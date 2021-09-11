@@ -10,20 +10,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CATCH2_TAG: v2.13.7
     steps:
 
       - uses: actions/checkout@v2
 
       - uses: lukka/get-cmake@latest
 
-      - name: Install dependencies (Catch2)
+      - name: Restore Catch2
+        id: cache-catch2
+        uses: actions/cache@v2
+        with:
+          path: ../Catch2
+          key: ${{ runner.os }}-${{ env.CATCH2_TAG }}-catch2
+      
+      - name: Build Catch2
+        if: ${{ steps.cache-catch2.outputs.cache-hit }}
         run: |
           cd ../
           git clone https://github.com/catchorg/Catch2
           cd Catch2
-          git checkout tags/v2.13.7
+          git checkout tags/${{ env.CATCH2_TAG }}
           mkdir build
-          cmake -S . -B build -H. -DBUILD_TESTING=OFF
+          cmake -S . -B build -H. -DBUILD_TESTING=OFF 
+
+      - name: Install Catch2
+        run: |
+          cd ../Catch2
           sudo cmake --build build --target install
       
       - name: Build
