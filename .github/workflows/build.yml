@@ -20,7 +20,7 @@ jobs:
 
       - name: Restore Catch2
         id: cache-catch2
-        uses: actions/cache@v2
+        uses: actions/cache@v1
         with:
           path: ../Catch2
           key: ${{ runner.os }}-${{ env.CATCH2_TAG }}-catch2
