@@ -14,12 +14,17 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install catch2
-      
       - uses: lukka/get-cmake@latest
+
+      - name: Install dependencies (Catch2)
+        run: |
+          cd ../
+          git clone https://github.com/catchorg/Catch2
+          cd Catch2
+          git checkout tags/v2.13.7
+          mkdir build
+          cmake -S . -B build -H. -DBUILD_TESTING=OFF
+          sudo cmake --build build --target install
       
       - name: Build
         run: |
