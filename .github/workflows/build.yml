@@ -26,7 +26,7 @@ jobs:
           key: ${{ runner.os }}-${{ env.CATCH2_TAG }}-catch2
       
       - name: Build Catch2
-        if: ${{ steps.cache-catch2.outputs.cache-hit }}
+        if: ${{ !steps.cache-catch2.outputs.cache-hit }}
         run: |
           cd ../
           git clone https://github.com/catchorg/Catch2
