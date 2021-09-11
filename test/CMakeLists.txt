@@ -15,10 +15,9 @@ add_executable(test_trackerboy
     "internal/test_endian.cpp"
     "internal/fileformat/test_Block.cpp"
 
-    "catch.cpp"
 )
 
-target_link_libraries(test_trackerboy PRIVATE trackerboy Catch2::Catch2)
+target_link_libraries(test_trackerboy PRIVATE trackerboy Catch2::Catch2WithMain)
 target_include_directories(test_trackerboy PRIVATE "${CMAKE_SOURCE_DIR}/src")
 if (IS_BIG_ENDIAN)
     target_compile_definitions(test_trackerboy PRIVATE -DTRACKERBOY_BIG_ENDIAN)

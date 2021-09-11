@@ -1,0 +1,29 @@
+
+name: build
+on:
+  push:
+    tags-ignore: '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install catch2
+      
+      - uses: lukka/get-cmake@latest
+      
+      - name: Build
+        run: |
+          cmake -S . -B build -GNinja -DCMAKE_BUILD_TYPE=Debug -DLIBTRACKERBOY_ENABLE_UNITY=ON
+          cmake --build build --target all
+
+      - name: Test
+        run: |
+          cd build
+          ctest
