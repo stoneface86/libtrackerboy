@@ -7,20 +7,16 @@
 namespace trackerboy {
 
 
-Synth::Synth(int samplerate, float framerate) noexcept :
-    mApu(samplerate, static_cast<size_t>(samplerate / framerate) + 1),
+Synth::Synth(IApu &apu, int samplerate, float framerate) noexcept :
+    mApu(apu),
     mSamplerate(samplerate),
     mFramerate(framerate),
-    mCyclesPerFrame(gbapu::constants::CLOCK_SPEED<float> / mFramerate),
+    mCyclesPerFrame(GB_CLOCK_SPEED<float> / mFramerate),
     mCycleOffset(0.0f),
     mFrameSize(0),
     mResizeRequired(true)
 {
     setupBuffers();
-}
-
-gbapu::Apu& Synth::apu() noexcept {
-    return mApu;
 }
 
 size_t Synth::framesize() const noexcept {
@@ -35,20 +31,17 @@ void Synth::run() noexcept {
     mCycleOffset = modff(cycles, &wholeCycles);
 
     // step to the end of the frame
-    mApu.stepTo(static_cast<uint32_t>(wholeCycles));
-    mApu.endFrame();
-
+    mApu.endFrameAt(static_cast<uint32_t>(wholeCycles));
 }
 
 
 void Synth::reset() noexcept {
     mApu.reset();
-    mApu.clearSamples();
     mCycleOffset = 0.0f;
 
     // turn sound on
-    mApu.writeRegister(gbapu::Apu::REG_NR52, 0x80, 0);
-    mApu.writeRegister(gbapu::Apu::REG_NR50, 0x77, 0);
+    mApu.writeRegister(IApu::REG_NR52, 0x80);
+    mApu.writeRegister(IApu::REG_NR50, 0x77);
 }
 
 void Synth::setFramerate(float framerate) {
@@ -71,12 +64,11 @@ void Synth::setSamplerate(int samplerate) {
 
 void Synth::setupBuffers() {
     if (mResizeRequired) {
-        mCyclesPerFrame = gbapu::constants::CLOCK_SPEED<float> / mFramerate;
+        mCyclesPerFrame = GB_CLOCK_SPEED<float> / mFramerate;
         mFrameSize = static_cast<size_t>(mSamplerate / mFramerate) + 1;
 
         mApu.setSamplerate(mSamplerate);
-        mApu.setBuffersize(mFrameSize);
-        mApu.resizeBuffer();
+        mApu.setBuffer(mFrameSize);
 
         reset();
         mResizeRequired = false;

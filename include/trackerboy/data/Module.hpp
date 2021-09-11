@@ -27,7 +27,7 @@
 #include "trackerboy/data/InfoStr.hpp"
 #include "trackerboy/data/Table.hpp"
 #include "trackerboy/data/SongList.hpp"
-#include "trackerboy/version.hpp"
+#include "trackerboy/Version.hpp"
 
 #include <cstddef>
 #include <istream>
@@ -96,6 +96,8 @@ public:
     void setFramerate(System system) noexcept;
 
     void setFramerate(int rate);
+
+    void setVersion(Version const& version) noexcept;
 
 private:
 

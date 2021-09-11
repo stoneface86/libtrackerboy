@@ -32,7 +32,7 @@ void ChannelControl<ch>::update(
     //  +2      envelope    envelope    volume      envelope
     //  +3                 freq LSB                 noise
     //  +4            freq MSB / retrigger          retrigger
-    constexpr uint8_t REGS_START = gbapu::Apu::REG_NR10 + (+ch * GB_CHANNEL_REGS);
+    constexpr uint8_t REGS_START = IApu::REG_NR10 + (+ch * GB_CHANNEL_REGS);
 
 
     // there are two ways to silence a channel:
@@ -64,9 +64,9 @@ void ChannelControl<ch>::update(
         } else {
             // note cut
             // set panning to mute
-            uint8_t nr51 = apu.readRegister(gbapu::Apu::REG_NR51);
+            uint8_t nr51 = apu.readRegister(IApu::REG_NR51);
             nr51 &= ~(0x11 << +ch);
-            apu.writeRegister(gbapu::Apu::REG_NR51, nr51);
+            apu.writeRegister(IApu::REG_NR51, nr51);
         }
     }
 
@@ -81,16 +81,16 @@ void ChannelControl<ch>::update(
             // might be worth adding a getRaw method to DataList that gets a raw pointer
             if (waveform != nullptr) {
                 // DAC OFF
-                apu.writeRegister(gbapu::Apu::REG_NR30, 0x00);
+                apu.writeRegister(IApu::REG_NR30, 0x00);
 
                 // copy wave
                 auto &data = waveform->data();
                 for (size_t i = 0; i != data.size(); ++i) {
-                    apu.writeRegister((uint8_t)(gbapu::Apu::REG_WAVERAM + i), data[i]);
+                    apu.writeRegister((uint8_t)(IApu::REG_WAVERAM + i), data[i]);
                 }
 
                 // DAC ON
-                apu.writeRegister(gbapu::Apu::REG_NR30, 0x80);
+                apu.writeRegister(IApu::REG_NR30, 0x80);
                 retrigger = true;
             }
 
@@ -108,7 +108,7 @@ void ChannelControl<ch>::update(
         // we can only update panning when the channel is playing
         // doing so otherwise may cause the note to start playing after being cut
         constexpr uint8_t panningMask = 0x11 << +ch;
-        auto nr51 = apu.readRegister(gbapu::Apu::REG_NR51);
+        auto nr51 = apu.readRegister(IApu::REG_NR51);
         nr51 &= ~panningMask; // clear current setting
         switch (state.panning) {
             case +Panning::mute:
@@ -128,7 +128,7 @@ void ChannelControl<ch>::update(
                 break;
 
         }
-        apu.writeRegister(gbapu::Apu::REG_NR51, nr51);
+        apu.writeRegister(IApu::REG_NR51, nr51);
     }
 
     bool const timbreChanged = lastState.timbre != state.timbre;
@@ -142,7 +142,7 @@ void ChannelControl<ch>::update(
             uint8_t nr43;
             if (!freqChanged) {
                 // only timbre changed, just set/clear the step-width bit
-                nr43 = apu.readRegister(gbapu::Apu::REG_NR43);
+                nr43 = apu.readRegister(IApu::REG_NR43);
                 if (state.timbre) {
                     nr43 |= 0x08;
                 } else {
@@ -157,12 +157,12 @@ void ChannelControl<ch>::update(
 
             }
 
-            apu.writeRegister(gbapu::Apu::REG_NR43, nr43);
+            apu.writeRegister(IApu::REG_NR43, nr43);
         }
 
 
         if (retrigger) {
-            apu.writeRegister(gbapu::Apu::REG_NR44, 0x80);
+            apu.writeRegister(IApu::REG_NR44, 0x80);
         }
     } else {
 
@@ -188,7 +188,7 @@ void ChannelControl<ch>::update(
                         vol = 0x20;
                         break;
                 }
-                apu.writeRegister(gbapu::Apu::REG_NR32, vol);
+                apu.writeRegister(IApu::REG_NR32, vol);
 
             } else {
                 // duty
@@ -219,14 +219,14 @@ void ChannelControl<ch>::update(
 template <ChType ch>
 void ChannelControl<ch>::clear(IApu &apu) noexcept {
     // clear registers
-    constexpr uint8_t regno = gbapu::Apu::REG_NR10 + (+ch * GB_CHANNEL_REGS);
+    constexpr uint8_t regno = IApu::REG_NR10 + (+ch * GB_CHANNEL_REGS);
     for (uint8_t i = 0; i != GB_CHANNEL_REGS; ++i) {
         apu.writeRegister(regno + i, 0);
     }
     // clear terminals for the channel
-    auto nr51 = apu.readRegister(gbapu::Apu::REG_NR51);
+    auto nr51 = apu.readRegister(IApu::REG_NR51);
     nr51 &= ~((uint8_t)0x11 << (+ch));
-    apu.writeRegister(gbapu::Apu::REG_NR51, nr51);
+    apu.writeRegister(IApu::REG_NR51, nr51);
 }
 
 template <ChType ch>

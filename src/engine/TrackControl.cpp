@@ -4,8 +4,6 @@
 
 #include "internal/enumutils.hpp"
 
-#include "gbapu.hpp"
-
 
 namespace trackerboy {
 

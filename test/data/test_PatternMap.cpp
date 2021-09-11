@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include "trackerboy/data/PatternMap.hpp"
 
 using namespace trackerboy;

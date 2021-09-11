@@ -1,15 +1,10 @@
 
-#include "trackerboy/version.hpp"
+#include "trackerboy/Version.hpp"
 
 #include <sstream>
 
-#if !defined(VERSION_MAJOR) || !defined(VERSION_MINOR) || !defined(VERSION_PATCH)
-#error version information not provided
-#endif
 
 namespace trackerboy {
-
-const Version VERSION = { VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH };
 
 std::string Version::toString() {
     std::ostringstream out;

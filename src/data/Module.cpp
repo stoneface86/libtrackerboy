@@ -14,11 +14,12 @@
 namespace trackerboy {
 
 
+
 Module::Module() noexcept :
     mSongs(),
     mInstrumentTable(),
     mWaveformTable(),
-    mVersion(VERSION),
+    mVersion{0, 0, 0},
     mRevisionMajor(FILE_REVISION_MAJOR),
     mRevisionMinor(FILE_REVISION_MINOR),
     mTitle(),
@@ -31,7 +32,7 @@ Module::Module() noexcept :
 }
 
 void Module::clear() noexcept {
-    mVersion = VERSION;
+    mVersion = {0, 0, 0};
     mRevisionMajor = FILE_REVISION_MAJOR;
     mRevisionMinor = FILE_REVISION_MINOR;
     mTitle.clear();
@@ -149,6 +150,10 @@ void Module::setFramerate(int rate) {
     mCustomFramerate = rate;
 }
 
+void Module::setVersion(const Version &version) noexcept {
+    mVersion = version;
+}
+
 FormatError Module::deserialize(std::istream &stream) noexcept {
 
     // read in the header
@@ -250,10 +255,9 @@ FormatError Module::serialize(std::ostream &stream) const noexcept {
     // signature
     header.current.signature = FILE_SIGNATURE;
 
-    // version information (saving always overrides what was loaded)
-    header.current.versionMajor = correctEndian(VERSION.major);
-    header.current.versionMinor = correctEndian(VERSION.minor);
-    header.current.versionPatch = correctEndian(VERSION.patch);
+    header.current.versionMajor = correctEndian(mVersion.major);
+    header.current.versionMinor = correctEndian(mVersion.minor);
+    header.current.versionPatch = correctEndian(mVersion.patch);
 
     // file information
 

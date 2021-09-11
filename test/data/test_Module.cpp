@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include "trackerboy/data/Module.hpp"
 #include "internal/fileformat/fileformat.hpp"
 

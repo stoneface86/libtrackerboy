@@ -25,8 +25,7 @@
 #pragma once
 
 #include "trackerboy/trackerboy.hpp"
-
-#include "gbapu.hpp"
+#include "trackerboy/engine/IApu.hpp"
 
 namespace trackerboy {
 
@@ -34,9 +33,7 @@ class Synth {
     
 public:
 
-    Synth(int samplerate, float framerate = GB_FRAMERATE_DMG) noexcept;
-
-    gbapu::Apu& apu() noexcept;
+    Synth(IApu &apu, int samplerate, float framerate = GB_FRAMERATE_DMG) noexcept;
 
     int samplerate() const noexcept;
 
@@ -68,7 +65,7 @@ public:
 
 private:
 
-    gbapu::Apu mApu;
+    IApu &mApu;
     
     // output sampling rate
     int mSamplerate;

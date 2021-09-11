@@ -1,5 +1,5 @@
 
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include "trackerboy/data/Table.hpp"
 
 using namespace trackerboy;

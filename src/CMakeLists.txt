@@ -34,6 +34,7 @@ set(PUB_HEADERS
     "../include/trackerboy/note.hpp"
     "../include/trackerboy/Synth.hpp"
     "../include/trackerboy/trackerboy.hpp"
+    "../include/trackerboy/Version.hpp"
 )
 
 set(SRC_FILES
@@ -90,6 +91,7 @@ set(SRC_FILES
     "InstrumentPreview.cpp"
     "note.cpp"
     "Synth.cpp"
+    "Version.cpp"
 )
 
 include(TestBigEndian)
@@ -105,6 +107,7 @@ set_target_properties(trackerboy PROPERTIES PUBLIC_HEADER "${PUB_HEADERS}")
 target_compile_features(trackerboy PUBLIC cxx_std_17)
 
 target_include_directories(trackerboy PUBLIC "../include")
+target_include_directories(trackerboy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (IS_BIG_ENDIAN)
     target_compile_definitions(trackerboy PRIVATE -DTRACKERBOY_BIG_ENDIAN)
