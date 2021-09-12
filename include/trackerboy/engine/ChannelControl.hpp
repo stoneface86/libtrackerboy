@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "trackerboy/apu/IApu.hpp"
 #include "trackerboy/engine/RuntimeContext.hpp"
 #include "trackerboy/engine/ChannelState.hpp"
-#include "trackerboy/engine/IApu.hpp"
 #include "trackerboy/trackerboy.hpp"
 
 namespace trackerboy {

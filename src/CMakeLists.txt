@@ -1,5 +1,7 @@
 
 set(PUB_HEADERS
+    "../include/trackerboy/apu/IApu.hpp"
+    "../include/trackerboy/apu/NullApu.hpp"
     "../include/trackerboy/data/DataItem.hpp"
     "../include/trackerboy/data/InfoStr.hpp"
     "../include/trackerboy/data/Instrument.hpp"
@@ -22,7 +24,6 @@ set(PUB_HEADERS
     "../include/trackerboy/engine/Frame.hpp"
     "../include/trackerboy/engine/FrequencyControl.hpp"
     "../include/trackerboy/engine/GlobalState.hpp"
-    "../include/trackerboy/engine/IApu.hpp"
     "../include/trackerboy/engine/InstrumentRuntime.hpp"
     "../include/trackerboy/engine/MusicRuntime.hpp"
     "../include/trackerboy/engine/Operation.hpp"
@@ -38,6 +39,9 @@ set(PUB_HEADERS
 )
 
 set(SRC_FILES
+    "apu/NullApu.cpp"
+    "apu/IApu.cpp"
+
     "data/DataItem.cpp"
     "data/InfoStr.cpp"
     "data/Instrument.cpp"
@@ -56,7 +60,6 @@ set(SRC_FILES
     "engine/ChannelControl.cpp"
     "engine/Engine.cpp"
     "engine/FrequencyControl.cpp"
-    "engine/IApu.cpp"
     "engine/InstrumentRuntime.cpp"
     "engine/MusicRuntime.cpp"
     "engine/Operation.cpp"
@@ -108,6 +111,12 @@ target_compile_features(trackerboy PUBLIC cxx_std_17)
 
 target_include_directories(trackerboy PUBLIC "../include")
 target_include_directories(trackerboy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (LIBTRACKERBOY_ENABLE_UNITY)
+    if (CMAKE_VERSION VERSION_GREATER 3.15)
+        set_target_properties(trackerboy PROPERTIES UNITY_BUILD ON)
+    endif ()
+endif ()
 
 if (IS_BIG_ENDIAN)
     target_compile_definitions(trackerboy PRIVATE -DTRACKERBOY_BIG_ENDIAN)

@@ -135,32 +135,5 @@ public:
 
 };
 
-//
-// Null Apu, all writes to this apu do nothing
-//
-class NullApu final : public IApu {
-
-public:
-
-    virtual void step(uint32_t cycles) override;
-
-    virtual void endFrameAt(uint32_t time) override;
-
-    virtual size_t samplesAvailable() override;
-
-    virtual size_t readSamples(int16_t *buf, size_t samples) override;
-
-    virtual void setBuffer(size_t samples) override;
-
-    virtual void setSamplerate(int rate) override;
-
-    virtual void reset() override;
-
-    virtual uint8_t readRegister(uint8_t reg) override;
-
-    virtual void writeRegister(uint8_t reg, uint8_t value) override;
-
-};
-
 
 }

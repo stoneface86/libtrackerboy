@@ -25,7 +25,7 @@
 #pragma once
 
 #include "trackerboy/trackerboy.hpp"
-#include "trackerboy/engine/IApu.hpp"
+#include "trackerboy/apu/IApu.hpp"
 
 namespace trackerboy {
 

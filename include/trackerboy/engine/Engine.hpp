@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "trackerboy/apu/IApu.hpp"
 #include "trackerboy/data/Module.hpp"
 #include "trackerboy/engine/Frame.hpp"
-#include "trackerboy/engine/IApu.hpp"
 #include "trackerboy/engine/MusicRuntime.hpp"
 #include "trackerboy/engine/RuntimeContext.hpp"
 

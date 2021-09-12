@@ -1,11 +1,7 @@
-#include "trackerboy/engine/IApu.hpp"
+
+#include "trackerboy/apu/NullApu.hpp"
 
 namespace trackerboy {
-
-int IApu::channelVolume(ChType ch) {
-    (void)ch;
-    return 0;
-}
 
 void NullApu::step(uint32_t cycles) {
     (void)cycles;

@@ -25,52 +25,35 @@
 #pragma once
 
 #include "trackerboy/apu/IApu.hpp"
-#include "trackerboy/data/Instrument.hpp"
-#include "trackerboy/engine/FrequencyControl.hpp"
-#include "trackerboy/engine/InstrumentRuntime.hpp"
-#include "trackerboy/engine/RuntimeContext.hpp"
 
-
-#include <optional>
 
 namespace trackerboy {
 
 //
-// Utility class for previewing instruments.
+// Null Apu, all writes to this apu do nothing
 //
-class InstrumentPreview {
+class NullApu final : public IApu {
 
 public:
 
-    InstrumentPreview();
+    virtual void step(uint32_t cycles) override;
 
-    //
-    // Start previewing the given instrument. If instrument is nullptr, then
-    // the runtime will preview the set note on the given channel. If no channel
-    // is provided, then it will default to the instrument's channel or CH1 if
-    // no instrument was provided.
-    //
-    void setInstrument(std::shared_ptr<Instrument> instrument, std::optional<ChType> ch = std::nullopt);
+    virtual void endFrameAt(uint32_t time) override;
 
-    void play(uint8_t note);
+    virtual size_t samplesAvailable() override;
 
-    void step(RuntimeContext const& rc);
+    virtual size_t readSamples(int16_t *buf, size_t samples) override;
 
-private:
+    virtual void setBuffer(size_t samples) override;
 
-    void restart();
+    virtual void setSamplerate(int rate) override;
 
-    ChType mCh;
-    ToneFrequencyControl mToneFc;
-    NoiseFrequencyControl mNoiseFc;
-    FrequencyControl *mFc;
+    virtual void reset() override;
 
-    std::shared_ptr<Instrument> mInstrument;
-    std::optional<InstrumentRuntime> mIr;
+    virtual uint8_t readRegister(uint8_t reg) override;
 
-    bool mInit;
-    bool mRetrigger;
-    ChannelState mLastState;
+    virtual void writeRegister(uint8_t reg, uint8_t value) override;
+
 };
 
 
