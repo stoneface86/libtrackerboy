@@ -17,27 +17,15 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: lukka/get-cmake@latest
-
-      - name: Restore Catch2
-        id: cache-catch2
-        uses: actions/cache@v1
-        with:
-          path: ../Catch2
-          key: ${{ runner.os }}-${{ env.CATCH2_TAG }}-catch2
       
-      - name: Build Catch2
-        if: ${{ !steps.cache-catch2.outputs.cache-hit }}
+      - name: Get Catch2
         run: |
           cd ../
           git clone https://github.com/catchorg/Catch2
           cd Catch2
           git checkout tags/${{ env.CATCH2_TAG }}
           mkdir build
-          cmake -S . -B build -H. -DBUILD_TESTING=OFF 
-
-      - name: Install Catch2
-        run: |
-          cd ../Catch2
+          cmake -S . -B build -H. -DBUILD_TESTING=OFF
           sudo cmake --build build --target install
       
       - name: Build
