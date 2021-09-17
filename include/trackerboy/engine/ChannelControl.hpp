@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/apu/IApu.hpp"
+#include "trackerboy/apu/IApuIo.hpp"
 #include "trackerboy/engine/RuntimeContext.hpp"
 #include "trackerboy/engine/ChannelState.hpp"
 #include "trackerboy/trackerboy.hpp"
@@ -40,15 +40,15 @@ class ChannelControl {
 public:
 
     static void update(
-        IApu &apu,
+        IApuIo &apu,
         WaveformTable const& waveTable,
         ChannelState const& lastState,
         ChannelState const& state
     ) noexcept;
 
-    static void clear(IApu &apu) noexcept;
+    static void clear(IApuIo &apu) noexcept;
 
-    static void init(IApu &apu, WaveformTable const& waveTable, ChannelState const& state) noexcept;
+    static void init(IApuIo &apu, WaveformTable const& waveTable, ChannelState const& state) noexcept;
 
 };
 

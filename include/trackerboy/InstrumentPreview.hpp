@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "trackerboy/apu/IApu.hpp"
 #include "trackerboy/data/Instrument.hpp"
 #include "trackerboy/engine/FrequencyControl.hpp"
 #include "trackerboy/engine/InstrumentRuntime.hpp"

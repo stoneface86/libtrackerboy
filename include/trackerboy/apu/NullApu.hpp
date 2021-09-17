@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/apu/IApu.hpp"
+#include "trackerboy/apu/Apu.hpp"
 
 
 namespace trackerboy {
@@ -32,7 +32,7 @@ namespace trackerboy {
 //
 // Null Apu, all writes to this apu do nothing
 //
-class NullApu final : public IApu {
+class NullApu final : public Apu {
 
 public:
 

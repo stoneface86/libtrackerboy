@@ -7,7 +7,7 @@
 namespace trackerboy {
 
 
-Engine::Engine(IApu &apu, Module const* mod) :
+Engine::Engine(IApuIo &apu, Module const* mod) :
     mApu(apu),
     mModule(mod),
     mRc(),

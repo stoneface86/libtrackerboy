@@ -7,7 +7,7 @@
 namespace trackerboy {
 
 
-Synth::Synth(IApu &apu, int samplerate, float framerate) noexcept :
+Synth::Synth(Apu &apu, int samplerate, float framerate) noexcept :
     mApu(apu),
     mSamplerate(samplerate),
     mFramerate(framerate),
@@ -40,8 +40,8 @@ void Synth::reset() noexcept {
     mCycleOffset = 0.0f;
 
     // turn sound on
-    mApu.writeRegister(IApu::REG_NR52, 0x80);
-    mApu.writeRegister(IApu::REG_NR50, 0x77);
+    mApu.writeRegister(Apu::REG_NR52, 0x80);
+    mApu.writeRegister(Apu::REG_NR50, 0x77);
 }
 
 void Synth::setFramerate(float framerate) {

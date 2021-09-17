@@ -1,7 +1,8 @@
 
 set(PUB_HEADERS
+    "../include/trackerboy/apu/Apu.hpp"
+    "../include/trackerboy/apu/IApuIo.hpp"
     "../include/trackerboy/apu/DefaultApu.hpp"
-    "../include/trackerboy/apu/IApu.hpp"
     "../include/trackerboy/apu/NullApu.hpp"
     "../include/trackerboy/data/DataItem.hpp"
     "../include/trackerboy/data/InfoStr.hpp"
@@ -40,9 +41,9 @@ set(PUB_HEADERS
 )
 
 set(SRC_FILES
+    "apu/Apu.cpp"
     "apu/DefaultApu.cpp"
     "apu/NullApu.cpp"
-    "apu/IApu.cpp"
 
     "data/DataItem.cpp"
     "data/InfoStr.cpp"

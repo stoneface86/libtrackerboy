@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/apu/IApu.hpp"
+#include "trackerboy/apu/IApuIo.hpp"
 #include "trackerboy/data/Module.hpp"
 #include "trackerboy/engine/Frame.hpp"
 #include "trackerboy/engine/MusicRuntime.hpp"
@@ -40,7 +40,7 @@ class Engine {
 
 public:
 
-    Engine(IApu &apu, Module const* mod = nullptr);
+    Engine(IApuIo &apu, Module const* mod = nullptr);
 
     Module const* getModule() const;
 
@@ -101,7 +101,7 @@ public:
 private:
     void clearChannel(ChType ch);
 
-    IApu &mApu;
+    IApuIo &mApu;
     Module const* mModule;
     std::optional<RuntimeContext> mRc;
     std::optional<MusicRuntime> mMusicContext;

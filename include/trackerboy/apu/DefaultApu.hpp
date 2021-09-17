@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/apu/IApu.hpp"
+#include "trackerboy/apu/Apu.hpp"
 
 #include <memory>
 
@@ -35,7 +35,7 @@ namespace trackerboy {
 // Implementation for the built-in APU. Gameboy APU emulator with a
 // goal of "close-enough" emulation and quality sound output.
 //
-class DefaultApu final : public IApu {
+class DefaultApu final : public Apu {
 
 public:
 
