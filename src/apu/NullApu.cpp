@@ -3,6 +3,10 @@
 
 namespace trackerboy {
 
+void NullApu::beginFrame() {
+
+}
+
 void NullApu::step(uint32_t cycles) {
     (void)cycles;
 }
@@ -15,7 +19,7 @@ size_t NullApu::samplesAvailable() {
     return 0;
 }
 
-size_t NullApu::readSamples(int16_t *buf, size_t samples) {
+size_t NullApu::readSamples(float *buf, size_t samples) {
     (void)buf;
     (void)samples;
     return 0;

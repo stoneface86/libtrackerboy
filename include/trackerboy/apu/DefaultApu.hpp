@@ -26,15 +26,20 @@
 
 #include "trackerboy/apu/IApu.hpp"
 
+#include <memory>
+
 
 namespace trackerboy {
 
 //
-// Null Apu, all writes to this apu do nothing
+// Implementation for the built-in APU. Gameboy APU emulator with a
+// goal of "close-enough" emulation and quality sound output.
 //
-class NullApu final : public IApu {
+class DefaultApu final : public IApu {
 
 public:
+
+    DefaultApu();
 
     virtual void beginFrame() override;
 
@@ -55,6 +60,11 @@ public:
     virtual uint8_t readRegister(uint8_t reg) override;
 
     virtual void writeRegister(uint8_t reg, uint8_t value) override;
+
+private:
+
+    struct Private;
+    std::unique_ptr<Private> mD;
 
 };
 

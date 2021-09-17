@@ -1,5 +1,6 @@
 
 set(PUB_HEADERS
+    "../include/trackerboy/apu/DefaultApu.hpp"
     "../include/trackerboy/apu/IApu.hpp"
     "../include/trackerboy/apu/NullApu.hpp"
     "../include/trackerboy/data/DataItem.hpp"
@@ -39,6 +40,7 @@ set(PUB_HEADERS
 )
 
 set(SRC_FILES
+    "apu/DefaultApu.cpp"
     "apu/NullApu.cpp"
     "apu/IApu.cpp"
 
@@ -69,6 +71,8 @@ set(SRC_FILES
 
     "export/Player.cpp"
     
+    "internal/apu.cpp"
+    "internal/apu.hpp"
     "internal/fileformat/payload/deserializePayload0.cpp"
     "internal/fileformat/payload/deserializePayload1.cpp"
     "internal/fileformat/payload/payload.cpp"
@@ -111,6 +115,17 @@ target_compile_features(trackerboy PUBLIC cxx_std_17)
 
 target_include_directories(trackerboy PUBLIC "../include")
 target_include_directories(trackerboy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # -Wno-missing-field-initializers prevents warnings when zero-initializing a struct
+    target_compile_options(trackerboy PRIVATE
+        -Wall
+        -Wextra
+        -Winline
+        -pedantic
+        -Wno-missing-field-initializers
+    )
+endif ()
 
 if (LIBTRACKERBOY_ENABLE_UNITY)
     if (CMAKE_VERSION VERSION_GREATER 3.15)

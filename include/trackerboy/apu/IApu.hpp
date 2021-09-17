@@ -75,8 +75,17 @@ public:
 
     virtual ~IApu() = default;
 
+
     //
-    // Step the emulator for the given number of cycles
+    // Begins a new frame of emulation. Must be called before step and endFrameAt.
+    // The internal sample buffer is cleared.
+    //
+    virtual void beginFrame() = 0;
+
+    //
+    // Step the emulator for the given number of cycles. Note that the cycles
+    // parameter is in T-states not M-cycles, so if stepping after a NOP instruction
+    // you would call step(4) not step(1).
     //
     virtual void step(uint32_t cycles) = 0;
 
@@ -95,7 +104,7 @@ public:
     // Reads the given number of samples into the given buffer, buf.
     // The number of samples that was actually read is returned.
     //
-    virtual size_t readSamples(int16_t *buf, size_t samples) = 0;
+    virtual size_t readSamples(float *buf, size_t samples) = 0;
 
     //
     // Sets the size of the APU's internal audio buffer
