@@ -39,7 +39,7 @@ endif ()
 add_subdirectory(src)
 
 if (NOT __IS_SUBDIRECTORY OR LIBTRACKERBOY_ENABLE_EXAMPLES)
-    #add_subdirectory(examples)
+    add_subdirectory(examples)
 endif ()
 
 if (NOT __IS_SUBDIRECTORY OR LIBTRACKERBOY_ENABLE_TESTS)

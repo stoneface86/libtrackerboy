@@ -43,13 +43,6 @@ public:
 
     virtual ~Apu() = default;
 
-
-    //
-    // Begins a new frame of emulation. Must be called before step and endFrameAt.
-    // The internal sample buffer is cleared.
-    //
-    virtual void beginFrame() = 0;
-
     //
     // Step the emulator for the given number of cycles. Note that the cycles
     // parameter is in T-states not M-cycles, so if stepping after a NOP instruction
@@ -88,8 +81,6 @@ public:
     // Hardware reset of the APU, buffer is also cleared.
     //
     virtual void reset() = 0;
-
-    
 
     //
     // Gets the current volume level (0-F) for a channel. Used for

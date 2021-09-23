@@ -36,8 +36,6 @@ class NullApu final : public Apu {
 
 public:
 
-    virtual void beginFrame() override;
-
     virtual void step(uint32_t cycles) override;
 
     virtual void endFrameAt(uint32_t time) override;

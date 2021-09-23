@@ -41,7 +41,7 @@ public:
 
     DefaultApu();
 
-    virtual void beginFrame() override;
+    ~DefaultApu();
 
     virtual void step(uint32_t cycles) override;
 
@@ -57,13 +57,18 @@ public:
 
     virtual void reset() override;
 
+    virtual int channelVolume(ChType ch) override;
+
     virtual uint8_t readRegister(uint8_t reg) override;
 
     virtual void writeRegister(uint8_t reg, uint8_t value) override;
 
 private:
 
-    struct Private;
+    // PIMPL idiom is used because this class is composed of classes not
+    // visible to the public API (internal/apu.hpp classes).
+
+    class Private;
     std::unique_ptr<Private> mD;
 
 };

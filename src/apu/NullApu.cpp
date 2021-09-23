@@ -3,10 +3,6 @@
 
 namespace trackerboy {
 
-void NullApu::beginFrame() {
-
-}
-
 void NullApu::step(uint32_t cycles) {
     (void)cycles;
 }

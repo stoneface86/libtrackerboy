@@ -3,220 +3,359 @@
 
 #include <array>
 #include <cstdint>
+#include <memory>
 
 namespace trackerboy {
 
 namespace apu {
 
-using GbSample = int8_t;
+// mix flags
+constexpr int MIX_LEFT = 2;
+constexpr int MIX_RIGHT = 1;
 
-// the number of clocks (T-states) a step does
-constexpr uint32_t STEP_UNIT = 2;
+enum class MixMode {
+    mute      = 0,
+    left      = MIX_LEFT,
+    right     = MIX_RIGHT,
+    middle    = MIX_LEFT | MIX_RIGHT
+};
+
+constexpr int operator+(MixMode mode) {
+    return static_cast<int>(mode);
+}
+
+constexpr bool modePansLeft(MixMode mode) {
+    return !!(+mode & MIX_LEFT);
+}
+
+constexpr bool modePansRight(MixMode mode) {
+    return !!(+mode & MIX_RIGHT);
+}
+
+using ChannelMix = std::array<MixMode, 4>;
+
+class Mixer {
+
+public:
+    explicit Mixer();
+
+    //
+    // Mixes a bandlimited step with the given delta (-15 to 15). The delta
+    // is multiplied by the volume step for its destination terminal.
+    // Calling this function with MixMode::mute does nothing.
+    //
+    void mix(MixMode mode, int8_t delta, uint32_t cycletime);
+
+    //
+    // Adds DC offsets to each terminal at the given cycle time
+    //
+    void mixDc(float dcLeft, float dcRight, uint32_t cycletime);
+
+    //
+    // Same as mix, but has the mode as a template parameter
+    //
+    template <MixMode mode>
+    void mixfast(int8_t delta, uint32_t cycletime);
+
+    //
+    // Sets the volume step for each terminal.
+    //
+    void setVolume(float leftVolume, float rightVolume);
+
+    //
+    // Volume step for the left terminal
+    //
+    float leftVolume() const noexcept;
+
+    //
+    // Volume step for the right terminal
+    //
+    float rightVolume() const noexcept;
+
+    // buffer management
+
+    //
+    // Sets the size of the sample buffer, in samples. Must call this
+    // once before mixing, or a null-pointer dereference will occur.
+    //
+    void setBuffer(size_t samples);
+
+    //
+    // Sets the samplerate. This change will only effect new mixes, so
+    // it's recommended to clear the buffer beforehand.
+    //
+    void setSamplerate(unsigned rate);
+
+    //
+    // Ends the frame at the given cycle time, allowing for samples to be
+    // read from the buffer
+    //
+    void endFrame(uint32_t cycletime);
+
+    //
+    // Gets the total number of samples available for reading
+    //
+    size_t availableSamples() const noexcept;
+
+    //
+    // Read from the sample buffer, moving data to the given buffer. The
+    // number of samples that was read is returned.
+    //
+    size_t readSamples(float buf[], size_t samples);
+
+    //
+    // Removes the given number of samples from the buffer
+    //
+    void removeSamples(size_t samples);
+
+    //
+    // Clears the buffer, and resets the filter state.
+    //
+    void clear();
+
+private:
+    //
+    // Converts the time in cycles to time in samples
+    //
+    float sampletime(uint32_t cycletime) const noexcept;
+
+    struct MixParam {
+        // the stepset to use
+        float const* stepset;
+        // the destination in the buffer to mix the step
+        float *dest;
+        // time fraction used for interpolation
+        float timeFract;
+
+    };
+
+    //
+    // Sample accumulator, used for integrating + high pass filtering
+    // the sample buffer.
+    //
+    struct Accum {
+        float sum = 0.0f;
+        float highpass = 0.0f;
+
+        void process(float *dest, float in, float highPassRate);
+
+        void reset();
+    };
+
+    MixParam getMixParameters(uint32_t cycletime);
+
+    float mVolumeStepLeft;
+    float mVolumeStepRight;
+
+    unsigned mSamplerate;
+    float mFactor;                      // samples per cycle (multiply cycletime by this to get sampletime)
+
+    std::unique_ptr<float[]> mBuffer;   // sample buffer
+    size_t mBuffersize;                 // total size of the buffer
+    std::array<Accum, 2> mAccumulators; // running sum state for each terminal
+    float mSampleOffset;                // fractional carry-over from previous frame
+    size_t mWriteIndex;                 // index to start mixing samples (samples before this index can be read)
+    float mHighpassRate;                // rate of the highpass filter
 
 
-// reset functions are to be called during a hardware reset
-// restart functions should be called during channel retrigger/restart
+};
 
+
+class Hardware;
+class Envelope;
 
 //
-// Base class for all internal components in the APU.
+// Timer class for counting cycles. Each Channel has a frequency timer, which
+// determines the rate its waveform generator is clocked.
 //
 class Timer {
 
 public:
+    explicit Timer(uint32_t initPeriod);
 
     //
-    // Returns the frequency timer, or the number of cycles needed to complete a period.
+    // Current counter value, or the number of cycles left to complete a period
     //
-    uint32_t timer() const noexcept;
-
-protected:
-
-    Timer(uint32_t period);
+    uint32_t counter() const noexcept;
 
     //
-    // step the timer the given number of cycles. If the timer is now 0,
-    // true is returned and the timer is reloaded with the period
+    // Current period value
     //
-    bool stepTimer(uint32_t cycles);
+    uint32_t period() const noexcept;
 
-    uint32_t mTimer;
+    //
+    // Runs the timer, returning true if the counter reaches 0
+    // false otherwise. If the counter reaches 0 it is also reloaded
+    // with the period. Note that cycles must be <= counter()
+    //
+    bool run(uint32_t cycles) noexcept;
+
+    //
+    // Similar to run, but counts the number of clocks the timer
+    // completes after running the given number of cycles.
+    //
+    uint32_t fastforward(uint32_t cycles) noexcept;
+
+    //
+    // Reloads the counter with the period
+    //
+    void restart() noexcept;
+
+    void setPeriod(uint32_t period) noexcept;
+
+private:
+
+    uint32_t mCounter;
     uint32_t mPeriod;
-
-
 };
 
-class ChannelBase : public Timer {
+//
+// Base class for an APU channel. All channels have:
+//  - DAC status
+//  - enabled status (controlled by the LengthCounter)
+//  - frequency
+//  - DAC input, used for mixing
+//  - Frequency timer
+//
+class Channel {
 
 public:
 
-    bool dacOn() const noexcept;
+    bool isDacOn() const noexcept;
 
-    bool lengthEnabled() const noexcept;
-
-    void reset() noexcept;
-
-    void restart() noexcept;
-
-    void setDacEnable(bool enabled) noexcept;
-
-    void stepLengthCounter() noexcept;
-
-    int8_t output() const noexcept;
-
-    void writeLengthCounter(uint8_t value) noexcept;
-
-protected:
-
-    ChannelBase(uint32_t defaultPeriod, unsigned lengthCounterMax) noexcept;
+    bool isEnabled() const noexcept;
 
     void disable() noexcept;
 
-    void setLengthCounterEnable(bool enable);
+    void setDacEnabled(bool enabled) noexcept;
 
     uint16_t frequency() const noexcept;
 
-    uint16_t mFrequency; // 0-2047 (for noise channel only 8 bits are used)
+    uint8_t output() const noexcept;
 
-    // PCM value going into the DAC (0 to F)
-    int8_t mOutput;
+    Timer& timer() noexcept;
 
-
-    bool mDacOn;
-
-private:
-
-
-    unsigned mLengthCounter;
-    bool mLengthEnabled;
-    bool mDisabled;
-
-    unsigned const mLengthCounterMax;
-    uint32_t const mDefaultPeriod;
-
-};
-
-// adds a volume envelope to the base class
-class EnvChannelBase : public ChannelBase {
-public:
-    uint8_t readEnvelope() const noexcept;
-
-    void writeEnvelope(uint8_t value) noexcept;
-
-    void stepEnvelope() noexcept;
+    void reset() noexcept;
 
     void restart() noexcept;
 
-    void reset() noexcept;
-
-
 protected:
-    EnvChannelBase(uint32_t defaultPeriod, unsigned lengthCounterMax) noexcept;
+    explicit Channel(uint32_t initPeriod);
 
-    // contents of the envelope register (NRx2)
-    uint8_t mEnvelopeRegister;
+    uint16_t mFrequency;
+    uint8_t mOutput;
 
-    uint8_t mEnvelopeCounter;
-    uint8_t mEnvelopePeriod;
-    bool mEnvelopeAmplify;
-    int8_t mVolume;
+private:
+    bool mDacOn;
+    bool mEnabled;
+    Timer mTimer;
+
+
 };
 
-
-
-class PulseChannel : public EnvChannelBase {
+class NoiseChannel : public Channel {
 
 public:
+    explicit NoiseChannel(Envelope const& env);
 
-    PulseChannel() noexcept;
+    void setNoise(uint8_t noisereg) noexcept;
 
-    //
-    // Set the duty of the pulse. Does not require restart.
-    //
-    void writeDuty(uint8_t duty) noexcept;
-
-    uint8_t readDuty() const noexcept;
+    void clock() noexcept;
 
     void reset() noexcept;
 
-protected:
+    void restart() noexcept;
 
-    void stepOscillator() noexcept;
-
-    void setPeriod() noexcept;
+    void fastforward(uint32_t cycles) noexcept;
 
 private:
 
+    void updateOutput() noexcept;
+
+    void clockLfsr() noexcept;
+
+    Envelope const& mEnvelope;
+    bool mValidScf;
+    bool mHalfWidth;
+    uint16_t mLfsr;
+
+};
+
+class PulseChannel : public Channel {
+
+public:
+
+    enum Duty {
+        Duty125 = 0,
+        Duty25 = 1,
+        Duty50 = 2,
+        Duty75 = 3
+    };
+
+    explicit PulseChannel(Envelope const& env);
+
+    uint8_t duty() const noexcept;
+
+    void setDuty(uint8_t duty) noexcept;
+
+    void setFrequency(uint16_t freq) noexcept;
+
+    void clock() noexcept;
+
+    void reset() noexcept;
+
+    void fastforward(uint32_t cycles) noexcept;
+
+private:
+
+    void updateOutput() noexcept;
+
+    Envelope const& mEnvelope;
     uint8_t mDuty;
     uint8_t mDutyWaveform;
 
     unsigned mDutyCounter;
 
-
 };
 
-class SweepPulseChannel : public PulseChannel {
 
-public:
-    SweepPulseChannel() noexcept;
 
-    uint8_t readSweep() const noexcept;
-
-    void reset() noexcept;
-
-    void restart() noexcept;
-
-    void writeSweep(uint8_t reg) noexcept;
-
-    void stepSweep() noexcept;
-
-private:
-
-    bool mSweepSubtraction;
-    uint8_t mSweepTime;
-    uint8_t mSweepShift;
-
-    uint8_t mSweepCounter;
-
-    // Sweep register, NR10
-    // Bits 0-2: Shift amount
-    // Bit    3: Sweep mode (1 = subtraction)
-    // Bits 4-6: Period
-    uint8_t mSweepRegister;
-
-    // shadow register, CH1's frequency gets copied here on reset (initalization)
-    int16_t mShadow;
-
-};
-
-class WaveChannel : public ChannelBase {
+class WaveChannel : public Channel {
 
 public:
 
-    WaveChannel() noexcept;
+    enum Volume {
+        VolumeMute = 0,
+        VolumeFull = 1,
+        VolumeHalf = 2,
+        VolumeQuarter = 3
+    };
+
+    explicit WaveChannel();
 
     uint8_t* waveram() noexcept;
 
-    uint8_t readVolume() const noexcept;
+    uint8_t volume() const noexcept;
+
+    void setVolume(uint8_t volume) noexcept;
+
+    void setFrequency(uint16_t frequency) noexcept;
+
+    void clock() noexcept;
 
     void reset() noexcept;
 
     void restart() noexcept;
 
-    void writeVolume(uint8_t volume) noexcept;
-
-
-protected:
-
-    void stepOscillator() noexcept;
-
-    void setPeriod() noexcept;
+    void fastforward(uint32_t cycles) noexcept;
 
 private:
 
-    void setOutput();
+    void updateSampleBuffer() noexcept;
 
-    //Gbs::WaveVolume mVolume;
+    void updateOutput() noexcept;
+
+    uint8_t mWaveVolume;
     uint8_t mVolumeShift;
     uint8_t mWaveIndex;
     uint8_t mSampleBuffer;
@@ -225,81 +364,109 @@ private:
 
 };
 
-class NoiseChannel : public EnvChannelBase {
+class LengthCounter {
+
+public:
+    explicit LengthCounter(unsigned max);
+
+    unsigned counter() const noexcept;
+
+    bool isEnabled() const noexcept;
+
+    void setCounter(unsigned value) noexcept;
+
+    void setEnable(bool enabled) noexcept;
+
+    void clock(Channel &channel) noexcept;
+
+    void reset() noexcept;
+
+    void restart() noexcept;
+
+private:
+    bool mEnabled;
+    unsigned mCounter;
+    unsigned const mCounterMax;
+
+};
+
+
+class Envelope {
 
 public:
 
-    NoiseChannel() noexcept;
+    explicit Envelope();
 
-    uint8_t readNoise() const noexcept;
+    uint8_t readRegister() const noexcept;
+
+    void writeRegister(Channel &channel, uint8_t val) noexcept;
+
+    void clock() noexcept;
 
     void restart() noexcept;
 
     void reset() noexcept;
 
-protected:
-    void stepOscillator() noexcept;
-
-    void setPeriod() noexcept;
+    uint8_t volume() const noexcept;
 
 private:
 
-    bool mValidScf;
+    // contents of the envelope register (NRx2)
+    uint8_t mRegister;
 
-    // width of the LFSR (7-bit = true, 15-bit = false)
-    bool mHalfWidth;
-    // lfsr: linear feedback shift register
-    uint16_t mLfsr;
-
-
+    uint8_t mCounter;
+    uint8_t mPeriod;
+    bool mAmplify;
+    int8_t mVolume;
 };
 
-template <class T>
-class Channel : public T {
+
+class Sweep {
 
 public:
-    void writeFrequencyLsb(uint8_t value);
+    explicit Sweep();
 
-    void writeFrequencyMsb(uint8_t value);
+    uint8_t readRegister() const noexcept;
 
-    // steps 2 clocks
-    void step();
+    void writeRegister(uint8_t val) noexcept;
 
-};
-
-
-struct ChannelFile {
-
-    Channel<SweepPulseChannel> ch1;
-    Channel<PulseChannel> ch2;
-    Channel<WaveChannel> ch3;
-    Channel<NoiseChannel> ch4;
-
-    ChannelFile() noexcept :
-        ch1(),
-        ch2(),
-        ch3(),
-        ch4()
-    {
-    }
-
-};
-
-class Sequencer : public Timer {
-
-public:
-
-    Sequencer(ChannelFile &cf) noexcept;
+    void clock(PulseChannel &ch1) noexcept;
 
     void reset() noexcept;
 
-    void step() noexcept;
+    void restart(PulseChannel &ch1) noexcept;
 
 private:
 
-    static constexpr uint32_t CYCLES_PER_STEP = 8192;
-    static constexpr uint32_t DEFAULT_PERIOD = CYCLES_PER_STEP * 2;
+    bool mSubtraction;
+    uint8_t mTime;
+    uint8_t mShift;
+    uint8_t mCounter;
 
+    // Sweep register, NR10
+    // Bits 0-2: Shift amount
+    // Bit    3: Sweep mode (1 = subtraction)
+    // Bits 4-6: Period
+    uint8_t mRegister;
+
+    // shadow register, CH1's frequency gets copied here on restart (initalization)
+    uint16_t mShadow;
+
+};
+
+
+class Sequencer {
+
+public:
+    explicit Sequencer();
+
+    void reset() noexcept;
+
+    void run(Hardware &hw, uint32_t cycles) noexcept;
+
+    uint32_t cyclesToNextTrigger() const noexcept;
+
+private:
     enum class TriggerType {
         lcSweep,
         lc,
@@ -314,14 +481,141 @@ private:
 
     static Trigger const TRIGGER_SEQUENCE[];
 
-    ChannelFile &mCf;
+    Timer mTimer;
     uint32_t mTriggerIndex;
-
-
-
 
 };
 
-}
 
-}
+
+class Hardware {
+
+    using ChannelTuple = std::tuple<PulseChannel, PulseChannel, WaveChannel, NoiseChannel>;
+
+public:
+    explicit Hardware();
+
+    void reset();
+
+    void clockEnvelopes() noexcept;
+
+    void clockLengthCounters() noexcept;
+
+    void clockSweep() noexcept;
+
+    template <size_t channel>
+    void writeFrequencyLsb(uint8_t lsb) noexcept {
+        static_assert(channel < 4, "unknown channel");
+
+        auto &ch = std::get<channel>(mChannels);
+        if constexpr (channel == 3) {
+            // noise channel
+            ch.setNoise(lsb);
+        } else {
+            ch.setFrequency((ch.frequency() & 0xFF00) | lsb);
+        }
+    }
+
+    template <size_t channel>
+    void writeFrequencyMsb(uint8_t msb) noexcept {
+        static_assert(channel < 4, "unknown channel");
+
+        auto &ch = std::get<channel>(mChannels);
+        if constexpr (channel != 3) {
+            ch.setFrequency((ch.frequency() & 0x00FF) | ((msb & 0x7) << 8));
+        }
+
+        mLengthCounters[channel].setEnable(!!(msb & 0x40));
+        if (!!(msb & 0x80)) {
+            ch.restart();
+            mLengthCounters[channel].restart();
+            if constexpr (channel != 2) {
+                envelope<channel>().restart();
+            }
+
+            if constexpr (channel == 0) {
+                mSweep.restart(std::get<0>(mChannels));
+            }
+        }
+    }
+
+    template <size_t channel>
+    Envelope& envelope() noexcept {
+        static_assert(channel != 2, "WaveChannel has no envelope");
+        static_assert(channel < 4, "unknown channel");
+
+        constexpr auto index = channel > 2 ? 2 : channel;
+        return mEnvelopes[index];
+
+    }
+
+    template <size_t channel>
+    LengthCounter& lengthCounter() noexcept {
+        static_assert(channel < 4, "unknown channel");
+        return mLengthCounters[channel];
+    }
+
+    Sweep& sweep() noexcept;
+
+    template <size_t index>
+    std::tuple_element_t<index, ChannelTuple>& channel() noexcept {
+        return std::get<index>(mChannels);
+    }
+
+    template <size_t channel>
+    void writeEnvelope(uint8_t value) noexcept {
+        envelope<channel>().writeRegister(std::get<channel>(mChannels), value);
+    }
+
+    void setMix(ChannelMix const& mix, Mixer &mixer, uint32_t cycletime) noexcept;
+
+    ChannelMix const& mix() const noexcept;
+
+    void setChannelMix(Mixer &mixer, size_t channel, MixMode mode) noexcept;
+
+    uint8_t lastOutput(size_t channel) const noexcept;
+
+
+    void run(Mixer &mixer, uint32_t cycletime, uint32_t cycles) noexcept;
+
+
+private:
+
+    //
+    // Runs the channel and mixes any changes in output
+    //
+    template <class Channel>
+    void runChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycletime, uint32_t cycles) noexcept;
+
+    template <class Channel, MixMode mode>
+    void runAndMixChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycletime, uint32_t cycles) noexcept;
+
+    //
+    // Determines which mix mode to use for the given channel. If the channel was disabled or the
+    // DAC is off, the channel is silenced and muted mixing is returned. Otherwise, the
+    // channel's mix setting is used.
+    //
+    MixMode preRunChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycletime) noexcept;
+
+    //
+    // Silence the given channel
+    //
+    void silence(size_t channel, Mixer &mixer, uint32_t cycletime) noexcept;
+
+    std::array<LengthCounter, 4> mLengthCounters;
+    std::array<Envelope, 3> mEnvelopes;
+    Sweep mSweep;
+
+    Sequencer mSequencer;
+    ChannelTuple mChannels;
+
+    ChannelMix mMix;
+
+    // last outputs for each channel that was mixed
+    std::array<uint8_t, 4> mLastOutputs;
+
+};
+
+} // apu
+
+} // trackerboy
