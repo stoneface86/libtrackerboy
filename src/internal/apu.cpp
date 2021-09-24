@@ -735,7 +735,7 @@ void Hardware::runChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycl
     auto mix = preRunChannel(index, ch, mixer, cycletime);
     switch (mix) {
         case MixMode::mute:
-            runAndMixChannel<Channel, MixMode::mute>(index, ch, mixer, cycletime, cycles);
+            ch.fastforward(cycles);
             break;
         case MixMode::left:
             runAndMixChannel<Channel, MixMode::left>(index, ch, mixer, cycletime, cycles);
@@ -754,43 +754,36 @@ void Hardware::runChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycl
 
 template <class Channel, MixMode mode>
 void Hardware::runAndMixChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycletime, uint32_t cycles) noexcept {
+    static_assert(mode != MixMode::mute, "cannot mix a muted mode");
 
-    if constexpr (mode == MixMode::mute) {
+    auto &last = mLastOutputs[index];
 
-        // optimization, since the channel is muted, we don't need to mix any
-        // changes in the output, just run the channel for the needed amount of cycles
-        ch.fastforward(cycles);
-
-    } else {
-
-        auto &last = mLastOutputs[index];
-
-        auto mixChanges = [&]() {
-            // mix any change in output
-            if (auto out = ch.output(); out != last) {
-                mixer.mixfast<mode>(out - last, cycletime);
-                last = out;
-            }
-        };
-
-
-        auto &timer = ch.timer();
-
-        mixChanges();
-        cycletime += timer.counter();
-
-        // determine the number of clocks we are stepping
-        auto clocks = timer.fastforward(cycles);
-        auto const period = timer.period();
-
-        // iterate each clock and mix any change in output
-        while (clocks) {
-            ch.clock();
-            --clocks;
-            mixChanges();
-            cycletime += period;
+    auto mixChanges = [&]() {
+        // mix any change in output
+        if (auto out = ch.output(); out != last) {
+            mixer.mixfast<mode>(out - last, cycletime);
+            last = out;
         }
+    };
+
+
+    auto &timer = ch.timer();
+
+    mixChanges();
+    cycletime += timer.counter();
+
+    // determine the number of clocks we are stepping
+    auto clocks = timer.fastforward(cycles);
+    auto const period = timer.period();
+
+    // iterate each clock and mix any change in output
+    while (clocks) {
+        ch.clock();
+        --clocks;
+        mixChanges();
+        cycletime += period;
     }
+
 }
 
 MixMode Hardware::preRunChannel(size_t index, Channel &ch, Mixer &mixer, uint32_t cycletime) noexcept {

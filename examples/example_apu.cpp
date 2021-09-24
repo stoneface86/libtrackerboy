@@ -297,7 +297,7 @@ static Demo const DEMO_TABLE[] = {
 
 constexpr size_t DEMO_COUNT = sizeof(DEMO_TABLE) / sizeof(Demo);
 
-using Clock = std::chrono::steady_clock;
+using Clock = std::chrono::high_resolution_clock;
 
 int main() {
 
@@ -309,8 +309,6 @@ int main() {
     constexpr size_t samplesPerFrame = (CYCLES_PER_FRAME / CYCLES_PER_SAMPLE) + 1;
     std::unique_ptr<float[]> frameBuf(new float[samplesPerFrame * 2]);
 
-    //auto timeStart = std::chrono::steady_clock::now();
-
     Clock::duration minTime(Clock::duration::max()), maxTime(0);
     Clock::duration elapsed(0);
     size_t frameCounter = 0;
@@ -318,7 +316,7 @@ int main() {
     for (size_t i = 0; i != DEMO_COUNT; ++i) {
         auto &demo = DEMO_TABLE[i];
 
-        std::string filename = "demo_";
+        std::string filename = "example_apu_";
         filename.append(demo.name);
         filename.append(".wav");
         Wav wav(filename, 2, SAMPLERATE);
