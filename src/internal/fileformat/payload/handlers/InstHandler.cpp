@@ -44,8 +44,9 @@ FormatError InstHandler::processIn(Module &mod, InputBlock &block, size_t index)
 void InstHandler::processOut(Module const& mod, OutputBlock &block, size_t index) {
     (void)index;
     
-    auto inst = nextItem(mod.instrumentTable());
-    serializeItem(block, *inst);
+    auto item = nextItem(mod.instrumentTable());
+    auto inst = item.first;
+    serializeItem(block, item.second, inst->name());
 
     TU::InstrumentFormat format;
     format.channel = +inst->channel();

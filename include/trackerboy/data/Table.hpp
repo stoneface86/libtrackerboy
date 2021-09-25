@@ -24,16 +24,11 @@
 
 #pragma once
 
-#include "trackerboy/data/DataItem.hpp"
 #include "trackerboy/data/Instrument.hpp"
 #include "trackerboy/data/Waveform.hpp"
 
-#include <array>
 #include <cstddef>
 #include <memory>
-#include <type_traits>
-#include <vector>
-
 #include <unordered_map>
 
 namespace trackerboy {

@@ -27,9 +27,10 @@ void serializeString(OutputBlock &block, std::string const& str) {
     }
 }
 
-void serializeItem(OutputBlock &block, DataItem const& item) {
-    block.write(item.id());
-    serializeString(block, item.name());
+void serializeItem(OutputBlock &block, int id, std::string const& name) {
+    uint8_t idu8 = (uint8_t)id;
+    block.write(idu8);
+    serializeString(block, name);
 }
 
 }

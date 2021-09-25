@@ -8,22 +8,15 @@ namespace trackerboy {
 
 
 Waveform::Waveform() noexcept :
-    DataItem(),
-    mData{0}
+    Named(),
+    mData{}
 {       
 }
 
 Waveform::Waveform(std::string const& hexstr) :
-    mData{ 0 }
+    mData{}
 {
     fromString(hexstr);
-}
-
-Waveform::Waveform(const Waveform &wave) :
-    DataItem(wave),
-    mData{ 0 }
-{
-    std::copy(wave.mData.begin(), wave.mData.end(), mData.begin());
 }
 
 

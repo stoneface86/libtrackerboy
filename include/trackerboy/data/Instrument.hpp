@@ -25,7 +25,7 @@
 #pragma once
 
 #include "trackerboy/trackerboy.hpp"
-#include "trackerboy/data/DataItem.hpp"
+#include "trackerboy/data/Named.hpp"
 #include "trackerboy/data/Sequence.hpp"
 
 #include <array>
@@ -40,7 +40,7 @@ namespace trackerboy {
 // - 4 sequences that each modulate a parameter (panning, arp, pitch, timbre)
 
 
-class Instrument : public DataItem {
+class Instrument : public Named {
 
 public:
 
@@ -52,9 +52,7 @@ public:
 
     using SequenceArray = std::array<Sequence, SEQUENCE_COUNT>;
 
-
     Instrument();
-    Instrument(Instrument const& instrument);
 
     ChType channel() const noexcept;
 

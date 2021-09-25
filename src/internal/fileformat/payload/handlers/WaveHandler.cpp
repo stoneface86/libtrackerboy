@@ -16,8 +16,9 @@ FormatError WaveHandler::processIn(Module &mod, InputBlock &block, size_t index)
 void WaveHandler::processOut(Module const& mod, OutputBlock &block, size_t index) {
     (void)index;
 
-    auto wave = nextItem(mod.waveformTable());
-    serializeItem(block, *wave);
+    auto item = nextItem(mod.waveformTable());
+    auto wave = item.first;
+    serializeItem(block, item.second, wave->name());
     block.write(wave->data());
 }
 

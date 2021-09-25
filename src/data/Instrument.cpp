@@ -4,19 +4,11 @@
 namespace trackerboy {
 
 Instrument::Instrument() :
+    Named(),
     mChannel(ChType::ch1),
     mEnvelopeEnabled(false),
     mEnvelope(0),
     mSequences()
-{
-}
-
-Instrument::Instrument(Instrument const& instrument) :
-    DataItem(instrument),
-    mChannel(instrument.mChannel),
-    mEnvelopeEnabled(instrument.mEnvelopeEnabled),
-    mEnvelope(instrument.mEnvelope),
-    mSequences(instrument.mSequences)
 {
 }
 

@@ -35,7 +35,7 @@ std::string deserializeString(InputBlock &block);
 void serializeString(OutputBlock &block, std::string const& str);
 
 
-void serializeItem(OutputBlock &block, DataItem const& item);
+void serializeItem(OutputBlock &block, int id, std::string const& name);
 
 
 

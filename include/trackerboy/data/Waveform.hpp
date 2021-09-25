@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/data/DataItem.hpp"
+#include "trackerboy/data/Named.hpp"
 #include "trackerboy/trackerboy.hpp"
 
 #include <array>
@@ -32,15 +32,13 @@
 
 namespace trackerboy {
 
-class Waveform : public DataItem {
+class Waveform : public Named {
 
 public:
 
     using Data = std::array<uint8_t, GB_WAVERAM_SIZE>;
 
     Waveform() noexcept;
-
-    Waveform(const Waveform &wave);
 
     Waveform(std::string const& hexstring);
 

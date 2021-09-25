@@ -6,6 +6,8 @@
 
 #include "trackerboy/data/Table.hpp"
 
+#include <utility>
+
 namespace trackerboy {
 
 
@@ -33,10 +35,10 @@ protected:
         return item;
     }
 
-    T const* nextItem(Table<T> const& table) {
+    auto nextItem(Table<T> const& table) {
         T const* item;
         while ((item = table[mNextId++]) == nullptr);
-        return item;
+        return std::make_pair(item, mNextId - 1);
     }
 
 private:

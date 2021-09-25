@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "trackerboy/data/DataItem.hpp"
+#include "trackerboy/data/Named.hpp"
 #include "trackerboy/data/Order.hpp"
 #include "trackerboy/data/OrderRow.hpp"
 #include "trackerboy/data/PatternMap.hpp"
@@ -33,7 +33,7 @@
 namespace trackerboy {
 
 
-class Song : public DataItem {
+class Song : public Named {
 
 public:
 
@@ -44,9 +44,6 @@ public:
     static constexpr uint16_t DEFAULT_ROWS = 64;
 
     Song();
-
-    // consider removal: implicit copy constructor has equivalent behavior
-    Song(const Song &song);
 
     int rowsPerBeat() const noexcept;
 
