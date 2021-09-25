@@ -28,9 +28,9 @@ protected:
             return nullptr;
         }
 
-        auto& item = table.insert(id);
-        item.setName(deserializeString(block));
-        return &item;
+        auto item = table.insert(id);
+        item->setName(deserializeString(block));
+        return item;
     }
 
     T const* nextItem(Table<T> const& table) {
@@ -40,7 +40,7 @@ protected:
     }
 
 private:
-    uint8_t mNextId;
+    int mNextId;
 
 
 };

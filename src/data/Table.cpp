@@ -2,211 +2,174 @@
 #include "trackerboy/data/Table.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <stdexcept>
 
 namespace trackerboy {
 
-/*
-// Implementation details
-// 
-// Items are dynamically allocated when inserted or duplicated. shared_ptr is used
-// so that the engine can continue to use items after they have been removed from the
-// table. The shared_ptrs are stored in a fixed size array, mData. This way lookup is
-// done by accessing the array by the item's id.
-//
-// The thin-template idiom is used, BaseTable does most of the work. The Table<T> class
-// simply downcasts the result from BaseTable to the templated type.
-*/
+#define TU TableTU
+namespace TU {
 
+constexpr auto TABLE_SIZE = InstrumentTable::MAX_SIZE;
 
-
-BaseTable::BaseTable() noexcept :
-    mData(),
-    mSize(0u),
-    mNextId(0u)
-{
-}
-
-BaseTable::~BaseTable() noexcept {
-
-}
-
-void BaseTable::clear() noexcept {
-    mData.fill(nullptr);
-    mSize = 0u;
-    mNextId = 0u;
-}
-
-size_t BaseTable::size() const noexcept {
-    return mSize;
-}
-
-uint8_t BaseTable::nextAvailableId() const noexcept {
-    return mNextId;
-}
-
-DataItem& BaseTable::insert() {
-    return insert(mNextId);
-}
-
-DataItem& BaseTable::insert(uint8_t id) {
-    if (size() == MAX_SIZE) {
-        throw std::runtime_error("cannot insert: maximum capacity reached");
-    }
-
-    auto &cell = mData[id];
-    if (cell) {
-        throw std::runtime_error("cannot insert: item already exists");
-    }
-
-    auto item = createItem();
-    item->setId(id);
-    cell = std::move(item);
-    ++mSize;
-    if (mNextId == id) {
-        findNextId();
-    }
-
-    return *cell.get();
-}
-
-DataItem& BaseTable::duplicate(uint8_t id) {
-    if (size() == MAX_SIZE) {
-        throw std::runtime_error("cannot duplicate: maximum capacity reached");
-    }
-
-    auto &toDup = mData[id];
-    if (toDup) {
-        auto item = copyItem(*toDup);
-        auto &result = *item.get();
-        item->setId(mNextId);
-        mData[mNextId] = std::move(item);
-        ++mSize;
-        findNextId();
-        return result;
+constexpr inline bool idIsValid(int id) {
+    if constexpr (((TABLE_SIZE - 1) & TABLE_SIZE) == 0) {
+        return (id & ~(TABLE_SIZE - 1)) == 0;
     } else {
-        throw std::runtime_error("cannot duplicate: item does not exist");
-    }
-    
-}
-
-void BaseTable::remove(uint8_t id) {
-    if (size() == 0) {
-        throw std::runtime_error("cannot remove: list is empty");
-    }
-
-    if (id < mData.size()) {
-        auto &cell = mData[id];
-        if (cell) {
-            --mSize;
-            cell.reset();
-            if (mNextId > id) {
-                mNextId = id;
-            }
-            return;
-        }
-    }
-
-    throw std::runtime_error("cannot remove: item does not exist");
-}
-
-DataItem const* BaseTable::get(uint8_t id) const {
-    if (id >= mData.size()) {
-        return nullptr;
-    } else {
-        return mData[id].get();
+        return id >= 0 && id < TABLE_SIZE;
     }
 }
 
-DataItem* BaseTable::get(uint8_t id) {
-    return const_cast<DataItem*>(
-        const_cast<BaseTable const*>(this)->get(id)
-        );
 }
 
-std::shared_ptr<DataItem> BaseTable::getShared(uint8_t id) const {
-    if (id >= mData.size()) {
-        return nullptr;
-    } else {
-        return mData[id];
-    }
-}
-
-void BaseTable::findNextId() {
-    if (size() < MAX_SIZE) {
-        // find the next available id
-        do {
-            ++mNextId;
-        } while (mData[mNextId]);
-    }
-}
 
 template <class T>
 Table<T>::Table() :
-    BaseTable()
+    mContainer(),
+    mNextId(0)
 {
 }
 
 template <class T>
-Table<T>::~Table() {
-}
-
-template <class T>
-T const* Table<T>::operator[](uint8_t id) const {
+T const* Table<T>::operator[](int id) const {
     return get(id);
 }
 
 template <class T>
-T* Table<T>::operator[](uint8_t id) {
+T* Table<T>::operator[](int id) {
     return get(id);
 }
 
 template <class T>
-T& Table<T>::insert() {
-    return static_cast<T&>(BaseTable::insert());
+void Table<T>::clear() {
+    mContainer.clear();
+    mNextId = 0;
 }
 
 template <class T>
-T& Table<T>::insert(uint8_t id) {
-    return static_cast<T&>(BaseTable::insert(id));
+int Table<T>::nextAvailableId() const {
+    return mNextId;
 }
 
 template <class T>
-T& Table<T>::duplicate(uint8_t id) {
-    return static_cast<T&>(BaseTable::duplicate(id));
+T* Table<T>::insert() {
+    if (size() == MAX_SIZE) {
+        return nullptr;
+    }
+    auto result = insertImpl(mNextId);
+    updateNextId();
+    return result;
 }
 
 template <class T>
-T* Table<T>::get(uint8_t id) {
-    return static_cast<T*>(BaseTable::get(id));
+T* Table<T>::insert(int index) {
+    if (!TU::idIsValid(index) || mContainer.find(index) != mContainer.end()) {
+        return nullptr; // can't insert, table is either full, an item already has this id or the id was invalid
+    }
+    if (index == mNextId) {
+        updateNextId();
+    }
+    return insertImpl(index);
+
 }
 
 template <class T>
-T const* Table<T>::get(uint8_t id) const {
-    return static_cast<T const*>(BaseTable::get(id));
+T* Table<T>::insertImpl(int index) {
+    auto result = mContainer.emplace(index, std::make_shared<T>());
+    assert(result.second);
+
+    return result.first->second.get();
 }
 
 template <class T>
-std::shared_ptr<T> Table<T>::getShared(uint8_t id) const {
-    return std::static_pointer_cast<T>(BaseTable::getShared(id));
+T* Table<T>::duplicate(int id) {
+    if (size() == MAX_SIZE || !TU::idIsValid(id)) {
+        return nullptr; // can't insert, table is full
+    }
+
+    auto iter = mContainer.find(id);
+    if ( iter == mContainer.end()) {
+        return nullptr; // cannot duplicate, item does not exist
+    }
+
+    auto result = mContainer.emplace(mNextId, std::make_shared<T>(*iter->second.get()));
+    assert(result.second);
+
+    updateNextId();
+    return result.first->second.get();
 }
 
 template <class T>
-std::shared_ptr<DataItem> Table<T>::createItem() {
-    return std::make_shared<T>();
+std::shared_ptr<T> const* Table<T>::getPointer(int id) const {
+    if (TU::idIsValid(id)) {
+        if (auto iter = mContainer.find(id); iter != mContainer.end()) {
+            return &iter->second;
+        }
+    }
+
+    return nullptr;
 }
 
 template <class T>
-std::shared_ptr<DataItem> Table<T>::copyItem(DataItem const& item) {
-    return std::make_shared<T>(static_cast<T const&>(item));
+T* Table<T>::get(int id) {
+    return const_cast<T*>(
+                static_cast<const Table<T>*>(this)->get(id)
+                );
 }
+
+template <class T>
+T const* Table<T>::get(int id) const {
+    if (auto ptr = getPointer(id); ptr) {
+        return (*ptr).get();
+    }
+
+    return nullptr;
+}
+
+template <class T>
+std::shared_ptr<T> Table<T>::getShared(int id) {
+    // this is kinda wasteful, getShared returns a new shared_ptr and
+    // then casting it creates another shared_ptr
+    return std::const_pointer_cast<T>(
+                static_cast<const Table<T>*>(this)->getShared(id)
+                );
+}
+
+template <class T>
+std::shared_ptr<const T> Table<T>::getShared(int id) const {
+    if (auto ptr = getPointer(id); ptr) {
+        return *ptr;
+    }
+
+    // id was invalid or there is no item with this id
+    return nullptr;
+}
+
+template <class T>
+void Table<T>::remove(int index) {
+    auto removed = mContainer.erase(index);
+    if (removed && mNextId > index) {
+        mNextId = index;
+    }
+}
+
+template <class T>
+size_t Table<T>::size() const {
+    return mContainer.size();
+}
+
+template <class T>
+void Table<T>::updateNextId() {
+    if (size() < MAX_SIZE) {
+        // find the next available id
+        while (mContainer.find(++mNextId) != mContainer.end());
+    }
+}
+
 
 template class Table<Instrument>;
 template class Table<Waveform>;
 
-
-
-
-
-
 }
+
+#undef TU

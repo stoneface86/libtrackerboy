@@ -193,7 +193,7 @@ FormatError Module::deserialize(std::istream &stream) noexcept {
         }
     }
 
-    if (header.current.icount > MAX_INSTRUMENTS || header.current.wcount > MAX_WAVEFORMS) {
+    if (header.current.icount > InstrumentTable::MAX_SIZE || header.current.wcount > WaveformTable::MAX_SIZE) {
         // too many instruments or waveforms
         return FormatError::invalid;
     }

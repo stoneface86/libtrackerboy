@@ -5,9 +5,6 @@
 using namespace trackerboy;
 using Catch::Contains;
 
-// https://github.com/catchorg/Catch2/issues/1134
-static constexpr auto MAX_SIZE = BaseTable::MAX_SIZE;
-
 TEMPLATE_TEST_CASE("table is empty", "[Table]", InstrumentTable, WaveformTable) {
 
     TestType table;
@@ -17,7 +14,7 @@ TEMPLATE_TEST_CASE("table is empty", "[Table]", InstrumentTable, WaveformTable) 
     for (size_t i = 0; i != TestType::MAX_SIZE; ++i) {
         uint8_t id = static_cast<uint8_t>(i);
         CHECK(table[id] == nullptr);
-        CHECK_THROWS_AS(table.remove(id), std::runtime_error);
+        CHECK_NOTHROW(table.remove(id));
     }
 
     //CHECK(table.begin() == table.end());
@@ -29,16 +26,16 @@ TEMPLATE_TEST_CASE("table is full", "[Table]", Instrument, Waveform) {
     Table<TestType> table;
     // populate the table
     for (size_t i = 0; i != Table<TestType>::MAX_SIZE; ++i) {
-        CHECK_NOTHROW(table.insert());
+        CHECK(table.insert() != nullptr);
     }
 
-    CHECK(table.size() == MAX_SIZE);
+    CHECK(table.size() == Table<TestType>::MAX_SIZE);
 
-    SECTION("inserting into a full table throws exception") {
-        CHECK_THROWS_AS(table.insert(), std::runtime_error);
-        CHECK_THROWS_AS(table.insert(2), std::runtime_error);
-        CHECK_THROWS_AS(table.insert(56), std::runtime_error);
-        CHECK_THROWS_AS(table.insert(255), std::runtime_error);
+    SECTION("inserting into a full table returns nullptr") {
+        CHECK(table.insert() == nullptr);
+        CHECK(table.insert(2) == nullptr);
+        CHECK(table.insert(56) == nullptr);
+        CHECK(table.insert(255) == nullptr);
 
     }
 }
@@ -49,9 +46,14 @@ TEMPLATE_TEST_CASE("table duplicates item", "[Table]", Instrument, Waveform) {
 
     REQUIRE(table[0] != nullptr);
 
-    auto nextId = table.nextAvailableId();
 
-    REQUIRE_NOTHROW(table.duplicate(0));
+    REQUIRE(table.duplicate(0) != nullptr);
+
+    SECTION("fails when item does not exist") {
+        auto next = table.nextAvailableId();
+        CHECK(table.duplicate(34) == nullptr);
+        CHECK(table[next] == nullptr);
+    }
 
     //auto item = table[nextId];
     //REQUIRE(item != nullptr);

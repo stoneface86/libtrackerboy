@@ -50,7 +50,7 @@ private:
 
     Operation mOp;
 
-    std::shared_ptr<Instrument> mInstrument;
+    std::shared_ptr<const Instrument> mInstrument;
     FrequencyControl &mFc;
     std::optional<InstrumentRuntime> mIr;
 

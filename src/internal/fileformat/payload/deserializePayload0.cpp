@@ -49,8 +49,8 @@ void readListIndex(InputBlock &block, size_t count, Table<T> &list) {
     while (count--) {
         uint8_t id;
         block.read(id);
-        auto &item = list.insert(id);
-        item.setName(TU::deserializeString(block));
+        auto item = list.insert(id);
+        item->setName(TU::deserializeString(block));
     }
 }
 
@@ -93,7 +93,7 @@ public:
         (void)index;
 
         auto &itable = mod.instrumentTable();
-        for (uint8_t id = 0; id != BaseTable::MAX_SIZE; ++id) {
+        for (size_t id = 0; id != InstrumentTable::MAX_SIZE; ++id) {
             auto inst = itable[id];
             if (inst) {
                 // same format as major 1
@@ -115,7 +115,7 @@ public:
         (void)index;
 
         auto &wtable = mod.waveformTable();
-        for (uint8_t id = 0; id != BaseTable::MAX_SIZE; ++id) {
+        for (size_t id = 0; id != WaveformTable::MAX_SIZE; ++id) {
             auto wave = wtable[id];
             if (wave) {
                 // same format as major 1

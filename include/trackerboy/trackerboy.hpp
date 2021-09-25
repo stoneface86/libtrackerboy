@@ -206,19 +206,6 @@ constexpr bool effectTypeShortensPattern(trackerboy::EffectType type) {
            type == trackerboy::EffectType::patternGoto;
 }
 
-
-constexpr size_t TABLE_SIZE = 64;
-
-//
-// Maximum number of instruments allowed in a module
-//
-constexpr size_t MAX_INSTRUMENTS = TABLE_SIZE;
-
-//
-// Maximum number of waveforms allowed in a module
-//
-constexpr size_t MAX_WAVEFORMS = TABLE_SIZE;
-
 //
 // Max number of patterns/orders in a song
 //

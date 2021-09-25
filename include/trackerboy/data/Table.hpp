@@ -34,110 +34,65 @@
 #include <type_traits>
 #include <vector>
 
+#include <unordered_map>
+
 namespace trackerboy {
 
-
-class BaseTable {
+template <class T>
+class Table {
 
 public:
+
     static constexpr size_t MAX_SIZE = 64;
 
+    Table();
 
-    virtual ~BaseTable() noexcept;
+    T* operator[](int id);
+    T const* operator[](int id) const;
 
-    void clear() noexcept;
+    void clear();
 
-    //
-    // total count of items in the table
-    //
-    size_t size() const noexcept;
+    int nextAvailableId() const;
 
-    //
-    // gets the next available id to insert/duplicate an item into
-    //
-    uint8_t nextAvailableId() const noexcept;
-    
-    DataItem& insert();
+    T* insert();
 
-    DataItem& insert(uint8_t id);
+    T* insert(int index);
 
-    DataItem& duplicate(uint8_t id);
+    T* duplicate(int id);
 
-    DataItem const* get(uint8_t id) const;
+    T* get(int id);
+    T const* get(int id) const;
 
-    DataItem* get(uint8_t id);
+    std::shared_ptr<T> getShared(int id);
+    std::shared_ptr<const T> getShared(int id) const;
 
-    std::shared_ptr<DataItem> getShared(uint8_t id) const;
+    void remove(int id);
 
-    void remove(uint8_t id);
+    size_t size() const;
 
-protected:
-    
-    BaseTable() noexcept;
-
-    virtual std::shared_ptr<DataItem> createItem() = 0;
-
-    virtual std::shared_ptr<DataItem> copyItem(DataItem const& item) = 0;
 
 private:
 
-    using DataType = std::array<std::shared_ptr<DataItem>, TABLE_SIZE>;
-    
+    //
+    // Gets a reference to the shared pointer for the index. nullptr
+    // is returned if the index was invalid or the item does not exist
+    // (used by both get and getShared functions).
+    //
+    std::shared_ptr<T> const* getPointer(int index) const;
 
-    void addId(uint8_t id);
+    T* insertImpl(int index);
 
-    void removeId(uint8_t id);
+    void updateNextId();
 
-    void findNextId();
+    using Container = std::unordered_map<int, std::shared_ptr<T>>;
 
-    DataType mData;
-    size_t mSize;
-    uint8_t mNextId;
+    Container mContainer;
+    int mNextId;
+
+
 };
 
 
-//
-// Table class. Stores instrument or waveform data. Items are stored in a fixed size
-// array so that looking up via id is constant time.
-//
-template <class T>
-class Table final : public BaseTable {
-
-    static_assert(std::is_base_of<DataItem, T>::value, "T must inherit from DataItem");
-
-public:
-
-    Table();
-    ~Table();
-
-    //
-    // Gets a pointer to the item with the given index if it exists. If the
-    // item does not exist, nullptr is returned. The pointer may be invalidated
-    // after calling insert()
-    //
-    T const* operator[](uint8_t id) const;
-
-    T* operator[](uint8_t id);
-
-    T& insert();
-
-    T& insert(uint8_t id);
-
-    T& duplicate(uint8_t id);
-
-    T const* get(uint8_t id) const;
-
-    T* get(uint8_t id);
-
-    std::shared_ptr<T> getShared(uint8_t id) const;
-
-protected:
-
-    virtual std::shared_ptr<DataItem> createItem() override;
-
-    virtual std::shared_ptr<DataItem> copyItem(DataItem const& item) override;
-
-};
 
 // we will only use these template instantiations
 
