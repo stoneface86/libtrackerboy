@@ -11,12 +11,6 @@ Sequence::Sequence() :
 {
 }
 
-Sequence::Sequence(Sequence const& seq) :
-    mData(seq.mData),
-    mLoop(seq.mLoop)
-{
-}
-
 std::vector<uint8_t>& Sequence::data() noexcept {
     return mData;
 }
@@ -79,6 +73,15 @@ std::optional<uint8_t> Sequence::Enumerator::next() {
 
     return curr;
 
+}
+
+bool operator==(Sequence const& lhs, Sequence const& rhs) noexcept {
+    // sequences are equivalent if they have same loop point and sequence data
+    return lhs.mLoop == rhs.mLoop && lhs.mData == rhs.mData;
+}
+
+bool operator!=(Sequence const& lhs, Sequence const& rhs) noexcept {
+    return !(lhs == rhs);
 }
 
 }

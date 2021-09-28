@@ -59,7 +59,6 @@ public:
     };
 
     Sequence();
-    Sequence(Sequence const& seq);
 
     std::vector<uint8_t>& data() noexcept;
     std::vector<uint8_t> const& data() const noexcept;
@@ -74,6 +73,8 @@ public:
 
     void removeLoop();
 
+    friend bool operator==(Sequence const& lhs, Sequence const& rhs) noexcept;
+    friend bool operator!=(Sequence const& lhs, Sequence const& rhs) noexcept;
 
 
 private:

@@ -53,6 +53,9 @@ public:
 
     uint8_t& operator[](int index);
 
+    friend bool operator==(Waveform const& lhs, Waveform const& rhs) noexcept;
+    friend bool operator!=(Waveform const& lhs, Waveform const& rhs) noexcept;
+
 private:
     Data mData;
 };

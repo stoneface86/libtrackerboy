@@ -76,6 +76,8 @@ public:
 
     void setEnvelopeEnable(bool enable) noexcept;
 
+    friend bool operator==(Instrument const& lhs, Instrument const& rhs) noexcept;
+    friend bool operator!=(Instrument const& lhs, Instrument const& rhs) noexcept;
 
 private:
 
@@ -89,6 +91,8 @@ private:
 
 
 };
+
+
 
 
 

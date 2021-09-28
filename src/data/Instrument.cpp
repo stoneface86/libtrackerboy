@@ -64,4 +64,15 @@ void Instrument::setEnvelopeEnable(bool enable) noexcept {
     mEnvelopeEnabled = enable;
 }
 
+bool operator==(Instrument const& lhs, Instrument const& rhs) noexcept {
+    return lhs.mChannel == rhs.mChannel &&
+           lhs.mEnvelopeEnabled == rhs.mEnvelopeEnabled &&
+           lhs.mEnvelope == rhs.mEnvelope &&
+           lhs.mSequences == rhs.mSequences;
+}
+
+bool operator!=(Instrument const& lhs, Instrument const& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
 }

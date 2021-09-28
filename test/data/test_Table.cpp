@@ -1,9 +1,10 @@
 
 #include <catch2/catch.hpp>
 #include "trackerboy/data/Table.hpp"
+#include <type_traits>
 
 using namespace trackerboy;
-using Catch::Contains;
+
 
 TEMPLATE_TEST_CASE("table is empty", "[Table]", InstrumentTable, WaveformTable) {
 
@@ -42,12 +43,27 @@ TEMPLATE_TEST_CASE("table is full", "[Table]", Instrument, Waveform) {
 
 TEMPLATE_TEST_CASE("table duplicates item", "[Table]", Instrument, Waveform) {
     Table<TestType> table;
-    table.insert();
+    auto src = table.insert();
 
-    REQUIRE(table[0] != nullptr);
+    REQUIRE(src != nullptr);
+    src->setName("test name");
 
+    if constexpr (std::is_same_v<TestType, Instrument>) {
+        src->setChannel(ChType::ch3);
+        src->setEnvelope(1);
+        src->setEnvelopeEnable(true);
+        src->sequence(Instrument::SEQUENCE_PANNING).data() = { 1, 1, 2, 2, 3 };
+    } else {
+        src->fromString("00112233445566778899AABBCCDDEEFF");
+    }
 
-    REQUIRE(table.duplicate(0) != nullptr);
+    auto duped = table.duplicate(0);
+    REQUIRE(duped != nullptr);
+
+    // check the duplicated object is equal to the source
+    CHECK(*src == *duped);
+    // check that duplicating also copies the name
+    CHECK(src->name() == duped->name());
 
     SECTION("fails when item does not exist") {
         auto next = table.nextAvailableId();
@@ -67,13 +83,13 @@ TEMPLATE_TEST_CASE("table keeps track of the next available index", "[Table]", I
     TestType table;
 
     REQUIRE(table.nextAvailableId() == 0);
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 1);
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 2);
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 3);
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 4);
     
     REQUIRE_NOTHROW(table.remove(0));
@@ -81,9 +97,9 @@ TEMPLATE_TEST_CASE("table keeps track of the next available index", "[Table]", I
     REQUIRE_NOTHROW(table.remove(1));
     REQUIRE(table.nextAvailableId() == 0); // still 0, since 0 < 1
 
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 1);
-    REQUIRE_NOTHROW(table.insert());
+    REQUIRE(table.insert() != nullptr);
     REQUIRE(table.nextAvailableId() == 4);
 }
 

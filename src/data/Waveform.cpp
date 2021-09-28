@@ -56,5 +56,13 @@ uint8_t& Waveform::operator[](int index) {
     return mData[index];
 }
 
+bool operator==(Waveform const& lhs, Waveform const& rhs) noexcept {
+    return lhs.mData == rhs.mData;
+}
+
+bool operator!=(Waveform const& lhs, Waveform const& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
 
 }
