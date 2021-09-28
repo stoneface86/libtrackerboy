@@ -1,10 +1,15 @@
 
 #include "trackerboy/note.hpp"
 
+#include <algorithm>
+#include <array>
 
 namespace trackerboy {
 
-const uint16_t NOTE_FREQ_TABLE[] = {
+#define TU noteTU
+namespace TU {
+
+std::array<uint16_t, NOTE_LAST + 1> const TONE_NOTES = {
 //     C      Db     D      Eb     E      F      Gb     G      Ab     A      Bb     B
     0x02C, 0x09D, 0x107, 0x16B, 0x1CA, 0x223, 0x277, 0x2C7, 0x312, 0x358, 0x39B, 0x3DA, //   2
     0x416, 0x44E, 0x483, 0x4B5, 0x4E5, 0x511, 0x53C, 0x563, 0x589, 0x5AC, 0x5CE, 0x5ED, //   3
@@ -15,7 +20,7 @@ const uint16_t NOTE_FREQ_TABLE[] = {
     0x7E1, 0x7E2, 0x7E4, 0x7E6, 0x7E7, 0x7E9, 0x7EA, 0x7EB, 0x7EC, 0x7ED, 0x7EE, 0x7EF  //   8
 };
 
-const uint8_t NOTE_NOISE_TABLE[] = {
+std::array<uint8_t, NOTE_NOISE_LAST + 1> const NOISE_NOTES = {
 //     C      Db     D      Eb     E      F      Gb     G      Ab     A      Bb     B
      0xD7,  0xD6,  0xD5,  0xD4,  0xC7,  0xC6,  0xC5,  0xC4,  0xB7,  0xB6,  0xB5,  0xB4, //   2
      0xA7,  0xA6,  0xA5,  0xA4,  0x97,  0x96,  0x95,  0x94,  0x87,  0x86,  0x85,  0x84, //   3
@@ -24,7 +29,19 @@ const uint8_t NOTE_NOISE_TABLE[] = {
      0x17,  0x16,  0x15,  0x14,  0x07,  0x06,  0x05,  0x04,  0x03,  0x02,  0x01,  0x00  //   6
 };
 
+}
 
 
+int lookupToneNote(int note) {
+    constexpr int upperbound = (int)TU::TONE_NOTES.size() - 1;
+    return TU::TONE_NOTES[std::clamp(note, 0, upperbound)];
+}
+
+int lookupNoiseNote(int note) {
+    constexpr int upperbound = (int)TU::NOISE_NOTES.size() - 1;
+    return TU::NOISE_NOTES[std::clamp(note, 0, upperbound)];
+}
 
 }
+
+#undef TU

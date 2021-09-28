@@ -328,22 +328,8 @@ ToneFrequencyControl::ToneFrequencyControl() noexcept :
 }
 
 uint16_t ToneFrequencyControl::noteLookup(uint8_t note) {
-    return NOTE_FREQ_TABLE[note];
+    return (uint16_t)lookupToneNote(note);
 }
-
-// Noise "pitch" units
-// frequency values for the noise channel are a modified version of the NR43 register, in
-// that the step-width bit is removed
-// sssswddd => ssssddd
-//
-// Noise pitches now range from 0 to 0x67.
-// 0 is the highest period, which is not ideal, since 0 should be the lowest frequency possible
-// so we use an adjust pitch value by calculating p = 0x67 - p;
-//
-//
-// to convert pitch p to nr43
-// nr43 = 0x67 - p
-// nr43 = ((nr43 << 1) & 0xF0) | (nr43 & 7)
 
 
 NoiseFrequencyControl::NoiseFrequencyControl() noexcept :
@@ -356,7 +342,7 @@ uint16_t NoiseFrequencyControl::noteLookup(uint8_t note) {
 }
 
 uint8_t NoiseFrequencyControl::toNR43(uint16_t frequency) noexcept {
-    return NOTE_NOISE_TABLE[frequency];
+    return (uint8_t)lookupNoiseNote(frequency);
 
 }
 

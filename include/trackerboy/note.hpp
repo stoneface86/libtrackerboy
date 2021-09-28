@@ -58,16 +58,25 @@ enum Note : uint8_t {
     OCTAVE_7 = 12 * 5,          // C-7
     OCTAVE_8 = 12 * 6,          // C-8
 
-    NOTE_NONE = 0xFF,           // null note index
     NOTE_LAST = (12 * 7) - 1,   // 7 octaves of notes possible, 2-8
     NOTE_NOISE_LAST = (12 * 5) - 1, // last possible note for CH4
     NOTE_CUT = NOTE_LAST + 1    // special index: stop playing the last note (stops instrument)
 };
 
-// note frequency lookup table
-extern const uint16_t NOTE_FREQ_TABLE[NOTE_LAST + 1];
+//
+// Converts a note index to a frequency value for use in tone channels (CH1, CH2, CH3)
+// Note index should be in range of C-2 to B-8 (0-83), indices outside this range will
+// be clamped to the nearest bound. The value returned can be written to a channel's
+// frequency registers NRx3 and NRx4.
+//
+int lookupToneNote(int note);
 
-extern const uint8_t NOTE_NOISE_TABLE[NOTE_NOISE_LAST + 1];
+//
+// Converts a note index to a noise value (NR43) for use in CH4. Index should be in
+// range of C-2 to B-6 (0 to 59), indices outside this range will be clamped to the
+// nearest bound. The value returned can be written to CH4's NR43 register
+//
+int lookupNoiseNote(int note);
 
 
 }
