@@ -114,7 +114,7 @@ add_library(trackerboy "${SRC_FILES}" "${PUB_HEADERS}")
 target_compile_features(trackerboy PUBLIC cxx_std_17)
 
 target_include_directories(trackerboy PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
     )
 target_include_directories(trackerboy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

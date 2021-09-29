@@ -49,7 +49,7 @@ public:
     // is provided, then it will default to the instrument's channel or CH1 if
     // no instrument was provided.
     //
-    void setInstrument(std::shared_ptr<Instrument> instrument, std::optional<ChType> ch = std::nullopt);
+    void setInstrument(std::shared_ptr<const Instrument> instrument, std::optional<ChType> ch = std::nullopt);
 
     void play(uint8_t note);
 
@@ -64,7 +64,7 @@ private:
     NoiseFrequencyControl mNoiseFc;
     FrequencyControl *mFc;
 
-    std::shared_ptr<Instrument> mInstrument;
+    std::shared_ptr<const Instrument> mInstrument;
     std::optional<InstrumentRuntime> mIr;
 
     bool mInit;

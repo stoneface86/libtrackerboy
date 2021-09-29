@@ -19,7 +19,7 @@ InstrumentPreview::InstrumentPreview() :
 {
 }
 
-void InstrumentPreview::setInstrument(std::shared_ptr<Instrument> instrument, std::optional<ChType> ch) {
+void InstrumentPreview::setInstrument(std::shared_ptr<const Instrument> instrument, std::optional<ChType> ch) {
     // ensure that the previous instrument is no longer used anywhere else after
     // hitting this assignment.
     mInstrument = std::move(instrument);
