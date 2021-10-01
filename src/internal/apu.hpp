@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <tuple>
 
 namespace trackerboy {
 
