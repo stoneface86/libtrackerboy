@@ -17,7 +17,7 @@ jobs:
     env:
       CATCH2_TAG: v2.13.7
       # installation prefix for dependencies (just Catch2)
-      DEPS_INSTALL: '${{ env.GITHUB_WORKSPACE }}/deps'
+      DEPS_INSTALL: '${{ github.workspace }}/deps'
     steps:
 
       - uses: actions/checkout@v2
