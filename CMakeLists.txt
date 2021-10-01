@@ -14,12 +14,13 @@ option(LIBTRACKERBOY_ENABLE_UNITY "Enables unity build" OFF)
 option(BUILD_SHARED_LIBS "Builds a shared library if enabled" OFF)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    set(__IS_SUBDIRECTORY FALSE)
+    set(__IS_ROOT TRUE)
 else ()
-    set(__IS_SUBDIRECTORY TRUE)
+    # we are being included from another project via add_subdirectory
+    set(__IS_ROOT FALSE)
 endif ()
 
-if (NOT __IS_SUBDIRECTORY)
+if (__IS_ROOT)
     
     include(CTest)
 
@@ -38,14 +39,13 @@ endif ()
 # builds the library
 add_subdirectory(src)
 
-if (NOT __IS_SUBDIRECTORY OR LIBTRACKERBOY_ENABLE_EXAMPLES)
+if (LIBTRACKERBOY_ENABLE_EXAMPLES)
     add_subdirectory(examples)
 endif ()
 
-if (NOT __IS_SUBDIRECTORY OR LIBTRACKERBOY_ENABLE_TESTS)
-    # unit tests if we are not in a subdirectory
+if ((__IS_ROOT AND BUILD_TESTING) OR LIBTRACKERBOY_ENABLE_TESTS)
     add_subdirectory(test)
 endif ()
 
 
-unset(__IS_SUBDIRECTORY)
+unset(__IS_ROOT)
