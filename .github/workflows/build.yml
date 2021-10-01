@@ -41,7 +41,7 @@ jobs:
           cd Catch2
           git checkout tags/${{ env.CATCH2_TAG }}
           mkdir build
-          cmake -S . -B build -H. -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX='${{ env.DEPS_INSTALL }}'
+          cmake -S . -B build -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX='${{ env.DEPS_INSTALL }}'
           cmake --build build --target install
       
       - name: Build
