@@ -111,12 +111,13 @@ endif ()
 
 
 add_library(trackerboy "${SRC_FILES}" "${PUB_HEADERS}")
+
 target_compile_features(trackerboy PUBLIC cxx_std_17)
 
 target_include_directories(trackerboy PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    "$<BUILD_INTERFACE:${__PARENT_SOURCE_DIR}/include>"
     )
+
 target_include_directories(trackerboy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -140,23 +141,38 @@ if (IS_BIG_ENDIAN)
     target_compile_definitions(trackerboy PRIVATE -DTRACKERBOY_BIG_ENDIAN)
 endif ()
 
-install(
-    TARGETS trackerboy
-    EXPORT trackerboyTargets
-)
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "include")
+# install rules
+if (__IS_ROOT)
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    trackerboyVersion.cmake
-    COMPATIBILITY AnyNewerVersion
-)
+    target_include_directories(trackerboy PUBLIC "$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>")
 
-install(
-    EXPORT trackerboyTargets
-    FILE trackerboyConfig.cmake
-    NAMESPACE trackerboy::
-    DESTINATION lib/cmake/trackerboy
+    install(
+        TARGETS trackerboy
+        EXPORT trackerboyTargets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+    )
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION include)
 
-)
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        trackerboyVersion.cmake
+        COMPATIBILITY AnyNewerVersion
+    )
+    install(
+        FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/trackerboyVersion.cmake"
+        DESTINATION
+            lib/cmake/trackerboy
+    )
 
+    install(
+        EXPORT trackerboyTargets
+        FILE trackerboyConfig.cmake
+        NAMESPACE trackerboy::
+        DESTINATION lib/cmake/trackerboy
+
+    )
+
+endif ()

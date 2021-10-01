@@ -15,9 +15,11 @@ option(BUILD_SHARED_LIBS "Builds a shared library if enabled" OFF)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set(__IS_ROOT TRUE)
+    set(__PARENT_SOURCE_DIR "${CMAKE_SOURCE_DIR}")
 else ()
     # we are being included from another project via add_subdirectory
     set(__IS_ROOT FALSE)
+    set(__PARENT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 endif ()
 
 if (__IS_ROOT)
@@ -49,3 +51,4 @@ endif ()
 
 
 unset(__IS_ROOT)
+unset(__PARENT_SOURCE_DIR)
