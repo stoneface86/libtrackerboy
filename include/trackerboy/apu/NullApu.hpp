@@ -24,34 +24,80 @@
 
 #pragma once
 
-#include "trackerboy/apu/Apu.hpp"
+/*!
+ * \file NullApu.hpp
+ * \brief NullApu class definition
+ */
 
+#include "trackerboy/apu/Apu.hpp"
 
 namespace trackerboy {
 
-//
-// Null Apu, all writes to this apu do nothing
-//
+/*!
+ * \brief An Apu implementation that does nothing
+ *
+ * The NullApu provides an Apu in which IO operations are ignored, and
+ * no audio samples are ever generated.
+ */
 class NullApu final : public Apu {
 
 public:
 
+    /*!
+     * \brief implementation does nothing
+     * \param cycles ignored
+     */
     virtual void step(uint32_t cycles) override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param time ignored
+     */
     virtual void endFrameAt(uint32_t time) override;
 
+    /*!
+     * \brief implementation does nothing
+     * \return always 0
+     */
     virtual size_t samplesAvailable() override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param buf ignored
+     * \param samples ignored
+     * \return always 0
+     */
     virtual size_t readSamples(float *buf, size_t samples) override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param samples ignored
+     */
     virtual void setBuffer(size_t samples) override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param rate ignored
+     */
     virtual void setSamplerate(int rate) override;
 
+    /*!
+     * \brief implementation does nothing
+     */
     virtual void reset() override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param reg ignored
+     * \return always 0
+     */
     virtual uint8_t readRegister(uint8_t reg) override;
 
+    /*!
+     * \brief implementation does nothing
+     * \param reg ignored
+     * \param value ignored
+     */
     virtual void writeRegister(uint8_t reg, uint8_t value) override;
 
 };

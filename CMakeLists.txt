@@ -28,12 +28,12 @@ if (__IS_ROOT)
 
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-    # find_package(Doxygen)
-    # if (Doxygen_FOUND)
-    #   add_subdirectory(docs)
-    # else ()
-    #   message(STATUS "Doxygen not found, documentation will NOT be generated")
-    # endif ()
+     find_package(Doxygen)
+     if (Doxygen_FOUND)
+        add_subdirectory(docs)
+     else ()
+        message(STATUS "Doxygen not found, documentation will NOT be generated")
+     endif ()
 
 
 endif ()

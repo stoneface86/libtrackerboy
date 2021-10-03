@@ -22,6 +22,11 @@
 **
 */
 
+/*!
+ * \file DefaultApu.hpp
+ * \brief DefaultApu class definition
+ */
+
 #pragma once
 
 #include "trackerboy/apu/Apu.hpp"
@@ -31,17 +36,26 @@
 
 namespace trackerboy {
 
-//
-// Implementation for the built-in APU. Gameboy APU emulator with a
-// goal of "close-enough" emulation and quality sound output.
-//
+/*!
+ * \brief The built-in APU emulator provided by this library
+ *
+ * Provides the library with a default Apu with a goal of "close-enough"
+ * emulation and high quality sound output.
+ */
 class DefaultApu final : public Apu {
 
 public:
 
+    /*!
+     * \brief Initializes the apu with a samplerate of 44100
+     *
+     * The internal buffer is not allocated so you must call setBuffer before
+     * using this object.
+     */
     DefaultApu();
 
     ~DefaultApu();
+
 
     virtual void step(uint32_t cycles) override;
 
@@ -57,6 +71,15 @@ public:
 
     virtual void reset() override;
 
+    /*!
+     * \brief gets the channel's current volume
+     * \param ch the channel's volume to query
+     * \return volume for the channel (0-F)
+     *
+     * For envelope channels (CH1, CH2, CH4) the current volume level for the
+     * channel's envelope is returned. For the wave channel, the current wave
+     * volume level is returned (0 = mute, 1 = 25%, 2 = 50% and 3 = 100%).
+     */
     virtual int channelVolume(ChType ch) override;
 
     virtual uint8_t readRegister(uint8_t reg) override;

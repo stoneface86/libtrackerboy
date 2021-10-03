@@ -1,0 +1,364 @@
+/*!
+\page file-format File format specification
+
+A module file (*.tbm) can be used by this tracker. This document is a specification
+of the format used in *.tbm files.
+
+\tableofcontents
+
+\section structure Structure
+
+A Trackerboy module consists of a Header, a Payload and a Terminator.
+
+
+     +----------------+-------------------------------------------+------------+
+     |                |                                           |            |
+     | Header         | Payload                                   | Terminator |
+     | 160 bytes      | size varies                               | 12 bytes   |
+     |                |                                           |            |
+     +----------------+-------------------------------------------+------------+
+    +0              +160                                                        EOF
+
+\subsection header-format Header format
+
+The figure below defines the Header structure used in all file types. All
+multi-byte fields are stored in little-endian. The size of the header is a
+fixed 160 bytes, with any unused space marked as reserved. Reserved fields can
+be utilized for future revisions of the format. Reserved fields should be set
+to zero, but this is not enforced.
+
+The layout of the header depends on the header revision, located in offset 24.
+The current revision of the header is shown below.
+
+         +0         +1         +2        +3
+     0   +-------------------------------------------+
+         |                                           |
+         | signature ( TRACKERBOY )                  |
+         |                                           |
+     12  +-------------------------------------------+
+         | version major                             |
+     16  +-------------------------------------------+
+         | version minor                             |
+     20  +-------------------------------------------+
+         | version patch                             |
+     24  +----------+----------+---------------------+
+         | m. rev   | n. rev   | reserved            |
+     28  +----------+----------+---------------------+
+         |                                           |
+         |                                           |
+         |                                           |
+         | title                                     |
+         |                                           |
+         |                                           |
+         |                                           |
+         |                                           |
+     60  +-------------------------------------------+
+         |                                           |
+         |                                           |
+         |                                           |
+         | artist                                    |
+         |                                           |
+         |                                           |
+         |                                           |
+         |                                           |
+     92  +-------------------------------------------|
+         |                                           |
+         |                                           |
+         |                                           |
+         | copyright                                 |
+         |                                           |
+         |                                           |
+         |                                           |
+         |                                           |
+     124 +-------------------------------------------+
+         | icount   | scount   | wcount   | system   |
+     128 +---------------------+----------+----------+
+         | customFramerate     |                     |
+         +---------------------+                     |
+         |                                           |
+         |                                           |
+         |                                           |
+         | reserved                                  |
+         |                                           |
+         |                                           |
+         |                                           |
+         |                                           |
+     160 +-------------------------------------------+
+
+\subsection signature Signature
+
+Every trackerboy file begins with this signature `\0TRACKERBOY\0` in order to
+identify the file as a trackerboy file.
+
+\subsection version Version
+
+Version information is stored as three 4-byte words. This information
+determines which version of trackerboy that created the file. Versioning is
+maintained by keeping a major and minor version, followed by a patch number.
+For example, if the trackerboy version is v1.0.2, then the header's version
+fields will contain 0x1 0x0 and 0x2 for major, minor and patch, respectively.
+
+\subsection major-rev Major revision (m. rev)
+
+This version number indicates a breaking change for the file format. Starts
+at 0 and is incremented whenever the layout of the header or payload changes.
+Trackerboy will not attempt to read modules with a newer major version, but can
+attempt to read older versions (backwards-compatible).
+
+Examples of breaking changes:
+ * Modifying the layout of the Header structure
+ * Adding/removing blocks to the payload
+ * Modifying the format of a payload block
+
+\subsection minor-rev Minor revision (n. rev)
+
+This version number indicates a change in the format that is forward-compatible
+with older versions. Changes such as utilizing a reserved field in the header.
+
+\subsubsection compatibility Compatibility
+
+Trackerboy can read any module file as long as its major revision is less than
+or equal to the current revision. Saving always uses the current revision, so
+saving an older major version is a one-way upgrade.
+
+\subsection author-information Author information
+
+The strings at the end of the header contain information about the author of
+the file. Each is string is 32-bytes and should be null-terminated. If the
+string is not null-terminated, trackerboy will terminate it automatically when
+reading in the file (so there is a maximum of 32 chars per string). ASCII
+encoding is used for all strings.
+
+Note that the size and naming of these strings are identical to the ones in
+*.gbs file format. This is intentional, as exporting to gbs is a planned
+feature.
+
+\subsection icount-scount-wcount icount, scount and wcount
+
+ - <b>i</b>count - <b>i</b>nstrument count
+ - <b>s</b>count - <b>s</b>ong count
+ - <b>w</b>count - <b>w</b>aveform count
+
+These counter fields determine the number of INST, SONG and WAVE blocks present
+in the payload, respectively. `icount` and `wcount` can range from 0-64 and is
+unbiased. `scount` can range from 0-255 and is biased (a value of 0 means there
+is 1 SONG block).
+
+\subsection system System
+
+The system field determines which gameboy model this module is for. Since the driver
+is updated every vblank, the system field determines the framerate, tick rate or
+vblank interval for the driver. The available choices are listed in the table:
+
+| Value | System name | Tick rate |
+|-------|-------------|-----------|
+| 0x0   | DMG         | 59.7 Hz   |
+| 0x1   | SGB         | 61.1 Hz   |
+| 0x2   | Custom      | varies    |
+
+If the system is custom, then a custom tick rate is used instead of the system's
+vblank. The custom tick rate is stored in the `customFramerate` field of the
+header.
+
+By default the DMG system is selected.
+
+\section payload Payload
+
+The payload is located right after the header (offset 160). It is a variable
+number of "blocks" or tagged data with a size.
+
+The following types are used throughout the format specification:
+| type name | size   | description                                                          |
+|-----------|--------|----------------------------------------------------------------------|
+| biased u8 | 1      | unsigned 8-bit integer, biased form (0-255) => (1-256)               |
+| u8        | 1      | unsigned 8-bit integer                                               |
+| u8bool    | 1      | boolean as an unsigned 8-bit integer (0 for false, 1 for true)       |
+| u16       | 2      | unsigned 16-bit integer                                              |
+| TrackRow  | 8      | Pattern row data for a track                                         |
+| OrderRow  | 4      | Row data for the song order                                          |
+| lstring   | varies | length-prefixed utf8 string, string data prefixed by a 2 byte length |
+
+\subsection block-format Block format
+
+A block contains a id, which determines the type of data contained in the
+block, and a length for the contained data.
+| Offset | Size   | Description |
+|--------|--------|-------------|
+| 0      | 4      | Id          |
+| 4      | 4      | Length      |
+| 8      | varies | data        |
+
+
+\subsection block-types Block types
+
+| Identifier | Description                          |
+|------------|--------------------------------------|
+| "COMM"     | User set comment data for the module |
+| "SONG"     | Block containing a single song       |
+| "INST"     | Block containing a single instrument |
+| "WAVE"     | Block containing a single waveform   |
+
+\subsection block-ordering Block ordering
+
+Blocks are stored categorically by type in the following order:
+| Order | Identifier | Count |
+|-------|------------|-------|
+| 1     | COMM       | 1     |
+| 2     | SONG       | 1-256 |
+| 3     | INST       | 0-64  |
+| 4     | WAVE       | 0-64  |
+
+\subsection comm-block COMM block format
+
+The COMM block just contains a UTF-8 string that contains the user's comment
+data. The string is not null-terminated since the size of the string is the
+size of the block. If the user has no comment set, then this block is empty
+(blocksize = 0).
+
+\subsection song-block SONG block format
+
+The SONG block contains the data for a single song. Songs are stored in the
+same order as they were in the module's song list. The first song block is
+song #0 and so on.
+
+Song data is stored in this order:
+ 1. name, `lstring`
+ 2. SongFormat
+ 3. Song order
+ 4. Track data
+
+\subsubsection song-name Song name
+
+The first part of this data is the song name, stored as a length-prefixed utf-8
+string.
+
+\subsubsection song-format SongFormat
+
+After the name follows the song format record:
+| Offset | Size | Type      | field name     |
+|--------|------|-----------|----------------|
+| +0     | 1    | biased u8 | rowsPerBeat    |
+| +1     | 1    | biased u8 | rowsPerMeasure |
+| +2     | 1    | u8        | speed          |
+| +3     | 1    | biased u8 | patternCount   |
+| +4     | 1    | biased u8 | rowsPerTrack   |
+| +5     | 2    | u16       | numberOfTracks |
+ * rowsPerBeat: number of rows that make up a beat, used by the UI for
+                highlighting and tempo calculation.
+ * rowsPerMeasure: number of rows that make up a measure, used by UI for highlighting
+ * speed: Initial speed setting for the song in Q4.4 format
+ * patternCount: number of patterns for the song
+ * rowsPerTrack: the size, in rows, of a track (all tracks have the same size).
+ * numberOfTracks: number of tracks stored in this song block.
+
+\subsubsection song-order Song order
+
+Next is the song order, an array of OrderRow records with the dimension being
+the `patternCount` field from the song format record. An `OrderRow` record is a
+set of 4 `u8` track ids, with the first being the track id for channel 1 and the
+last being the id for channel 4.
+
+\subsubsection track-data Track data
+
+The last part of the song block is the track data. Each track gets its own
+TrackFormat record and an array of RowFormat records.
+
+The TrackFormat record:
+| Offset | Size | Type      | field name     |
+|--------|------|-----------|----------------|
+| +0     | 1    | u8        | channel        |
+| +1     | 1    | u8        | trackId        |
+| +2     | 1    | biased u8 | rows           |
+ * channel (0-3) determines which channel the track is for
+ * trackId (0-255) determines the track id to use for this track
+ * rows is the number of RowFormat records that follow this structure
+
+The RowFormat record:
+| Offset | Size | Type      | field name     |
+|--------|------|-----------|----------------|
+| +0     | 1    | u8        | rowno          |
+| +1     | 8    | TrackRow  | rowdata        |
+ * rowno is the index in the track's row array to set
+ * rowdata is the data to set at this index
+
+The last RowFormat record for the last track ends the SONG block.
+
+\subsection inst-block INST Block format
+
+The INST Block contains data for a single instrument. The data is structured
+in this order:
+ 1. id, `u8`
+ 2. name, `lstring`
+ 3. `InstrumentFormat` record
+ 4. (4) `SequenceFormat` records
+
+Both INST and WAVE blocks start with a 1 byte id and an `lstring` name.
+
+Following the name is an InstrumentFormat record:
+| Offset | Size | Type   | field name      |
+|--------|------|--------|-----------------|
+| +0     | 1    | u8     | channel         |
+| +1     | 1    | u8bool | envelopeEnabled |
+| +2     | 1    | u8     | envelope        |
+ * channel (0-3) determines which channel the instrument is for
+ * envelopeEnabled (0-1) is the instrument's envelope enable setting
+ * envelope is the instruments envelope setting
+
+Following the InstrumentFormat record is 4 SequenceFormat records, 1 for each
+instrument sequence:
+| Offset | Size | Type   | field name  |
+|--------|------|--------|-------------|
+| +0     | 2    | u16    | length      |
+| +2     | 1    | u8bool | loopEnabled |
+| +3     | 1    | u8     | loopIndex   |
+ - length (0-256) is the length of the sequence
+ - loopEnabled (0-1) determines whether there is a loop index
+ - loopIndex is the index of the loop point (0 when loopEnabled = 0)
+
+The sequence data follows the record and is an array of bytes with dimension
+being the length field in the record.
+
+\subsection wave-block WAVE Block format
+
+The WAVE Block contains data for a single waveform. The data is structured in
+this order:
+ 1. id, `u8`
+ 2. name, `lstring`
+ 3. Waveform data, a 16-byte array of 32 4-bit PCM samples
+
+\section terminator-format Terminator format
+
+Following the payload is a terminator, which signifies the end of the file.
+The terminator is the signature, reversed:
+
+
+    "\0YOBREKCART\0"
+
+
+There should be no data after this terminator. Any data after the terminator
+will be ignored.
+
+\section revision-history Revision history
+
+Changes to the file format are listed here, ordered from new to last.
+
+\subsection revision-b Revision B (1.0)
+Introduced in v0.5.0, adds multiple song support.
+ - file revision is now a major/minor set of numbers
+ - SONG, INST, and WAVE blocks each store a single song, instrument and
+   waveform, respectively.
+ - The payload can now contain up to 256 songs
+ - Removed the INDX block
+ - Removed numberOfInstruments and numberOfWaveforms fields
+ - Added scount, icount and wcount fields at offset 124 (replacing the removed
+   numberOf* fields). These fields contain the number of SONG, INST and WAVE
+   blocks present in the payload. Note that only scount is biased (0 => 1).
+ - String encoding now specified for all strings. Header strings use ASCII,
+   everything else uses UTF-8.
+ - `lstring` now uses a 2-byte length instead of 1-byte
+ - Added a terminator to the format
+
+\subsection revision-a Revision A (0.0)
+First initial version, introduced in v0.2.0.
+
+*/
