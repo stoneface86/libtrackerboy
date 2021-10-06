@@ -2,63 +2,52 @@
 #include "trackerboy/engine/Operation.hpp"
 #include "trackerboy/note.hpp"
 
+#include <algorithm>
+#include <numeric>
+
+#define TU OperationTU
+
 namespace trackerboy {
 
 Operation::Operation() :
-    patternCommand(PatternCommand::none),
-    patternCommandParam(0),
-    speed(0),
-    halt(false),
-    note(),
-    instrument(),
-    delay(0),
-    duration(),
-    envelope(),
-    timbre(),
-    panning(),
-    sweep(),
-    modulationType(FrequencyMod::none),
-    modulationParam(0),
-    vibrato(),
-    vibratoDelay(),
-    tune()
+    mPatternCommand(PatternCommand::none),
+    mPatternCommandParam(0),
+    mSpeed(0),
+    mHalt(false),
+    mNote(),
+    mInstrument(),
+    mDelay(0),
+    mDuration(),
+    mEnvelope(),
+    mTimbre(),
+    mPanning(),
+    mSweep(),
+    mModulationType(FrequencyMod::none),
+    mModulationParam(0),
+    mVibrato(),
+    mVibratoDelay(),
+    mTune()
 {
 }
 
 
 Operation::Operation(TrackRow const& row) :
-    patternCommand(PatternCommand::none),
-    patternCommandParam(0),
-    speed(0),
-    halt(false),
-    note(),
-    instrument(),
-    delay(0),
-    duration(),
-    envelope(),
-    timbre(),
-    panning(),
-    sweep(),
-    modulationType(FrequencyMod::none),
-    modulationParam(0),
-    vibrato(),
-    vibratoDelay(),
-    tune()
+    Operation()
 {
 
     // note column
-    note = row.queryNote();
-    if (note && *note == NOTE_CUT) {
+    mNote = row.queryNote();
+    if (mNote && *mNote == NOTE_CUT) {
         // NOTE_CUT behaves exactly the same as the S00 effect
         // this also makes the Sxx effect have higher priority unless we process the note after effects
         // --  .. ... ... ... same as: ... .. S00 ... ...
         // --  .. S03 ... ... => the row will cut in 3 frames
-        note.reset();
-        duration = (uint8_t)0;
+        mNote.reset();
+        mDuration = 1;
     }
 
     // instrument column
-    instrument = row.queryInstrument();
+    mInstrument = row.queryInstrument();
 
     // effects
     for (size_t i = 0; i != TrackRow::MAX_EFFECTS; ++i) {
@@ -67,84 +56,159 @@ Operation::Operation(TrackRow const& row) :
             auto param = effect->param;
             switch (effect->type) {
                 case trackerboy::EffectType::patternGoto:
-                    patternCommand = PatternCommand::jump;
-                    patternCommandParam = param;
+                    mPatternCommand = PatternCommand::jump;
+                    mPatternCommandParam = param;
                     break;
                 case trackerboy::EffectType::patternHalt:
-                    halt = true;
+                    mHalt = true;
                     break;
                 case trackerboy::EffectType::patternSkip:
-                    patternCommand = PatternCommand::next;
-                    patternCommandParam = param;
+                    mPatternCommand = PatternCommand::next;
+                    mPatternCommandParam = param;
                     break;
                 case trackerboy::EffectType::setTempo:
                     if (param >= SPEED_MIN && param <= SPEED_MAX) {
-                        speed = param;
+                        mSpeed = param;
                     }
                     break;
                 case trackerboy::EffectType::sfx:
                     // TBD
                     break;
                 case trackerboy::EffectType::setEnvelope:
-                    envelope = param;
+                    mEnvelope = param;
                     break;
                 case trackerboy::EffectType::setTimbre:
-                    timbre = param;
+                    mTimbre = std::clamp(param, (uint8_t)0, (uint8_t)3) + 1;
                     break;
                 case trackerboy::EffectType::setPanning:
-                    panning = param;
+                    mPanning = std::clamp(param, (uint8_t)0, (uint8_t)3) + 1;
                     break;
                 case trackerboy::EffectType::setSweep:
-                    sweep = param;
+                    mSweep = param;
                     break;
                 case trackerboy::EffectType::delayedCut:
-                    duration = param;
+                    mDuration = param;
                     break;
                 case trackerboy::EffectType::delayedNote:
-                    delay = param;
+                    mDelay = param;
                     break;
                 case trackerboy::EffectType::lock:
                     // TBD
                     break;
                 case trackerboy::EffectType::arpeggio:
-                    modulationType = FrequencyMod::arpeggio;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::arpeggio;
+                    mModulationParam = param;
                     break;
                 case trackerboy::EffectType::pitchUp:
-                    modulationType = FrequencyMod::pitchSlideUp;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::pitchSlideUp;
+                    mModulationParam = param;
                     break;
                 case trackerboy::EffectType::pitchDown:
-                    modulationType = FrequencyMod::pitchSlideDown;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::pitchSlideDown;
+                    mModulationParam = param;
                     break;
                 case trackerboy::EffectType::autoPortamento:
-                    modulationType = FrequencyMod::portamento;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::portamento;
+                    mModulationParam = param;
                     break;
                 case trackerboy::EffectType::vibrato:
-                    vibrato = param;
+                    mVibrato = param;
                     break;
                 case trackerboy::EffectType::vibratoDelay:
-                    vibratoDelay = param;
+                    mVibratoDelay = param;
                     break;
                 case trackerboy::EffectType::tuning:
-                    tune = param;
+                    mTune = param;
                     break;
                 case trackerboy::EffectType::noteSlideUp:
-                    modulationType = FrequencyMod::noteSlideUp;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::noteSlideUp;
+                    mModulationParam = param;
                     break;
                 case trackerboy::EffectType::noteSlideDown:
-                    modulationType = FrequencyMod::noteSlideDown;
-                    modulationParam = param;
+                    mModulationType = FrequencyMod::noteSlideDown;
+                    mModulationParam = param;
                     break;
                 default:
+                    // unknown effect, possibly defined in a newer version of trackerboy
                     break;
             }
         }
     }
 
+}
+
+Operation::Operation(uint8_t note) :
+    Operation()
+{
+    if (note == NOTE_CUT) {
+        mDuration = 1;
+    } else {
+        mNote = note;
+    }
+}
+
+Operation::PatternCommand Operation::patternCommand() const noexcept {
+    return mPatternCommand;
+}
+
+uint8_t Operation::patternCommandParam() const noexcept {
+    return mPatternCommandParam;
+}
+
+uint8_t Operation::speed() const noexcept {
+    return mSpeed;
+}
+
+bool Operation::halt() const noexcept {
+    return mHalt;
+}
+
+std::optional<uint8_t> Operation::instrument() const noexcept {
+    return mInstrument;
+}
+
+std::optional<uint8_t> Operation::note() const noexcept {
+    return mNote;
+}
+
+uint8_t Operation::delay() const noexcept {
+    return mDelay;
+}
+
+std::optional<uint8_t> Operation::duration() const noexcept {
+    return mDuration;
+}
+
+std::optional<uint8_t> Operation::envelope() const noexcept {
+    return mEnvelope;
+}
+
+std::optional<uint8_t> Operation::timbre() const noexcept {
+    return mTimbre;
+}
+
+std::optional<uint8_t> Operation::panning() const noexcept {
+    return mPanning;
+}
+
+Operation::FrequencyMod Operation::modulationType() const noexcept {
+    return mModulationType;
+}
+
+uint8_t Operation::modulationParam() const noexcept {
+    return mModulationParam;
+}
+
+std::optional<uint8_t> Operation::vibrato() const noexcept {
+    return mVibrato;
+}
+
+std::optional<uint8_t> Operation::vibratoDelay() const noexcept {
+    return mVibratoDelay;
+}
+
+std::optional<uint8_t> Operation::tune() const noexcept {
+    return mTune;
 }
 
 }

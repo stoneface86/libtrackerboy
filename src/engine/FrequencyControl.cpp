@@ -84,13 +84,13 @@ void FrequencyControl::apply(Operation const& op) noexcept {
     bool updateChord = false;
 
     bool newNote;
-    if (op.note) {
+    if (auto note = op.note(); note.has_value()) {
         if (mMod == ModType::noteSlide) {
             // setting a new note cancels a note slide
             mMod = ModType::none;
         }
 
-        mNote = std::min(*op.note, mMaxNote);
+        mNote = std::min(*note, mMaxNote);
         newNote = true;
     } else {
         newNote = false;
@@ -98,39 +98,40 @@ void FrequencyControl::apply(Operation const& op) noexcept {
     uint8_t currNote = mNote;
     
 
-    switch (op.modulationType) {
+    auto const modParam = op.modulationParam();
+    switch (auto const modType = op.modulationType(); modType) {
         case Operation::FrequencyMod::arpeggio:
-            if (op.modulationParam == 0) {
+            if (modParam == 0) {
                 mMod = ModType::none;
             } else {
                 mMod = ModType::arpeggio;
-                mChordOffset1 = op.modulationParam >> 4;
-                mChordOffset2 = op.modulationParam & 0xF;
+                mChordOffset1 = modParam >> 4;
+                mChordOffset2 = modParam & 0xF;
                 updateChord = true;
             }
             break;
         case Operation::FrequencyMod::pitchSlideDown:
         case Operation::FrequencyMod::pitchSlideUp:
-            if (op.modulationParam == 0) {
+            if (modParam == 0) {
                 mMod = ModType::none;
             } else {
                 mMod = ModType::pitchSlide;
-                if (op.modulationType == Operation::FrequencyMod::pitchSlideUp) {
+                if (modType == Operation::FrequencyMod::pitchSlideUp) {
                     mSlideTarget = mMaxFrequency;
                 } else {
                     mSlideTarget = 0;
                 }
-                mSlideAmount = op.modulationParam;
+                mSlideAmount = modParam;
             }
             break;
         case Operation::FrequencyMod::noteSlideDown:
         case Operation::FrequencyMod::noteSlideUp:
-            mSlideAmount = 1 + (2 * (op.modulationParam & 0xF));
+            mSlideAmount = 1 + (2 * (modParam & 0xF));
             // upper 4 bits is the # of semitones to slide to
             {
-                uint8_t semitones = op.modulationParam >> 4;
+                uint8_t semitones = modParam >> 4;
                 uint8_t targetNote = mNote;
-                if (op.modulationType == Operation::FrequencyMod::noteSlideUp) {
+                if (modType == Operation::FrequencyMod::noteSlideUp) {
                     targetNote += semitones;
                     if (targetNote > mMaxNote) {
                         targetNote = mMaxNote; // clamp to highest note
@@ -150,7 +151,7 @@ void FrequencyControl::apply(Operation const& op) noexcept {
             }
             break;
         case Operation::FrequencyMod::portamento:
-            if (op.modulationParam == 0) {
+            if (modParam == 0) {
                 // turn off portamento
                 mMod = ModType::none;
             } else {
@@ -158,7 +159,7 @@ void FrequencyControl::apply(Operation const& op) noexcept {
                     mSlideTarget = mFrequency;
                     mMod = ModType::portamento;
                 }
-                mSlideAmount = op.modulationParam;
+                mSlideAmount = modParam;
             }
             break;
         default:
@@ -166,8 +167,8 @@ void FrequencyControl::apply(Operation const& op) noexcept {
             break;
     }
 
-    if (op.vibrato) {
-        auto param = *op.vibrato;
+    if (auto vib = op.vibrato(); vib.has_value()) {
+        auto param = *vib;
         mVibratoParam = param;
         if (!(param & 0x0F)) {
             // extent is 0, disable vibrato
@@ -185,15 +186,15 @@ void FrequencyControl::apply(Operation const& op) noexcept {
         }
     }
 
-    if (op.vibratoDelay) {
-        mVibratoDelay = *op.vibratoDelay;
+    if (auto vibDelay = op.vibratoDelay(); vibDelay.has_value()) {
+        mVibratoDelay = *vibDelay;
     }
 
-    if (op.tune) {
+    if (auto tune = op.tune(); tune.has_value()) {
         // tune values have a bias of 0x80, so 0x80 is 0, is in tune
         // 0x81 is +1, frequency is pitch adjusted by 1
         // 0x7F is -1, frequency is pitch adjusted by -1
-        mTune = (int8_t)(*op.tune - 0x80);
+        mTune = (int8_t)(*tune - 0x80);
     }
 
     if (newNote) {

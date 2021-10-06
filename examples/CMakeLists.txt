@@ -9,3 +9,6 @@ target_link_libraries(example_apu PRIVATE trackerboy wav)
 
 add_executable(example_instruments "example_instruments.cpp")
 target_link_libraries(example_instruments PRIVATE trackerboy wav)
+
+add_executable(runner "runner.cpp")
+target_link_libraries(runner PRIVATE trackerboy)

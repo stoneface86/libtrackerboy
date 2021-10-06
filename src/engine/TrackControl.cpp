@@ -32,7 +32,7 @@ void TrackControl::setRow(TrackRow const& row) {
     // convert the row to an operation
     // this operation gets applied in the step method after mOp.delay frames
     mOp = Operation(row);
-    mDelayCounter = mOp.delay;
+    mDelayCounter = mOp.delay();
 }
 
 void TrackControl::step(RuntimeContext const &rc, ChannelState &state, GlobalState &global) {
@@ -42,42 +42,42 @@ void TrackControl::step(RuntimeContext const &rc, ChannelState &state, GlobalSta
             // apply the operation
 
             // global effects
-            if (mOp.patternCommand != Operation::PatternCommand::none) {
-                global.patternCommand = mOp.patternCommand;
-                global.patternCommandParam = mOp.patternCommandParam;
+            if (auto pcmd = mOp.patternCommand(); pcmd != Operation::PatternCommand::none) {
+                global.patternCommand = pcmd;
+                global.patternCommandParam = mOp.patternCommandParam();
             }
 
-            if (mOp.speed) {
-                global.speed = mOp.speed;
+            if (mOp.speed()) {
+                global.speed = mOp.speed();
             }
 
-            if (mOp.halt) {
+            if (mOp.halt()) {
                 global.halt = true;
             }
 
             bool restartIr = false;
 
-            if (mOp.instrument) {
-                auto inst = rc.instrumentTable.getShared(*mOp.instrument);
+            if (auto instId = mOp.instrument(); instId.has_value()) {
+                auto inst = rc.instrumentTable.getShared(*instId);
                 if (inst) {
                     mInstrument = std::move(inst);
                     restartIr = true;
                 }
             }
 
-            if (mOp.envelope) {
-                state.envelope = mEnvelope = *mOp.envelope;
+            if (auto env = mOp.envelope(); env.has_value()) {
+                state.envelope = mEnvelope = *env;
             }
 
-            if (mOp.timbre) {
-                state.timbre = mTimbre = *mOp.timbre;
+            if (auto timbre = mOp.timbre(); timbre.has_value()) {
+                state.timbre = mTimbre = *timbre;
             }
 
-            if (mOp.panning) {
-                state.panning = mPanning = *mOp.panning;
+            if (auto panning = mOp.panning(); panning.has_value()) {
+                state.panning = mPanning = *panning;
             }
 
-            if (mOp.note) {
+            if (auto note = mOp.note(); note.has_value()) {
                 restartIr = true;
                 mPlaying = true;
                 state.envelope = mEnvelope;
@@ -88,7 +88,7 @@ void TrackControl::step(RuntimeContext const &rc, ChannelState &state, GlobalSta
             // explicit channel retrigger when a note/instrument is set
             state.retrigger = restartIr;
 
-            mCutCounter = mOp.duration;
+            mCutCounter = mOp.duration();
 
             if (restartIr && mInstrument) {
                 // restart the instrument runtime

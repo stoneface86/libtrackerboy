@@ -4,6 +4,7 @@ set(PUB_HEADERS
     "../include/trackerboy/apu/IApuIo.hpp"
     "../include/trackerboy/apu/DefaultApu.hpp"
     "../include/trackerboy/apu/NullApu.hpp"
+    "../include/trackerboy/compiler/PatternRun.hpp"
     "../include/trackerboy/data/InfoStr.hpp"
     "../include/trackerboy/data/Instrument.hpp"
     "../include/trackerboy/data/Module.hpp"
@@ -59,6 +60,8 @@ set(SRC_FILES
     "data/Track.cpp"
     "data/TrackRow.cpp"
     "data/Waveform.cpp"
+
+    "compiler/PatternRun.cpp"
 
     "engine/ChannelControl.cpp"
     "engine/Engine.cpp"

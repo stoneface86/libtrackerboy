@@ -120,7 +120,7 @@ FormatError SongHandler::processIn(Module &mod, InputBlock &block, size_t index)
         for (size_t r = rowCount; r--; ) {
             TU::RowFormat rowFormat;
             block.read(rowFormat);
-            track.replace(rowFormat.rowno, rowFormat.rowdata);
+            track[rowFormat.rowno] = rowFormat.rowdata;
         }
     }
 

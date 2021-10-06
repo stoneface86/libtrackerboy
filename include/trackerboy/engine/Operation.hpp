@@ -29,16 +29,20 @@
 
 #include <cstdint>
 #include <optional>
+#include <functional>
 
 namespace trackerboy {
 
 
-//
-// Data structure representing a row operation to be executed.
-//
-// C-4 00 ... ... ... => { .note = 24, .instrument = 0, 
-//
-struct Operation {
+/*!
+ * \brief Structure representing a row operation to be executed.
+ *
+ * Before a TrackRow is played, it is converted to an Operation. The Operation
+ * is the parsed version of a TrackRow.
+ */
+class Operation {
+
+public:
 
     enum class PatternCommand : uint8_t {
         none,       // do nothing
@@ -56,40 +60,82 @@ struct Operation {
         arpeggio            // frequency alternates between 3 notes
     };
 
-    Operation();
+    /*!
+     * \brief Construct an empty operation, or no-op.
+     */
+    explicit Operation();
 
-    // Create an operation from the given track row
-    Operation(TrackRow const& row);
+    /*!
+     * \brief Construct an operation from the given TrackRow.
+     * \param row the row data
+     */
+    explicit Operation(TrackRow const& row);
 
-    // pattern effects / global effects
-    PatternCommand patternCommand;
-    uint8_t patternCommandParam;
-    uint8_t speed; // change speed if nonzero
-    bool halt;
+    /*!
+     * \brief Construct an operation with only the given \a note index.
+     * \param note the note index
+     *
+     * Equivalent to constructing with a TrackRow that only has the note column
+     * set.
+     */
+    explicit Operation(uint8_t note);
 
-    // note index
-    // NOTE_CUT sets duration to 0, leaving note unset
-    std::optional<uint8_t> note;
+    PatternCommand patternCommand() const noexcept;
 
-    // instrument
-    std::optional<uint8_t> instrument;
+    uint8_t patternCommandParam() const noexcept;
 
-    // track effects
-    uint8_t delay;                   // delay this operation by the given number of frames
-    std::optional<uint8_t> duration; // if set, cut the note in the given number of frames
+    uint8_t speed() const noexcept;
 
-    std::optional<uint8_t> envelope;
-    std::optional<uint8_t> timbre;
-    std::optional<uint8_t> panning;
-    std::optional<uint8_t> sweep;
+    bool halt() const noexcept;
+
+    std::optional<uint8_t> instrument() const noexcept;
+
+    std::optional<uint8_t> note() const noexcept;
+
+    uint8_t delay() const noexcept;
+
+    std::optional<uint8_t> duration() const noexcept;
+
+    std::optional<uint8_t> envelope() const noexcept;
+
+    std::optional<uint8_t> timbre() const noexcept;
+
+    std::optional<uint8_t> panning() const noexcept;
+
+    FrequencyMod modulationType() const noexcept;
+
+    uint8_t modulationParam() const noexcept;
+
+    std::optional<uint8_t> vibrato() const noexcept;
+
+    std::optional<uint8_t> vibratoDelay() const noexcept;
+
+    std::optional<uint8_t> tune() const noexcept;
+
+private:
+
+    PatternCommand mPatternCommand;
+    uint8_t mPatternCommandParam;
+    uint8_t mSpeed;
+    bool mHalt;
+
+    std::optional<uint8_t> mNote;
+    std::optional<uint8_t> mInstrument;
+
+    uint8_t mDelay;
+
+    std::optional<uint8_t> mDuration;
+    std::optional<uint8_t> mEnvelope;
+    std::optional<uint8_t> mTimbre;
+    std::optional<uint8_t> mPanning;
+    std::optional<uint8_t> mSweep;
 
     // frequency effects
-    FrequencyMod modulationType;
-    uint8_t modulationParam;
-    std::optional<uint8_t> vibrato;
-    std::optional<uint8_t> vibratoDelay;
-    std::optional<uint8_t> tune;
+    FrequencyMod mModulationType;
+    uint8_t mModulationParam;
+    std::optional<uint8_t> mVibrato;
+    std::optional<uint8_t> mVibratoDelay;
+    std::optional<uint8_t> mTune;
 };
-
 
 }

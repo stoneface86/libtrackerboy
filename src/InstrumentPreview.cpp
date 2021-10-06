@@ -42,8 +42,7 @@ void InstrumentPreview::setInstrument(std::shared_ptr<const Instrument> instrume
 
 
 void InstrumentPreview::play(uint8_t note) {
-    Operation op;
-    op.note = note;
+    Operation op(note);
     mFc->apply(op);
     restart();
 }
