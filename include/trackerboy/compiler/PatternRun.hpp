@@ -81,9 +81,10 @@ public:
      * For example, consider a song with 3 patterns with the following jumps:
      *  - pattern #0 -> pattern #2
      *  - pattern #2 -> pattern #1
+     *
      * Then the song will have a visit order of:
      *
-     *      { 0, 2, 1 } // song will loop at index 1 (pattern #2)
+     *     { 0, 2, 1 } // song will loop at index 1 (pattern #2)
      *
      * In some cases a pattern jump may result in a pattern never getting
      * played. Consider a song like the first example, however, there is a

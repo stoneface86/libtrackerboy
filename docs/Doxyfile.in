@@ -11,10 +11,9 @@ STRIP_FROM_INC_PATH     = @__PARENT_SOURCE_DIR@/include/
 STRIP_FROM_PATH         = @__PARENT_SOURCE_DIR@/
 INCLUDE_PATH            = @__PARENT_SOURCE_DIR@/include/
 INPUT                   = @__PARENT_SOURCE_DIR@/include/ \
-                          @__PARENT_SOURCE_DIR@/src/ \
                           @CMAKE_CURRENT_SOURCE_DIR@/fileformat.dox \
                           @CMAKE_CURRENT_SOURCE_DIR@/mainpage.dox
 EXCLUDE                 = @__PARENT_SOURCE_DIR@/src/internal/
 RECURSIVE               = YES
-FILE_PATTERNS           = *.cpp *.hpp
+FILE_PATTERNS           = *.hpp
 BUILTIN_STL_SUPPORT     = YES
