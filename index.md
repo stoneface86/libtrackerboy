@@ -8,7 +8,11 @@ The library handles:
  * Module playback
  * (Coming soon) export to [tbengine](https://github.com/stoneface86/tbengine) format.
 
-# Build
+## Documentation
+
+Coming soon.
+
+## Build
 
 You will need:
  - git
@@ -25,16 +29,16 @@ cmake --build build  --target all
 cmake --build build --target install
 ```
 
-# Usage (installed in system)
+## Use (installed in system)
 
 In your CMakeLists.txt
 ```cmake
-find_package(trackerboy CONFIG REQURIED)
+find_package(trackerboy CONFIG REQUIRED)
 # ...
 target_link_libraries(app PRIVATE trackerboy::trackerboy)
 ```
 
-# Usage (as a subdirectory)
+## Use (as a subdirectory)
 
 In your CMakeLists.txt
 ```cmake
