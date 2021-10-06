@@ -1,37 +1,44 @@
-## Welcome to GitHub Pages
+## Welcome
 
-You can use the [editor on GitHub](https://github.com/stoneface86/libtrackerboy/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+libtrackerboy is a support library for the [Trackerboy](https://github.com/stoneface86/trackerboy). 
+The library handles:
+ * Reading/Writing trackerboy module files
+ * Manipulating/reading module data
+ * Gameboy APU emulation
+ * Module playback
+ * (Coming soon) export to [tbengine](https://github.com/stoneface86/tbengine) format.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# Build
 
-### Markdown
+You will need:
+ - git
+ - cmake (3.9 or newer)
+ - C++ compiler with the C++17 standard
+ - (optional) Catch2 for testing
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```sh
+git clone https://github.com/stoneface86/libtrackerboy
+cd libtrackerboy
+cmake -S . -B build -DBUILD_TESTING=OFF
+cmake --build build  --target all
+# (optional) install
+cmake --build build --target install
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+# Usage (installed in system)
 
-### Jekyll Themes
+In your CMakeLists.txt
+```cmake
+find_package(trackerboy CONFIG REQURIED)
+# ...
+target_link_libraries(app PRIVATE trackerboy::trackerboy)
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/stoneface86/libtrackerboy/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+# Usage (as a subdirectory)
 
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+In your CMakeLists.txt
+```cmake
+add_subdirectory(path_to_libtrackerboy)
+# ...
+target_link_libraries(app PRIVATE trackerboy)
+```
