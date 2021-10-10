@@ -43,7 +43,7 @@ Operation::Operation(TrackRow const& row) :
         // --  .. ... ... ... same as: ... .. S00 ... ...
         // --  .. S03 ... ... => the row will cut in 3 frames
         mNote.reset();
-        mDuration = 1;
+        mDuration = 0;
     }
 
     // instrument column
@@ -78,10 +78,10 @@ Operation::Operation(TrackRow const& row) :
                     mEnvelope = param;
                     break;
                 case trackerboy::EffectType::setTimbre:
-                    mTimbre = std::clamp(param, (uint8_t)0, (uint8_t)3) + 1;
+                    mTimbre = std::clamp(param, (uint8_t)0, (uint8_t)3);
                     break;
                 case trackerboy::EffectType::setPanning:
-                    mPanning = std::clamp(param, (uint8_t)0, (uint8_t)3) + 1;
+                    mPanning = std::clamp(param, (uint8_t)0, (uint8_t)3);
                     break;
                 case trackerboy::EffectType::setSweep:
                     mSweep = param;
