@@ -82,5 +82,16 @@ int Pattern::totalRows() {
     return mRowCount;
 }
 
+bool operator==(Pattern const& lhs, Pattern const& rhs) noexcept {
+    return (*lhs.mTrack1 == *rhs.mTrack1) &&
+           (*lhs.mTrack2 == *rhs.mTrack2) &&
+           (*lhs.mTrack3 == *rhs.mTrack3) &&
+           (*lhs.mTrack4 == *rhs.mTrack4);
+}
+
+bool operator!=(Pattern const& lhs, Pattern const& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
 
 }

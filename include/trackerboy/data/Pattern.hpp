@@ -57,6 +57,10 @@ public:
     //
     int totalRows();
 
+    friend bool operator==(Pattern const& lhs, Pattern const& rhs) noexcept;
+    friend bool operator!=(Pattern const& lhs, Pattern const& rhs) noexcept;
+
+
 private:
     Track *mTrack1;
     Track *mTrack2;

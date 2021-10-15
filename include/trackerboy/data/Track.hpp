@@ -126,6 +126,9 @@ public:
 
     size_t size() const;
 
+    friend bool operator==(Track const& lhs, Track const& rhs) noexcept;
+    friend bool operator!=(Track const& lhs, Track const& rhs) noexcept;
+
 private:
 
     void checkIndex(size_t row) const;

@@ -55,4 +55,28 @@ void TrackRow::transpose(int amount) {
     }
 }
 
+bool operator==(Effect const lhs, Effect const rhs) noexcept {
+    if (lhs.type == rhs.type) {
+        if (lhs.type == EffectType::noEffect) {
+            // ignore the parameter for noEffect
+            return true;
+        } else {
+            return lhs.param == rhs.param;
+        }
+    }
+    return false;
+}
+
+bool operator!=(Effect const lhs, Effect const rhs) noexcept {
+    return !(lhs == rhs);
+}
+
+bool operator==(TrackRow const& lhs, TrackRow const& rhs) noexcept {
+    return lhs.note == rhs.note && lhs.instrumentId == rhs.instrumentId && lhs.effects == rhs.effects;
+}
+
+bool operator!=(TrackRow const& lhs, TrackRow const& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
 }

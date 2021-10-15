@@ -39,6 +39,10 @@ struct Effect {
     uint8_t param;
 };
 
+bool operator==(Effect const lhs, Effect const rhs) noexcept;
+bool operator!=(Effect const lhs, Effect const rhs) noexcept;
+
+
 
 struct TrackRow {
 
@@ -75,6 +79,9 @@ struct TrackRow {
     static constexpr uint8_t convertColumn(std::optional<uint8_t> value) {
         return value.value_or((uint8_t)-1) + 1;
     }
+
+    friend bool operator==(TrackRow const& lhs, TrackRow const& rhs) noexcept;
+    friend bool operator!=(TrackRow const& lhs, TrackRow const& rhs) noexcept;
 
 };
 

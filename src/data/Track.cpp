@@ -180,4 +180,15 @@ void Track::checkSize(size_t size) const {
     }
 }
 
+bool operator==(Track const& lhs, Track const& rhs) noexcept {
+    if (lhs.mRows == rhs.mRows) {
+        return std::equal(lhs.mData.get(), lhs.mData.get() + lhs.mRows, rhs.mData.get());
+    }
+    return false;
+}
+
+bool operator!=(Track const& lhs, Track const& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
 }
