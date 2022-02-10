@@ -41,6 +41,7 @@ struct GlobalState {
         patternCommand(Operation::PatternCommand::none),
         patternCommandParam(0),
         speed(0),
+        sweep(0),
         halt(false)
     {
     }
@@ -50,6 +51,7 @@ struct GlobalState {
     Operation::PatternCommand patternCommand;
     uint8_t patternCommandParam;
     uint8_t speed; // change speed if nonzero
+    uint8_t sweep; // change sweep if >= 0x80
     bool halt;
 
 

@@ -102,6 +102,8 @@ public:
 
     std::optional<uint8_t> panning() const noexcept;
 
+    std::optional<uint8_t> sweep() const noexcept;
+
     FrequencyMod modulationType() const noexcept;
 
     uint8_t modulationParam() const noexcept;

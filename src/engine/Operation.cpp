@@ -191,6 +191,10 @@ std::optional<uint8_t> Operation::panning() const noexcept {
     return mPanning;
 }
 
+std::optional<uint8_t> Operation::sweep() const noexcept {
+    return mSweep;
+}
+
 Operation::FrequencyMod Operation::modulationType() const noexcept {
     return mModulationType;
 }

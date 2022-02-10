@@ -201,7 +201,21 @@ void MusicRuntime::update(RuntimeContext const& rc) {
     if (!mFlags.test(+ch)) {
         // only write to registers if the channel is locked
         // unlocked channels have sfx playing on them or are being used for something else
+        if constexpr (ch == ChType::ch1) {
+            // check if the sweep effect was used
+            if (mGlobal.sweep >= 0x80) {
+                rc.apu.writeRegister(IApuIo::REG_NR10, mGlobal.sweep & 0x7F);
+                state.retrigger = true;
+            }
+        }
         ChannelControl<ch>::update(rc.apu, rc.waveTable, mStates[+ch], state);
+        if constexpr (ch == ChType::ch1) {
+            if (mGlobal.sweep >= 0x80) {
+                // immediately clear the sweep register
+                rc.apu.writeRegister(IApuIo::REG_NR10, 0x00);
+                mGlobal.sweep = 0;
+            }
+        }
     }
     state.retrigger = false;
     // save the current state

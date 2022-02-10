@@ -57,6 +57,7 @@ private:
     std::optional<uint8_t> mDelayCounter;
     std::optional<uint8_t> mCutCounter;
 
+    bool mHasSweep;
     bool mPlaying;
 
     uint8_t mEnvelope;

@@ -16,6 +16,7 @@ TrackControl::TrackControl(ChType ch, FrequencyControl &fc) :
     mIr(),
     mDelayCounter(),
     mCutCounter(),
+    mHasSweep(ch == ChType::ch1),
     mPlaying(false),
     mEnvelope(ChannelState::defaultEnvelope(ch)),
     mPanning(ChannelState::defaultPanning(ch)),
@@ -75,6 +76,12 @@ void TrackControl::step(RuntimeContext const &rc, ChannelState &state, GlobalSta
 
             if (auto panning = mOp.panning(); panning.has_value()) {
                 state.panning = mPanning = *panning;
+            }
+
+            if (mHasSweep) {
+                if (auto sweep = mOp.sweep(); sweep.has_value()) {
+                    global.sweep = *sweep | 0x80;
+                }
             }
 
             if (auto note = mOp.note(); note.has_value()) {
