@@ -216,7 +216,7 @@ static constexpr FormatMajor FILE_REVISION_MAJOR = 1;
 // is implemented in the format. Changes such as adding/removing extended commands to the
 // payload or utilizing a reserved field in the header.
 //
-static constexpr FormatMinor FILE_REVISION_MINOR = 0;
+static constexpr FormatMinor FILE_REVISION_MINOR = 1;
 
 // most counter fields in the file format range from 1-256, but use a single byte for encoding
 // the counter is biased by subtracting 1 such that 1...256 is represented by 0...255
@@ -246,6 +246,9 @@ bool upgradeHeader(Header &header) noexcept;
 
 // Revision history
 //
+// Rev C (1.1)
+//  - add new effect, Jxy
+// 
 // Rev B (1.0)
 // Introduced in v0.5.0, adds multi-song support
 //  - file revision is now a major/minor set of numbers

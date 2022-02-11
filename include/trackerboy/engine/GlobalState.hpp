@@ -42,6 +42,7 @@ struct GlobalState {
         patternCommandParam(0),
         speed(0),
         sweep(0),
+        volume(0),
         halt(false)
     {
     }
@@ -52,6 +53,7 @@ struct GlobalState {
     uint8_t patternCommandParam;
     uint8_t speed; // change speed if nonzero
     uint8_t sweep; // change sweep if >= 0x80
+    uint8_t volume; // change global volume if >= 0x80
     bool halt;
 
 

@@ -82,9 +82,11 @@ enum class EffectType : uint8_t {
     vibratoDelay,                           //   5xx delay vibrato xx frames on note trigger
     tuning,                                 //   Pxx fine tuning
     noteSlideUp,                            // * Qxy note slide up
-    noteSlideDown                           // * Rxy note slide down
+    noteSlideDown,                          // * Rxy note slide down
 
     // add new effects here! this way older modules will still be compatible
+
+    setGlobalVolume                         //   Jxy sets global volume level
 
 };
 

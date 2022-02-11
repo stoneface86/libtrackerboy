@@ -160,6 +160,12 @@ bool MusicRuntime::step(RuntimeContext const& rc, Frame &frame) {
     }
     frame.speed = mTimer.period();
 
+    // Change the NR50 volume if the Jxy effect was used
+    if (mGlobal.volume >= 0x80) {
+        rc.apu.writeRegister(IApuIo::REG_NR50, mGlobal.volume & 0x77);
+        mGlobal.volume = 0;
+    }
+
     if (mTimer.step()) {
         // timer overflow, advance row counter
         if (++mRowCounter >= mSong.patterns().length()) {

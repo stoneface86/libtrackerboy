@@ -13,6 +13,7 @@ Operation::Operation() :
     mPatternCommand(PatternCommand::none),
     mPatternCommandParam(0),
     mSpeed(0),
+    mVolume(0),
     mHalt(false),
     mNote(),
     mInstrument(),
@@ -128,6 +129,9 @@ Operation::Operation(TrackRow const& row) :
                     mModulationType = FrequencyMod::noteSlideDown;
                     mModulationParam = param;
                     break;
+                case trackerboy::EffectType::setGlobalVolume:
+                    mVolume = 0x80 | (param & 0x77);
+                    break;
                 default:
                     // unknown effect, possibly defined in a newer version of trackerboy
                     break;
@@ -193,6 +197,10 @@ std::optional<uint8_t> Operation::panning() const noexcept {
 
 std::optional<uint8_t> Operation::sweep() const noexcept {
     return mSweep;
+}
+
+uint8_t Operation::volume() const noexcept {
+    return mVolume;
 }
 
 Operation::FrequencyMod Operation::modulationType() const noexcept {

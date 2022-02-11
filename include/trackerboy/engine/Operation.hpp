@@ -103,6 +103,8 @@ public:
     std::optional<uint8_t> panning() const noexcept;
 
     std::optional<uint8_t> sweep() const noexcept;
+    
+    uint8_t volume() const noexcept;
 
     FrequencyMod modulationType() const noexcept;
 
@@ -119,6 +121,7 @@ private:
     PatternCommand mPatternCommand;
     uint8_t mPatternCommandParam;
     uint8_t mSpeed;
+    uint8_t mVolume;
     bool mHalt;
 
     std::optional<uint8_t> mNote;

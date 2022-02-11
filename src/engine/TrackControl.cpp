@@ -56,6 +56,10 @@ void TrackControl::step(RuntimeContext const &rc, ChannelState &state, GlobalSta
                 global.halt = true;
             }
 
+            if (mOp.volume() >= 0x80) {
+                global.volume = mOp.volume();
+            }
+
             bool restartIr = false;
 
             if (auto instId = mOp.instrument(); instId.has_value()) {
