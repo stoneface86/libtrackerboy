@@ -4,6 +4,9 @@
 
 import std/[options, sequtils, tables]
 
+import common
+import version
+
 const
     speedFractionBits = 4
     unitSpeed = 1 shl speedFractionBits
@@ -18,6 +21,7 @@ type
     TrackSize* = PositiveByte
     TrackId* = uint8
     OrderId* = uint8
+    Framerate* = range[1..high(uint16).int]
 
     Speed* = range[unitSpeed.uint8..(high(uint8)+1-unitSpeed).uint8]
 
@@ -122,15 +126,8 @@ type
         trackSize: TrackSize
         tracks: array[ChannelId, tables.Table[ByteIndex, Track]]
 
-    InvalidOperationDefect* = object of Defect
-
     SongList* {.requiresInit.} = object
         data: seq[ref Song]
-
-    Version* = object
-        major*: Natural
-        minor*: Natural
-        patch*: Natural
 
     InfoString* = array[32, char]
 
@@ -138,15 +135,6 @@ type
         SystemDmg,
         SystemSgb,
         SystemCustom
-
-    Framerate = object
-        case system: System
-        of SystemDmg:
-            discard
-        of SystemSgb:
-            discard
-        of SystemCustom:
-            custom: int
 
     # Module
     Module* {.requiresInit.} = object
@@ -161,7 +149,8 @@ type
         title*, artist*, copyright*: InfoString
 
         comments*: string
-        framerate: Framerate
+        system*: System
+        customFramerate*: Framerate
 
     # PatternCursor
     # PatternCursor = object
@@ -499,6 +488,12 @@ proc initSongList*(): SongList =
     )
     result.data[0] = newSong()
 
+proc `[]`*(l: SongList, i: ByteIndex): ref Song =
+    l.data[i]
+
+proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
+    l.data[i] = s
+
 proc canAdd(l: SongList) =
     if l.data.len == 256:
         raise newException(InvalidOperationDefect, "SongList cannot have more than 256 songs")
@@ -526,7 +521,7 @@ proc moveUp*(l: var SongList, i: ByteIndex) =
 
 proc moveDown*(l: var SongList, i: ByteIndex) =
     if i == l.data.len - 1:
-        raise newException(IndexDefect, "cannot move bottomost item up")
+        raise newException(IndexDefect, "cannot move bottomost item down")
     swap(l.data[i], l.data[i + 1])
 
 proc len*(l: var SongList): Natural =
@@ -539,14 +534,15 @@ proc initModule*(): Module =
         songs: initSongList(),
         instruments: initTable[Instrument](),
         waveforms: initTable[Waveform](),
-        version: Version(major: 0, minor: 0, patch: 0),
-        revisionMajor: 0,
-        revisionMinor: 0,
+        version: appVersion,
+        revisionMajor: fileMajor,
+        revisionMinor: fileMinor,
         title: default(InfoString),
         artist: default(InfoString),
         copyright: default(InfoString),
         comments: "",
-        framerate: Framerate(system: SystemDmg)
+        system: SystemDmg,
+        customFramerate: 30
     )
 
 proc version*(m: Module): Version =
@@ -557,16 +553,3 @@ proc revisionMajor*(m: Module): int =
 
 proc revisionMinor*(m: Module): int = 
     m.revisionMinor
-
-proc system*(m: Module): System =
-    m.framerate.system
-
-proc framerate*(m: Module): float =
-    case m.framerate.system:
-    of SystemDmg:
-        result = 59.7f
-    of SystemSgb:
-        result = 61.1f
-    of SystemCustom:
-        result = m.framerate.custom.float
-

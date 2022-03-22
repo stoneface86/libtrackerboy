@@ -1,4 +1,18 @@
 
+# nim-rewrite branch
+
+This is the `nim-rewrite` branch. This branch contains a rewrite of the
+library in the Nim language.
+
+Why Nim?
+ - easy C/C++ interop
+ - fast, small executable size when compiling to C
+ - efficient programming language with amazing metaprogramming support
+ - (Opinion) C++ is annoying to work with compared to a modern language like Nim.
+
+Most of Trackerboy will eventually be rewritten in Nim. Except for the frontend,
+which will remain in C++ as there are no Nim bindings for Qt.
+
 # libtrackerboy
 
 Support library for [Trackerboy](https://github.com/stoneface86/trackerboy).

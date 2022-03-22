@@ -16,3 +16,6 @@ requires "nim >= 1.6.0"
 
 task test, "Runs the unit tester":
     exec("nim c -r --outdir:" & binDir & " tests/tester.nim")
+
+task doc, "Builds the documentation":
+    exec("nim doc --project --index:on --outdir:docs src/trackerboy.nim")
