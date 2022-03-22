@@ -3,53 +3,26 @@ name: build
 on:
   push:
     branches:
-      - main
-      - develop
+      - nim-rewrite
     tags-ignore: '**'
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-    env:
-      CATCH2_TAG: v2.13.7
-      # installation prefix for dependencies (just Catch2)
-      DEPS_INSTALL: '${{ github.workspace }}/deps'
+        nim-version: ['stable', 'devel']
     steps:
 
       - uses: actions/checkout@v2
 
-      - uses: lukka/get-cmake@latest
-
-      - uses: ilammy/msvc-dev-cmd@v1
-      
-      - name: Cache dependencies
-        id: dep-cache
-        uses: actions/cache@v2
+      - uses: jiro4989/setup-nim-action@v1
         with:
-          path: ${{ env.DEPS_INSTALL }}
-          key: ${{ runner.os }}-${{ env.CATCH2_TAG }}
-
-      - name: Dependencies
-        if: ${{ !steps.dep-cache.outputs.cache-hit }}
-        run: |
-          cd ../
-          git clone https://github.com/catchorg/Catch2
-          cd Catch2
-          git checkout tags/${{ env.CATCH2_TAG }}
-          mkdir build
-          cmake -S . -B build -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX='${{ env.DEPS_INSTALL }}'
-          cmake --build build --target install
+          nim-version: ${{ matrix.nim-version }}
       
       - name: Build
-        run: |
-          cmake -S . -B build -GNinja -DCMAKE_BUILD_TYPE=Debug -DLIBTRACKERBOY_ENABLE_UNITY=ON -DCMAKE_PREFIX_PATH='${{ env.DEPS_INSTALL }}'
-          cmake --build build --target all
+        run: nimble build
 
       - name: Test
-        run: |
-          cd build
-          ctest
+        run: nimble test
