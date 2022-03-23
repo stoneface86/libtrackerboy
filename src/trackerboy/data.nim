@@ -4,6 +4,8 @@
 
 import std/[options, sequtils, tables]
 
+export options
+
 import common
 import version
 
@@ -13,49 +15,82 @@ const
 
 type
     TableId* = range[0u8..63u8]
+        ## Integer ID type for items in an InstrumentTable or WaveformTable.
+    
     ChannelId* = range[0u8..3u8]
-    SequenceSize* = range[0..high(uint8).int+1]
+        ## Integer ID type for a channel. A ChannelId of 0 is CH1, 1 is CH2,
+        ## 2 is CH3 and 3 is CH4.
+    
+    SequenceSize* = range[0..high(uint8).int]
+        ## Size range a sequence's data can be.
+    
     ByteIndex* = range[0..high(uint8).int]
+        ## Index type using the range of a uint8 (0-255)
+    
     PositiveByte = range[1..high(uint8).int+1]
+        ## Positive type using the range of a uint8 (1-256)
+    
     OrderSize* = PositiveByte
+        ## Size range of a song order.
+    
     TrackSize* = PositiveByte
+        ## Size range of a Track
+    
     TrackId* = uint8
+        ## Integer ID type for a Track in a Song.
+    
     OrderId* = uint8
+        ## Integer ID type for an OrderRow in an Order.
+    
     Framerate* = range[1..high(uint16).int]
+        ## Range of a Module's custom framerate setting.
 
     Speed* = range[unitSpeed.uint8..(high(uint8)+1-unitSpeed).uint8]
+        ## Range of a Song's speed setting.
 
     EffectIndex* = range[0..2]
+        ## Index type for an Effect in a TrackRow.
+    
     EffectColumns* = range[1..3]
+    
     EffectCounts* = array[4, EffectColumns]
+        ## Number of effects to display for each channel.
 
     WaveData* = array[16, uint8]
+        ## Waveform data. A waveform consists of 16 bytes, with each byte
+        ## containing 2 4-bit PCM samples. The first sample is the upper nibble
+        ## of the byte, with the second being the lower nibble.
 
     ItemData = object
         id: TableId
         name: string
 
-    SequenceKind* {.pure.} = enum
-        ## sequence kinds
-        arp,
-        panning,
-        pitch,
-        timbre
+    SequenceKind* = enum
+        ## Enumeration for the kinds of parameters a sequence can operate on.
+        ## An `Instrument` has a `Sequence` for each one of these kinds.
+        skArp,
+        skPanning,
+        skPitch,
+        skTimbre
 
     Sequence* = object
-        ## A sequence is a sequence of parameter changes with looping capability
-        loopIndex: Option[uint8]
+        ## A sequence is a sequence of parameter changes with looping capability.
+        loopIndex*: Option[ByteIndex]
+            ## If set, the sequence will loop to this index at the end. If unset
+            ## or the index exceeds the bounds of the sequence data, the sequence
+            ## will stop at the end instead.
         data: seq[uint8]
 
-    Instrument* = object
+    Instrument* {.requiresInit.} = object
         item: ItemData
-        initEnvelope: bool
-        envelope: uint8
-        sequences: array[SequenceKind, Sequence]
+        initEnvelope*: bool
+        envelope*: uint8
+        sequences*: array[SequenceKind, Sequence]
 
-    Waveform* = object
+    Waveform* {.requiresInit.} = object
+        ## Container for a waveform to use on CH3.
         item: ItemData
-        data: WaveData
+        data*: WaveData
 
     SomeData* = Instrument|Waveform
 
@@ -65,58 +100,72 @@ type
         data: array[TableId, ref T]
 
     InstrumentTable* = Table[Instrument]
+        ## Container for Instruments. Up to 64 Instruments can be stored in this
+        ## table and is addressable via a TableId.
     WaveformTable* = Table[Waveform]
+        ## Container for Waveforms. Up to 64 Waveforms can be stored in this
+        ## table and is addressable via a TableId.
 
     # song order
 
-    OrderRow* = array[ChannelId, uint8]
+    OrderRow* = array[ChannelId, TrackId]
+        ## An OrderRow is a set of TrackIds, one for each channel.
     Order* {.requiresInit.} = object
+        ## An Order is a sequence of OrderRows, that determine the layout of
+        ## a Song. Each Order must have at least 1 OrderRow and no more than
+        ## 256 rows.
         data: seq[OrderRow]
 
     # patterns
 
-    EffectType* {.pure.} = enum
-        noEffect = 0,
-        # pattern effect
-        patternGoto,                            #   Bxx begin playing given pattern immediately
-        patternHalt,                            #   C00 stop playing
-        patternSkip,                            #   D00 begin playing next pattern immediately
-        setTempo,                               #   Fxx set the tempo
-        sfx,                                    # * Txx play sound effect
-        # track effect
-        setEnvelope,                            #   Exx set the persistent envelope/wave id setting
-        setTimbre,                              #   Vxx set persistent duty/wave volume setting
-        setPanning,                             #   Ixy set channel panning setting
-        setSweep,                               #   Hxx set the persistent sweep setting (CH1 only)
-        delayedCut,                             #   Sxx note cut delayed by xx frames
-        delayedNote,                            #   Gxx note trigger delayed by xx frames
-        lock,                                   #   L00 (lock) stop the sound effect on the current channel
-        # frequency effect
-        arpeggio,                               # * 0xy arpeggio with semi tones x and y
-        pitchUp,                                # * 1xx pitch slide up
-        pitchDown,                              # * 2xx pitch slide down
-        autoPortamento,                         # * 3xx automatic portamento
-        vibrato,                                # * 4xy vibrato
-        vibratoDelay,                           #   5xx delay vibrato xx frames on note trigger
-        tuning,                                 #   Pxx fine tuning
-        noteSlideUp,                            # * Qxy note slide up
-        noteSlideDown                           # * Rxy note slide down
+    EffectType* = enum
+        ## Enumeration for all available effects.
+        ## 
+        etNoEffect = 0,         ## No effect, this effect column is unset.
+        etPatternGoto,          ## `Bxx` begin playing given pattern immediately
+        etPatternHalt,          ## `C00` stop playing
+        etPatternSkip,          ## `D00` begin playing next pattern immediately
+        etSetTempo,             ## `Fxx` set the tempo
+        etSfx,                  ## `Txx` play sound effect
+        etSetEnvelope,          ## `Exx` set the persistent envelope/wave id setting
+        etSetTimbre,            ## `Vxx` set persistent duty/wave volume setting
+        etSetPanning,           ## `Ixy` set channel panning setting
+        etSetSweep,             ## `Hxx` set the persistent sweep setting (CH1 only)
+        etDelayedCut,           ## `Sxx` note cut delayed by xx frames
+        etDelayedNote,          ## `Gxx` note trigger delayed by xx frames
+        etLock,                 ## `L00` (lock) stop the sound effect on the current channel
+        etArpeggio,             ## `0xy` arpeggio with semi tones x and y
+        etPitchUp,              ## `1xx` pitch slide up
+        etPitchDown,            ## `2xx` pitch slide down
+        etAutoPortamento,       ## `3xx` automatic portamento
+        etVibrato,              ## `4xy` vibrato
+        etVibratoDelay,         ## `5xx` delay vibrato xx frames on note trigger
+        etTuning,               ## `Pxx` fine tuning
+        etNoteSlideUp,          ## `Qxy` note slide up
+        etNoteSlideDown,        ## `Rxy` note slide down
+        etSetGlobalVolume       ## `Jxy` set global volume scale
 
     Effect* {.packed.} = object
+        ## Effect column. An effect has a type and a parameter.
         effectType*: uint8
         param*: uint8
 
     TrackRow* {.packed.} = object
+        ## A single row of data in a Track. Guaranteed to be 8 bytes.
         note*: uint8
         instrument*: uint8
         effects*: array[EffectIndex, Effect]
 
     Track* = object
+        ## Pattern data for a single channel, stored in a `seq[TrackRow]`. A
+        ## Track can have 1-256 rows.
         data: seq[TrackRow]
 
     # Song
 
     Song* {.requiresInit.} = object
+        ## Song type. Contains track data for a single song.
+        ##
         name*: string
         rowsPerBeat*: PositiveByte
         rowsPerMeasure*: PositiveByte
@@ -127,17 +176,27 @@ type
         tracks: array[ChannelId, tables.Table[ByteIndex, Track]]
 
     SongList* {.requiresInit.} = object
+        ## Container for songs. Songs stored in this container are references,
+        ## like InstrumentTable and WaveformTable. A SongList can contain 1-256
+        ## songs.
         data: seq[ref Song]
 
     InfoString* = array[32, char]
+        ## Fixed-length string of 32 characters, used for artist information.
 
     System* = enum
-        SystemDmg,
-        SystemSgb,
-        SystemCustom
+        ## Enumeration for types of systems the module is for. The system
+        ## determines the vblank interval, or tick rate, of the engine.
+        SystemDmg,      ## DMG/CGB system, 59.7 Hz
+        SystemSgb,      ## SGB system, 61.1 Hz
+        SystemCustom    ## Custom tick rate
 
     # Module
     Module* {.requiresInit.} = object
+        ## A module is a container for songs, instruments and waveforms.
+        ## Each module can store up to 256 songs, 64 instruments and 64
+        ## waveforms. Instruments and Waveforms are shared between all songs.
+        ##
         songs*: SongList
         instruments*: InstrumentTable
         waveforms*: WaveformTable
@@ -166,7 +225,7 @@ const
 
 # ItemData
 
-proc initItemData(): ItemData =
+func initItemData(): ItemData =
     result = ItemData(
         id: 0,
         name: ""
@@ -184,59 +243,56 @@ proc `name=`*[T: SomeData](self: var T, value: string) {.inline.} =
 proc name*[T: SomeData](self: T): lent string {.inline.} =
     self.item.name
 
+# Sequence
+
+proc `[]`*(s: Sequence, i: ByteIndex): uint8 =
+    s.data[i]
+
+proc `[]=`*(s: var Sequence, i: ByteIndex, val: uint8) =
+    s.data[i] = val
+
+proc setLen*(s: var Sequence, len: SequenceSize) =
+    s.data.setLen(len)
+
+proc data*(s: Sequence): lent seq[uint8] =
+    s.data
+
+proc `data=`*(s: var Sequence, data: sink seq[uint8]) =
+    if data.len > 256:
+        raise newException(InvalidOperationDefect, "cannot set data: sequence is too big")
+    s.data = data
+
 # Instrument
 
-proc initInstrument*(): Instrument =
-    result = Instrument(
+template tInitInstrument[T: Instrument|ref Instrument](): untyped =
+    T(
         item: initItemData(),
         initEnvelope: false,
         envelope: 0xF0,
+        sequences: default(T.sequences.type)
     )
 
+proc initInstrument*(): Instrument =
+    result = tInitInstrument[Instrument]()
+
 proc newInstrument*(): ref Instrument =
-    result = new(Instrument)
-    result[] = initInstrument()
-
-proc `initEnvelope=`*(i: var Instrument, val: bool) =
-    i.initEnvelope = val
-
-proc initEnvelope*(i: Instrument): bool =
-    i.initEnvelope
-
-proc `envelope=`*(i: var Instrument, envelope: uint8) =
-    i.envelope = envelope
-
-proc `envelope`*(i: Instrument): uint8 =
-    i.envelope
-
-proc `[]`*(i: var Instrument, kind: SequenceKind): var Sequence =
-    i.sequences[kind]
-
-proc `[]`*(i: Instrument, kind: SequenceKind): lent Sequence =
-    i.sequences[kind]
-
+    result = tInitInstrument[ref Instrument]()
 
 # Waveform
 
-proc initWaveform*(): Waveform =
-    result = Waveform(
-        item: initItemData()
+template tInitWaveform[T: Waveform|ref Waveform](): untyped =
+    T(
+        item: initItemData(),
+        data: default(T.data.type)
     )
 
+proc initWaveform*(): Waveform =
+    result = tInitWaveform[Waveform]()
+
 proc newWaveform*(): ref Waveform =
-    result = new(Waveform)
-    result[] = initWaveform()
+    result = tInitWaveform[ref Waveform]()
 
-proc `[]=`* (w: var Waveform, i: int, val: uint8) {.inline.} =
-    w.data[i] = val
-
-proc `[]`* (w: Waveform, i: int): uint8 {.inline.} =
-    w.data[i]
-
-proc `data=`* (self: var Waveform, value: WaveData) {.inline.} =
-    self.data = value
-
-proc `data=`*(w: var Waveform, str: sink string) =
+proc fromString*(w: var WaveData, str: sink string) =
     proc toHex(ch: char): uint8 =
         if ch >= 'A':
             result = (ord(ch) - ord('A')).uint8
@@ -245,41 +301,12 @@ proc `data=`*(w: var Waveform, str: sink string) =
 
     assert str.len == 32
     var index = 0
-    for sample in w.data.mitems:
+    for sample in w.mitems:
         var result = toHex(str[index]) shl 4
         inc index
         result = result or toHex(str[index])
         inc index
         sample = result
-
-proc data* (self: Waveform): WaveData {.inline.} =
-    self.data
-
-# Sequence
-
-proc `[]`*(s: Sequence, index: ByteIndex): uint8 =
-    s.data[index]
-
-proc `[]=`*(s: var Sequence, index: ByteIndex, val: uint8) =
-    s.data[index] = val
-
-proc `loopIndex=`* (self: var Sequence, value: Option[uint8]) {.inline.} =
-    self.loopIndex = value
-
-proc loopIndex* (self: Sequence): Option[uint8] {.inline.} =
-    self.loopIndex
-
-proc `data`*(s: Sequence): lent seq[uint8] =
-    s.data
-
-proc `data`*(s: var Sequence): var seq[uint8] =
-    s.data
-
-proc `data=`*(s: var Sequence, val: seq[uint8]) =
-    s.data = val
-
-proc setLen*(s: var Sequence, len: SequenceSize) =
-    s.data.setLen(len)
 
 # Table
 
@@ -423,6 +450,21 @@ proc `[]`*(t: var Track, i: ByteIndex): var TrackRow =
 proc `[]`*(t: Track, i: ByteIndex): TrackRow =
     t.data[i]
 
+proc setNote*(t: var Track, i: ByteIndex, note: uint8) =
+    t.data[i].note = note + 1
+
+proc setInstrument*(t: var Track, i: ByteIndex, instrument: TableId) =
+    t.data[i].instrument = instrument + 1
+
+proc setEffect*(t: var Track, i: ByteIndex, effectNo: EffectColumns, et: EffectType, param = 0u8) =
+    t.data[i].effects[effectNo] = Effect(effectType: et.uint8, param: param)
+
+proc setEffectType*(t: var Track, i: ByteIndex, effectNo: EffectColumns, et: EffectType) =
+    t.data[i].effects[effectNo].effectType = et.uint8
+
+proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectColumns, param: uint8) =
+    t.data[i].effects[effectNo].param = param
+
 proc data*(t: Track): lent seq[TrackRow] =
     t.data
 
@@ -469,10 +511,10 @@ proc speedToFloat*(speed: Speed): float =
 proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): float =
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
-proc effectTypeShortensPattern*(et: EffectType): bool =
-    result = et == EffectType.patternHalt or
-             et == EffectType.patternSkip or
-             et == EffectType.patternGoto
+func effectTypeShortensPattern*(et: EffectType): bool =
+    result = et == etPatternHalt or
+             et == etPatternSkip or
+             et == etPatternGoto
 
 proc estimateSpeed*(tempo, framerate: float): Speed =
     16
@@ -502,12 +544,27 @@ proc add*(l: var SongList) =
     l.canAdd()
     l.data.add(newSong())
 
+proc add*(l: var SongList, song: ref Song) =
+    l.canAdd()
+    l.data.add(song)
+
 proc duplicate*(l: var SongList, i: ByteIndex) =
     l.canAdd()
-    var dupe: ref Song
-    new(dupe)
-    dupe[] = l.data[i][]
-    l.data.add(dupe)
+    let src = l.data[i]
+    # gross, but there's no other way to do this :(
+    # dest[] = src[] won't work cause we have to init dest first (Song has .requiresInit. pragma)
+    # we could init dest first via newSong(), but that's inefficient
+    l.data.add((ref Song)(
+        name: src.name,
+        rowsPerBeat: src.rowsPerBeat,
+        rowsPerMeasure: src.rowsPerMeasure,
+        speed: src.speed,
+        effectCounts: src.effectCounts,
+        order: src.order,
+        trackSize: src.trackSize,
+        tracks: src.tracks
+    ))
+
 
 proc remove*(l: var SongList, i: ByteIndex) =
     if l.data.len == 1:
@@ -553,3 +610,12 @@ proc revisionMajor*(m: Module): int =
 
 proc revisionMinor*(m: Module): int = 
     m.revisionMinor
+
+proc framerate*(m: Module): float =
+    case m.system:
+    of SystemDmg:
+        result = 59.7f
+    of SystemSgb:
+        result = 61.1f
+    of SystemCustom:
+        result = m.customFramerate.float

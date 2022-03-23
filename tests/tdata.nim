@@ -3,6 +3,7 @@
 import std/[unittest, sequtils]
 
 import trackerboy/data
+import trackerboy/common
 
 const
     testName = "test name"
@@ -39,11 +40,11 @@ test "Table[T] duplicates item":
         src[].name = testName
 
         when T is Instrument:
-            src[].envelope = 0x03
-            src[].initEnvelope = true
-            src[][SequenceKind.panning].data = @[1u8, 1u8, 2u8, 2u8, 3u8]
+            src.envelope = 0x03
+            src.initEnvelope = true
+            src.sequences[skPanning].data = @[1u8, 1u8, 2u8, 2u8, 3u8]
         else:
-            src[].data = "0123456789ABCDEFFEDCBA9876543210"
+            src.data.fromString("0123456789ABCDEFFEDCBA9876543210")
 
         let dupId = table.duplicate(srcId)
         var duped = table[dupId]
@@ -123,3 +124,63 @@ suite "Order":
             order.size == 2
             order[0] == testrow1
             order[1] == testrow2
+
+suite "SongList":
+
+    setup:
+        var songlist = initSongList()
+    
+    test "1 song on init":
+        check songlist.len == 1
+        check songlist[0] != nil
+
+    test "get/set":
+        var song = newSong()
+        check songlist[0] != nil
+        songlist[0] = song
+        check songlist[0] == song
+    
+    test "add":
+        songlist.add()
+        check songlist.len == 2
+        songlist.add()
+        check songlist.len == 3
+        songlist.add()
+        check songlist.len == 4
+
+    test "duplicate":
+        songlist[0].rowsPerBeat = 8
+        songlist.duplicate(0)
+        check songlist.len == 2
+        check songlist[0][] == songlist[1][]
+    
+    test "remove":
+        songlist.add()
+        songlist.add()
+        songlist.remove(0)
+        check songlist.len == 2
+        songlist.remove(1)
+        check songlist.len == 1
+
+    test "removing when len=1 raises InvalidOperationDefect":
+        expect InvalidOperationDefect:
+            songlist.remove(0)
+    
+    test "adding/duplicating when len=256 raises InvalidOperationDefect":
+        for i in 0..254:
+            songlist.add()
+        expect InvalidOperationDefect:
+            songlist.add()
+        expect InvalidOperationDefect:
+            songlist.duplicate(2)
+
+static: assert sizeof(TrackRow) == 8
+
+test "TrackRow is empty on default init":
+    let row = default(TrackRow)
+    check row.queryNote().isNone()
+    check row.queryInstrument().isNone()
+
+    for effect in row.effects:
+        check effect.effectType == etNoEffect.uint8
+        check effect.param == 0u8
