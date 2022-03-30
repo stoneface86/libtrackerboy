@@ -4,9 +4,9 @@ import std/unittest
 import trackerboy/version
 
 test "version to string":
-    check &v() == "0.0.0"
-    check &v(1, 0, 0) == "1.0.0"
-    check &v(0, 5, 23) == "0.5.23"
+    check $v() == "0.0.0"
+    check $v(1, 0, 0) == "1.0.0"
+    check $v(0, 5, 23) == "0.5.23"
 
 test "version comparing":
     check v() == v()

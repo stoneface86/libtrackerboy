@@ -2,7 +2,7 @@
 ## This module contains data types used in the library.
 ##
 
-import std/[options, sequtils, tables]
+import std/[math, options, sequtils, tables]
 
 export options
 
@@ -17,7 +17,7 @@ type
     TableId* = range[0u8..63u8]
         ## Integer ID type for items in an InstrumentTable or WaveformTable.
     
-    ChannelId* = range[0u8..3u8]
+    ChannelId* = range[0..3]
         ## Integer ID type for a channel. A ChannelId of 0 is CH1, 1 is CH2,
         ## 2 is CH3 and 3 is CH4.
     
@@ -156,10 +156,19 @@ type
         instrument*: uint8
         effects*: array[EffectIndex, Effect]
 
-    Track* = object
+    Track* {.requiresInit.} = object
         ## Pattern data for a single channel, stored in a `seq[TrackRow]`. A
         ## Track can have 1-256 rows.
         data: seq[TrackRow]
+
+    SomeTrackRef = ref Track | CRef[Track]
+
+    GenericPattern[T: SomeTrackRef] {.requiresInit.} = object
+        tracks*: array[ChannelId, T]
+
+    Pattern* = GenericPattern[ref Track]
+    # Pattern with immutable access
+    CPattern* = GenericPattern[CRef[Track]]
 
     # Song
 
@@ -173,7 +182,9 @@ type
         effectCounts*: array[4, EffectColumns]
         order*: Order
         trackSize: TrackSize
-        tracks: array[ChannelId, tables.Table[ByteIndex, Track]]
+        # ref Track is used since Table doesn't provide a view return for
+        # accessing, resulting in a wasteful copy
+        tracks: array[ChannelId, tables.Table[ByteIndex, ref Track]]
 
     SongList* {.requiresInit.} = object
         ## Container for songs. Songs stored in this container are references,
@@ -211,17 +222,57 @@ type
         system*: System
         customFramerate*: Framerate
 
-    # PatternCursor
-    # PatternCursor = object
-    #     row*: ByteIndex
-    #     track: ChannelId
-    #     column
+    
 
 const
     defaultRpb* = 4
     defaultRpm* = 16
     defaultSpeed*: Speed = 0x60
     defaultTrackSize*: TrackSize = 64
+
+func effectTypeShortensPattern*(et: EffectType): bool =
+    result = et == etPatternHalt or
+             et == etPatternSkip or
+             et == etPatternGoto
+
+func note*(str: string): uint8 {.compileTime.} =
+    ## Compile time function for converting a string literal to a note index
+    ## Notes must range from C-2 to B-8, sharp and flat accidentals can be used.
+    ## ie `note("c-2") => 0`, `"D#3.note => 15`
+    # C C# D D# E F F# G G# A A# B
+    # C Db D Eb E F Gb G Ab A Bb B
+    # 0 1  2 3  4 5 6  7 8  9 10 11
+    doAssert str.len == 3
+    case str[0]:
+    of 'C', 'c':
+        result = 0
+    of 'D', 'd':
+        result = 2
+    of 'E', 'e':
+        result = 4
+    of 'F', 'f':
+        result = 5
+    of 'G', 'g':
+        result = 7
+    of 'A', 'a':
+        result = 9
+    of 'B', 'b':
+        result = 11
+    else:
+        doAssert false, "invalid note"
+    if str[1] == '#':
+        inc result
+    elif str[1] == 'b':
+        dec result
+    else:
+        doAssert str[1] == '-', "invalid note"
+    let octave = (str[2].ord - '2'.ord)
+    doAssert octave >= 0 and octave <= 6, "invalid octave"
+    result += (octave * 12).uint8
+
+
+static:
+    assert note("c-2") == 0
 
 # ItemData
 
@@ -326,8 +377,11 @@ proc updateNextId[T: SomeData](t: var Table[T]) =
 proc capacity*[T: SomeData](t: Table[T]): static[int] =
     high(TableId).int + 1
 
-proc `[]`*[T: SomeData](t: Table[T], id: TableId): ref T =
+proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
     t.data[id]
+
+proc `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
+    toCRef(t.data[id])
 
 proc insert[T: SomeData](t: var Table[T], id: TableId) =
     t.data[id] = when T is Instrument:
@@ -439,10 +493,30 @@ proc queryInstrument*(row: TrackRow): Option[uint8] =
 
 # Track
 
+template tInitTrack[T](size: TrackSize): untyped =
+    T(data: newSeq[TrackRow](size))
+
 proc initTrack*(size: TrackSize): Track =
-    result = Track(
-        data: newSeq[TrackRow](size)
-    )
+    result = tInitTrack[Track](size)
+
+proc newTrack*(size: TrackSize): ref Track =
+    result = tInitTrack[ref Track](size)
+
+iterator items*(t: Track): lent TrackRow =
+    for row in t.data:
+        yield row
+
+iterator items*(t: Track, slice: Slice[ByteIndex]): lent TrackRow =
+    for row in slice:
+        yield t.data[row]
+
+iterator mitems*(t: var Track): var TrackRow =
+    for row in t.data.mitems:
+        yield row
+
+iterator mitems*(t: var Track, slice: Slice[ByteIndex]): var TrackRow =
+    for row in slice:
+        yield t.data[row]
 
 proc `[]`*(t: var Track, i: ByteIndex): var TrackRow =
     t.data[i]
@@ -456,13 +530,13 @@ proc setNote*(t: var Track, i: ByteIndex, note: uint8) =
 proc setInstrument*(t: var Track, i: ByteIndex, instrument: TableId) =
     t.data[i].instrument = instrument + 1
 
-proc setEffect*(t: var Track, i: ByteIndex, effectNo: EffectColumns, et: EffectType, param = 0u8) =
+proc setEffect*(t: var Track, i: ByteIndex, effectNo: EffectIndex, et: EffectType, param = 0u8) =
     t.data[i].effects[effectNo] = Effect(effectType: et.uint8, param: param)
 
-proc setEffectType*(t: var Track, i: ByteIndex, effectNo: EffectColumns, et: EffectType) =
+proc setEffectType*(t: var Track, i: ByteIndex, effectNo: EffectIndex, et: EffectType) =
     t.data[i].effects[effectNo].effectType = et.uint8
 
-proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectColumns, param: uint8) =
+proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectIndex, param: uint8) =
     t.data[i].effects[effectNo].param = param
 
 proc data*(t: Track): lent seq[TrackRow] =
@@ -473,6 +547,32 @@ proc len*(t: Track): int =
 
 proc resize*(t: var Track, size: TrackSize) =
     t.data.setLen(size)
+
+# Pattern
+
+func toCPattern*(p: sink Pattern): CPattern =
+    result = CPattern(
+        tracks: [p.tracks[0].toCRef, p.tracks[1].toCRef, p.tracks[2].toCRef, p.tracks[3].toCRef]
+    )
+
+func clone*(p: CPattern): Pattern =
+    template cloneTrack(t: Track): ref Track =
+        (ref Track)(data: t.data)
+    result = Pattern(tracks: [
+        cloneTrack(p.tracks[0][]),
+        cloneTrack(p.tracks[1][]),
+        cloneTrack(p.tracks[2][]),
+        cloneTrack(p.tracks[3][])
+    ])
+
+func rowsWhenRun*(p: CPattern): Natural =
+    for i in 0..p.tracks[0][].len-1:
+        inc result
+        for track in p.tracks:
+            let row = track[][i]
+            for effect in row.effects:
+                if effectTypeShortensPattern(effect.effectType.EffectType):
+                    return
 
 # Song
 
@@ -494,30 +594,61 @@ proc initSong*(): Song =
 proc newSong*(): ref Song =
     result = tInitSong[ref Song]()
 
-proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
-    if not s.tracks[ch].contains(order):
-        s.tracks[ch][order] = initTrack(s.trackSize)
-    result = s.tracks[ch][order][row]
-
-proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
-    if s.tracks[ch].contains(order):
-        result = s.tracks[ch][order][row]
-    else:
-        result = TrackRow()
-
 proc speedToFloat*(speed: Speed): float =
     speed.float * (1.0 / (1 shl speedFractionBits))
 
 proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): float =
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
-func effectTypeShortensPattern*(et: EffectType): bool =
-    result = et == etPatternHalt or
-             et == etPatternSkip or
-             et == etPatternGoto
+proc getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): ref Track =
+    result = s.tracks[ch].getOrDefault(order)
+    if result == nil:
+        result = newTrack(s.trackSize)
+        s.tracks[ch][order] = result
 
-proc estimateSpeed*(tempo, framerate: float): Speed =
-    16
+proc getTrack*(s: Song, ch: ChannelId, order: ByteIndex): CRef[Track] =
+    result = s.tracks[ch].getOrDefault(order).toCRef
+
+proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
+    result = s.getTrack(ch, order)[][row]
+
+proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
+    if s.tracks[ch].contains(order):
+        result = s.tracks[ch][order][][row]
+    else:
+        result = TrackRow()
+
+proc getPattern*(s: var Song, order: ByteIndex): Pattern =
+    result = Pattern(tracks: [
+        s.getTrack(0, order),
+        s.getTrack(1, order),
+        s.getTrack(2, order),
+        s.getTrack(3, order)
+        ]
+    )
+
+proc getPattern*(s: Song, order: ByteIndex): CPattern =
+    result = CPattern(tracks: [
+        s.getTrack(0, order),
+        s.getTrack(1, order),
+        s.getTrack(2, order),
+        s.getTrack(3, order)
+        ]
+    )
+
+proc trackSize*(s: Song): TrackSize {.inline.} =
+    s.trackSize
+
+proc setTrackSize*(s: var Song, size: TrackSize) =
+    for table in s.tracks.mitems:
+        for track in table.mvalues:
+            track[].resize(size)
+    s.trackSize = size
+
+proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
+    let speedFloat = speedToTempo(tempo, s.rowsPerBeat, framerate)
+    let speed = round(speedFloat * (1 shl speedFractionBits).float).uint8
+    result = clamp(speed, low(Speed), high(Speed))
 
 proc tempo*(s: Song, framerate: float): float =
     result = speedToTempo(speedToFloat(s.speed), s.rowsPerBeat, framerate)
@@ -530,8 +661,11 @@ proc initSongList*(): SongList =
     )
     result.data[0] = newSong()
 
-proc `[]`*(l: SongList, i: ByteIndex): ref Song =
+proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
     l.data[i]
+
+func `[]`*(l: SongList, i: ByteIndex): CRef[Song] =
+    toCRef(l.data[i])
 
 proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
     l.data[i] = s

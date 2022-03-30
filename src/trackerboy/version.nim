@@ -30,7 +30,7 @@ const
     fileMinor* = 1
         ## The current minor revision of the file format
 
-proc `&`*(v: Version): string =
+proc `$`*(v: Version): string =
     ## Convert a `Version` to a `string`. The string has the
     ## format `"major.minor.patch"`.
     "$1.$2.$3".format(v.major, v.minor, v.patch)
