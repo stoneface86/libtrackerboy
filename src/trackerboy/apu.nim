@@ -1,0 +1,810 @@
+
+import synth
+import private/hardware
+
+import std/[bitops, algorithm]
+
+const
+    dcOffset: float32 = 7.5f
+
+type
+    Channel = object
+        output: uint8
+        dacEnable: bool
+        enabled: bool
+
+    Timer = object
+        counter: uint32
+        period: uint32
+
+    LengthCounter = object
+        enabled: bool
+        counter: int
+        counterMax: int
+
+    Sweep = object
+        subtraction: bool
+        time: int
+        shift: int
+        counter: int
+        register: uint8
+        shadow: uint16
+
+    Envelope = object
+        register: uint8
+        counter: uint8
+        period: uint8
+        amplify: bool
+        volume: uint8
+
+    NoiseChannel = object
+        channel: Channel
+        timer: Timer
+        envelope: Envelope
+        lc: LengthCounter
+        register: uint8
+        validScf: bool
+        halfWidth: bool
+        lfsr: uint16
+    
+    Duty = enum
+        Duty125,
+        Duty25,
+        Duty50,
+        Duty75
+
+    PulseChannel = object
+        channel: Channel
+        timer: Timer
+        envelope: Envelope
+        lc: LengthCounter
+        frequency: uint16
+        duty: Duty
+        dutyWaveform: uint8
+        dutyCounter: uint8
+
+    WaveVolume = enum
+        WaveMute,
+        WaveFull,
+        WaveHalf,
+        WaveQuarter
+
+    WaveChannel = object
+        channel: Channel
+        timer: Timer
+        lc: LengthCounter
+        frequency: uint16
+        waveram: array[16, uint8]
+        waveIndex: uint8
+        sampleBuffer: uint8
+        volumeShift: int
+        volume: WaveVolume
+
+    Sequencer = object
+        timer: Timer
+        triggerIndex: int
+
+    Apu* = object
+        ch1, ch2: PulseChannel
+        ch3: WaveChannel
+        ch4: NoiseChannel
+        sweep: Sweep
+        sequencer: Sequencer
+        synth: Synth
+        mix: array[4, MixMode]
+        lastOutputs: array[4, uint8]
+        time: uint32
+        leftVolume, rightVolume: int
+        nr51: uint8
+        enabled: bool
+        volumeStep: float32
+
+# Timer =======================================================================
+
+proc initTimer(initPeriod: uint32): Timer =
+    Timer(
+        counter: initPeriod,
+        period: initPeriod
+    )
+
+proc run(t: var Timer, cycles: uint32): bool =
+    # if this assertion fails, we have missed a clock!
+    assert t.counter >= cycles
+    t.counter -= cycles
+    result = t.counter == 0
+    if result:
+        # reload counter with period
+        t.counter = t.period
+
+proc fastforward(t: var Timer, cycles: uint32): uint32 =
+    if cycles < t.counter:
+        t.counter -= cycles
+        0u32
+    else:
+        let c = cycles - t.counter
+        let clocks = (c div t.period) + 1
+        t.counter = t.period - (c mod t.period)
+        clocks
+
+proc restart(t: var Timer) =
+    t.counter = t.period
+
+# Channel =====================================================================
+
+proc initChannel(): Channel =
+    Channel(
+        output: 0,
+        dacEnable: false,
+        enabled: false
+    )
+
+proc disable(ch: var Channel) =
+    ch.enabled = false
+
+proc setDacEnable(ch: var Channel, enable: bool) =
+    ch.dacEnable = enable
+    if not enable:
+        ch.disable()
+
+proc restart(ch: var Channel) =
+    ch.enabled = ch.dacEnable
+
+
+
+# Envelope ====================================================================
+
+proc initEnvelope(): Envelope =
+    Envelope(
+        register: 0,
+        counter: 0,
+        period: 0,
+        amplify: false,
+        volume: 0
+    )
+
+proc writeRegister(e: var Envelope, ch: var Channel, val: uint8) =
+    e.register = val
+    ch.setDacEnable((val and 0xF8).bool)
+
+proc clock(e: var Envelope) =
+    if e.period > 0:
+        inc e.counter
+        if e.counter == e.period:
+            e.counter = 0
+            if e.amplify:
+                if e.volume < 0xF:
+                    inc e.volume
+            else:
+                if e.volume > 0:
+                    dec e.volume
+
+proc restart(e: var Envelope) =
+    e.counter = 0
+    e.period = e.register and 7
+    e.amplify = testBit(e.register, 3)
+    e.volume = e.register shr 4
+
+# LengthCounter ===============================================================
+
+proc initLengthCounter(max: int): LengthCounter =
+    LengthCounter(
+        enabled: false,
+        counter: 0,
+        counterMax: max
+    )
+
+proc clock(l: var LengthCounter, ch: var Channel) =
+    if l.enabled:
+        if l.counter == 0:
+            ch.disable()
+        else:
+            dec l.counter
+
+proc restart(l: var LengthCounter) =
+    if l.counter == 0:
+        l.counter = l.counterMax
+
+# NoiseChannel ================================================================
+
+#
+# when bit 0 of val:
+#   0: return 0
+#   1: return vol
+#
+template getOutput(val: uint8, vol: uint8): uint8 =
+    ( ( not (val and 1) ) + 1 ) and vol
+
+const
+    noiseDefaultPeriod = 8u32
+    lfsrInit = 0x7FFFu16
+
+proc initNoiseChannel(): NoiseChannel =
+    NoiseChannel(
+        channel: initChannel(),
+        timer: initTimer(noiseDefaultPeriod),
+        envelope: initEnvelope(),
+        lc: initLengthCounter(64),
+        register: 0,
+        validScf: true,
+        halfWidth: false,
+        lfsr: lfsrInit
+    )
+
+proc setNoise(n: var NoiseChannel, val: uint8) =
+    n.register = val
+    # drf = dividing ratio frequency (divisor)
+    var drf = (val and 0x7).uint32
+    if drf == 0:
+        drf = 8
+    else:
+        drf *= 16
+    n.halfWidth = testBit(val, 3)
+    # scf = shift clock frequency
+    let scf = val shr 4
+    # obscure behavior: a scf of 14 or 15 results in the channel receiving no clocks
+    n.validScf = scf < 0xE
+    n.timer.period = drf shl scf
+
+proc clockLfsr(n: var NoiseChannel) =
+    let shifted = n.lfsr shr 1
+    let bit = (n.lfsr xor shifted) and 1
+    # shift + feedback
+    n.lfsr = shifted or (bit shl 14)
+    if n.halfWidth:
+        if bit == 0:
+            clearBit(n.lfsr, 7)
+        else:
+            setBit(n.lfsr, 7)
+
+proc updateOutput(n: var NoiseChannel) =
+    # channel output is bit 0 of the lfsr
+    #   when 1: 0
+    #   when 0: envelope.volume
+    n.channel.output = getOutput(not n.lfsr.uint8, n.envelope.volume)
+
+proc clock(n: var NoiseChannel) =
+    if n.validScf:
+        n.clockLfsr()
+        n.updateOutput()
+
+proc fastforward(n: var NoiseChannel, cycles: uint32) =
+    var clocks = n.timer.fastforward(cycles)
+    if n.validScf:
+        while clocks > 0:
+            n.clockLfsr()
+            dec clocks
+        n.updateOutput()
+
+proc restart(n: var NoiseChannel) =
+    n.channel.restart()
+    n.timer.restart()
+    n.envelope.restart()
+    n.lc.restart()
+    n.lfsr = lfsrInit
+    n.channel.output = 0
+
+
+# PulseChannel ================================================================
+
+const
+    pulseMultiplier = 4
+    pulseDefaultPeriod = (2048 - 0) * pulseMultiplier
+
+    dutyWaveforms: array[Duty, uint8] = [
+        0b00000001u8, # 12.5% -_______
+        0b10000001u8, # 25.0% -______-
+        0b10000111u8, # 50.0% ---____-
+        0b01111110u8  # 75.0% _------_
+    ]
+
+template dutyToRegister(duty: Duty): uint8 =
+    0x3F or (ord(duty).uint8 shl 6)
+
+template dutyFromRegister(reg: uint8): Duty =
+    Duty(reg shr 6)
+
+
+proc initPulseChannel(): PulseChannel =
+    PulseChannel(
+        channel: initChannel(),
+        timer: initTimer(pulseDefaultPeriod),
+        envelope: initEnvelope(),
+        lc: initLengthCounter(64),
+        frequency: 0,
+        duty: Duty75,
+        dutyWaveform: dutyWaveforms[Duty75],
+        dutyCounter: 0
+    )
+
+proc writeFrequency(p: var PulseChannel, freq: uint16) =
+    p.frequency = freq
+    p.timer.period = (2048 - freq).uint32 * pulseMultiplier
+
+proc setDuty(p: var PulseChannel, duty: Duty) =
+    p.duty = duty
+    p.dutyWaveform = dutyWaveforms[duty]
+
+proc updateOutput(p: var PulseChannel) =
+    p.channel.output = getOutput(p.dutyWaveform shr p.dutyCounter, p.envelope.volume) 
+
+proc clock(p: var PulseChannel) =
+    p.dutyCounter = (p.dutyCounter + 1) and 7
+    p.updateOutput()
+
+proc fastforward(p: var PulseChannel, cycles: uint32) =
+    let clocks = p.timer.fastforward(cycles)
+    p.dutyCounter = ((p.dutyCounter + clocks) and 7).uint8
+    p.updateOutput()
+
+proc restart(p: var PulseChannel) =
+    p.channel.restart()
+    p.timer.restart()
+    p.envelope.restart()
+    p.lc.restart()
+
+# WaveChannel =================================================================
+
+const
+    waveMultiplier = 2
+    waveDefaultPeriod = (2048 - 0) * waveMultiplier
+    waveVolumeShifts: array[WaveVolume, int] = [
+        4,
+        0,
+        1,
+        2
+    ]
+
+
+proc initWaveChannel(): WaveChannel =
+    WaveChannel(
+        channel: initChannel(),
+        timer: initTimer(waveDefaultPeriod),
+        lc: initLengthCounter(256),
+        frequency: 0,
+        waveIndex: 0,
+        sampleBuffer: 0,
+        volumeShift: 0,
+        volume: WaveMute
+    )
+
+proc updateOutput(w: var WaveChannel) =
+    w.channel.output = w.sampleBuffer shr w.volumeShift
+
+proc setVolume(w: var WaveChannel, vol: WaveVolume) =
+    w.volume = vol
+    w.volumeShift = waveVolumeShifts[vol]
+    w.updateOutput()
+
+proc writeFrequency(w: var WaveChannel, freq: uint16) =
+    w.frequency = freq
+    w.timer.period = (2048 - freq).uint32 * waveMultiplier
+
+proc updateSampleBuffer(w: var WaveChannel) =
+    w.sampleBuffer = w.waveram[w.waveIndex shr 1]
+    if testBit(w.waveIndex, 0):
+        # odd number, low nibble
+        w.sampleBuffer = w.sampleBuffer and 0xF
+    else:
+        # even number, high nibble
+        w.sampleBuffer = w.sampleBuffer shr 4
+    w.updateOutput()
+
+proc clock(w: var WaveChannel) =
+    w.waveIndex = (w.waveIndex + 1) and 0x1F
+    w.updateSampleBuffer()
+
+proc fastforward(w: var WaveChannel, cycles: uint32) =
+    let clocks = w.timer.fastforward(cycles)
+    w.waveIndex = ((w.waveIndex + clocks) and 0x1F).uint8
+    w.updateSampleBuffer()
+
+proc restart(w: var WaveChannel) =
+    w.channel.restart()
+    w.timer.restart()
+    w.lc.restart()
+    w.waveIndex = 0
+
+# Sweep =======================================================================
+
+proc initSweep(): Sweep =
+    Sweep(
+        subtraction: false,
+        time: 0,
+        shift: 0,
+        counter: 0,
+        register: 0,
+        shadow: 0
+    )
+
+proc readRegister(s: Sweep): uint8 =
+    s.register and 0x7F
+
+proc writeRegister(s: var Sweep, val: uint8) =
+    s.register = val and 0x7F
+
+proc clock(s: var Sweep, pul: var PulseChannel) =
+    if s.time > 0:
+        inc s.counter
+        if s.counter >= s.time:
+            s.counter = 0
+            if s.shift > 0:
+                var freq = s.shadow shr s.shift
+                if s.subtraction:
+                    if freq > s.shadow:
+                        # underflow, no change to frequency
+                        return
+                    freq = s.shadow - freq
+                else:
+                    freq += s.shadow
+                    if freq > 2047:
+                        # overflow, disable channel
+                        pul.channel.disable()
+                        return
+                pul.writeFrequency(freq)
+                s.shadow = freq
+
+proc restart(s: var Sweep, pul: var PulseChannel) =
+    s.counter = 0
+    s.shift = (s.register and 0x7).int
+    s.subtraction = testBit(s.register, 3)
+    s.time = ((s.register shr 4) and 0x7).int
+    s.shadow = pul.frequency
+
+# Sequencer ===================================================================
+
+type TriggerType = enum
+    TriggerLc,
+    TriggerLcSweep,
+    TriggerEnv
+
+const
+    cyclesPerStep = 8192u32
+    triggerSequence: array[5, tuple[nextIndex: int, period: uint32, trigger: TriggerType]] = [
+        (1, cyclesPerStep * 2,  TriggerLc),
+        (2, cyclesPerStep * 2,  TriggerLcSweep),
+        (3, cyclesPerStep,      TriggerLc),
+        (4, cyclesPerStep,      TriggerLcSweep),
+        (0, cyclesPerStep * 2,  TriggerEnv)
+    ]
+
+proc initSequencer(): Sequencer =
+    Sequencer(
+        timer: initTimer(cyclesPerStep * 2),
+        triggerIndex: 0
+    )
+
+proc run(s: var Sequencer, apu: var Apu, cycles: uint32) =
+    if (s.timer.run(cycles)):
+        let trigger = triggerSequence[s.triggerIndex]
+        proc triggerLc(apu: var Apu) =
+            apu.ch1.lc.clock(apu.ch1.channel)
+            apu.ch2.lc.clock(apu.ch2.channel)
+            apu.ch3.lc.clock(apu.ch3.channel)
+            apu.ch4.lc.clock(apu.ch4.channel)
+
+        case trigger[2]:
+        of TriggerLc:
+            triggerLc(apu)
+        of TriggerLcSweep:
+            triggerLc(apu)
+            apu.sweep.clock(apu.ch1)
+        of TriggerEnv:
+            apu.ch1.envelope.clock()
+            apu.ch2.envelope.clock()
+            apu.ch4.envelope.clock()
+        s.timer.period = trigger[1]
+        s.triggerIndex = trigger[0]
+
+proc timeToTrigger(s: Sequencer): uint32 {.inline.} =
+    s.timer.counter
+
+# Apu =========================================================================
+
+proc updateVolume(a: var Apu) =
+    a.synth.leftVolume = a.leftVolume.float32 * a.volumeStep
+    a.synth.rightVolume = a.rightVolume.float32 * a.volumeStep
+
+proc setVolume*(a: var Apu, gain: float32) =
+    a.volumeStep = gain / 480.0f
+    a.updateVolume()
+
+proc initApu*(samplerate: int): Apu =
+    result = Apu(
+        synth: initSynth(samplerate)
+    )
+    result.reset()
+    result.setVolume(0.625f)
+
+proc reset*(a: var Apu) =
+    a.ch1 = initPulseChannel()
+    a.ch2 = initPulseChannel()
+    a.ch3 = initWaveChannel()
+    a.ch4 = initNoiseChannel()
+    a.sweep = initSweep()
+    a.sequencer = initSequencer()
+    a.synth.clear()
+    a.mix.fill(MixMode.mute)
+    a.lastOutputs.fill(0u8)
+    a.time = 0
+    a.nr51 = 0
+    a.enabled = false
+    a.leftVolume = 1
+    a.rightVolume = 1
+
+proc silence(a: var Apu, ch: int, time: uint32) =
+    let output = a.lastOutputs[ch]
+    if output > 0:
+        a.synth.mix(a.mix[ch], -(output.int8), time)
+        a.lastOutputs[ch] = 0
+
+proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
+    if ch.dacEnable and ch.enabled:
+        result = a.mix[chno]
+    else:
+        a.silence(chno, time)
+        result = MixMode.mute
+
+type SomeChannel = PulseChannel|WaveChannel|NoiseChannel
+
+proc mixChannel(a: var Apu, mix: static MixMode, ch: Channel, last: var uint8, time: uint32) =
+    if ch.output != last:
+        a.synth.mix(mix, ch.output.int8 - last.int8, time)
+        last = ch.output
+
+proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: uint32) =
+    
+    proc runImpl(a: var Apu, mix: static MixMode, chno: int, ch: var T, time, cycles: uint32) =
+        var last = a.lastOutputs[chno]
+        a.mixChannel(mix, ch.channel, last, time)
+        var timeCounter = time + ch.timer.counter
+
+        # determine the number of clocks to run
+        var clocks = ch.timer.fastforward(cycles)
+        while clocks > 0:
+            ch.clock()
+            dec clocks
+            a.mixChannel(mix, ch.channel, last, timeCounter)
+            timeCounter += ch.timer.period
+        
+        a.lastOutputs[chno] = last
+    
+    case a.preRunChannel(chno, ch.channel, time):
+    of MixMode.mute:
+        ch.fastforward(cycles)
+    of MixMode.left:
+        a.runImpl(MixMode.left, chno, ch, time, cycles)
+    of MixMode.right:
+        a.runImpl(MixMode.right, chno, ch, time, cycles)
+    of MixMode.middle:
+        a.runImpl(MixMode.middle, chno, ch, time, cycles)
+
+
+proc run*(a: var Apu, cycles: uint32) =
+    var cycleCountdown = cycles
+    #var time = a.time
+    while cycleCountdown > 0:
+        # run components to the beat of the sequencer
+        let toStep = min(cycleCountdown, a.sequencer.timeToTrigger())
+        a.runChannel(0, a.ch1, a.time, toStep)
+        a.runChannel(1, a.ch2, a.time, toStep)
+        a.runChannel(2, a.ch3, a.time, toStep)
+        a.runChannel(3, a.ch4, a.time, toStep)
+        a.sequencer.run(a, toStep)
+
+        cycleCountdown -= toStep
+        a.time += toStep
+
+template cannotAccessRegister(a: var Apu, reg: uint8): bool =
+    not a.enabled and reg < rNR52
+
+proc readRegister*(a: var Apu, reg: uint8): uint8 =
+    template readNRx4(lc: LengthCounter): uint8 =
+        if lc.enabled: 0xFF else: 0xBF
+    
+
+    if a.cannotAccessRegister(reg):
+        return 0xFF
+
+    case reg:
+    of rNR10:
+        result = a.sweep.readRegister()
+    of rNR11:
+        result = dutyToRegister(a.ch1.duty)
+    of rNR12:
+        result = a.ch1.envelope.register
+    of rNR13, rNR23, rNR33:
+        result = 0xFF
+    of rNR14:
+        result = readNRx4(a.ch1.lc)
+    of rNR21:
+        result = dutyToRegister(a.ch2.duty)
+    of rNR22:
+        result = a.ch2.envelope.register
+    of rNR24:
+        result = readNRx4(a.ch2.lc)
+    of rNR30:
+        result = if a.ch3.channel.dacEnable: 0xFF else: 0x7F
+    of rNR31:
+        result = 0xFF
+    of rNR32:
+        result = 0x9F or (a.ch3.volume.uint8 shl 5)
+    of rNR34:
+        result = readNRx4(a.ch3.lc)
+    of rNR41:
+        result = 0xFF
+    of rNR42:
+        result = a.ch4.envelope.register
+    of rNR43:
+        result = a.ch4.register
+    of rNR44:
+        result = readNRx4(a.ch4.lc)
+    of rNR50:
+        result = ((a.leftVolume.uint8 - 1) shr 4) or (a.rightVolume.uint8 - 1)
+    of rNR51:
+        result = a.nr51
+    of rNR52:
+        if a.enabled:
+            result = 0xF0
+            template channelStatus(stat: var uint8, chno: int, ch: Channel) =
+                if ch.dacEnable:
+                    stat.setBit(chno)
+            channelStatus(result, 0, a.ch1.channel)
+            channelStatus(result, 1, a.ch2.channel)
+            channelStatus(result, 2, a.ch3.channel)
+            channelStatus(result, 3, a.ch4.channel)
+        else:
+            result = 0x70
+    of rWAVERAM..(rWAVERAM + 15):
+        if a.ch3.channel.dacEnable:
+            result = a.ch3.waveram[reg - rWAVERAM]
+        else:
+            result = 0xFF
+    else:
+        result = 0xFF
+
+
+proc writeRegister*(a: var Apu, reg, value: uint8) =
+    if a.cannotAccessRegister(reg):
+        return
+
+    template writeDutyLc(ch: PulseChannel, value: uint8) =
+        ch.setDuty(dutyFromRegister(value))
+        ch.lc.counter = (value and 0x3F).int
+
+    template writeFrequencyLsb(ch: SomeChannel, value: uint8) =
+        when ch is NoiseChannel:
+            ch.setNoise(value)
+        else:
+            ch.writeFrequency((ch.frequency and 0xFF00) or value.uint16)
+    
+    template writeFrequencyMsb(ch: SomeChannel, value: uint8, body: untyped) =
+        when ch isnot NoiseChannel:
+            ch.writeFrequency((ch.frequency and 0x00FF) or ((value.uint16 and 7) shl 8))
+        ch.lc.enabled = value.testBit(6)
+        if value.testBit(7):
+            ch.restart()
+            ch.lc.restart()
+            when ch isnot WaveChannel:
+                ch.envelope.restart()
+            body
+
+    case reg:
+    of rNR10:
+        a.sweep.writeRegister(value)
+    of rNR11:
+        writeDutyLc(a.ch1, value)
+    of rNR12:
+        a.ch1.envelope.writeRegister(a.ch1.channel, value)
+    of rNR13:
+        writeFrequencyLsb(a.ch1, value)
+    of rNR14:
+        writeFrequencyMsb(a.ch1, value):
+            a.sweep.restart(a.ch1)
+    of rNR21:
+        writeDutyLc(a.ch2, value)
+    of rNR22:
+        a.ch2.envelope.writeRegister(a.ch2.channel, value)
+    of rNR23:
+        writeFrequencyLsb(a.ch2, value)
+    of rNR24:
+        writeFrequencyMsb(a.ch2, value):
+            discard
+    of rNR30:
+        a.ch3.channel.dacEnable = value.testBit(7)
+    of rNR31:
+        a.ch3.lc.counter = value.int
+    of rNR32:
+        a.ch3.setVolume(((value shr 5) and 3).WaveVolume)
+    of rNR33:
+        writeFrequencyLsb(a.ch3, value)
+    of rNR34:
+        writeFrequencyMsb(a.ch3, value):
+            discard
+    of rNR41:
+        a.ch4.lc.counter = (value and 0x3F).int
+    of rNR42:
+        a.ch4.envelope.writeRegister(a.ch4.channel, value)
+    of rNR43:
+        writeFrequencyLsb(a.ch4, value)
+    of rNR44:
+        writeFrequencyMsb(a.ch4, value):
+            discard
+    of rNR50:
+        a.leftVolume = ((value shr 4) and 3).int + 1
+        a.rightVolume = (value and 3).int + 1
+
+        # a change in volume requires a transition to the new volume step
+        let oldVolumeLeft = a.synth.leftVolume
+        let oldVolumeRight = a.synth.rightVolume
+        a.updateVolume()
+        let leftDiff = a.synth.leftVolume - oldVolumeLeft
+        let rightDiff = a.synth.rightVolume - oldVolumeRight
+
+        var dcLeft, dcRight = 0.0f
+        for chno, mix in a.mix.pairs:
+            let output = a.lastOutputs[chno].float32 - dcOffset
+
+            if mix.pansLeft():
+                dcLeft += output
+            if mix.pansRight():
+                dcRight += output
+
+        a.synth.mixDc(dcLeft * leftDiff, dcRight * rightDiff, a.time)
+    of rNR51:
+        if a.nr51 != value:
+            a.nr51 = value
+
+            var nr51 = value
+            var dcLeft = 0.0f
+            var dcRight = 0.0f
+            for chno, mode in a.mix.mpairs:
+                let newmode = ((nr51 and 1) or ((nr51 shr 3) and 1)).MixMode
+                nr51 = nr51 shr 1
+                if newmode != mode:
+                    let changes = (ord(newmode) xor ord(mode))
+                    let level = dcOffset - a.lastOutputs[chno].float32
+                    if (changes and ord(MixMode.left)) > 0:
+                        if newmode.pansLeft:
+                            dcLeft -= level
+                        else:
+                            dcLeft += level
+                    if (changes and ord(MixMode.right)) > 0:
+                        if newmode.pansRight:
+                            dcRight -= level
+                        else:
+                            dcRight += level
+                    mode = newmode
+
+            a.synth.mixDc(dcLeft * a.synth.leftVolume, dcRight * a.synth.rightVolume, a.time)
+    of rNR52:
+        if value.testBit(7) != a.enabled:
+            if a.enabled:
+                # shutdown
+                for reg in rNR10..rNR51:
+                    a.writeRegister(reg, 0)
+                a.enabled = false
+            else:
+                # startup
+                a.enabled = true
+    of rWAVERAM..rWAVERAM+15:
+        if a.ch3.channel.dacEnable:
+            a.ch3.waveram[reg - rWAVERAM] = value
+    else:
+        discard
+
+proc endFrame*(a: var Apu) =
+    a.synth.endFrame(a.time)
+    a.time = 0
+
+proc availableSamples*(a: Apu): int =
+    a.synth.availableSamples()
+
+proc readSamples*(a: var Apu, buf: var openArray[Pcm]): int =
+    a.synth.readSamples(buf)
+
+proc setSamplerate*(a: var Apu, samplerate: int) =
+    a.synth.samplerate = samplerate
+
+proc setBuffer*(a: var Apu, samples: int) =
+    a.synth.setBuffer(samples)
+    a.time = 0

@@ -13,6 +13,11 @@ type
         ## Should be functionally similar to a `ref T` (minus the implicit derefencing)
         data: ref T
 
+    PcmF32* = float32
+        ## 32-bit floating point PCM sample
+
+    Pcm* = PcmF32
+
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef
     result = CRef[T](data: src)
