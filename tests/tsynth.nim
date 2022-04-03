@@ -2,8 +2,6 @@
 
 import std/unittest
 
-import wavegen
-
 import trackerboy/[common, synth]
 import trackerboy/private/hardware
 
@@ -20,25 +18,6 @@ proc isZero(buf: openArray[Pcm], channel: int): bool =
     result = true
 
 suite "synth":
-
-    test "synthesis":
-        const checksums: array[9, Crc32] = [
-            # copy-paste the checksums reported by wavegen here after verifying
-            # the generated waveforms.
-            758368708.Crc32,
-            2550173872.Crc32,
-            1603654311.Crc32,
-            2135429016.Crc32,
-            1004205920.Crc32,
-            3916518292.Crc32,
-            3349790457.Crc32,
-            944799146.Crc32,
-            2039312010.Crc32
-        ]
-        var buf: seq[PcmF32]
-        for i, checksum in generatePresets(buf):
-            checkpoint describePreset(i)
-            check checksum == checksums[i]
 
 
     test "highpass":

@@ -20,5 +20,8 @@ task test, "Runs the unit tester":
 task doc, "Builds the documentation":
     exec("nim doc --project --index:on --outdir:docs src/trackerboy.nim")
 
+task apugen, "Generate APU wav files for tapu":
+    exec("nim c -r --outdir:" & binDir & " tests/apugen.nim")
+
 task wavegen, "Generate waveforms for tsynth":
     exec("nim c -r --outdir:" & binDir & " tests/wavegen.nim")

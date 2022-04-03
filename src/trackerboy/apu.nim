@@ -2,6 +2,8 @@
 import synth
 import private/hardware
 
+export Pcm
+
 import std/[bitops, algorithm]
 
 const
@@ -84,7 +86,7 @@ type
         timer: Timer
         triggerIndex: int
 
-    Apu* = object
+    Apu* {.requiresInit.} = object
         ch1, ch2: PulseChannel
         ch3: WaveChannel
         ch4: NoiseChannel
@@ -501,18 +503,39 @@ proc timeToTrigger(s: Sequencer): uint32 {.inline.} =
 # Apu =========================================================================
 
 proc updateVolume(a: var Apu) =
-    a.synth.leftVolume = a.leftVolume.float32 * a.volumeStep
-    a.synth.rightVolume = a.rightVolume.float32 * a.volumeStep
+    a.synth.volumeStepLeft = a.leftVolume.float32 * a.volumeStep
+    a.synth.volumeStepRight = a.rightVolume.float32 * a.volumeStep
 
-proc setVolume*(a: var Apu, gain: float32) =
+proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
+    ## Sets the apu volume level to the given linear gain value. The gain
+    ## should range from 0.0f to 1.0f.
+
+    # 4 channels
+    # channel volume ranges from 0-15 (15 steps)
+    # master volume ranges from 0-7 (8 steps, 0 is not mute)
+    # 15 * 8 * 4 = 480
+    # so 480 is the maximum possible volume on all channels
     a.volumeStep = gain / 480.0f
     a.updateVolume()
 
 proc initApu*(samplerate: int): Apu =
     result = Apu(
-        synth: initSynth(samplerate)
+        ch1: initPulseChannel(),
+        ch2: initPulseChannel(),
+        ch3: initWaveChannel(),
+        ch4: initNoiseChannel(),
+        sweep: initSweep(),
+        sequencer: initSequencer(),
+        synth: initSynth(samplerate),
+        mix: default(Apu.mix.type),
+        lastOutputs: default(Apu.lastOutputs.type),
+        time: 0,
+        leftVolume: 1,
+        rightVolume: 1,
+        nr51: 0,
+        enabled: false,
+        volumeStep: 0.0f
     )
-    result.reset()
     result.setVolume(0.625f)
 
 proc reset*(a: var Apu) =
@@ -544,6 +567,7 @@ proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
         a.silence(chno, time)
         result = MixMode.mute
 
+# sum type for all of the Channel objects
 type SomeChannel = PulseChannel|WaveChannel|NoiseChannel
 
 proc mixChannel(a: var Apu, mix: static MixMode, ch: Channel, last: var uint8, time: uint32) =
@@ -656,9 +680,9 @@ proc readRegister*(a: var Apu, reg: uint8): uint8 =
             result = 0x70
     of rWAVERAM..(rWAVERAM + 15):
         if a.ch3.channel.dacEnable:
-            result = a.ch3.waveram[reg - rWAVERAM]
-        else:
             result = 0xFF
+        else:
+            result = a.ch3.waveram[reg - rWAVERAM]
     else:
         result = 0xFF
 
@@ -730,26 +754,26 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
         writeFrequencyMsb(a.ch4, value):
             discard
     of rNR50:
-        a.leftVolume = ((value shr 4) and 3).int + 1
-        a.rightVolume = (value and 3).int + 1
+        a.leftVolume = ((value shr 4) and 7).int + 1
+        a.rightVolume = (value and 7).int + 1
 
         # a change in volume requires a transition to the new volume step
-        let oldVolumeLeft = a.synth.leftVolume
-        let oldVolumeRight = a.synth.rightVolume
+        let oldVolumeLeft = a.synth.volumeStepLeft
+        let oldVolumeRight = a.synth.volumeStepRight
         a.updateVolume()
-        let leftDiff = a.synth.leftVolume - oldVolumeLeft
-        let rightDiff = a.synth.rightVolume - oldVolumeRight
+        let leftDiff = a.synth.volumeStepLeft - oldVolumeLeft
+        let rightDiff = a.synth.volumeStepRight - oldVolumeRight
 
         var dcLeft, dcRight = 0.0f
         for chno, mix in a.mix.pairs:
             let output = a.lastOutputs[chno].float32 - dcOffset
 
             if mix.pansLeft():
-                dcLeft += output
+                dcLeft += output * leftDiff
             if mix.pansRight():
-                dcRight += output
+                dcRight += output * rightDiff
 
-        a.synth.mixDc(dcLeft * leftDiff, dcRight * rightDiff, a.time)
+        a.synth.mixDc(dcLeft, dcRight, a.time)
     of rNR51:
         if a.nr51 != value:
             a.nr51 = value
@@ -758,7 +782,7 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
             var dcLeft = 0.0f
             var dcRight = 0.0f
             for chno, mode in a.mix.mpairs:
-                let newmode = ((nr51 and 1) or ((nr51 shr 3) and 1)).MixMode
+                let newmode = ((nr51 and 1) or ((nr51 shr 3) and 2)).MixMode
                 nr51 = nr51 shr 1
                 if newmode != mode:
                     let changes = (ord(newmode) xor ord(mode))
@@ -774,8 +798,7 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
                         else:
                             dcRight += level
                     mode = newmode
-
-            a.synth.mixDc(dcLeft * a.synth.leftVolume, dcRight * a.synth.rightVolume, a.time)
+            a.synth.mixDc(dcLeft * a.synth.volumeStepLeft, dcRight * a.synth.volumeStepRight, a.time)
     of rNR52:
         if value.testBit(7) != a.enabled:
             if a.enabled:
@@ -787,7 +810,7 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
                 # startup
                 a.enabled = true
     of rWAVERAM..rWAVERAM+15:
-        if a.ch3.channel.dacEnable:
+        if not a.ch3.channel.dacEnable:
             a.ch3.waveram[reg - rWAVERAM] = value
     else:
         discard

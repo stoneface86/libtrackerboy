@@ -1,29 +1,11 @@
 
 # module generates wav files for verification that Synth works
 # a square tone is generated for a couple different samplerates.
-# The CRC32 of each generated tone is reported to be stored in tsynth.nim
-
-# run via nimble:
-# $ nimble wavegen
-
-# you only need to run this if you change the filter or resampling algorithm
-# used in the synth module. Doing so invalidates the checksums stored in the
-# test_synth module. The unit test just generates the tones and compares its
-# generated checksums to the verified ones.
-
-# to verify:
-# run the wavegen task and listen to each of the wav files generated
-# the filename has the format tone_xHz_yHz_zHz.wav where
-#  x - the samplerate
-#  y - the frequency of the tone on the left channel (0 for silence)
-#  z - the frequency of the tone on the right channel (0 for silence)
-# play each wav file and verify by ear that the tones on each channel are
-# correct and of desired quality.
+# the wav files are generated in a folder called "wavegen" in the same directory
+# as the executable
 
 import trackerboy/synth
 import trackerboy/private/hardware
-import crc32
-export Crc32
 
 
 type
@@ -75,23 +57,8 @@ proc generateWaveform(s: var Synth, w: Waveform) =
             generate(s, MixMode.left, getTimeStep(w.leftFrequency))
         if w.rightFrequency > 0:
             generate(s, MixMode.right, getTimeStep(w.rightFrequency))
-    
+
     s.endFrame(gbClockrate)
-
-iterator generatePresets*(buf: var seq[Pcm]): (int, Crc32) =
-    var s = initSynth()
-    s.leftVolume = volumeStep
-    s.rightVolume = volumeStep
-    for i, preset in presetWaveforms.pairs:
-        generateWaveform(s, preset)
-        buf.setLen(s.availableSamples() * 2)
-        assert s.readSamples(buf) == buf.len() div 2
-
-        yield (i, buf.crc32)
-
-proc describePreset*(index: int): string =
-    result = presetWaveforms[index].description
-
 
 when isMainModule:
     import trackerboy/private/wavwriter
@@ -101,21 +68,15 @@ when isMainModule:
         result = fmt"tone_{w.samplerate}Hz_{w.leftFrequency}Hz_{w.rightFrequency}Hz.wav"
 
     var buf: seq[Pcm]
-    var checksums: array[presetWaveforms.len, Crc32]
-    let appDir = getAppDir()
+    let outDir = getAppDir().joinPath("wavegen")
+    outDir.createDir()
 
-    for i, checksum in generatePresets(buf):
-        let preset = presetWaveforms[i]
-        var wav = initWavWriter(joinPath(appDir, $preset), 2, preset.samplerate)
+    var s = initSynth()
+    s.volumeStepLeft = volumeStep
+    s.volumeStepRight = volumeStep
+    for i, preset in presetWaveforms.pairs:
+        generateWaveform(s, preset)
+        buf.setLen(s.availableSamples() * 2)
+        assert s.readSamples(buf) == buf.len() div 2
+        var wav = initWavWriter(joinPath(outDir, $preset), 2, preset.samplerate)
         wav.write(buf)
-
-        checksums[i] = checksum
-
-    proc printChecksum(crc: Crc32) =
-        stdout.write($crc & "." & name(Crc32))
-
-    for checksum in checksums[0..^2]:
-        printChecksum(checksum)
-        echo ","
-    printChecksum(checksums[^1])
-    echo ""

@@ -27,7 +27,7 @@ type
         highpass: float32
 
     Synth* {.requiresInit.} = object
-        volumeStepLeft, volumeStepRight: float32
+        volumeStepLeft*, volumeStepRight*: float32
         samplerate: int
         # cycletime to sampletime conversion factor
         factor: float32
@@ -37,8 +37,6 @@ type
         buffer: seq[Pcm]
         # fractional sample time offset
         sampleOffset: float32
-        # samples before this offset are ready to be read
-        #writeOffset: int
         samplesAvail: int
         # sample accumulators
         accums: array[2, Accumulator]
@@ -180,18 +178,6 @@ proc mixDc*(s: var Synth, dcLeft, dcRight: PcmF32, cycletime: uint32) =
     s.buffer[time] += dcLeft
     s.buffer[time + 1] += dcRight
 
-proc leftVolume*(s: Synth): float32 {.inline.} =
-    s.volumeStepLeft
-
-proc `leftVolume=`*(s: var Synth, value: float32) {.inline.} =
-    s.volumeStepLeft = value
-
-proc rightVolume*(s: Synth): float32 {.inline.} =
-    s.volumeStepRight
-
-proc `rightVolume=`*(s: var Synth, value: float32) {.inline.} =
-    s.volumeStepRight = value
-
 proc clear*(s: var Synth) =
     s.samplesAvail = 0
     s.sampleOffset = 0
@@ -244,6 +230,13 @@ proc readSamples*(s: var Synth, buf: var openarray[Pcm]): int =
                 accumulateChannel(1)
         result = s.samplesAvail
         s.samplesAvail = 0
+        # copy leftovers to front of buffer
+        var d = frameIndex(result)
+        for i in 0..(stepWidth*2)-1:
+            s.buffer[i] = s.buffer[d]
+            s.buffer[d] = 0.0f
+            inc d
+
     else:
         result = 0
 
@@ -255,6 +248,3 @@ proc endFrame*(s: var Synth, cycletime: uint32) =
 
 proc availableSamples*(s: Synth): int =
     s.samplesAvail
-
-proc buffer*(s: Synth): lent seq[PcmF32] =
-    s.buffer
