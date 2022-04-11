@@ -2,8 +2,9 @@
 ## bandlimited synthesis
 ##
 
-import common
-import private/[hardware, ptrarith]
+import ../common
+import hardware
+import ptrarith
 export Pcm
 
 import std/[algorithm, bitops, math]
@@ -15,12 +16,6 @@ const
 type
     StepSet = array[stepWidth, float32]
     StepTable = array[stepPhases + 1, StepSet]
-
-    MixMode* {.pure.} = enum
-        mute,
-        left,
-        right,
-        middle
     
     Accumulator = object
         sum: float32
@@ -130,7 +125,7 @@ iterator iterateStep(s: int): tuple[s0, s1: float32] =
     yield (stepset[], nextset[])
 
 proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
-    static: assert mode != MixMode.mute, "cannot mix a muted mode!"
+    static: assert mode != mixMute, "cannot mix a muted mode!"
 
     let params = s.getMixParam(cycletime)
     
@@ -144,10 +139,10 @@ proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
     # can cause a buffer overrun if the cycletime exceeds the length of the buffer
     var buf = s.buffer[frameIndex(params.timeIndex)].addr
     ptrArith:
-        when mode == MixMode.right:
+        when mode == mixRight:
             inc buf
         template advanceBuf() =
-            when mode == MixMode.middle:
+            when mode == mixMiddle:
                 inc buf
             else:
                 # skip next terminal
@@ -163,12 +158,12 @@ proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
 
 proc mix*(s: var Synth, mode: MixMode, delta: int8, cycletime: uint32) =
     case mode
-    of MixMode.left:
-        s.mix(MixMode.left, delta, cycletime)
-    of MixMode.right:
-        s.mix(MixMode.right, delta, cycletime)
-    of MixMode.middle:
-        s.mix(MixMode.middle, delta, cycletime)
+    of mixLeft:
+        s.mix(mixLeft, delta, cycletime)
+    of mixRight:
+        s.mix(mixRight, delta, cycletime)
+    of mixMiddle:
+        s.mix(mixMiddle, delta, cycletime)
     else:
         # do nothing for muted mode
         discard

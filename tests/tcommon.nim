@@ -19,8 +19,9 @@ test "CRef[T] access":
     new(ref1)
 
     var cref = ref1.toCRef
-    check cref[] == default(T)
-    check cref.isRef(ref1)
-    check cref == ref1
-    check ref1 == cref
+    check:
+        cref[] == default(T)
+        cref.isRef(ref1)
+        cref == ref1
+        ref1 == cref
 

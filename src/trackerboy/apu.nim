@@ -1,8 +1,9 @@
 
-import synth
-import private/hardware
+import common
+import private/[hardware, synth]
 
 export Pcm
+export MixMode
 
 import std/[bitops, algorithm]
 
@@ -546,7 +547,7 @@ proc reset*(a: var Apu) =
     a.sweep = initSweep()
     a.sequencer = initSequencer()
     a.synth.clear()
-    a.mix.fill(MixMode.mute)
+    a.mix.fill(mixMute)
     a.lastOutputs.fill(0u8)
     a.time = 0
     a.nr51 = 0
@@ -565,7 +566,7 @@ proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
         result = a.mix[chno]
     else:
         a.silence(chno, time)
-        result = MixMode.mute
+        result = mixMute
 
 # sum type for all of the Channel objects
 type SomeChannel = PulseChannel|WaveChannel|NoiseChannel
@@ -593,14 +594,14 @@ proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: 
         a.lastOutputs[chno] = last
     
     case a.preRunChannel(chno, ch.channel, time):
-    of MixMode.mute:
+    of mixMute:
         ch.fastforward(cycles)
-    of MixMode.left:
-        a.runImpl(MixMode.left, chno, ch, time, cycles)
-    of MixMode.right:
-        a.runImpl(MixMode.right, chno, ch, time, cycles)
-    of MixMode.middle:
-        a.runImpl(MixMode.middle, chno, ch, time, cycles)
+    of mixLeft:
+        a.runImpl(mixLeft, chno, ch, time, cycles)
+    of mixRight:
+        a.runImpl(mixRight, chno, ch, time, cycles)
+    of mixMiddle:
+        a.runImpl(mixMiddle, chno, ch, time, cycles)
 
 
 proc run*(a: var Apu, cycles: uint32) =
@@ -618,10 +619,10 @@ proc run*(a: var Apu, cycles: uint32) =
         cycleCountdown -= toStep
         a.time += toStep
 
-template cannotAccessRegister(a: var Apu, reg: uint8): bool =
+template cannotAccessRegister(a: Apu, reg: uint8): bool =
     not a.enabled and reg < rNR52
 
-proc readRegister*(a: var Apu, reg: uint8): uint8 =
+func readRegister*(a: Apu, reg: uint8): uint8 =
     template readNRx4(lc: LengthCounter): uint8 =
         if lc.enabled: 0xFF else: 0xBF
     
@@ -669,13 +670,13 @@ proc readRegister*(a: var Apu, reg: uint8): uint8 =
     of rNR52:
         if a.enabled:
             result = 0xF0
-            template channelStatus(stat: var uint8, chno: int, ch: Channel) =
+            template channelStatus(stat: var uint8, chno: ChannelId, ch: Channel) =
                 if ch.dacEnable:
                     stat.setBit(chno)
-            channelStatus(result, 0, a.ch1.channel)
-            channelStatus(result, 1, a.ch2.channel)
-            channelStatus(result, 2, a.ch3.channel)
-            channelStatus(result, 3, a.ch4.channel)
+            channelStatus(result, ch1, a.ch1.channel)
+            channelStatus(result, ch2, a.ch2.channel)
+            channelStatus(result, ch3, a.ch3.channel)
+            channelStatus(result, ch4, a.ch4.channel)
         else:
             result = 0x70
     of rWAVERAM..(rWAVERAM + 15):
@@ -787,12 +788,12 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
                 if newmode != mode:
                     let changes = (ord(newmode) xor ord(mode))
                     let level = dcOffset - a.lastOutputs[chno].float32
-                    if (changes and ord(MixMode.left)) > 0:
+                    if (changes and ord(mixLeft)) > 0:
                         if newmode.pansLeft:
                             dcLeft -= level
                         else:
                             dcLeft += level
-                    if (changes and ord(MixMode.right)) > 0:
+                    if (changes and ord(mixRight)) > 0:
                         if newmode.pansRight:
                             dcRight -= level
                         else:
@@ -831,3 +832,38 @@ proc setSamplerate*(a: var Apu, samplerate: int) =
 proc setBuffer*(a: var Apu, samples: int) =
     a.synth.setBuffer(samples)
     a.time = 0
+
+func channelFrequency*(a: Apu, chno: ChannelId): int =
+    ## Gets the current frequency setting for the channel, for diagnostic
+    ## purposes. Channels 1-3 will result in a value from 0 to 2047. Channel
+    ## 4 will result in the contents of its NR43 register.
+    case chno:
+    of ch1: result = a.ch1.frequency.int
+    of ch2: result = a.ch2.frequency.int
+    of ch3: result = a.ch3.frequency.int
+    of ch4: result = a.ch4.register.int
+
+func channelVolume*(a: Apu, chno: ChannelId): int =
+    ## Returns a number from 0 to 15 resprenting the current volume level of
+    ## the channel. For channels with an enevelope, this level is the current
+    ## volume of the envelope. For the Wave channel, this value is the maximum
+    ## possible determined by the wave volume setting (NR32).
+    proc impl(ch: SomeChannel): int =
+        when ch.type is WaveChannel:
+            case ch.volume:
+            of WaveMute: result = 0
+            of WaveFull: result = 15
+            of WaveHalf: result = 7
+            of WaveQuarter: result = 3
+        else:
+            result = ch.envelope.volume.int
+
+
+    case chno:
+    of ch1: result = impl(a.ch1)
+    of ch2: result = impl(a.ch2)
+    of ch3: result = impl(a.ch3)
+    of ch4: result = impl(a.ch4)
+
+func channelMix*(a: Apu, chno: ChannelId): MixMode =
+    result = a.mix[chno]

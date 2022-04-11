@@ -11,25 +11,15 @@ import version
 
 const
     speedFractionBits = 4
-    unitSpeed = 1 shl speedFractionBits
+    unitSpeed* = 1 shl speedFractionBits
 
 type
     TableId* = range[0u8..63u8]
         ## Integer ID type for items in an InstrumentTable or WaveformTable.
-    
-    ChannelId* = range[0..3]
-        ## Integer ID type for a channel. A ChannelId of 0 is CH1, 1 is CH2,
-        ## 2 is CH3 and 3 is CH4.
-    
+
     SequenceSize* = range[0..high(uint8).int]
         ## Size range a sequence's data can be.
-    
-    ByteIndex* = range[0..high(uint8).int]
-        ## Index type using the range of a uint8 (0-255)
-    
-    PositiveByte = range[1..high(uint8).int+1]
-        ## Positive type using the range of a uint8 (1-256)
-    
+
     OrderSize* = PositiveByte
         ## Size range of a song order.
     
@@ -234,45 +224,6 @@ func effectTypeShortensPattern*(et: EffectType): bool =
     result = et == etPatternHalt or
              et == etPatternSkip or
              et == etPatternGoto
-
-func note*(str: string): uint8 {.compileTime.} =
-    ## Compile time function for converting a string literal to a note index
-    ## Notes must range from C-2 to B-8, sharp and flat accidentals can be used.
-    ## ie `note("c-2") => 0`, `"D#3.note => 15`
-    # C C# D D# E F F# G G# A A# B
-    # C Db D Eb E F Gb G Ab A Bb B
-    # 0 1  2 3  4 5 6  7 8  9 10 11
-    doAssert str.len == 3
-    case str[0]:
-    of 'C', 'c':
-        result = 0
-    of 'D', 'd':
-        result = 2
-    of 'E', 'e':
-        result = 4
-    of 'F', 'f':
-        result = 5
-    of 'G', 'g':
-        result = 7
-    of 'A', 'a':
-        result = 9
-    of 'B', 'b':
-        result = 11
-    else:
-        doAssert false, "invalid note"
-    if str[1] == '#':
-        inc result
-    elif str[1] == 'b':
-        dec result
-    else:
-        doAssert str[1] == '-', "invalid note"
-    let octave = (str[2].ord - '2'.ord)
-    doAssert octave >= 0 and octave <= 6, "invalid octave"
-    result += (octave * 12).uint8
-
-
-static:
-    assert note("c-2") == 0
 
 # ItemData
 
@@ -715,13 +666,13 @@ proc moveDown*(l: var SongList, i: ByteIndex) =
         raise newException(IndexDefect, "cannot move bottomost item down")
     swap(l.data[i], l.data[i + 1])
 
-proc len*(l: var SongList): Natural =
+proc len*(l: SongList): Natural =
     l.data.len
 
 # Module
 
-proc initModule*(): Module =
-    result = Module(
+template tInitModule(T: typedesc[Module|ref Module]): untyped =
+    T(
         songs: initSongList(),
         instruments: initTable[Instrument](),
         waveforms: initTable[Waveform](),
@@ -735,6 +686,12 @@ proc initModule*(): Module =
         system: SystemDmg,
         customFramerate: 30
     )
+
+proc initModule*(): Module =
+    result = tInitModule(Module)
+
+proc newModule*(): ref Module =
+    result = tInitModule(ref Module)
 
 proc version*(m: Module): Version =
     m.version

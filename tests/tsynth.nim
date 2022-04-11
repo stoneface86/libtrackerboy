@@ -2,8 +2,7 @@
 
 import std/unittest
 
-import trackerboy/[common, synth]
-import trackerboy/private/hardware
+import trackerboy/private/[hardware, synth]
 
 iterator iterateChannel(buf: openArray[Pcm], channel: int): Pcm =
     var time = channel
@@ -35,7 +34,7 @@ suite "synth":
         synth.endFrame(gbClockrate) # 1 sec
 
         # read samples, check that 1 second of audio was generated
-        var samples: array[samplerate * 2, PcmF32]
+        var samples: array[samplerate * 2, Pcm]
         check synth.readSamples(samples) == samplerate
 
 

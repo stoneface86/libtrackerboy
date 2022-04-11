@@ -4,8 +4,7 @@
 # the wav files are generated in a folder called "wavegen" in the same directory
 # as the executable
 
-import trackerboy/synth
-import trackerboy/private/hardware
+import trackerboy/private/[hardware, synth]
 
 
 type

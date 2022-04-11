@@ -3,9 +3,7 @@
 import std/unittest
 import std/with
 
-import trackerboy/editing
-import trackerboy/data
-import trackerboy/common
+import trackerboy/[common, data, editing, notes]
 
 template a(r: int, t: int, c: TrackSelect): PatternAnchor =
     PatternAnchor(row: r, track: t, column: c)

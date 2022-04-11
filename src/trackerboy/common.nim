@@ -17,6 +17,29 @@ type
         ## 32-bit floating point PCM sample
 
     Pcm* = PcmF32
+        ## Type alias for the PCM type used in this library
+
+    ChannelId* = range[0..3]
+        ## Integer ID type for a channel. A ChannelId of 0 is CH1, 1 is CH2,
+        ## 2 is CH3 and 3 is CH4.
+
+    ByteIndex* = range[0..high(uint8).int]
+        ## Index type using the range of a uint8 (0-255)
+    
+    PositiveByte* = range[1..high(uint8).int+1]
+        ## Positive type using the range of a uint8 (1-256)
+
+    MixMode* = enum
+        mixMute
+        mixLeft
+        mixRight
+        mixMiddle
+
+const
+    ch1* = 0
+    ch2* = 1
+    ch3* = 2
+    ch4* = 3
 
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef
@@ -35,3 +58,8 @@ template `==`*[T](cref: CRef[T], data: ref T): bool =
 
 template `==`*[T](data: ref T, cref: CRef[T]): bool =
     cref.isRef(data)
+
+template noRef*(T: typedesc): CRef[T] =
+    ## returns a CRef of type T with no reference set (nil). Same as doing
+    ## `nil.toCRef[T]`
+    toCRef[T](nil)
