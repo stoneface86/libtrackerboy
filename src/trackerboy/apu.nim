@@ -519,7 +519,7 @@ proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
     a.volumeStep = gain / 480.0f
     a.updateVolume()
 
-proc initApu*(samplerate: int): Apu =
+proc initApu*(samplerate: int, buffersize: Natural = 0): Apu =
     result = Apu(
         ch1: initPulseChannel(),
         ch2: initPulseChannel(),
@@ -527,7 +527,7 @@ proc initApu*(samplerate: int): Apu =
         ch4: initNoiseChannel(),
         sweep: initSweep(),
         sequencer: initSequencer(),
-        synth: initSynth(samplerate),
+        synth: initSynth(samplerate, buffersize),
         mix: default(Apu.mix.type),
         lastOutputs: default(Apu.lastOutputs.type),
         time: 0,
@@ -578,7 +578,7 @@ proc mixChannel(a: var Apu, mix: static MixMode, ch: Channel, last: var uint8, t
 
 proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: uint32) =
     
-    proc runImpl(a: var Apu, mix: static MixMode, chno: int, ch: var T, time, cycles: uint32) =
+    template runImpl(mix: static MixMode) =
         var last = a.lastOutputs[chno]
         a.mixChannel(mix, ch.channel, last, time)
         var timeCounter = time + ch.timer.counter
@@ -597,11 +597,11 @@ proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: 
     of mixMute:
         ch.fastforward(cycles)
     of mixLeft:
-        a.runImpl(mixLeft, chno, ch, time, cycles)
+        runImpl(mixLeft)
     of mixRight:
-        a.runImpl(mixRight, chno, ch, time, cycles)
+        runImpl(mixRight)
     of mixMiddle:
-        a.runImpl(mixMiddle, chno, ch, time, cycles)
+        runImpl(mixMiddle)
 
 
 proc run*(a: var Apu, cycles: uint32) =
@@ -823,14 +823,14 @@ proc endFrame*(a: var Apu) =
 proc availableSamples*(a: Apu): int =
     a.synth.availableSamples()
 
-proc readSamples*(a: var Apu, buf: var openArray[Pcm]): int =
-    a.synth.readSamples(buf)
+proc takeSamples*(a: var Apu, buf: var seq[Pcm]) =
+    a.synth.takeSamples(buf)
 
 proc setSamplerate*(a: var Apu, samplerate: int) =
     a.synth.samplerate = samplerate
 
-proc setBuffer*(a: var Apu, samples: int) =
-    a.synth.setBuffer(samples)
+proc setBufferSize*(a: var Apu, samples: int) =
+    a.synth.setBufferSize(samples)
     a.time = 0
 
 func channelFrequency*(a: Apu, chno: ChannelId): int =

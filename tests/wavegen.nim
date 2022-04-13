@@ -4,8 +4,10 @@
 # the wav files are generated in a folder called "wavegen" in the same directory
 # as the executable
 
-import trackerboy/private/[hardware, synth]
+import trackerboy/private/[hardware, synth, wavwriter]
+import trackerboy/common
 
+import std/[os, strformat, typetraits]
 
 type
 
@@ -36,7 +38,7 @@ const
 
 proc generateWaveform(s: var Synth, w: Waveform) =
     s.samplerate = w.samplerate
-    s.setBuffer(w.samplerate) # 1 sec
+    s.setBufferSize(w.samplerate) # 1 sec
 
     proc generate(s: var Synth, mode: static MixMode, timeStep: float32) =
         var time = 0.0f
@@ -50,21 +52,19 @@ proc generateWaveform(s: var Synth, w: Waveform) =
         result = gbClockrate.float32 / freq.float32 / 2.0f
 
     if w.leftFrequency == w.rightFrequency:
-        generate(s, MixMode.middle, getTimeStep(w.leftFrequency))
+        generate(s, mixMiddle, getTimeStep(w.leftFrequency))
     else:
         if w.leftFrequency > 0:
-            generate(s, MixMode.left, getTimeStep(w.leftFrequency))
+            generate(s, mixLeft, getTimeStep(w.leftFrequency))
         if w.rightFrequency > 0:
-            generate(s, MixMode.right, getTimeStep(w.rightFrequency))
+            generate(s, mixRight, getTimeStep(w.rightFrequency))
 
     s.endFrame(gbClockrate)
 
-when isMainModule:
-    import trackerboy/private/wavwriter
-    import std/[os, strformat, typetraits]
+proc `$`(w: Waveform): string =
+    result = fmt"tone_{w.samplerate}Hz_{w.leftFrequency}Hz_{w.rightFrequency}Hz.wav"
 
-    proc `$`(w: Waveform): string =
-        result = fmt"tone_{w.samplerate}Hz_{w.leftFrequency}Hz_{w.rightFrequency}Hz.wav"
+when isMainModule:
 
     var buf: seq[Pcm]
     let outDir = getAppDir().joinPath("wavegen")
@@ -75,7 +75,6 @@ when isMainModule:
     s.volumeStepRight = volumeStep
     for i, preset in presetWaveforms.pairs:
         generateWaveform(s, preset)
-        buf.setLen(s.availableSamples() * 2)
-        assert s.readSamples(buf) == buf.len() div 2
+        s.takeSamples(buf)
         var wav = initWavWriter(joinPath(outDir, $preset), 2, preset.samplerate)
         wav.write(buf)

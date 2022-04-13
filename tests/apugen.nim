@@ -28,7 +28,6 @@ const
     testSamplerate* = 44100
     cyclesPerWrite = 12
     cyclesPerFrame = 70256u32
-    samplesPerFrame = (testSamplerate / gbVblank).int + 1
 
 const tests* = (
     duty: [
@@ -263,8 +262,7 @@ when isMainModule:
     import trackerboy/private/wavwriter
 
     proc runTest(test: openarray[ApuTestCommand], apu: var Apu, wav: var WavWriter) =
-        var buf {.noinit.}: array[samplesPerFrame * 2, Pcm]
-
+        var buf: seq[Pcm]
         apu.reset()
 
         var time = 0u32
@@ -277,9 +275,8 @@ when isMainModule:
                     apu.endFrame()
                     time = 0
 
-                    let samples = apu.readSamples(toOpenArray(buf, 0, apu.availableSamples * 2 - 1))
-                    let bufslice = 0..(samples * 2 - 1)
-                    wav.write(toOpenArray(buf, bufslice.a, bufslice.b))
+                    apu.takeSamples(buf)
+                    wav.write(buf)
 
                     dec frames
             of opWrite:
@@ -290,8 +287,7 @@ when isMainModule:
 
     import std/os
 
-    var a = initApu(testSamplerate)
-    a.setBuffer(testSamplerate)
+    var a = initApu(testSamplerate, testSamplerate)
     let outDir = getAppDir().joinPath("apugen")
     outDir.createDir()
     

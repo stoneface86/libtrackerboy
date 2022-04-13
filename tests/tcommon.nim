@@ -25,3 +25,18 @@ test "CRef[T] access":
         cref == ref1
         ref1 == cref
 
+test "noRef(T)":
+    var ref1: CRef[T]
+    check:
+        ref1 == noRef(T)
+        nil == noRef(T)
+
+static:
+    assert not mixMute.pansLeft
+    assert not mixMute.pansRight
+    assert mixLeft.pansLeft
+    assert not mixLeft.pansRight
+    assert not mixRight.pansLeft
+    assert mixRight.pansRight
+    assert mixMiddle.pansLeft
+    assert mixMiddle.pansRight

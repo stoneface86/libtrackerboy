@@ -7,7 +7,7 @@ import hardware
 import ptrarith
 export Pcm
 
-import std/[algorithm, bitops, math]
+import std/[algorithm, math]
 
 const
     stepWidth = 16
@@ -76,15 +76,8 @@ const
 
 
 template frameIndex(t: Natural): int = t * 2
-template sampleCount(t: Natural): int = t div 2
 
-proc pansLeft*(mode: MixMode): bool {.inline.} =
-    testBit(ord(mode), 0)
-
-proc pansRight*(mode: MixMode): bool {.inline.} =
-    testBit(ord(mode), 1)
-
-proc initAccumulator(): Accumulator =
+func initAccumulator(): Accumulator =
     Accumulator(
         sum: 0.0f,
         highpass: 0.0f
@@ -95,10 +88,10 @@ proc process(a: var Accumulator, input: float32, highpassRate: float32): float32
     result = a.sum - a.highpass
     a.highpass = a.sum - (result * highpassRate)
 
-proc sampletime(s: Synth, cycletime: uint32): float32 =
+func sampletime(s: Synth, cycletime: uint32): float32 =
     (cycletime.float32 * s.factor) + s.sampleOffset
 
-proc getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeFract: float32] =
+func getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeFract: float32] =
     let time = s.sampletime(cycletime)
     let phase = (time - trunc(time)) * stepPhases.float32
 
@@ -108,7 +101,7 @@ proc getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeF
         timeFract: phase - trunc(phase)
     )
 
-proc deltaScale(delta, scale, interp: float32): tuple[first, second: float32] =
+func deltaScale(delta, scale, interp: float32): tuple[first, second: float32] =
     let first = delta * scale
     let second = first * interp
     (first - second, second)
@@ -179,7 +172,7 @@ proc clear*(s: var Synth) =
     s.accums.fill(initAccumulator())
     s.buffer.fill(0.0f)
 
-proc samplerate*(s: Synth): int =
+func samplerate*(s: Synth): int =
     s.samplerate
 
 proc `samplerate=`*(s: var Synth, samplerate: int) =
@@ -189,7 +182,11 @@ proc `samplerate=`*(s: var Synth, samplerate: int) =
         # sameboy's HPF
         s.highpass = pow(0.999958f, 1.0f / s.factor)
 
-proc initSynth*(samplerate = 44100): Synth =
+proc setBufferSize*(s: var Synth, samples: Natural) =
+    s.buffer.setLen(frameIndex(samples + stepWidth))
+    s.clear()
+
+func initSynth*(samplerate = 44100, buffersize: Natural = 0): Synth =
     result = Synth(
         volumeStepLeft: 0.0f,
         volumeStepRight: 0.0f,
@@ -205,35 +202,33 @@ proc initSynth*(samplerate = 44100): Synth =
         ]
     )
     result.`samplerate=`(samplerate)
+    result.setBufferSize(buffersize)
 
-proc setBuffer*(s: var Synth, samples: int) =
-    s.buffer.setLen(frameIndex(samples + stepWidth))
-    s.clear()
-
-proc readSamples*(s: var Synth, buf: var openarray[Pcm]): int =
-    if buf.len.sampleCount >= s.samplesAvail:
-        var dest = buf[0].addr
-        var src = s.buffer[0].addr
-        for i in 0..s.samplesAvail-1:
-            ptrArith:
-                template accumulateChannel(channel: int): untyped =
-                    dest[] = s.accums[channel].process(src[], s.highpass)
-                    src[] = 0
-                    inc src
-                    inc dest
-                accumulateChannel(0)
-                accumulateChannel(1)
-        result = s.samplesAvail
-        s.samplesAvail = 0
-        # copy leftovers to front of buffer
-        var d = frameIndex(result)
-        for i in 0..(stepWidth*2)-1:
-            s.buffer[i] = s.buffer[d]
-            s.buffer[d] = 0.0f
-            inc d
-
-    else:
-        result = 0
+proc takeSamples*(s: var Synth, buf: var seq[Pcm]) =
+    ## Takes all available samples from the synth and puts them into the given
+    ## buf. The buf's len is changed to the amount of available samples.
+    let totalSamples = frameIndex(s.samplesAvail)
+    buf.setLen(totalSamples)
+    # move samples to the destination buf, after integrating and applying the
+    # high pass filter
+    var dest = buf[0].addr
+    var src = s.buffer[0].addr
+    for i in 0..<s.samplesAvail:
+        ptrArith:
+            template accumulateChannel(channel: int): untyped =
+                dest[] = s.accums[channel].process(src[], s.highpass)
+                src[] = 0
+                inc src
+                inc dest
+            accumulateChannel(0)
+            accumulateChannel(1)
+    # copy leftovers to the front of the synth's buffer
+    var d = totalSamples
+    s.samplesAvail = 0
+    for i in 0..<(stepWidth*2):
+        s.buffer[i] = s.buffer[d]
+        s.buffer[d] = 0.0f
+        inc d
 
 proc endFrame*(s: var Synth, cycletime: uint32) =
     let split = splitDecimal(s.sampletime(cycletime))
@@ -241,5 +236,5 @@ proc endFrame*(s: var Synth, cycletime: uint32) =
     assert split.intpart.int <= s.buffer.len, "end of frame exceeds buffer"
     s.samplesAvail = split.intpart.int
 
-proc availableSamples*(s: Synth): int =
+func availableSamples*(s: Synth): int =
     s.samplesAvail
