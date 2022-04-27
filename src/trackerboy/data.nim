@@ -2,12 +2,15 @@
 ## This module contains data types used in the library.
 ##
 
-import std/[math, options, sequtils, tables]
+import std/[math, options, parseutils, sequtils, tables]
 
 export options
 
 import common
 import version
+import private/data
+
+export common
 
 const
     speedFractionBits = 4
@@ -41,7 +44,7 @@ type
     EffectIndex* = range[0..2]
         ## Index type for an Effect in a TrackRow.
     
-    EffectColumns* = range[1..3]
+    EffectColumns* = range[1u8..3u8]
     
     EffectCounts* = array[4, EffectColumns]
         ## Number of effects to display for each channel.
@@ -73,6 +76,7 @@ type
 
     Instrument* {.requiresInit.} = object
         item: ItemData
+        channel*: ChannelId
         initEnvelope*: bool
         envelope*: uint8
         sequences*: array[SequenceKind, Sequence]
@@ -95,6 +99,8 @@ type
     WaveformTable* = Table[Waveform]
         ## Container for Waveforms. Up to 64 Waveforms can be stored in this
         ## table and is addressable via a TableId.
+
+    SomeTable* = InstrumentTable|WaveformTable
 
     # song order
 
@@ -202,17 +208,13 @@ type
         instruments*: InstrumentTable
         waveforms*: WaveformTable
 
-        version: Version
-        revisionMajor: int
-        revisionMinor: int
-
         title*, artist*, copyright*: InfoString
 
         comments*: string
         system*: System
         customFramerate*: Framerate
 
-    
+        private*: ModulePrivate
 
 const
     defaultRpb* = 4
@@ -264,11 +266,46 @@ proc `data=`*(s: var Sequence, data: sink seq[uint8]) =
         raise newException(InvalidOperationDefect, "cannot set data: sequence is too big")
     s.data = data
 
+func `$`*(s: Sequence): string =
+    ## Stringify operator for Sequences. The string returned can be passed to
+    ## `parseSequence` to get the original sequence.
+    let loopIndex = if s.loopIndex.isSome(): s.loopIndex.get().int else: -1
+    for i, item in s.data.pairs:
+        if i == loopIndex:
+            result.add("| ")
+        result.add($cast[int8](s.data[i]))
+        if i != s.data.high:
+            result.add(' ')
+
+func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequence =
+    ## Convert a string to a Sequence. The string should have its sequence data
+    ## separated by whitespace, with the loop index using a '|' char before the
+    ## data to loop to. Any invalid element is ignored.
+    var i = 0
+    while true:
+        i += str.skipWhitespace(i)
+        if i >= str.len:
+            break
+        if str[i] == '|':
+            result.loopIndex = some(result.data.len.ByteIndex)
+            inc i
+        else:
+            var data: int
+            
+            let parsed = str.parseInt(data, i)
+            if parsed == 0:
+                # skip this character
+                inc i
+            else:
+                i += parsed
+                result.data.add(cast[uint8](clamp(data, minVal, maxVal)))
+
 # Instrument
 
 template tInitInstrument[T: Instrument|ref Instrument](): untyped =
     T(
         item: initItemData(),
+        channel: ch1,
         initEnvelope: false,
         envelope: 0xF0,
         sequences: default(T.sequences.type)
@@ -294,21 +331,27 @@ proc initWaveform*(): Waveform =
 proc newWaveform*(): ref Waveform =
     result = tInitWaveform[ref Waveform]()
 
-proc fromString*(w: var WaveData, str: sink string) =
-    proc toHex(ch: char): uint8 =
-        if ch >= 'A':
-            result = (ord(ch) - ord('A')).uint8
-        else:
-            result = (ord(ch) - ord('0')).uint8
+func `$`*(wave: WaveData): string {.noInit.} =
+    const hextable = ['0', '1', '2', '3', '4', '5', '6', '7',
+                      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+    result = newString(32)
+    var i = 0
+    for samples in wave:
+        result[i] = hextable[samples shr 4]
+        inc i
+        result[i] = hextable[samples and 0xF]
+        inc i
 
-    assert str.len == 32
-    var index = 0
-    for sample in w.mitems:
-        var result = toHex(str[index]) shl 4
-        inc index
-        result = result or toHex(str[index])
-        inc index
-        sample = result
+func parseWave*(str: string): WaveData {.noInit.} =
+    var start = 0
+    for dest in result.mitems:
+        let parsed = parseHex(str, dest, start, 2)
+        if parsed != 2:
+            # clear the rest
+            for i in (start div 2)..<result.len:
+                result[i] = 0
+            break
+        start += 2
 
 # Table
 
@@ -333,6 +376,12 @@ proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
 
 proc `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
     toCRef(t.data[id])
+
+iterator items*[T: SomeData](t: Table[T]): TableId =
+    ## Iterates all items in the table, via their id, in order.
+    for id in low(TableId)..high(TableId):
+        if t.data[id] != nil:
+            yield id
 
 proc insert[T: SomeData](t: var Table[T], id: TableId) =
     t.data[id] = when T is Instrument:
@@ -372,6 +421,12 @@ proc size*[T: SomeData](t: Table[T]): int =
 
 proc nextAvailableId*[T: SomeData](t: Table[T]): TableId =
     t.nextId
+
+func next*[T: SomeData](t: Table[T], start: TableId = 0): Option[TableId] =
+    for id in start..high(TableId):
+        if t.data[id] != nil:
+            return some(id)
+    none(TableId)
 
 # Order
 
@@ -430,17 +485,20 @@ proc swap*(o: var Order, i1, i2: ByteIndex) =
 
 # TrackRow
 
-proc queryNote*(row: TrackRow): Option[uint8] =
+func queryNote*(row: TrackRow): Option[uint8] =
     if row.note > 0:
         return some(row.note - 1)
     else:
         return none(uint8)
 
-proc queryInstrument*(row: TrackRow): Option[uint8] = 
+func queryInstrument*(row: TrackRow): Option[uint8] = 
     if row.instrument > 0:
         return some(row.instrument - 1)
     else:
         return none(uint8)
+
+func isEmpty*(row: TrackRow): bool =
+    row == default(TrackRow)
 
 # Track
 
@@ -475,6 +533,9 @@ proc `[]`*(t: var Track, i: ByteIndex): var TrackRow =
 proc `[]`*(t: Track, i: ByteIndex): TrackRow =
     t.data[i]
 
+proc `[]=`*(t: var Track, i: ByteIndex, row: TrackRow) =
+    t.data[i] = row
+
 proc setNote*(t: var Track, i: ByteIndex, note: uint8) =
     t.data[i].note = note + 1
 
@@ -489,6 +550,11 @@ proc setEffectType*(t: var Track, i: ByteIndex, effectNo: EffectIndex, et: Effec
 
 proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectIndex, param: uint8) =
     t.data[i].effects[effectNo].param = param
+
+func totalRows*(t: Track): int =
+    for row in t.data:
+        if not row.isEmpty():
+            inc result
 
 proc data*(t: Track): lent seq[TrackRow] =
     t.data
@@ -545,6 +611,10 @@ proc initSong*(): Song =
 proc newSong*(): ref Song =
     result = tInitSong[ref Song]()
 
+proc removeAllTracks*(s: var Song) =
+    for tab in s.tracks.mitems:
+        tab.clear()
+
 proc speedToFloat*(speed: Speed): float =
     speed.float * (1.0 / (1 shl speedFractionBits))
 
@@ -559,6 +629,10 @@ proc getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): ref Track =
 
 proc getTrack*(s: Song, ch: ChannelId, order: ByteIndex): CRef[Track] =
     result = s.tracks[ch].getOrDefault(order).toCRef
+
+iterator tracks*(s: Song, ch: ChannelId): (ByteIndex, CRef[Track]) =
+    for pair in s.tracks[ch].pairs:
+        yield (pair[0], pair[1].toCRef)
 
 proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
     result = s.getTrack(ch, order)[][row]
@@ -587,6 +661,10 @@ proc getPattern*(s: Song, order: ByteIndex): CPattern =
         ]
     )
 
+func totalTracks*(s: Song): int =
+    for t in s.tracks:
+        result += t.len
+
 proc trackSize*(s: Song): TrackSize {.inline.} =
     s.trackSize
 
@@ -606,11 +684,12 @@ proc tempo*(s: Song, framerate: float): float =
 
 # SongList
 
-proc initSongList*(): SongList =
+proc initSongList*(len: PositiveByte = 1): SongList =
     result = SongList(
-        data: newSeq[ref Song](1)
+        data: newSeq[ref Song](len)
     )
-    result.data[0] = newSong()
+    for songref in result.data.mitems:
+        songref = newSong()
 
 proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
     l.data[i]
@@ -676,15 +755,17 @@ template tInitModule(T: typedesc[Module|ref Module]): untyped =
         songs: initSongList(),
         instruments: initTable[Instrument](),
         waveforms: initTable[Waveform](),
-        version: appVersion,
-        revisionMajor: fileMajor,
-        revisionMinor: fileMinor,
         title: default(InfoString),
         artist: default(InfoString),
         copyright: default(InfoString),
         comments: "",
         system: SystemDmg,
-        customFramerate: 30
+        customFramerate: 30,
+        private: ModulePrivate(
+            version: appVersion,
+            revisionMajor: fileMajor,
+            revisionMinor: fileMinor
+        )
     )
 
 proc initModule*(): Module =
@@ -694,13 +775,13 @@ proc newModule*(): ref Module =
     result = tInitModule(ref Module)
 
 proc version*(m: Module): Version =
-    m.version
+    m.private.version
 
 proc revisionMajor*(m: Module): int =
-    m.revisionMajor
+    m.private.revisionMajor
 
 proc revisionMinor*(m: Module): int = 
-    m.revisionMinor
+    m.private.revisionMinor
 
 proc framerate*(m: Module): float =
     case m.system:
@@ -710,3 +791,7 @@ proc framerate*(m: Module): float =
         result = 61.1f
     of SystemCustom:
         result = m.customFramerate.float
+
+converter toInfoString*(str: string): InfoString =
+    for i in 0..<min(str.len, result.len):
+        result[i] = str[i]

@@ -3,12 +3,10 @@
 ## 
 
 import ../common
+import endian
 export PcmF32
 
 import std/[streams, with]
-
-# big endian is not supported atm since the std/endians module is unstable.
-static: assert cpuEndian == littleEndian, "unsupported endian"
 
 type
 
@@ -22,17 +20,19 @@ type
     # [C] indicates the field is set on close
     # [I] indicates the field is set on init
 
+    u32le = LittleEndian[uint32]
+
     WavHeader {.packed.} = object
         riffId: array[4, char]      # = "RIFF"
-        chunkSize: uint32           # = [C]
+        chunkSize: u32le            # = [C]
         waveId: array[4, char]      # = "WAVE"
         # fmt subchunk
         fmtId: array[4, char]       # = "fmt "
-        fmtChunkSize: uint32        # = 18
+        fmtChunkSize: u32le         # = 18
         fmtTag: uint16              # = 3 (IEEE_FLOAT)
         fmtChannels: uint16         # [I]
-        fmtSampleRate: uint32       # [I]
-        fmtAvgBytesPerSec: uint32   # [I] = sizeof(Sample) * fmtSampleRate * fmtChannels
+        fmtSampleRate: u32le        # [I]
+        fmtAvgBytesPerSec: u32le    # [I] = sizeof(Sample) * fmtSampleRate * fmtChannels
         fmtBlockAlign: uint16       # [I] = sizeof(Sample) * fmtChannels
         fmtBitsPerSample: uint16    # = sizeof(Sample) * 8
         fmtCbSize: uint16           # = 0
@@ -40,11 +40,11 @@ type
         # for integer PCM this is not needed, but is needed for "all new WAVE formats"
         # it is assumed that float PCM requires this chunk
         factId: array[4, char]      # = "fact"
-        factChunkSize: uint32       # = 4
-        factSampleCount: uint32     # = [C]
+        factChunkSize: u32le        # = 4
+        factSampleCount: u32le      # = [C]
         # data subchunk
         dataId: array[4, char]      # = "data"
-        dataChunkSize: uint32       # = [C]
+        dataChunkSize: u32le        # = [C]
         # sampled data follows
         # extra padding byte if dataChunkSize is odd [C]
 
@@ -66,22 +66,22 @@ proc initWavWriter*(filename: sink string, channels, samplerate: int): WavWriter
 
     let header = WavHeader(
         riffId: ['R', 'I', 'F', 'F'],
-        chunkSize: 0,
+        chunkSize: 0'u32.toLE,
         waveId: ['W', 'A', 'V', 'E'],
         fmtId: ['f', 'm', 't', ' '],
-        fmtChunkSize: 18,
+        fmtChunkSize: 18'u32.toLE,
         fmtTag: 3,
         fmtChannels: channels.uint16,
-        fmtSampleRate: samplerate.uint32,
-        fmtAvgBytesPerSec: (bytesPerChannel * samplerate).uint32,
+        fmtSampleRate: samplerate.uint32.toLE,
+        fmtAvgBytesPerSec: (bytesPerChannel * samplerate).uint32.toLE,
         fmtBlockAlign: bytesPerChannel.uint16,
         fmtBitsPerSample: sizeof(PcmF32) * 8,
         fmtCbSize: 0,
         factId: ['f', 'a', 'c', 't'],
-        factChunkSize: 4,
-        factSampleCount: 0,
+        factChunkSize: 4'u32.toLE,
+        factSampleCount: 0'u32.toLE,
         dataId: ['d', 'a', 't', 'a'],
-        dataChunkSize: 0
+        dataChunkSize: 0'u32.toLE
     )
 
     result.stream.write(header)
@@ -107,15 +107,15 @@ proc close(w: var WavWriter) =
         with w.stream:
             # overwrite the chunk size for the entire file (also equal to filesize - 8)
             setPosition(offsetOf(WavHeader, chunkSize))
-            write(chunkSize)
+            write(chunkSize.toLE)
 
             # overwrite the sample count in the fact subchunk
             setPosition(offsetOf(WavHeader, factSampleCount))
-            write(totalSamples)
+            write(totalSamples.toLE)
 
             # overwrite the chunk size of the data subchunk
             setPosition(offsetOf(WavHeader, dataChunkSize))
-            write(dataChunkSize)
+            write(dataChunkSize.toLE)
 
         w.stream = nil
 

@@ -42,9 +42,9 @@ test "Table[T] duplicates item":
         when T is Instrument:
             src.envelope = 0x03
             src.initEnvelope = true
-            src.sequences[skPanning].data = @[1u8, 1u8, 2u8, 2u8, 3u8]
+            src.sequences[skPanning].data = @[1u8, 1, 2, 2, 3]
         else:
-            src.data.fromString("0123456789ABCDEFFEDCBA9876543210")
+            src.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
 
         let dupId = table.duplicate(srcId)
         var duped = table[dupId]
@@ -78,6 +78,47 @@ test "Table[T] keeps track of next available id":
 const defaultOrderRow = [0u8, 0u8, 0u8, 0u8]
 const testrow1 = [1u8, 1u8, 1u8, 1u8]
 const testrow2 = [2u8, 2u8, 2u8, 2u8]
+
+test "$Sequence":
+    var s: Sequence
+    check $s == ""
+    s.data = @[127u8]
+    check $s == "127"
+    s.data = @[1u8, 2, 3, 0xFF, 0x80]
+    check $s == "1 2 3 -1 -128"
+    s.loopIndex = some(1.ByteIndex)
+    check $s == "1 | 2 3 -1 -128"
+    s.loopIndex = some(200.ByteIndex)
+    check $s == "1 2 3 -1 -128"
+    s.setLen(0)
+    check $s == ""
+
+test "parseSequence(\"\") == Sequence()":
+    check "".parseSequence() == Sequence()
+
+template parseSequenceTest(input: string, expectedData: seq[uint8], expectedLoop: Option[ByteIndex]) =
+    let s = parseSequence(input)
+    check:
+        s.data == expectedData
+        s.loopIndex == expectedLoop
+
+test "parseSequence":
+    parseSequenceTest "  1 2   \t3  4\t", @[1u8, 2, 3, 4], none(ByteIndex)
+
+test "parseSequence with loop index":
+    parseSequenceTest "2 | 3 4", @[2u8, 3, 4], some(1.ByteIndex)
+
+test "parseSequence with garbage input":
+    parseSequenceTest "23sasd32sasd3@@$@21||23|2", @[23u8, 32, 3, 21, 23, 2], some(5.ByteIndex)
+
+test "parseSequence clamping":
+    parseSequenceTest "129 -300 23", @[0x7Fu8, 0x80, 23], none(ByteIndex)
+
+test "parseSequence($sequence) == sequence":
+    discard
+
+test "parseWave($wave) == wave":
+    discard
 
 suite "Order":
 
