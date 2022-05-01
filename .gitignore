@@ -2,3 +2,7 @@
 .vscode/
 bin/
 docs/
+nimcache/
+testresults/
+outputExpected.txt
+outputGotten.txt

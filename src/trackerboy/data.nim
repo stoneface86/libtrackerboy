@@ -54,10 +54,6 @@ type
         ## containing 2 4-bit PCM samples. The first sample is the upper nibble
         ## of the byte, with the second being the lower nibble.
 
-    ItemData = object
-        id: TableId
-        name: string
-
     SequenceKind* = enum
         ## Enumeration for the kinds of parameters a sequence can operate on.
         ## An `Instrument` has a `Sequence` for each one of these kinds.
@@ -75,7 +71,8 @@ type
         data: seq[uint8]
 
     Instrument* {.requiresInit.} = object
-        item: ItemData
+        id: TableId
+        name*: string
         channel*: ChannelId
         initEnvelope*: bool
         envelope*: uint8
@@ -83,7 +80,8 @@ type
 
     Waveform* {.requiresInit.} = object
         ## Container for a waveform to use on CH3.
-        item: ItemData
+        id: TableId
+        name*: string
         data*: WaveData
 
     SomeData* = Instrument|Waveform
@@ -227,25 +225,10 @@ func effectTypeShortensPattern*(et: EffectType): bool =
              et == etPatternSkip or
              et == etPatternGoto
 
-# ItemData
-
-func initItemData(): ItemData =
-    result = ItemData(
-        id: 0,
-        name: ""
-    )
-
-proc `id=`*[T: SomeData](self: var T, value: TableId) {.inline.} =
-    self.item.id = value
+# Instrument|Waveform
 
 proc id*[T: SomeData](self: T): TableId {.inline.} =
-    self.item.id
-
-proc `name=`*[T: SomeData](self: var T, value: string) {.inline.} =
-    self.item.name = value
-
-proc name*[T: SomeData](self: T): lent string {.inline.} =
-    self.item.name
+    self.id
 
 # Sequence
 
@@ -258,7 +241,10 @@ proc `[]=`*(s: var Sequence, i: ByteIndex, val: uint8) =
 proc setLen*(s: var Sequence, len: SequenceSize) =
     s.data.setLen(len)
 
-proc data*(s: Sequence): lent seq[uint8] =
+func len*(s: Sequence): int =
+    s.data.len
+
+func data*(s: Sequence): lent seq[uint8] =
     s.data
 
 proc `data=`*(s: var Sequence, data: sink seq[uint8]) =
@@ -304,31 +290,33 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
 
 template tInitInstrument[T: Instrument|ref Instrument](): untyped =
     T(
-        item: initItemData(),
+        id: 0,
+        name: "",
         channel: ch1,
         initEnvelope: false,
         envelope: 0xF0,
         sequences: default(T.sequences.type)
     )
 
-proc initInstrument*(): Instrument =
+func initInstrument*(): Instrument =
     result = tInitInstrument[Instrument]()
 
-proc newInstrument*(): ref Instrument =
+func newInstrument*(): ref Instrument =
     result = tInitInstrument[ref Instrument]()
 
 # Waveform
 
 template tInitWaveform[T: Waveform|ref Waveform](): untyped =
     T(
-        item: initItemData(),
+        id: 0,
+        name: "",
         data: default(T.data.type)
     )
 
-proc initWaveform*(): Waveform =
+func initWaveform*(): Waveform =
     result = tInitWaveform[Waveform]()
 
-proc newWaveform*(): ref Waveform =
+func newWaveform*(): ref Waveform =
     result = tInitWaveform[ref Waveform]()
 
 func `$`*(wave: WaveData): string {.noInit.} =
@@ -355,7 +343,7 @@ func parseWave*(str: string): WaveData {.noInit.} =
 
 # Table
 
-proc initTable*[T: SomeData](): Table[T] =
+func initTable*[T: SomeData](): Table[T] =
     result = Table[T](
         nextId: 0,
         size: 0,
@@ -374,10 +362,10 @@ proc capacity*[T: SomeData](t: Table[T]): static[int] =
 proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
     t.data[id]
 
-proc `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
+func `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
     toCRef(t.data[id])
 
-iterator items*[T: SomeData](t: Table[T]): TableId =
+iterator items*[T: SomeData](t: Table[T]): TableId {.noSideEffect.} =
     ## Iterates all items in the table, via their id, in order.
     for id in low(TableId)..high(TableId):
         if t.data[id] != nil:
@@ -416,10 +404,10 @@ proc remove*[T: SomeData](t: var Table[T], id: TableId) =
     if t.nextId > id:
         t.nextId = id
 
-proc size*[T: SomeData](t: Table[T]): int =
+proc len*[T: SomeData](t: Table[T]): int =
     t.size
 
-proc nextAvailableId*[T: SomeData](t: Table[T]): TableId =
+func nextAvailableId*[T: SomeData](t: Table[T]): TableId =
     t.nextId
 
 func next*[T: SomeData](t: Table[T], start: TableId = 0): Option[TableId] =
@@ -448,7 +436,7 @@ proc `data=`*(o: var Order, data: sink seq[OrderRow]) =
     assert data.len >= 1
     o.data = data
 
-proc size*(o: Order): int =
+proc len*(o: Order): int =
     o.data.len
 
 proc nextUnused*(o: Order): OrderRow =
@@ -477,8 +465,8 @@ proc remove*(o: var Order, index: ByteIndex, count: OrderSize = 1) =
     assert o.data.len > count
     o.data.delete(index.int..(index + count - 1))
 
-proc resize*(o: var Order, size: OrderSize) =
-    o.data.setLen(size)
+proc setLen*(o: var Order, len: OrderSize) =
+    o.data.setLen(len)
 
 proc swap*(o: var Order, i1, i2: ByteIndex) =
     swap(o.data[i1], o.data[i2])
@@ -562,7 +550,7 @@ proc data*(t: Track): lent seq[TrackRow] =
 proc len*(t: Track): int =
     t.data.len
 
-proc resize*(t: var Track, size: TrackSize) =
+proc setLen*(t: var Track, size: TrackSize) =
     t.data.setLen(size)
 
 # Pattern
@@ -671,7 +659,7 @@ proc trackSize*(s: Song): TrackSize {.inline.} =
 proc setTrackSize*(s: var Song, size: TrackSize) =
     for table in s.tracks.mitems:
         for track in table.mvalues:
-            track[].resize(size)
+            track[].setLen(size)
     s.trackSize = size
 
 proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =

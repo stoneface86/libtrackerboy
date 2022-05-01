@@ -1,0 +1,10 @@
+# ignore everything
+*
+# except for:
+
+!.gitignore
+# nim files
+!*.nim
+# directories
+!*/
+megatest.nim

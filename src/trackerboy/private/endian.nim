@@ -13,7 +13,11 @@
 {.push raises: [].}
 
 # byte swapping is only necessary when this bool is true
-const willCorrect = cpuEndian == bigEndian
+# the tbEndianInverse is for testing purposes only
+when defined(tbEndianInverse):
+    const willCorrect* = cpuEndian != bigEndian
+else:
+    const willCorrect* = cpuEndian == bigEndian
 
 when willCorrect:
     const useBuiltins = not defined(noIntrinsicsEndians)
@@ -21,7 +25,7 @@ when willCorrect:
     # byte swap reference functions, in pure nim
 
     func bswapReference(val: uint16): uint16 =
-        # stew/endians2 swapBytesNim(uint8)
+        # stew/endians2 swapBytesNim(uint16)
         (val shl 8) or (val shr 8)
 
     func bswapReference(val: uint32): uint32 =
@@ -76,7 +80,9 @@ when willCorrect:
     else:
         # builtins are not available, or were disabled
         # use the reference ones instead
-        const bswapBuiltin = bswapReference
+        template bswapBuiltin(a: uint16): uint16 = bswapReference(a)
+        template bswapBuiltin(a: uint32): uint32 = bswapReference(a)
+        template bswapBuiltin(a: uint64): uint64 = bswapReference(a)
 
 # philosophy notes
 # should uint8 be included in SomeWord? Since endianess only applies to
@@ -122,19 +128,5 @@ func toLE*[T: SomeWord](val: T): LittleEndian[T] {.inline.} =
 func toNE*[T: SomeWord](val: LittleEndian[T]): T {.inline.} =
     ## Convert the word, in little endian representation, to native endian (NE).
     correct(val.data)
-
-static:
-    when willCorrect:
-        assert 0x12345678'u32.toLE() == LittleEndian[uint32](data: 0x78563412'u32)
-        assert 0x1234'u16.bswapReference == 0x3412'u16
-        assert 0x12345678'u32.bswapReference == 0x78563412'u32
-        assert 0xDEADCAFEBABEBEEF'u64.bswapReference == 0xEFBEBEBAFECAADDE'u64
-    else:
-        assert 0x12345678'u32.toLE() == LittleEndian[uint32](data: 0x12345678'u32)
-
-    # not using distinct T, ensure that the sizes are equivalent to the wrapped type
-    assert LittleEndian[uint16].sizeof == uint16.sizeof
-    assert LittleEndian[uint32].sizeof == uint32.sizeof
-    assert LittleEndian[uint64].sizeof == uint64.sizeof
 
 {.pop.}
