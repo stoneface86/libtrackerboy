@@ -45,6 +45,11 @@ type
         mixRight    = 2
         mixMiddle   = mixLeft.ord or mixRight.ord
 
+    DeepEqualsRef*[T] = object
+        # Ref wrapper type providing an == overload that compares the value of
+        # the ref
+        data*: ref T
+
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef
     result = CRef[T](data: src)
@@ -67,6 +72,17 @@ template noRef*(T: typedesc): CRef[T] =
     ## returns a CRef of type T with no reference set (nil). Same as doing
     ## `nil.toCRef[T]`
     toCRef[T](nil)
+
+func deepEqualsRef*[T](val: ref T): DeepEqualsRef[T] {.inline.} =
+    DeepEqualsRef[T](data: val)
+
+func `==`*[T](lhs, rhs: DeepEqualsRef[T]): bool =
+    if lhs.data.isNil:
+        rhs.data.isNil
+    elif rhs.data.isNil:
+        false
+    else:
+        lhs.data[] == rhs.data[]
 
 func pansLeft*(mode: MixMode): bool {.inline.} =
     testBit(ord(mode), 0)

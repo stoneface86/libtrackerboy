@@ -23,8 +23,28 @@ type
             ## File has an unrecognized revision, possibly from a newer version of the format
         frCannotUpgrade
             ## An older revision file could not be upgraded to current revision
-        frInvalid
-            ## Invalid payload
+        frInvalidSystem
+            ## An invalid/unknown system was set in the header
+        frInvalidSize
+            ## Attempted to read past the size of a payload block, block data
+            ## is ill-formed
+        frInvalidCount
+            ## The icount or wcount field in the header is too big
+        frInvalidBlock
+            ## An invalid/unknown block id was used in a payload block
+        frInvalidChannel
+            ## An invalid/unknown channel was used in a payload block
+        frInvalidSpeed
+            ## The format contains an invalid speed, outside of Speed.low..Speed.high
+        frInvalidRowCount
+            ## A TrackFormat's rows field in a SONG block exceeds the Song's
+            ## track size
+        frInvalidRowNumber
+            ## A RowFormat's rowno field exceeds the Song's track size
+        frInvalidTerminator
+            ## The terminator is invalid.
+        frInvalidId
+        frInvalidDuplicateId
         frReadError
             ## A read error occurred during processing
         frWriteError
@@ -73,9 +93,6 @@ type
 
     Header = Header1
 
-    ModulePiece = Instrument|Song|Waveform
-    # A piece of a module, can be serialized/deserialized separately
-
     # payload records
     InstrumentFormat {.packed.} = object
         channel: uint8
@@ -90,18 +107,17 @@ type
     PackedEffects = distinct uint8
 
     SongFormat {.packed.} = object
-        rowsPerBeat: uint8
-        rowsPerMeasure: uint8
+        rowsPerBeat: BiasedUint8
+        rowsPerMeasure: BiasedUint8
         speed: uint8
         patternCount: BiasedUint8
         rowsPerTrack: BiasedUint8
         numberOfTracks: LittleEndian[uint16]
-        effectCounts: PackedEffects
     
     TrackFormat {.packed.} = object
         channel: uint8
         trackId: uint8
-        rows: uint8
+        rows: BiasedUint8
     
     RowFormat {.packed.} = object
         rowno: uint8
@@ -132,11 +148,23 @@ const
     blockIdInstrument   = "INST".toBlockId
     blockIdWave         = "WAVE".toBlockId
 
-converter unbias(val: BiasedUint8): uint8 {.inline.} =
-    val.uint8 + 1
+type BiasRange = range[1..256]
 
-converter bias(val: uint8): BiasedUint8 {.inline.} =
-    (val - 1).BiasedUint8
+func unbias(val: BiasedUint8): BiasRange {.inline.} =
+    val.int + 1
+
+func bias(val: BiasRange): BiasedUint8 {.inline.} =
+    (val.int - 1).BiasedUint8
+
+func `==`(l, r: BiasedUint8): bool {.borrow.}
+func `$`(b: BiasedUint8): string {.borrow.}
+
+static:
+    assert 1.bias == 0.BiasedUint8
+    assert 256.bias == 0xFF.BiasedUint8
+    assert 0.BiasedUint8.unbias == 1
+    assert 0xFF.BiasedUint8.unbias == 256
+    assert 23.bias.unbias == 23
 
 func currentVersionHeader(): BasicHeader =
     BasicHeader(
@@ -156,10 +184,14 @@ template errorCheck(body: untyped): untyped =
         if error != frNone:
             return error
 
-template invalidWhen(cond: bool): untyped =
-    ## template to return frInvalid when cond is true
+template invalidWhen(cond: bool, res = frInvalidSize): untyped =
+    ## template to return res when cond is true
     if cond:
-        return frInvalid
+        return res
+
+template checkChannel(channel: int): untyped =
+    if channel notin ch1..ch4:
+        return frInvalidChannel
 
 func packEffectCounts(ec: EffectCounts): PackedEffects =
     (ec[0] or (ec[1] shl 2) or (ec[2] shl 4) or (ec[3] shl 6)).PackedEffects
@@ -175,6 +207,9 @@ func unpackEffectCounts(ec: PackedEffects): EffectCounts =
         toColumn((ec.uint8 shr 6) and 0x3)
     ]
 
+func `$`(p: PackedEffects): string =
+    $p.unpackEffectCounts
+
 proc upgrade(h0: Header0, h1: var Header1): bool =
     ## Upgrades a rev 0 header to rev 1, returns true if the upgrade
     if h0.numberOfInstruments.toNE() > high(uint8) or h0.numberOfWaveforms.toNE() > high(uint8):
@@ -189,7 +224,7 @@ proc upgrade(h0: Header0, h1: var Header1): bool =
         h1.artist = h0.artist
         h1.copyright = h0.copyright
         h1.icount = h0.numberOfInstruments.toNE().uint8
-        h1.scount = 1u8
+        h1.scount = 1.bias
         h1.wcount = h0.numberOfWaveforms.toNE().uint8
         h1.system = h0.system
         h1.customFramerate = h0.customFramerate
@@ -202,12 +237,10 @@ proc deserialize(str: var string, ib: var InputBlock): FormatResult =
     str.setLen(block:
         # get the 2-byte length prefix
         var len: LittleEndian[uint16]
-        if ib.read(len):
-            return frInvalid
+        invalidWhen ib.read(len)
         len.toNE.int
     )
-    if ib.read(str):
-        return frInvalid
+    invalidWhen ib.read(str)
     frNone
 
 proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): FormatResult =
@@ -219,7 +252,7 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
     when T is Instrument:
         var format: InstrumentFormat
         invalidWhen ib.read(format)
-        invalidWhen format.channel.int notin ch1..ch4
+        checkChannel format.channel.int
         p.channel = format.channel
         p.initEnvelope = format.envelopeEnabled
         p.envelope = format.envelope
@@ -240,9 +273,9 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
     elif T is Song:
         var format: SongFormat
         invalidWhen ib.read(format)
-        p.rowsPerBeat = format.rowsPerBeat
-        p.rowsPerMeasure = format.rowsPerMeasure
-        invalidWhen format.speed.Speed notin (low(Speed)..high(Speed))
+        p.rowsPerBeat = format.rowsPerBeat.unbias
+        p.rowsPerMeasure = format.rowsPerMeasure.unbias
+        invalidWhen format.speed.Speed notin (low(Speed)..high(Speed)), frInvalidSpeed
         p.speed = format.speed.Speed
         if major > 0:
             var packed: PackedEffects
@@ -250,23 +283,24 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
             p.effectCounts = unpackEffectCounts(packed)
         # Order
         block:
-            var order = newSeq[OrderRow](unbias(format.patternCount))
+            var order = newSeq[OrderRow](format.patternCount.unbias)
             invalidWhen ib.read(order)
             p.order.data = order
         # Track data
         p.removeAllTracks()
-        let trackSize = unbias(format.rowsPerTrack).TrackSize
+        let trackSize = format.rowsPerTrack.unbias.TrackSize
         p.setTrackSize(trackSize)
         for i in 0..<toNE(format.numberOfTracks).int:
             var trackFormat: TrackFormat
             invalidWhen ib.read(trackFormat)
-            invalidWhen trackFormat.channel.int notin ch1..ch4
+            checkChannel trackFormat.channel.int
             let track = p.getTrack(trackFormat.channel.ChannelId, trackFormat.trackId)
-            let rowcount = unbias(trackFormat.rows).TrackSize
-            invalidWhen rowcount > trackSize
+            let rowcount = trackFormat.rows.unbias.TrackSize
+            invalidWhen rowcount > trackSize, frInvalidRowCount
             for j in 0..<rowcount:
                 var rowFormat: RowFormat
                 invalidWhen ib.read(rowFormat)
+                invalidWhen rowFormat.rowno.int >= trackSize.int, frInvalidRowNumber
                 track[][rowFormat.rowno] = rowFormat.rowdata
     else:   # Waveform
         invalidWhen ib.read(p.data)
@@ -293,14 +327,14 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
             ob.write(sequence.data)
     elif T is Song:
         ob.write(SongFormat(
-            rowsPerBeat: p.rowsPerBeat.uint8,
-            rowsPerMeasure: p.rowsPerMeasure.uint8,
+            rowsPerBeat: p.rowsPerBeat.bias,
+            rowsPerMeasure: p.rowsPerMeasure.bias,
             speed: p.speed.uint8,
-            patternCount: bias(p.order.size.uint8),
-            rowsPerTrack: bias(p.trackSize.uint8),
-            numberOfTracks: toLE(p.totalTracks().uint16),
-            effectCounts: packEffectCounts(p.effectCounts)
+            patternCount: p.order.len.bias,
+            rowsPerTrack: p.trackSize.bias,
+            numberOfTracks: p.totalTracks().uint16.toLE
         ))
+        ob.write(packEffectCounts(p.effectCounts))
         # write the song order
         ob.write(p.order.data)
         # write out all tracks
@@ -312,7 +346,7 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
                     ob.write(TrackFormat(
                         channel: chno.uint8,
                         trackId: trackid.uint8,
-                        rows: bias(rowcount.uint8)
+                        rows: rowcount.bias
                     ))
                     for rowno, row in track[].data.pairs:
                         if not row.isEmpty():
@@ -338,18 +372,15 @@ proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): Format
         str.setLen(len.int)
         ib.read(str)
 
-    if legacyDeserialize(m.songs[0].name, ib):
-        return frInvalid
+    invalidWhen legacyDeserialize(m.songs[0].name, ib)
     
     template readListIndex(count: int, table: untyped): untyped =
         for i in 0..<count:
             var id: uint8
-            if ib.read(id):
-                return frInvalid
+            invalidWhen ib.read(id)
             table.add(id)
             var name: string
-            if legacyDeserialize(name, ib):
-                return frInvalid
+            invalidWhen legacyDeserialize(name, ib)
             table[id][].name = name
     
     readListIndex(icount, m.instruments)
@@ -358,7 +389,7 @@ proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): Format
 template readBlock(id: BlockId, stream: Stream, body: untyped): untyped =
     block:
         var ib {.inject.} = initInputBlock(stream)
-        invalidWhen ib.begin() != id
+        invalidWhen ib.begin() != id, frInvalidBlock
         body
         invalidWhen not ib.isFinished()
 
@@ -381,8 +412,8 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
     proc processComm(m: var Module, ib: var InputBlock): FormatResult =
         var comments: string
         if ib.size > 0:
-            if ib.read(comments):
-                return frInvalid
+            comments.setLen(ib.size)
+            invalidWhen ib.read(comments)
         m.comments = comments
         frNone
 
@@ -395,14 +426,14 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
 
         if header.system.System in low(System)..high(System):
             m.system = header.system.System
-            if m.system == SystemCustom:
+            if m.system == systemCustom:
                 let framerate = toNE(header.customFramerate)
                 invalidWhen framerate.int notin low(Framerate)..high(Framerate)
                 m.customFramerate = framerate
         else:
-            return frInvalid
+            return frInvalidSystem
         
-        invalidWhen header.icount > high(TableId)+1 or header.wcount > high(TableId)+1
+        invalidWhen header.icount > high(TableId)+1 or header.wcount > high(TableId)+1, frInvalidCount
 
         m.private.revisionMajor = header.bh.revMajor.int
         m.private.revisionMinor = header.bh.revMinor.int
@@ -416,7 +447,7 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
 
         m.instruments = initTable[Instrument]()
         m.waveforms = initTable[Waveform]()
-        m.songs = initSongList(header.scount.unbias.int)
+        m.songs = initSongList(header.scount.unbias)
 
         # read the payload
         let major = header.bh.revMajor.int
@@ -441,7 +472,7 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
             readBlock blockIdComment, stream:
                 errorCheck: processComm(m, ib)
             
-            for i in 0..<header.scount.unbias.int:
+            for i in 0..<header.scount.unbias:
                 readBlock blockIdSong, stream:
                     errorCheck: deserialize(m.songs[i][], ib, major)
 
@@ -450,7 +481,8 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
                     readBlock blockId, stream:
                         var id: TableId
                         invalidWhen ib.read(id)
-                        invalidWhen id notin low(TableId)..high(TableId) or table[id] == nil
+                        invalidWhen id notin low(TableId)..high(TableId), frInvalidId
+                        invalidWhen table[id] != nil, frInvalidDuplicateId
                         table.add(id)
                         errorCheck: deserialize(table[id][], ib, major)
 
@@ -463,7 +495,7 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
             var term: Signature
             stream.read(term)
             if term != terminator:
-                return frInvalid
+                return frInvalidTerminator
     except IOError, OSError:
         return frWriteError
 
@@ -516,9 +548,9 @@ proc serialize*(m: Module, stream: Stream): FormatResult {.raises: [].} =
                 title: m.title,
                 artist: m.artist,
                 copyright: m.copyright,
-                icount: m.instruments.size.uint8,
-                scount: m.songs.len.uint8,
-                wcount: m.waveforms.size.uint8,
+                icount: m.instruments.len.uint8,
+                scount: m.songs.len.bias,
+                wcount: m.waveforms.len.uint8,
                 system: ord(m.system).uint8,
                 customFramerate: toLE(m.customFramerate.uint16)
             )

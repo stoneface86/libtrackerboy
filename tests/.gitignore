@@ -7,4 +7,5 @@
 !*.nim
 # directories
 !*/
+!_io/data/*
 megatest.nim

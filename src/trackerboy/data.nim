@@ -178,13 +178,13 @@ type
         trackSize: TrackSize
         # ref Track is used since Table doesn't provide a view return for
         # accessing, resulting in a wasteful copy
-        tracks: array[ChannelId, tables.Table[ByteIndex, ref Track]]
+        tracks: array[ChannelId, tables.Table[ByteIndex, DeepEqualsRef[Track]]]
 
     SongList* {.requiresInit.} = object
         ## Container for songs. Songs stored in this container are references,
         ## like InstrumentTable and WaveformTable. A SongList can contain 1-256
         ## songs.
-        data: seq[ref Song]
+        data: seq[DeepEqualsRef[Song]]
 
     InfoString* = array[32, char]
         ## Fixed-length string of 32 characters, used for artist information.
@@ -192,9 +192,11 @@ type
     System* = enum
         ## Enumeration for types of systems the module is for. The system
         ## determines the vblank interval, or tick rate, of the engine.
-        SystemDmg,      ## DMG/CGB system, 59.7 Hz
-        SystemSgb,      ## SGB system, 61.1 Hz
-        SystemCustom    ## Custom tick rate
+        systemDmg       ## DMG/CGB system, 59.7 Hz
+        systemSgb       ## SGB system, 61.1 Hz
+        systemCustom    ## Custom tick rate
+
+    ModulePiece* = Instrument|Song|Waveform
 
     # Module
     Module* {.requiresInit.} = object
@@ -610,24 +612,24 @@ proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): f
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
 proc getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): ref Track =
-    result = s.tracks[ch].getOrDefault(order)
+    result = s.tracks[ch].getOrDefault(order).data
     if result == nil:
         result = newTrack(s.trackSize)
-        s.tracks[ch][order] = result
+        s.tracks[ch][order] = deepEqualsRef(result)
 
 proc getTrack*(s: Song, ch: ChannelId, order: ByteIndex): CRef[Track] =
-    result = s.tracks[ch].getOrDefault(order).toCRef
+    result = s.tracks[ch].getOrDefault(order).data.toCRef
 
 iterator tracks*(s: Song, ch: ChannelId): (ByteIndex, CRef[Track]) =
     for pair in s.tracks[ch].pairs:
-        yield (pair[0], pair[1].toCRef)
+        yield (pair[0], pair[1].data.toCRef)
 
 proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
     result = s.getTrack(ch, order)[][row]
 
 proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
     if s.tracks[ch].contains(order):
-        result = s.tracks[ch][order][][row]
+        result = s.tracks[ch][order].data[][row]
     else:
         result = TrackRow()
 
@@ -659,7 +661,7 @@ proc trackSize*(s: Song): TrackSize {.inline.} =
 proc setTrackSize*(s: var Song, size: TrackSize) =
     for table in s.tracks.mitems:
         for track in table.mvalues:
-            track[].setLen(size)
+            track.data[].setLen(size)
     s.trackSize = size
 
 proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
@@ -674,19 +676,19 @@ proc tempo*(s: Song, framerate: float): float =
 
 proc initSongList*(len: PositiveByte = 1): SongList =
     result = SongList(
-        data: newSeq[ref Song](len)
+        data: newSeq[DeepEqualsRef[Song]](len)
     )
     for songref in result.data.mitems:
-        songref = newSong()
+        songref = deepEqualsRef(newSong())
 
 proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
-    l.data[i]
+    l.data[i].data
 
 func `[]`*(l: SongList, i: ByteIndex): CRef[Song] =
-    toCRef(l.data[i])
+    toCRef(l.data[i].data)
 
 proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
-    l.data[i] = s
+    l.data[i] = deepEqualsRef(s)
 
 proc canAdd(l: SongList) =
     if l.data.len == 256:
@@ -694,19 +696,19 @@ proc canAdd(l: SongList) =
 
 proc add*(l: var SongList) =
     l.canAdd()
-    l.data.add(newSong())
+    l.data.add(deepEqualsRef(newSong()))
 
 proc add*(l: var SongList, song: ref Song) =
     l.canAdd()
-    l.data.add(song)
+    l.data.add(deepEqualsRef(song))
 
 proc duplicate*(l: var SongList, i: ByteIndex) =
     l.canAdd()
-    let src = l.data[i]
+    let src = l.data[i].data
     # gross, but there's no other way to do this :(
     # dest[] = src[] won't work cause we have to init dest first (Song has .requiresInit. pragma)
     # we could init dest first via newSong(), but that's inefficient
-    l.data.add((ref Song)(
+    l.data.add(deepEqualsRef((ref Song)(
         name: src.name,
         rowsPerBeat: src.rowsPerBeat,
         rowsPerMeasure: src.rowsPerMeasure,
@@ -715,7 +717,7 @@ proc duplicate*(l: var SongList, i: ByteIndex) =
         order: src.order,
         trackSize: src.trackSize,
         tracks: src.tracks
-    ))
+    )))
 
 
 proc remove*(l: var SongList, i: ByteIndex) =
@@ -747,7 +749,7 @@ template tInitModule(T: typedesc[Module|ref Module]): untyped =
         artist: default(InfoString),
         copyright: default(InfoString),
         comments: "",
-        system: SystemDmg,
+        system: systemDmg,
         customFramerate: 30,
         private: ModulePrivate(
             version: appVersion,
@@ -773,13 +775,21 @@ proc revisionMinor*(m: Module): int =
 
 proc framerate*(m: Module): float =
     case m.system:
-    of SystemDmg:
+    of systemDmg:
         result = 59.7f
-    of SystemSgb:
+    of systemSgb:
         result = 61.1f
-    of SystemCustom:
+    of systemCustom:
         result = m.customFramerate.float
 
 converter toInfoString*(str: string): InfoString =
     for i in 0..<min(str.len, result.len):
         result[i] = str[i]
+
+template initPiece*(T: typedesc[ModulePiece]): T =
+    when T is Instrument:
+        initInstrument()
+    elif T is Song:
+        initSong()
+    else:
+        initWaveform()

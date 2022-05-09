@@ -79,3 +79,28 @@ template unittests*(body: untyped): untyped =
     body
 
     delOutputFormatter(formatter)
+
+
+when isMainModule:
+
+    unittests:
+        test "requires fail":
+            require false
+
+        suite "my suite":
+
+            test "multiple fails":
+                check false
+                checkpoint "a checkpoint"
+                check false
+            
+            test "passes":
+                discard
+
+            test "raises exception":
+                raise newException(Exception, "an exception")
+
+        test "fails":
+            check false
+        test "passes":
+            discard
