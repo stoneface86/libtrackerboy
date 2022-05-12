@@ -48,7 +48,7 @@ type
     DeepEqualsRef*[T] = object
         # Ref wrapper type providing an == overload that compares the value of
         # the ref
-        data*: ref T
+        src*: ref T
 
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef
@@ -74,15 +74,18 @@ template noRef*(T: typedesc): CRef[T] =
     toCRef[T](nil)
 
 func deepEqualsRef*[T](val: ref T): DeepEqualsRef[T] {.inline.} =
-    DeepEqualsRef[T](data: val)
+    DeepEqualsRef[T](src: val)
 
 func `==`*[T](lhs, rhs: DeepEqualsRef[T]): bool =
-    if lhs.data.isNil:
-        rhs.data.isNil
-    elif rhs.data.isNil:
+    if lhs.src.isNil:
+        # return true if both are nil
+        rhs.src.isNil
+    elif rhs.src.isNil:
+        # lhs is not nil but rhs is nil
         false
     else:
-        lhs.data[] == rhs.data[]
+        # check if the referenced data is equal (deep equality)
+        lhs.src[] == rhs.src[]
 
 func pansLeft*(mode: MixMode): bool {.inline.} =
     testBit(ord(mode), 0)

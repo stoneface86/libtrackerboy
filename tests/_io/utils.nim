@@ -38,7 +38,7 @@ template pieceTests*(
         strm.write(correctBin)
         strm.setPosition(0)
 
-        var dataIn = initPiece(PieceType)
+        var dataIn = PieceType.init()
         let res = dataIn.deserialize(strm)
         check res == frNone
         if res == frNone:
@@ -48,14 +48,14 @@ template pieceTests*(
         strm.write(correctBin)
         corruptSignature(strm)
         strm.setPosition(0)
-        var dataIn = initPiece(PieceType)
+        var dataIn = PieceType.init()
         check dataIn.deserialize(strm) == frInvalidSignature
 
     test "deserialize - bad revision":
         strm.write(correctBin)
         overwriteRevMajor(strm, fileMajor + 1)
         strm.setPosition(0)
-        var dataIn = initPiece(PieceType)
+        var dataIn = PieceType.init()
         check dataIn.deserialize(strm) == frInvalidRevision
         # piece files were introduced in major 1, so a rev 0 file should not exist
         overwriteRevMajor(strm, 0)
@@ -74,7 +74,7 @@ template pieceTests*(
         check serializeRes == frNone
         if serializeRes == frNone:
             strm.setPosition(0)
-            var dataIn = initPiece(PieceType)
+            var dataIn = PieceType.init()
             let deserializeRes = dataIn.deserialize(strm)
             check deserializeRes == frNone
             if deserializeRes == frNone:

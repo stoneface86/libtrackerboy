@@ -107,8 +107,8 @@ type
     PackedEffects = distinct uint8
 
     SongFormat {.packed.} = object
-        rowsPerBeat: BiasedUint8
-        rowsPerMeasure: BiasedUint8
+        rowsPerBeat: uint8
+        rowsPerMeasure: uint8
         speed: uint8
         patternCount: BiasedUint8
         rowsPerTrack: BiasedUint8
@@ -273,8 +273,8 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
     elif T is Song:
         var format: SongFormat
         invalidWhen ib.read(format)
-        p.rowsPerBeat = format.rowsPerBeat.unbias
-        p.rowsPerMeasure = format.rowsPerMeasure.unbias
+        p.rowsPerBeat = format.rowsPerBeat
+        p.rowsPerMeasure = format.rowsPerMeasure
         invalidWhen format.speed.Speed notin (low(Speed)..high(Speed)), frInvalidSpeed
         p.speed = format.speed.Speed
         if major > 0:
@@ -327,8 +327,8 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
             ob.write(sequence.data)
     elif T is Song:
         ob.write(SongFormat(
-            rowsPerBeat: p.rowsPerBeat.bias,
-            rowsPerMeasure: p.rowsPerMeasure.bias,
+            rowsPerBeat: p.rowsPerBeat.uint8,
+            rowsPerMeasure: p.rowsPerMeasure.uint8,
             speed: p.speed.uint8,
             patternCount: p.order.len.bias,
             rowsPerTrack: p.trackSize.bias,
@@ -445,9 +445,9 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
         m.artist = header.artist
         m.copyright = header.copyright
 
-        m.instruments = initTable[Instrument]()
-        m.waveforms = initTable[Waveform]()
-        m.songs = initSongList(header.scount.unbias)
+        m.instruments = InstrumentTable.init
+        m.waveforms = WaveformTable.init
+        m.songs = SongList.init(header.scount.unbias)
 
         # read the payload
         let major = header.bh.revMajor.int

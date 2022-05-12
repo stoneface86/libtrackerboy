@@ -70,26 +70,24 @@ type
             ## will stop at the end instead.
         data: seq[uint8]
 
-    Instrument* {.requiresInit.} = object
-        id: TableId
+    Instrument* = object
         name*: string
         channel*: ChannelId
         initEnvelope*: bool
         envelope*: uint8
         sequences*: array[SequenceKind, Sequence]
 
-    Waveform* {.requiresInit.} = object
+    Waveform* = object
         ## Container for a waveform to use on CH3.
-        id: TableId
         name*: string
         data*: WaveData
 
     SomeData* = Instrument|Waveform
 
-    Table[T: SomeData] {.requiresInit.} = object
+    Table[T: SomeData] = object
         nextId: TableId
-        size: int
-        data: array[TableId, ref T]
+        len: int
+        data: array[TableId, DeepEqualsRef[T]]
 
     InstrumentTable* = Table[Instrument]
         ## Container for Instruments. Up to 64 Instruments can be stored in this
@@ -170,14 +168,12 @@ type
         ## Song type. Contains track data for a single song.
         ##
         name*: string
-        rowsPerBeat*: PositiveByte
-        rowsPerMeasure*: PositiveByte
+        rowsPerBeat*: ByteIndex
+        rowsPerMeasure*: ByteIndex
         speed*: Speed
         effectCounts*: array[4, EffectColumns]
         order*: Order
         trackSize: TrackSize
-        # ref Track is used since Table doesn't provide a view return for
-        # accessing, resulting in a wasteful copy
         tracks: array[ChannelId, tables.Table[ByteIndex, DeepEqualsRef[Track]]]
 
     SongList* {.requiresInit.} = object
@@ -226,11 +222,6 @@ func effectTypeShortensPattern*(et: EffectType): bool =
     result = et == etPatternHalt or
              et == etPatternSkip or
              et == etPatternGoto
-
-# Instrument|Waveform
-
-proc id*[T: SomeData](self: T): TableId {.inline.} =
-    self.id
 
 # Sequence
 
@@ -290,36 +281,31 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
 
 # Instrument
 
-template tInitInstrument[T: Instrument|ref Instrument](): untyped =
-    T(
-        id: 0,
-        name: "",
-        channel: ch1,
-        initEnvelope: false,
-        envelope: 0xF0,
-        sequences: default(T.sequences.type)
-    )
+func init*(T: typedesc[Instrument]): T.typeOf =
+    discard # default is sufficient
 
-func initInstrument*(): Instrument =
-    result = tInitInstrument[Instrument]()
+func new*(T: typedesc[Instrument]): ref T.typeOf =
+    new(result)
 
-func newInstrument*(): ref Instrument =
-    result = tInitInstrument[ref Instrument]()
+template initInstrument*(): Instrument {.deprecated: "use Instrument.init instead".} =
+    Instrument.init
+
+template newInstrument*(): ref Instrument {.deprecated: "use Instrument.new instead".} =
+    Instrument.new
 
 # Waveform
 
-template tInitWaveform[T: Waveform|ref Waveform](): untyped =
-    T(
-        id: 0,
-        name: "",
-        data: default(T.data.type)
-    )
+func init*(T: type Waveform): T =
+    discard # default is sufficient, no init needed
 
-func initWaveform*(): Waveform =
-    result = tInitWaveform[Waveform]()
+func new*(T: typedesc[Waveform]): ref T.typeOf =
+    new(result)
 
-func newWaveform*(): ref Waveform =
-    result = tInitWaveform[ref Waveform]()
+template initWaveform*(): Waveform {.deprecated: "use Waveform.init instead".} =
+    Waveform.init
+
+template newWaveform*(): ref Waveform {.deprecated: "use Waveform.new instead".} =
+    Waveform.new
 
 func `$`*(wave: WaveData): string {.noInit.} =
     const hextable = ['0', '1', '2', '3', '4', '5', '6', '7',
@@ -345,16 +331,21 @@ func parseWave*(str: string): WaveData {.noInit.} =
 
 # Table
 
-func initTable*[T: SomeData](): Table[T] =
-    result = Table[T](
-        nextId: 0,
-        size: 0,
-        data: default(Table[T].data)
-    )
+func init*(T: typedesc[SomeTable]): T.typeOf =
+    discard  # default is sufficient
+
+template initInstrumentTable*(): InstrumentTable {.deprecated: "use InstrumentTable.init instead".} =
+    InstrumentTable.init
+
+template initWaveformTable*(): WaveformTable {.deprecated: "use WaveformTable.init instead".} =
+    WaveformTable.init
+
+func contains*[T: SomeData](t: Table[T], id: TableId): bool =
+    t.data[id].src != nil
 
 proc updateNextId[T: SomeData](t: var Table[T]) =
     for i in t.nextId..high(TableId):
-        if t.data[i] == nil:
+        if i notin t:
             t.nextId = i
             break
 
@@ -362,68 +353,73 @@ proc capacity*[T: SomeData](t: Table[T]): static[int] =
     high(TableId).int + 1
 
 proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
-    t.data[id]
+    t.data[id].src
 
 func `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
-    toCRef(t.data[id])
+    t.data[id].src.toCRef
 
 iterator items*[T: SomeData](t: Table[T]): TableId {.noSideEffect.} =
     ## Iterates all items in the table, via their id, in order.
     for id in low(TableId)..high(TableId):
-        if t.data[id] != nil:
+        if id in t:
             yield id
 
 proc insert[T: SomeData](t: var Table[T], id: TableId) =
-    t.data[id] = when T is Instrument:
-        newInstrument()
-    else:
-        newWaveform()
-    t.data[id][].id = id
-    inc t.size
+    t.data[id].src = T.new
+    inc t.len
 
 proc add*[T: SomeData](t: var Table[T]): TableId =
-    assert t.size < t.capacity
+    assert t.len < t.capacity
     t.insert(t.nextId)
     result = t.nextId
     t.updateNextId()
 
 proc add*[T: SomeData](t: var Table[T], id: TableId) =
-    assert t.size < t.capacity and t.data[id] == nil
+    assert t.len < t.capacity and id notin t
     t.insert(id)
     if t.nextId == id:
         t.updateNextId()
 
 proc duplicate*[T: SomeData](t: var Table[T], id: TableId): TableId =
-    assert t.data[id] != nil
+    assert id in t
     result = t.add()
     # duplicate the newly added item
-    t.data[result][] = t.data[id][]
+    t.data[result].src[] = t.data[id].src[]
 
 proc remove*[T: SomeData](t: var Table[T], id: TableId) =
-    assert t.data[id] != nil
-    t.data[id] = nil
-    dec t.size
+    assert id in t
+    t.data[id].src = nil
+    dec t.len
     if t.nextId > id:
         t.nextId = id
 
 proc len*[T: SomeData](t: Table[T]): int =
-    t.size
+    t.len
 
 func nextAvailableId*[T: SomeData](t: Table[T]): TableId =
     t.nextId
 
 func next*[T: SomeData](t: Table[T], start: TableId = 0): Option[TableId] =
     for id in start..high(TableId):
-        if t.data[id] != nil:
+        if id in t:
             return some(id)
     none(TableId)
 
+func wavedata*(t: WaveformTable, id: TableId): WaveData =
+    ## Shortcut for getting the waveform's wavedata via id. The waveform must
+    ## exist in the table!
+    assert id in t
+    t.data[id].src.data
+
 # Order
 
-proc initOrder*(): Order =
+func init*(T: typedesc[Order]): T.typeof =
     result = Order(
-        data: @[[0u8, 0u8, 0u8, 0u8]]
+        data: @[[0u8, 0, 0, 0]]
     )
+
+template initOrder*(): Order {.deprecated: "Use Order.init instead".} =
+    Order.init
 
 proc `[]`*(o: Order, index: Natural): OrderRow =
     o.data[index]
@@ -492,20 +488,26 @@ func isEmpty*(row: TrackRow): bool =
 
 # Track
 
-template tInitTrack[T](size: TrackSize): untyped =
-    T(data: newSeq[TrackRow](size))
+template construct(T: typedesc[Track|ref Track], len: TrackSize): untyped =
+    T(data: newSeq[TrackRow](len))
 
-proc initTrack*(size: TrackSize): Track =
-    result = tInitTrack[Track](size)
+func init*(T: typedesc[Track], len: TrackSize): T.typeOf =
+    T.construct(len)
 
-proc newTrack*(size: TrackSize): ref Track =
-    result = tInitTrack[ref Track](size)
+func new*(T: typedesc[Track], len: TrackSize): ref T.typeOf =
+    (ref T).construct(len)
 
-iterator items*(t: Track): lent TrackRow =
+template initTrack*(len: TrackSize): Track {.deprecated: "use Track.init instead".} =
+    Track.init(len)
+
+template newTrack*(len: TrackSize): ref Track {.deprecated: "use Track.new instead".} =
+    Track.new(len)
+
+iterator items*(t: Track): TrackRow =
     for row in t.data:
         yield row
 
-iterator items*(t: Track, slice: Slice[ByteIndex]): lent TrackRow =
+iterator items*(t: Track, slice: Slice[ByteIndex]): TrackRow =
     for row in slice:
         yield t.data[row]
 
@@ -583,23 +585,42 @@ func rowsWhenRun*(p: CPattern): Natural =
 
 # Song
 
-template tInitSong[T: Song|ref Song](): untyped =
+template construct(T: typedesc[Song|ref Song]): untyped =
     T(
         name: "",
         rowsPerBeat: defaultRpb,
         rowsPerMeasure: defaultRpm,
         speed: defaultSpeed,
         effectCounts: [2.EffectColumns, 2, 2, 2],
-        order: initOrder(),
+        order: Order.init,
         trackSize: defaultTrackSize,
-        tracks: default(T.tracks.type)
+        tracks: default(Song.tracks.type)
     )
 
-proc initSong*(): Song =
-    result = tInitSong[Song]()
+func init*(T: typedesc[Song]): T.typeOf =
+    T.construct
 
-proc newSong*(): ref Song =
-    result = tInitSong[ref Song]()
+func new*(T: typedesc[Song]): ref T.typeOf =
+    (ref T).construct
+
+func new*(T: typedesc[Song], song: Song): ref T.typeOf =
+    # perhaps use deepCopy instead ?
+    (ref T)(
+        name: song.name,
+        rowsPerBeat: song.rowsPerBeat,
+        rowsPerMeasure: song.rowsPerMeasure,
+        speed: song.speed,
+        effectCounts: song.effectCounts,
+        order: song.order,
+        trackSize: song.trackSize,
+        tracks: song.tracks
+    )
+
+template initSong*(): Song {.deprecated: "Use Song.init instead".} =
+    Song.init
+
+template newSong*(): ref Song {.deprecated: "Use Song.new instead".} =
+    Song.new
 
 proc removeAllTracks*(s: var Song) =
     for tab in s.tracks.mitems:
@@ -612,24 +633,24 @@ proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): f
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
 proc getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): ref Track =
-    result = s.tracks[ch].getOrDefault(order).data
+    result = s.tracks[ch].getOrDefault(order).src
     if result == nil:
-        result = newTrack(s.trackSize)
+        result = Track.new(s.trackSize)
         s.tracks[ch][order] = deepEqualsRef(result)
 
 proc getTrack*(s: Song, ch: ChannelId, order: ByteIndex): CRef[Track] =
-    result = s.tracks[ch].getOrDefault(order).data.toCRef
+    result = s.tracks[ch].getOrDefault(order).src.toCRef
 
 iterator tracks*(s: Song, ch: ChannelId): (ByteIndex, CRef[Track]) =
     for pair in s.tracks[ch].pairs:
-        yield (pair[0], pair[1].data.toCRef)
+        yield (pair[0], pair[1].src.toCRef)
 
 proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
     result = s.getTrack(ch, order)[][row]
 
 proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
     if s.tracks[ch].contains(order):
-        result = s.tracks[ch][order].data[][row]
+        result = s.tracks[ch][order].src[][row]
     else:
         result = TrackRow()
 
@@ -661,7 +682,7 @@ proc trackSize*(s: Song): TrackSize {.inline.} =
 proc setTrackSize*(s: var Song, size: TrackSize) =
     for table in s.tracks.mitems:
         for track in table.mvalues:
-            track.data[].setLen(size)
+            track.src[].setLen(size)
     s.trackSize = size
 
 proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
@@ -674,21 +695,24 @@ proc tempo*(s: Song, framerate: float): float =
 
 # SongList
 
-proc initSongList*(len: PositiveByte = 1): SongList =
+func init*(T: typedesc[SongList], len: PositiveByte = 1): T.typeOf =
     result = SongList(
         data: newSeq[DeepEqualsRef[Song]](len)
     )
     for songref in result.data.mitems:
-        songref = deepEqualsRef(newSong())
+        songref.src = Song.new
+
+template initSongList*(len: PositiveByte = 1): SongList {.deprecated: "Use SongList.init instead".} =
+    SongList.init(len)
 
 proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
-    l.data[i].data
+    l.data[i].src
 
 func `[]`*(l: SongList, i: ByteIndex): CRef[Song] =
-    toCRef(l.data[i].data)
+    toCRef(l.data[i].src)
 
 proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
-    l.data[i] = deepEqualsRef(s)
+    l.data[i].src = s
 
 proc canAdd(l: SongList) =
     if l.data.len == 256:
@@ -696,29 +720,15 @@ proc canAdd(l: SongList) =
 
 proc add*(l: var SongList) =
     l.canAdd()
-    l.data.add(deepEqualsRef(newSong()))
+    l.data.add(Song.new.deepEqualsRef)
 
 proc add*(l: var SongList, song: ref Song) =
     l.canAdd()
-    l.data.add(deepEqualsRef(song))
+    l.data.add(song.deepEqualsRef)
 
 proc duplicate*(l: var SongList, i: ByteIndex) =
     l.canAdd()
-    let src = l.data[i].data
-    # gross, but there's no other way to do this :(
-    # dest[] = src[] won't work cause we have to init dest first (Song has .requiresInit. pragma)
-    # we could init dest first via newSong(), but that's inefficient
-    l.data.add(deepEqualsRef((ref Song)(
-        name: src.name,
-        rowsPerBeat: src.rowsPerBeat,
-        rowsPerMeasure: src.rowsPerMeasure,
-        speed: src.speed,
-        effectCounts: src.effectCounts,
-        order: src.order,
-        trackSize: src.trackSize,
-        tracks: src.tracks
-    )))
-
+    l.data.add( Song.new( l.data[i].src[] ).deepEqualsRef )
 
 proc remove*(l: var SongList, i: ByteIndex) =
     if l.data.len == 1:
@@ -740,11 +750,11 @@ proc len*(l: SongList): Natural =
 
 # Module
 
-template tInitModule(T: typedesc[Module|ref Module]): untyped =
+template construct(T: typedesc[Module | ref Module]): untyped =
     T(
-        songs: initSongList(),
-        instruments: initTable[Instrument](),
-        waveforms: initTable[Waveform](),
+        songs: SongList.init,
+        instruments: InstrumentTable.init,
+        waveforms: WaveformTable.init,
         title: default(InfoString),
         artist: default(InfoString),
         copyright: default(InfoString),
@@ -758,11 +768,17 @@ template tInitModule(T: typedesc[Module|ref Module]): untyped =
         )
     )
 
-proc initModule*(): Module =
-    result = tInitModule(Module)
+func init*(T: typedesc[Module]): T.typeOf =
+    T.construct
 
-proc newModule*(): ref Module =
-    result = tInitModule(ref Module)
+func new*(T: typedesc[Module]): ref T.typeOf =
+    (ref T).construct
+
+template initModule*(): Module {.deprecated: "use Module.init instead".} =
+    Module.init
+
+template newModule*(): ref Module {.deprecated: "use Module.new instead".} =
+    Module.new
 
 proc version*(m: Module): Version =
     m.private.version
@@ -786,10 +802,5 @@ converter toInfoString*(str: string): InfoString =
     for i in 0..<min(str.len, result.len):
         result[i] = str[i]
 
-template initPiece*(T: typedesc[ModulePiece]): T =
-    when T is Instrument:
-        initInstrument()
-    elif T is Song:
-        initSong()
-    else:
-        initWaveform()
+template initPiece*(T: typedesc[ModulePiece]): T {.deprecated: "use T.init instead" .} =
+    T.init

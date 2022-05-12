@@ -12,7 +12,7 @@ unittests:
     test "can name instruments/waveforms":
         template nameTest(T: typedesc[Instrument|Waveform]) =
             block:
-                var item = when T is Instrument: initInstrument() else: initWaveform()
+                var item = T.init
                 check item.name.len() == 0
                 item.name = testName
                 check item.name == testName
@@ -22,8 +22,8 @@ unittests:
     suite "Table[T]":
 
         setup:
-            var itable = initTable[Instrument]()
-            var wtable = initTable[Waveform]()
+            var itable = InstrumentTable.init
+            var wtable = WaveformTable.init
 
         template ttest(testname: string, impl: untyped) =
             test testname:
