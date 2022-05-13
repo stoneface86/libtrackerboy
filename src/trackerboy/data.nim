@@ -217,6 +217,7 @@ const
     defaultRpm* = 16
     defaultSpeed*: Speed = 0x60
     defaultTrackSize*: TrackSize = 64
+    defaultFramerate*: Framerate = 30
 
 func effectTypeShortensPattern*(et: EffectType): bool =
     result = et == etPatternHalt or
@@ -760,7 +761,7 @@ template construct(T: typedesc[Module | ref Module]): untyped =
         copyright: default(InfoString),
         comments: "",
         system: systemDmg,
-        customFramerate: 30,
+        customFramerate: defaultFramerate,
         private: ModulePrivate(
             version: appVersion,
             revisionMajor: fileMajor,

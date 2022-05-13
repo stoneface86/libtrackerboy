@@ -424,14 +424,17 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
         if header.bh.signature != signature:
             return frInvalidSignature
 
-        if header.system.System in low(System)..high(System):
+        if header.system in System.low.uint8..System.high.uint8:
             m.system = header.system.System
             if m.system == systemCustom:
                 let framerate = toNE(header.customFramerate)
-                invalidWhen framerate.int notin low(Framerate)..high(Framerate)
-                m.customFramerate = framerate
+                if framerate.int in low(Framerate)..high(Framerate):
+                    m.customFramerate = framerate
+                else:
+                    m.customFramerate = defaultFramerate
         else:
-            return frInvalidSystem
+            m.system = systemDmg
+            m.customFramerate = defaultFramerate
         
         invalidWhen header.icount > high(TableId)+1 or header.wcount > high(TableId)+1, frInvalidCount
 

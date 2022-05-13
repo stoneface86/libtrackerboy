@@ -7,5 +7,9 @@
 !*.nim
 # directories
 !*/
-!_io/data/*
+!_io/data/*.tbi
+!_io/data/*.tbm
+!_io/data/*.tbs
+!_io/data/*.tbw
+!_io/data/*.nim
 megatest.nim
