@@ -1,6 +1,8 @@
-##
-## bandlimited synthesis
-##
+##[
+
+.. include:: warning.rst
+
+]##
 
 import ../common
 import hardware

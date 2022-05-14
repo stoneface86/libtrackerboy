@@ -17,11 +17,11 @@ requires "nim >= 1.6.0"
 task test, "Runs the unit tester":
     exec "testament --targets:c all"
 
-task doc, "Builds the documentation":
-    exec("nim doc --project --index:on --outdir:docs src/trackerboy.nim")
+task docgen, "Generate documentation":
+    exec "nim --hints:off docgen.nims"
 
-task apugen, "Generate APU wav files for tapu":
+task apugen, "Generate demo APU wav files":
     exec("nim c -r --outdir:" & binDir & " tests/apugen.nim")
 
-task wavegen, "Generate waveforms for tsynth":
+task wavegen, "Generate demo synth waveforms":
     exec("nim c -r --outdir:" & binDir & " tests/wavegen.nim")

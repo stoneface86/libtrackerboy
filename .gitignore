@@ -1,7 +1,7 @@
 .vs/
 .vscode/
 bin/
-docs/
+htmldocs/
 nimcache/
 testresults/
 outputExpected.txt

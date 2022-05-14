@@ -1,8 +1,11 @@
-##
-## Endian conversion module. Converts native endian words to little endian and
-## vice-versa.
-## 
+##[
 
+.. include:: warning.rst
+
+]##
+
+# Endian conversion module. Converts native endian words to little endian and
+# vice-versa.
 
 # I am aware std/endians exists, however it's API is unstable (and awkward to
 # use, why pointers?)
@@ -102,8 +105,11 @@ when willCorrect:
 type
     # intxx are omitted due to overflow/underflow checks
     SomeWord* = uint16|uint32|uint64
+        # Type class for a multi-byte integer
     LittleEndian*[T: SomeWord] {.packed.} = object
+        # Type containing a word in little-endian byte order
         data: T
+
     # not using distinct T since nim has some issue with that
     # we could provide BigEndian[T] as well but it wouldn't be used by this library
 
@@ -120,13 +126,13 @@ template correct[T: SomeWord](val: T): T =
         val
 
 func toLE*[T: SomeWord](val: T): LittleEndian[T] {.inline.} =
-    ## Convert some word to little endian representation (LE).
+    # Convert some word to little endian representation (LE).
     LittleEndian[T](data: correct(val))
     # when `LittleEndian[T]` is `distinct T`, this fails:
     #   correct(val).LittleEndian[T]
 
 func toNE*[T: SomeWord](val: LittleEndian[T]): T {.inline.} =
-    ## Convert the word, in little endian representation, to native endian (NE).
+    # Convert the word, in little endian representation, to native endian (NE).
     correct(val.data)
 
 {.pop.}

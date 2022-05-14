@@ -1,6 +1,8 @@
-##
-## Module for writing wav files. Only 32-bit floating point pcm is supported.
-## 
+##[
+
+.. include:: warning.rst
+
+]##
 
 import ../common
 import endian

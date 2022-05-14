@@ -712,7 +712,7 @@ proc prestep(r: var MusicRuntime, frame: var EngineFrame): bool =
                 discard
             of pcNext:
                 inc r.orderCounter
-                if r.orderCounter >= r.song[].order.size:
+                if r.orderCounter >= r.song[].order.len:
                     # loop back to the first pattern
                     r.orderCounter = 0
                 r.rowCounter = r.global.patternCommandParam.int
@@ -721,7 +721,7 @@ proc prestep(r: var MusicRuntime, frame: var EngineFrame): bool =
             of pcJump:
                 r.rowCounter = 0
                 # if the parameter goes past the last one, use the last one
-                r.orderCounter = min(r.global.patternCommandParam.int, r.song[].order.size - 1)
+                r.orderCounter = min(r.global.patternCommandParam.int, r.song[].order.len - 1)
                 r.global.patternCommand = pcNone
                 frame.startedNewPattern = true
         
@@ -896,7 +896,7 @@ proc play*(e: var Engine, song, pattern, row: Natural = 0) =
         raise newException(IndexDefect, "invalid song index")
     
     let songref = e.module[].songs[song]
-    if pattern >= songref[].order.size():
+    if pattern >= songref[].order.len():
         raise newException(IndexDefect, "invalid pattern index")
     if row >= songref[].trackSize():
         raise newException(IndexDefect, "invalid row index")

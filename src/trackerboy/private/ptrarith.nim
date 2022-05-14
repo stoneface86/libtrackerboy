@@ -1,10 +1,13 @@
+##[
+.. include:: warning.rst
+]##
 
 template ptrArith*(body: untyped) =
-    ##
-    ## Provides pointer arithmetic operators for the enclosing body.
-    ## Be sure you know what you're doing! Code within this body is
-    ## unsafe.
-    ## 
+    #
+    # Provides pointer arithmetic operators for the enclosing body.
+    # Be sure you know what you're doing! Code within this body is
+    # unsafe.
+    #
 
     # {.used.} prevents compiler warnings if you don't use all of the operators
     # in a body ;)

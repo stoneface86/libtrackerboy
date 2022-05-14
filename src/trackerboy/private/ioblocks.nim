@@ -1,16 +1,20 @@
-##
-## Module for reading/writing io blocks from a stream. A block is tagged data
-## with a size, similar to TLV. Each block begins with a 4-byte identifier,
-## followed by a 4-byte size, followed by the data. The identifier and size of
-## the block are stored in little endian.
-## 
-## An InputBlock is used to read a block, and to ensure that no data is
-## read past the size of the block.
-## 
-## An OutputBlock is used to write the block, keeping track of the block's size
-## whenever data is written to it.
-## 
+##[
 
+.. include:: warning.rst
+
+
+]##
+
+# Module for reading/writing io blocks from a stream. A block is tagged data
+# with a size, similar to TLV. Each block begins with a 4-byte identifier,
+# followed by a 4-byte size, followed by the data. The identifier and size of
+# the block are stored in little endian.
+
+# An InputBlock is used to read a block, and to ensure that no data is
+# read past the size of the block.
+
+# An OutputBlock is used to write the block, keeping track of the block's size
+# whenever data is written to it.
 
 import std/streams
 export streams

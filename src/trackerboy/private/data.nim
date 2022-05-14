@@ -1,3 +1,6 @@
+##[
+.. include:: warning.rst
+]##
 
 import ../version
 

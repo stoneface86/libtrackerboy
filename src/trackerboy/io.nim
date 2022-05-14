@@ -15,39 +15,37 @@ const
 
 type
     FormatResult* = enum
-        frNone
+        frNone = 0
             ## No error, format is acceptable
-        frInvalidSignature
+        frInvalidSignature = 1
             ## File has an invalid signature
-        frInvalidRevision
+        frInvalidRevision = 2
             ## File has an unrecognized revision, possibly from a newer version of the format
-        frCannotUpgrade
+        frCannotUpgrade = 3
             ## An older revision file could not be upgraded to current revision
-        frInvalidSystem
-            ## An invalid/unknown system was set in the header
-        frInvalidSize
+        frInvalidSize = 4
             ## Attempted to read past the size of a payload block, block data
             ## is ill-formed
-        frInvalidCount
+        frInvalidCount = 5
             ## The icount or wcount field in the header is too big
-        frInvalidBlock
+        frInvalidBlock = 6
             ## An invalid/unknown block id was used in a payload block
-        frInvalidChannel
+        frInvalidChannel = 7
             ## An invalid/unknown channel was used in a payload block
-        frInvalidSpeed
+        frInvalidSpeed = 8
             ## The format contains an invalid speed, outside of Speed.low..Speed.high
-        frInvalidRowCount
+        frInvalidRowCount = 9
             ## A TrackFormat's rows field in a SONG block exceeds the Song's
             ## track size
-        frInvalidRowNumber
+        frInvalidRowNumber = 10
             ## A RowFormat's rowno field exceeds the Song's track size
-        frInvalidTerminator
+        frInvalidId = 11
+        frInvalidDuplicateId = 12
+        frInvalidTerminator = 13
             ## The terminator is invalid.
-        frInvalidId
-        frInvalidDuplicateId
-        frReadError
+        frReadError = 14
             ## A read error occurred during processing
-        frWriteError
+        frWriteError = 15
             ## A write error occurred during processing
 
     BiasedUint8 = distinct uint8

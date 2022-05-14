@@ -1,6 +1,6 @@
-
-# similar to hardware.inc
-# gameboy hardware constants
+##[
+.. include:: warning.rst
+]##
 
 const
 
