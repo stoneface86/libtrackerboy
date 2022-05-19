@@ -4,9 +4,7 @@
 
 ]##
 
-import ../common
-import hardware
-import ptrarith
+import ../common, hardware, ptrarith
 export Pcm
 
 import std/[algorithm, math]

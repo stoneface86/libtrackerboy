@@ -10,12 +10,11 @@
 ## mr - music runtime
 ## chno - channel number
 
-import apuio, common, data, notes
-import private/[hardware]
+import apuio, common, data, notes, private/[hardware]
+export common
 
 import std/[bitops, options, with]
 
-export common
 
 type
 

@@ -16,10 +16,11 @@
 # An OutputBlock is used to write the block, keeping track of the block's size
 # whenever data is written to it.
 
+import endian
+
 import std/streams
 export streams
 
-import endian
 
 type
     BlockId* = uint32

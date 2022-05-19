@@ -2,11 +2,10 @@
 ## Module for editing pattern data.
 ##
 
-import std/options
+import common, data
+export common
 
-import data
-import common
-export ByteIndex, ChannelId
+import std/options
 
 #
 # Iterating selections:

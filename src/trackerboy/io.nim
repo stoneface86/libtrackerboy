@@ -1,8 +1,5 @@
 
-import data
-import version
-import private/[endian, ioblocks]
-
+import data, private/[endian, ioblocks], version
 import private/data as dataPrivate
 
 import std/[options]

@@ -4,8 +4,7 @@
 
 ]##
 
-import ../common
-import endian
+import ../common, endian
 export PcmF32
 
 import std/[streams, with]

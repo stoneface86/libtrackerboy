@@ -2,15 +2,11 @@
 ## This module contains data types used in the library.
 ##
 
-import std/[math, options, parseutils, sequtils, tables]
-
-export options
-
-import common
-import version
-import private/data
-
+import common, private/data, version 
 export common
+
+import std/[math, options, parseutils, sequtils, tables]
+export options
 
 const
     speedFractionBits = 4
