@@ -22,13 +22,13 @@ type
 const
     instrumentData: array[InstrumentSamples, Instrument] = [
         block:
-            var i = initInstrument()
+            var i = Instrument.init
             i.name = "empty"
             i
         ,
         block:
             # file path: data/sample.tbi
-            var i = initInstrument()
+            var i = Instrument.init
             i.name = "main 1"
             i.initEnvelope = true
             i.envelope = 0x57
@@ -37,19 +37,19 @@ const
     ]
     waveformData: array[WaveformSamples, Waveform] = [
         block:
-            var w = initWaveform()
+            var w = Waveform.init
             w.name = "empty"
             w
         ,
         block:
             # file path: data/sample.tbw
-            var w = initWaveform()
+            var w = Waveform.init
             w.name = "triangle"
             w.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
             w
         ,
         block:
-            var w = initWaveform()
+            var w = Waveform.init
             w.name = "Duty 37.5%"
             w.data = "FFFFFFFFFFFF00000000000000000000".parseWave
             w
@@ -58,13 +58,13 @@ const
 let 
     songData: array[SongSamples, Song] = [
         block:
-            var s = initSong()
+            var s = Song.init
             s.name = "empty"
             s
         ,
         block:
             # file path: data/sample.tbs
-            var s = initSong()
+            var s = Song.init
             s.name = "test song"
             s.rowsPerBeat = 2
             s.rowsPerMeasure = 8

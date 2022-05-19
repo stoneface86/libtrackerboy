@@ -9,14 +9,14 @@ unittests:
     suite "SongList":
 
         setup:
-            var songlist = initSongList()
+            var songlist = SongList.init
         
         test "1 song on init":
             check songlist.len == 1
             check songlist[0] != nil
 
         test "get/set":
-            var song = newSong()
+            var song = Song.new
             check songlist[0] != nil
             songlist[0] = song
             check songlist[0] == song

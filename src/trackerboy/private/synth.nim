@@ -205,9 +205,6 @@ func init*(T: typedesc[Synth], samplerate = 44100, buffersize: Natural = 0): T.t
     result.`samplerate=`(samplerate)
     result.setBufferSize(buffersize)
 
-template initSynth*(samplerate = 44100, buffersize: Natural = 0): Synth {.deprecated: "use Synth.init instead".} =
-    Synth.init(samplerate, buffersize)
-
 proc endFrame(s: var Synth, cycletime: uint32): int =
     # end the frame, discarding all mixed samples
     let split = splitDecimal(s.sampletime(cycletime))

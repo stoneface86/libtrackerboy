@@ -19,10 +19,10 @@ unittests:
         proc getSamplePattern(): Pattern = 
             result = Pattern(
                 tracks: [
-                    newTrack(patternSize),
-                    newTrack(patternSize),
-                    newTrack(patternSize),
-                    newTrack(patternSize)
+                    Track.new(patternSize),
+                    Track.new(patternSize),
+                    Track.new(patternSize),
+                    Track.new(patternSize)
                 ]
             )
 
@@ -90,10 +90,10 @@ unittests:
             check clip.hasData()
 
             var copy = Pattern(tracks: [
-                newTrack(patternSize),
-                newTrack(patternSize),
-                newTrack(patternSize),
-                newTrack(patternSize)
+                Track.new(patternSize),
+                Track.new(patternSize),
+                Track.new(patternSize),
+                Track.new(patternSize)
             ])
             clip.restore(copy)
             check pattern.tracks[0][] == copy.tracks[0][]
@@ -154,7 +154,7 @@ unittests:
             check copyPattern.tracks[2][] == pattern.tracks[2][]
 
             proc makeExpected(): Track =
-                result = initTrack(patternSize)
+                result = Track.init(patternSize)
                 with result:
                     setNote(0, "G-6".note)
                     setInstrument(0, 1)

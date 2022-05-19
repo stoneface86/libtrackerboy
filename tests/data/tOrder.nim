@@ -13,7 +13,7 @@ unittests:
     suite "Order":
 
         setup:
-            var order = initOrder()
+            var order = Order.init
 
         test "must have 1 row on init":
             check:

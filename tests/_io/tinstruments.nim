@@ -20,5 +20,5 @@ unittests:
         test "deserialize - unknown channel":
             strm.write(instrumentBadChannel)
             strm.setPosition(0)
-            var inst = initInstrument()
+            var inst = Instrument.init
             check inst.deserialize(strm) == frInvalidChannel

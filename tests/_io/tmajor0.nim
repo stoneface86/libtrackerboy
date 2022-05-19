@@ -20,7 +20,7 @@ unittests:
             strm.write(moduleBin)
             strm.setPosition(0)
             
-            var m = initModule()
+            var m = Module.init
             check m.deserialize(strm) == frNone
             check m.title == "legacy example"
             check m.artist == "stoneface86"
@@ -37,5 +37,5 @@ unittests:
             strm.setPosition(125)
             strm.write(1u8)
             strm.setPosition(0)
-            var m = initModule()
+            var m = Module.init
             check m.deserialize(strm) == frCannotUpgrade

@@ -56,8 +56,6 @@ type
         ## deep equality.
         src*: ref T
             ## The source reference of the wrapper
-    
-    DeepEqualsRef* {.deprecated: "use EqRef[T] instead".} = EqRef 
 
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef
@@ -110,9 +108,6 @@ func isNil*[T](cref: CRef[T]): bool =
 
 func toEqRef*[T](val: ref T): EqRef[T] {.inline.} =
     EqRef[T](src: val)
-
-template deepEqualsRef*[T](val: ref T): EqRef[T] {.deprecated: "use toEqRef[T] instead".} =
-    toEqRef[T](val)
 
 func `==`*[T](lhs, rhs: EqRef[T]): bool =
     ## Equality test for the given EqRefs. The refs are equal if either:
