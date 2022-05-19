@@ -28,14 +28,13 @@ unittests:
             # an impulse is mixed at time 0 and the signal generated should
             # decay to 0. Only the decay is tested, not the performance of the filter itself
 
-            var synth = initSynth(samplerate, samplerate)
+            var synth = Synth.init(samplerate, samplerate)
             # mix an impulse on the left channel
             synth.mixDc(1.0f, 0.0f, 0)
-            synth.endFrame(gbClockrate) # 1 sec
 
             # read samples, check that 1 second of audio was generated
             var buf: seq[Pcm]
-            synth.takeSamples(buf)
+            synth.takeSamples(gbClockrate, buf.addr)
             check buf.len == samplerate * 2
 
             # check that only the left channel has a signal
@@ -56,7 +55,7 @@ unittests:
         test "resampling":
             const samplerates = [11025, 22050, 44100, 88200]
 
-            var synth = initSynth()
+            var synth = Synth.init()
             var buf: seq[Pcm]
             for rate in samplerates:
                 checkpoint "resample test @ " & $rate & " Hz"
@@ -64,10 +63,9 @@ unittests:
                 synth.setBufferSize(rate * 2)
                 # mix an impulse at t = 1s
                 synth.mixDc(1.0f, 0.0f, gbClockRate)
-                synth.endFrame(gbClockRate * 2)
 
                 # get the samples
-                synth.takeSamples(buf)
+                synth.takeSamples(gbClockRate * 2, buf.addr)
                 check buf.len == rate * 2 * 2
 
                 # check that at t == 1s, the buffer contains an impulse
@@ -84,7 +82,7 @@ unittests:
                         time += 2
                     result = true
 
-            var synth = initSynth(samplerate, samplerate)
+            var synth = Synth.init(samplerate, samplerate)
             synth.volumeStepLeft = 0.125f
             synth.volumeStepRight = 0.125f
             var bufleft, bufright, bufmiddle: seq[Pcm]
@@ -92,11 +90,10 @@ unittests:
             proc mixtest(buf: var seq[Pcm], mode: MixMode) =
                 synth.clear()
                 # mix a simple square waveform
-                synth.mix(mode, 1, 4000)    # +1 volume step at t = 0.000953s
-                synth.mix(mode, -2, 262144) # -1 volume step at t = 0.0625s
-                synth.mix(mode, 1, 524288)  # zero crossing at t = 0.125s
-                synth.endFrame(786432)      # end frame at t = 0.1875s
-                synth.takeSamples(buf)
+                synth.mix(mode, 1, 4000)            # +1 volume step at t = 0.000953s
+                synth.mix(mode, -2, 262144)         # -1 volume step at t = 0.0625s
+                synth.mix(mode, 1, 524288)          # zero crossing at t = 0.125s
+                synth.takeSamples(786432, buf.addr) # end frame at t = 0.1875s
             
             mixtest(bufleft, mixLeft)
             mixtest(bufright, mixRight)

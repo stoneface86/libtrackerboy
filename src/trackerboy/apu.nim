@@ -1,9 +1,21 @@
+##[
 
-import common
-import private/[hardware, synth]
+Game Boy APU emulation. Provides an Apu object that can synthesize audio to
+an internal buffer when stepping for a given number of cycles. The emulated
+registers can be read/written to, which can be used along side an full Game
+Boy emulator, or to just generate audio when playing a module.
 
-export Pcm
-export MixMode
+See also
+--------
+
+`Pan Docs<https://gbdev.io/pandocs/Sound_Controller.html>`_ for details about
+the hardware being emulated.
+
+
+]##
+
+import common, private/[hardware, synth]
+export common
 
 import std/[bitops, algorithm]
 
@@ -88,6 +100,8 @@ type
         triggerIndex: int
 
     Apu* {.requiresInit.} = object
+        ## Game Boy APU emulator. Satisfies the `ApuIo<apuio.html#ApuIo>`_ concept.
+        ## 
         ch1, ch2: PulseChannel
         ch3: WaveChannel
         ch4: NoiseChannel
@@ -508,8 +522,12 @@ proc updateVolume(a: var Apu) =
     a.synth.volumeStepRight = a.rightVolume.float32 * a.volumeStep
 
 proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
-    ## Sets the apu volume level to the given linear gain value. The gain
-    ## should range from 0.0f to 1.0f.
+    ## Sets the volume level of `a` to the given linear gain value. The gain
+    ## should range from 0.0f to 1.0f. The default volume level is a linear
+    ## value of 0.625f or about -4 dB
+    runnableExamples:
+        var a = Apu.init(44100, 44100)
+        a.setVolume(0.5f)
 
     # 4 channels
     # channel volume ranges from 0-15 (15 steps)
@@ -519,7 +537,15 @@ proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
     a.volumeStep = gain / 480.0f
     a.updateVolume()
 
-proc initApu*(samplerate: int, buffersize: Natural = 0): Apu =
+func init*(T: typedesc[Apu], samplerate: int, buffersize: Natural = 0): T.typeOf =
+    ## Initializes an Apu with the given samplerate and internal buffer size.
+    ## `samplerate` is in Hz and must be greater than 0. `buffersize` is in
+    ## number of samples, use 0 to set the buffer later.
+    ## 
+    ## The returned `Apu` is in its default, or hardware reset, state. The
+    ## volume step is set to a default of 0.625f.
+    runnableExamples:
+        var a = Apu.init(24000, 2400) # 24000 Hz, with a 0.1s buffer
     result = Apu(
         ch1: initPulseChannel(),
         ch2: initPulseChannel(),
@@ -527,7 +553,7 @@ proc initApu*(samplerate: int, buffersize: Natural = 0): Apu =
         ch4: initNoiseChannel(),
         sweep: initSweep(),
         sequencer: initSequencer(),
-        synth: initSynth(samplerate, buffersize),
+        synth: Synth.init(samplerate, buffersize),
         mix: default(Apu.mix.type),
         lastOutputs: default(Apu.lastOutputs.type),
         time: 0,
@@ -540,6 +566,16 @@ proc initApu*(samplerate: int, buffersize: Natural = 0): Apu =
     result.setVolume(0.625f)
 
 proc reset*(a: var Apu) =
+    ## Resets the apu to its initial state. Should behave similarly to a
+    ## hardware reset. The internal sample buffer is also cleared.
+    runnableExamples:
+        var a = Apu.init(44100, 44100)
+        a.writeRegister(0x26, 0x80)
+        a.writeRegister(0x12, 0xF2)
+        assert a.readRegister(0x12) == 0xF2u8
+        a.reset()
+        assert a.readRegister(0x12) == 0xFFu8
+        assert a.availableSamples == 0
     a.ch1 = initPulseChannel()
     a.ch2 = initPulseChannel()
     a.ch3 = initWaveChannel()
@@ -568,7 +604,7 @@ proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
         a.silence(chno, time)
         result = mixMute
 
-# sum type for all of the Channel objects
+# type class for all of the Channel objects
 type SomeChannel = PulseChannel|WaveChannel|NoiseChannel
 
 proc mixChannel(a: var Apu, mix: static MixMode, ch: Channel, last: var uint8, time: uint32) =
@@ -605,6 +641,20 @@ proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: 
 
 
 proc run*(a: var Apu, cycles: uint32) =
+    ## Runs the apu `a` for a given number of cycles. The internal sample
+    ## buffer is updated with new samples from the run. Use
+    ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ afterwards to collect them for
+    ## processing, or `removeSamples<#removeSamples,Apu>`_ to discard them.
+
+    runnableExamples:
+        var a = Apu.init(44100, 44100)
+        a.run(4194304) # 1 second
+        assert a.availableSamples == 44100
+        # another call to run will overrun the buffer
+        # to empty the buffer do either:
+        #  a.takeSamples(buffer)
+        #  a.removeSamples()
+
     var cycleCountdown = cycles
     #var time = a.time
     while cycleCountdown > 0:
@@ -623,9 +673,31 @@ template cannotAccessRegister(a: Apu, reg: uint8): bool =
     not a.enabled and reg < rNR52
 
 func readRegister*(a: Apu, reg: uint8): uint8 =
+    ##
+    ## Reads the register at address `reg`. This proc emulates the behavior of
+    ## reading the memory-mapped registers on an actual Game Boy. Since some
+    ## registers are write-only (ie frequency), attempting to read these
+    ## registers will result in their bits being read back as all 1s.
+    ## 
+    ## `reg` is the memory address of the register in the 0xFF00 page, so
+    ## to read rNR10, 0xFF10, you would call this proc with `reg = 0x10u8`
+    ## 
+    ## The read occurs at the apu's current timestep, `run` the apu beforehand
+    ## if you want the read to occur at a certain point in time.
+    ## 
+    ## The proc will return 0xFF for any invalid reg address.
+    ## 
+    
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        # sound is OFF, all reads should result in 0xFF
+        assert a.readRegister(0x10) == 0xFFu8
+        # NR52 should be 0x70
+        assert a.readRegister(0x26) == 0x70u8
+
+
     template readNRx4(lc: LengthCounter): uint8 =
         if lc.enabled: 0xFF else: 0xBF
-    
 
     if a.cannotAccessRegister(reg):
         return 0xFF
@@ -687,8 +759,22 @@ func readRegister*(a: Apu, reg: uint8): uint8 =
     else:
         result = 0xFF
 
-
 proc writeRegister*(a: var Apu, reg, value: uint8) =
+    ## Writes `value` to the apu's register at `reg` address. Like
+    ## `readRegister<#readRegister,Apu,uint8>`_, this proc emulates writing to
+    ## the Game Boy's memory-mapped APU registers. Writes to any unknown
+    ## address are ignored. Writes to read-only portions of registers are also
+    ## ignored. Like readRegister, the write occurs at the apu's current `time`.
+    
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        a.writeRegister(0x12, 0xC0) # APU is off, write is ignored
+        a.writeRegister(0x26, 0x80) # turn APU on
+        assert a.readRegister(0x12) == 0x00
+        a.writeRegister(0x12, 0xC0)
+        assert a.readRegister(0x12) == 0xC0
+        a.writeRegister(0xD3, 0xCC) # invalid register, write is ignored
+
     if a.cannotAccessRegister(reg):
         return
 
@@ -816,20 +902,50 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
     else:
         discard
 
-proc endFrame*(a: var Apu) =
-    a.synth.endFrame(a.time)
-    a.time = 0
+func time*(a: Apu): uint32 =
+    ## Gets the apu's current time, in cycles. Calling `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
+    ## resets the time to 0.
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        assert a.time == 0
+        a.run(1000)
+        assert a.time == 1000
+        a.run(100)
+        assert a.time == 1100
+        a.removeSamples()
+        assert a.time == 0      # takeSamples will also reset time to 0
+    a.time
 
 proc availableSamples*(a: Apu): int =
-    a.synth.availableSamples()
+    ## Gets the amount of samples available in the buffer.
+    ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ will take this exact amount
+    ## of samples when called
+    a.synth.sampletime(a.time).int
+
+proc takeOrRemove(a: var Apu, buf: ptr seq[Pcm]) =
+    a.synth.takeSamples(a.time, buf)
+    a.time = 0
 
 proc takeSamples*(a: var Apu, buf: var seq[Pcm]) =
-    a.synth.takeSamples(buf)
+    ## Takes out the entire sample buffer and puts it into the given buf. The
+    ## buf's len will be set to `a.availableSamples * 2` and will have the
+    ## contents of the apu's sample buffer.
+    a.takeOrRemove(buf.addr)
+
+proc removeSamples*(a: var Apu) =
+    ## Removes all samples in the sample buffer.
+    a.takeOrRemove(nil)
 
 proc setSamplerate*(a: var Apu, samplerate: int) =
+    ## Sets the samplerate of the generated audio. The internal sample buffer
+    ## is left untouched, so it is recommended you call `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
+    ## beforehand.
     a.synth.samplerate = samplerate
 
 proc setBufferSize*(a: var Apu, samples: int) =
+    ## Sets the apu's internal buffer to the given number of samples. This will
+    ## destroy the contents of the buffer so it is recommended you call
+    ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ first.
     a.synth.setBufferSize(samples)
     a.time = 0
 
@@ -837,6 +953,9 @@ func channelFrequency*(a: Apu, chno: ChannelId): int =
     ## Gets the current frequency setting for the channel, for diagnostic
     ## purposes. Channels 1-3 will result in a value from 0 to 2047. Channel
     ## 4 will result in the contents of its NR43 register.
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        assert a.channelFrequency(ch2) == 0
     case chno:
     of ch1: result = a.ch1.frequency.int
     of ch2: result = a.ch2.frequency.int
@@ -848,6 +967,17 @@ func channelVolume*(a: Apu, chno: ChannelId): int =
     ## the channel. For channels with an enevelope, this level is the current
     ## volume of the envelope. For the Wave channel, this value is the maximum
     ## possible determined by the wave volume setting (NR32).
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        assert a.channelVolume(ch1) == 0
+        assert a.channelVolume(ch3) == 0
+        a.writeRegister(0x26, 0x80)  # NR52 <- 0x80
+        a.writeRegister(0x12, 0xD0)  # NR12 <- 0xD0
+        a.writeRegister(0x14, 0x80)  # NR14 <- 0x80
+        a.writeRegister(0x1C, 0x20)  # NR32 <- 0x20
+        assert a.channelVolume(ch1) == 0xD
+        assert a.channelVolume(ch3) == 0xF
+
     proc impl(ch: SomeChannel): int =
         when ch.type is WaveChannel:
             case ch.volume:
@@ -858,7 +988,6 @@ func channelVolume*(a: Apu, chno: ChannelId): int =
         else:
             result = ch.envelope.volume.int
 
-
     case chno:
     of ch1: result = impl(a.ch1)
     of ch2: result = impl(a.ch2)
@@ -866,4 +995,14 @@ func channelVolume*(a: Apu, chno: ChannelId): int =
     of ch4: result = impl(a.ch4)
 
 func channelMix*(a: Apu, chno: ChannelId): MixMode =
+    ## Gets the current mix mode for the given channel. Provided as an alternative
+    ## to reading ar51.
+    runnableExamples:
+        var a = Apu.init(44100, 4410)
+        a.writeRegister(0x26, 0x80)         # NR52 <- 0x80
+        a.writeRegister(0x25, 0b00110101)   # NR51 <- 0x35
+        assert a.channelMix(ch1) == mixMiddle
+        assert a.channelMix(ch2) == mixRight
+        assert a.channelMix(ch3) == mixLeft
+        assert a.channelMix(ch4) == mixMute
     result = a.mix[chno]

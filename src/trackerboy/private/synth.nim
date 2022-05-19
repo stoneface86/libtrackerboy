@@ -34,7 +34,6 @@ type
         buffer: seq[Pcm]
         # fractional sample time offset
         sampleOffset: float32
-        samplesAvail: int
         # sample accumulators
         accums: array[2, Accumulator]
 
@@ -76,21 +75,20 @@ const
         [ 0.000000000f,  0.001312256f, -0.003509521f,  0.010681152f, -0.014892578f,  0.034667969f, -0.027893066f,  0.178863525f,  0.641540527f,  0.178863525f, -0.027893066f,  0.034667969f, -0.014892578f,  0.010681152f, -0.003509521f,  0.001312256f ]
     ]
 
+template assertTime(s: Synth, t: int): untyped =
+    assert t < s.buffer.len, "attempted to mix past the buffer"
 
 template frameIndex(t: Natural): int = t * 2
 
-func initAccumulator(): Accumulator =
-    Accumulator(
-        sum: 0.0f,
-        highpass: 0.0f
-    )
+func init(T: typedesc[Accumulator]): T.typeOf =
+    discard  # default is sufficient
 
 proc process(a: var Accumulator, input: float32, highpassRate: float32): float32 =
     a.sum += input
     result = a.sum - a.highpass
     a.highpass = a.sum - (result * highpassRate)
 
-func sampletime(s: Synth, cycletime: uint32): float32 =
+func sampletime*(s: Synth, cycletime: uint32): float32 =
     (cycletime.float32 * s.factor) + s.sampleOffset
 
 func getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeFract: float32] =
@@ -132,7 +130,11 @@ proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
 
     # DANGER! pointer arithmetic is used for optimization purposes, but a bug
     # can cause a buffer overrun if the cycletime exceeds the length of the buffer
-    var buf = s.buffer[frameIndex(params.timeIndex)].addr
+
+    var buf = block:
+        let time = frameIndex(params.timeIndex)
+        assertTime(s, time + stepWidth * 2)  # <- if this fails we will overrun the buffer
+        s.buffer[time].addr
     ptrArith:
         when mode == mixRight:
             inc buf
@@ -165,13 +167,13 @@ proc mix*(s: var Synth, mode: MixMode, delta: int8, cycletime: uint32) =
 
 proc mixDc*(s: var Synth, dcLeft, dcRight: PcmF32, cycletime: uint32) =
     let time = frameIndex(s.sampletime(cycletime).int)
+    assertTime(s, time)
     s.buffer[time] += dcLeft
     s.buffer[time + 1] += dcRight
 
 proc clear*(s: var Synth) =
-    s.samplesAvail = 0
     s.sampleOffset = 0
-    s.accums.fill(initAccumulator())
+    s.accums.fill(Accumulator.init)
     s.buffer.fill(0.0f)
 
 func samplerate*(s: Synth): int =
@@ -188,8 +190,8 @@ proc setBufferSize*(s: var Synth, samples: Natural) =
     s.buffer.setLen(frameIndex(samples + stepWidth))
     s.clear()
 
-func initSynth*(samplerate = 44100, buffersize: Natural = 0): Synth =
-    result = Synth(
+func init*(T: typedesc[Synth], samplerate = 44100, buffersize: Natural = 0): T.typeOf =
+    result = T(
         volumeStepLeft: 0.0f,
         volumeStepRight: 0.0f,
         samplerate: 0,
@@ -197,46 +199,49 @@ func initSynth*(samplerate = 44100, buffersize: Natural = 0): Synth =
         highpass: 0.0f,
         buffer: newSeq[Pcm](),
         sampleOffset: 0.0f,
-        samplesAvail: 0,
         accums: [
-            initAccumulator(),
-            initAccumulator()
+            Accumulator.init,
+            Accumulator.init
         ]
     )
     result.`samplerate=`(samplerate)
     result.setBufferSize(buffersize)
 
-proc takeSamples*(s: var Synth, buf: var seq[Pcm]) =
-    ## Takes all available samples from the synth and puts them into the given
-    ## buf. The buf's len is changed to the amount of available samples.
-    let totalSamples = frameIndex(s.samplesAvail)
-    buf.setLen(totalSamples)
-    # move samples to the destination buf, after integrating and applying the
-    # high pass filter
-    var dest = buf[0].addr
-    var src = s.buffer[0].addr
-    for i in 0..<s.samplesAvail:
-        ptrArith:
-            template accumulateChannel(channel: int): untyped =
-                dest[] = s.accums[channel].process(src[], s.highpass)
-                src[] = 0
-                inc src
-                inc dest
-            accumulateChannel(0)
-            accumulateChannel(1)
+template initSynth*(samplerate = 44100, buffersize: Natural = 0): Synth {.deprecated: "use Synth.init instead".} =
+    Synth.init(samplerate, buffersize)
+
+proc endFrame(s: var Synth, cycletime: uint32): int =
+    # end the frame, discarding all mixed samples
+    let split = splitDecimal(s.sampletime(cycletime))
+    s.sampleOffset = split.floatpart
+    assert split.intpart.int <= s.buffer.len, "end of frame exceeds buffer"
+    split.intpart.int
+
+proc takeSamples*(s: var Synth, endtime: uint32, buf: ptr seq[Pcm]) =
+    # takes samples out of the synth's buffer and puts it into buf. If buf is
+    # nil, the samples are discarded.
+    let samplesToTake = s.endframe(endtime)
+    let totalSamples = frameIndex(samplesToTake)
+    if buf != nil:
+        buf[].setLen(totalSamples)
+        # move samples to the destination buf, after integrating and applying the
+        # high pass filter
+        var dest = buf[][0].addr
+        var src = s.buffer[0].addr
+        for i in 0..<samplesToTake:
+            ptrArith:
+                template accumulateChannel(channel: int): untyped =
+                    dest[] = s.accums[channel].process(src[], s.highpass)
+                    src[] = 0
+                    inc src
+                    inc dest
+                accumulateChannel(0)
+                accumulateChannel(1)
+    else:
+        s.buffer.fill(0, totalSamples-1, 0.0f)
     # copy leftovers to the front of the synth's buffer
     var d = totalSamples
-    s.samplesAvail = 0
     for i in 0..<(stepWidth*2):
         s.buffer[i] = s.buffer[d]
         s.buffer[d] = 0.0f
         inc d
-
-proc endFrame*(s: var Synth, cycletime: uint32) =
-    let split = splitDecimal(s.sampletime(cycletime))
-    s.sampleOffset = split.floatpart
-    assert split.intpart.int <= s.buffer.len, "end of frame exceeds buffer"
-    s.samplesAvail = split.intpart.int
-
-func availableSamples*(s: Synth): int =
-    s.samplesAvail

@@ -10,9 +10,7 @@
 ## mr - music runtime
 ## chno - channel number
 
-import common
-import data
-import notes
+import apuio, common, data, notes
 import private/[hardware]
 
 import std/[bitops, options, with]
@@ -177,10 +175,6 @@ type
         time: int
         patternRepeat: bool
         frame: EngineFrame
-
-    ApuIo* = concept a, var b
-        a.readRegister(uint8) is uint8
-        b.writeRegister(uint8, uint8)
 
 func identityLookup(note: Natural): uint16 = note.uint16
 

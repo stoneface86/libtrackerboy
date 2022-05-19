@@ -29,6 +29,7 @@ Available modules:
 Module                               Description
 ===================================  ==============================================
 `apu<trackerboy/apu.html>`_          Game Boy APU emulation
+`apuio<trackerboy/apuio.html>`_      APU I/O access, provides ApuIo concept
 `common<trackerboy/common.html>`_    Common types/procs used throughout the library
 `data<trackerboy/data.html>`_        Data model
 `editing<trackerboy/editing.html>`_  Utilities for editing pattern data

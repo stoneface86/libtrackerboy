@@ -4,8 +4,8 @@
 # the wav files are generated in a folder called "wavegen" in the same directory
 # as the executable
 
-import trackerboy/private/[hardware, synth, wavwriter]
-import trackerboy/common
+import ../src/trackerboy/private/[hardware, synth, wavwriter]
+import ../src/trackerboy/common
 
 import std/[os, strformat, typetraits]
 
@@ -59,8 +59,6 @@ proc generateWaveform(s: var Synth, w: Waveform) =
         if w.rightFrequency > 0:
             generate(s, mixRight, getTimeStep(w.rightFrequency))
 
-    s.endFrame(gbClockrate)
-
 proc `$`(w: Waveform): string =
     result = fmt"tone_{w.samplerate}Hz_{w.leftFrequency}Hz_{w.rightFrequency}Hz.wav"
 
@@ -70,11 +68,11 @@ when isMainModule:
     let outDir = getAppDir().joinPath("wavegen")
     outDir.createDir()
 
-    var s = initSynth()
+    var s = Synth.init()
     s.volumeStepLeft = volumeStep
     s.volumeStepRight = volumeStep
     for i, preset in presetWaveforms.pairs:
         generateWaveform(s, preset)
-        s.takeSamples(buf)
+        s.takeSamples(gbClockrate, buf)
         var wav = initWavWriter(joinPath(outDir, $preset), 2, preset.samplerate)
         wav.write(buf)

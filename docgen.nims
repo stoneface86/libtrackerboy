@@ -8,9 +8,13 @@ import std/[os, strformat]
 const dryRun = false
 
 when dryRun:
-    template doExec(cmd: string): untyped = echo cmd
+    template tryExec(code: int, cmd: string): untyped = echo cmd
 else:
-    template doExec(cmd: string): untyped = exec cmd
+    template tryExec(code: int, cmd: string): untyped =
+        try:
+            exec cmd
+        except OSError:
+            quit(code)
 
 const
     rstFiles = [
@@ -24,13 +28,13 @@ when not dryRun:
 # Generate all rst documents
 for filename in rstFiles:
     echo fmt"Generating page for '{filename}'"
-    doExec fmt"nim rst2html --hints:off --index:on --outdir:htmldocs {filename}"
+    tryExec 1, &"nim rst2html --hints:off --index:on --outdir:htmldocs \"{filename}\""
 
 # generate project documentation via src/trackerboy.nim
 echo "Generating documentation for whole project..."
 let srcpath = "src".absolutePath()
-doExec fmt"nim doc --hints:off --project --index:on --outdir:htmldocs -p:{srcpath} src/trackerboy.nim"
+tryExec 2, &"nim doc --hints:off --project --index:on --outdir:htmldocs -p:\"{srcpath}\" src/trackerboy.nim"
 
 # generate the index
 echo "Building index..."
-doExec "nim buildIndex --hints:off -o:htmldocs/theindex.html htmldocs"
+tryExec 3, "nim buildIndex --hints:off -o:htmldocs/theindex.html htmldocs"
