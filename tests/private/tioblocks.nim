@@ -9,7 +9,7 @@ const testBlockId = "TEST".toBlockId
 const testBlockData = ['e', 'x', 'a', 'm', 'p', 'l', 'e']
 
 proc writeTestBlock(stream: Stream) =
-    var ob = initOutputBlock(stream)
+    var ob = OutputBlock.init(stream)
     ob.begin(testBlockId)
     ob.write(testBlockData)
     ob.finish()
@@ -38,7 +38,7 @@ unittests:
             let fifthVal = @fourthVal
 
             block:
-                var ob = initOutputBlock(stream)
+                var ob = OutputBlock.init(stream)
                 ob.begin(testBlockId)
                 # generic overload
                 ob.write(firstVal)
@@ -52,7 +52,7 @@ unittests:
 
             stream.setPosition(0)
             block:
-                var ib = initInputBlock(stream)
+                var ib = InputBlock.init(stream)
                 check ib.begin() == testBlockId
 
                 template testRead(expected: untyped): untyped =
@@ -75,7 +75,7 @@ unittests:
             stream.setPosition(0)
 
             block:
-                var ib = initInputBlock(stream)
+                var ib = InputBlock.init(stream)
                 require ib.begin() == testBlockId
                 # read all of the block
                 var val: testBlockData.type
@@ -91,7 +91,7 @@ unittests:
 
             stream.setPosition(0)
             block:
-                var ib = initInputBlock(stream)
+                var ib = InputBlock.init(stream)
                 require ib.begin() == testBlockId
                 require not ib.isFinished()
                 # at the start, attempt to read more than the block contains

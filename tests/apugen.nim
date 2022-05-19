@@ -290,5 +290,5 @@ when isMainModule:
     outDir.createDir()
     
     for name, data in tests.fieldPairs:
-        var wav = initWavWriter(joinPath(outDir, "apu_test_" & name & ".wav"), 2, testSamplerate)
+        var wav = WavWriter.init(joinPath(outDir, "apu_test_" & name & ".wav"), 2, testSamplerate)
         runTest(data, a, wav)

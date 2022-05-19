@@ -11,7 +11,7 @@ unittests:
     suite "PatternClip":
 
         const patternSize = 8
-        const wholePattern = initPatternSelection(
+        const wholePattern = PatternSelection.init(
             a(0, low(ChannelId), low(TrackSelect)),
             a(patternSize - 1, high(ChannelId), high(TrackSelect))
         )
@@ -68,7 +68,7 @@ unittests:
         test "save raises RangeDefect on invalid selection":
             proc mkInput(a1, a2: PatternAnchor, name: string): auto =
                 (
-                    data: initPatternSelection(a1, a2),
+                    data: PatternSelection.init(a1, a2),
                     name: name
                 )
             const inputs = [
@@ -106,7 +106,7 @@ unittests:
             let pattern = getSamplePattern().toCPattern
             clip.save(
                 pattern,
-                initPatternSelection(
+                PatternSelection.init(
                     a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)
                 )
             )
@@ -125,7 +125,7 @@ unittests:
             let pattern = getSamplePattern().toCPattern
             let copyPattern = pattern.clone()
             # clip track 0
-            clip.save(pattern, initPatternSelection(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
+            clip.save(pattern, PatternSelection.init(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
             check clip.hasData()
 
             # mix paste at track 3

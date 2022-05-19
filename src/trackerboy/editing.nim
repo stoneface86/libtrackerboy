@@ -71,7 +71,7 @@ template last(p: PatternSelection|PatternIter): PatternAnchor =
 func isEffect*(column: TrackSelect): bool =
     column >= selEffect1 and column <= selEffect3
 
-func initPatternCursor*(row: int, track: int, column: TrackColumn): PatternCursor =
+func init*(T: typedesc[PatternCursor], row: int, track: int, column: TrackColumn): PatternCursor =
     result = PatternCursor(
         row: row,
         track: track,
@@ -115,7 +115,7 @@ func toSelect(column: TrackColumn): TrackSelect =
     of colEffectType2..colEffectParamLo2: selEffect2
     else: selEffect3
 
-func initPatternSelection*(a: PatternAnchor, b = a): PatternSelection =
+func init*(T: typedesc[PatternSelection], a: PatternAnchor, b = a): PatternSelection =
     result = PatternSelection(corners: [a, b])
 
 proc translate*(s: var PatternSelection, rows: int) =

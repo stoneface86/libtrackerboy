@@ -191,7 +191,7 @@ const
 
     updateAll = {low(UpdateFlag)..high(UpdateFlag)}
 
-func initChannelState(ch: ChannelId): ChannelState =
+func init(T: typedesc[ChannelState], ch: ChannelId): ChannelState =
     result = ChannelState(
         envelope: if ch == ch3: 0xFF else: 0x00,
         timbre: 0,
@@ -199,7 +199,7 @@ func initChannelState(ch: ChannelId): ChannelState =
         frequency: 0
     )
 
-func initGlobalState(): GlobalState =
+func init(T: typedesc[GlobalState]): GlobalState =
     discard
 
 proc setBit[T: SomeInteger](v: var T; bit: BitsRange[T]; val: bool) {.inline.} =
@@ -284,7 +284,7 @@ proc clearChannel(chno: static ChannelId, apu: var ApuIo) =
     when chno != ch3:
         apu.writeRegister(regstart + 4, 0x80)
 
-func initTimer(speed: Speed): Timer =
+func init(T: typedesc[Timer], speed: Speed): Timer =
     result = Timer(
         period: speed.int,
         counter: 0
@@ -384,7 +384,7 @@ converter toOperation(note: uint8): Operation =
     else:
         result.note = some(note)
 
-func initFrequencyControl(bounds: FrequencyBounds): FrequencyControl =
+func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyControl =
     result.bounds = bounds
 
 proc apply(fc: var FrequencyControl, op: Operation) =
@@ -567,10 +567,10 @@ proc step(r: var InstrumentRuntime): SequenceInput =
 
 
 
-func initTrackControl(ch: ChannelId): TrackControl =
+func init(T: typedesc[TrackControl], ch: ChannelId): TrackControl =
     result = TrackControl(
         op: default(Operation),
-        fc: initFrequencyControl(if ch == 3: noiseFrequencyBounds else: toneFrequencyBounds),
+        fc: FrequencyControl.init(if ch == 3: noiseFrequencyBounds else: toneFrequencyBounds),
         envelope: if ch == 2: 0 else: 0xF0,
         timbre: 3,
         panning: 3
@@ -661,27 +661,27 @@ proc step(tc: var TrackControl, itable: InstrumentTable, state: var ChannelState
         readInput(state.panning, skPanning)
         readInput(state.timbre, skTimbre)
 
-func initMusicRuntime(song: sink CRef[Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
+func init(T: typedesc[MusicRuntime], song: sink CRef[Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
     result = MusicRuntime(
         song: song,
         halted: false,
         orderCounter: orderNo,
         rowCounter: rowNo,
         patternRepeat: patternRepeat,
-        timer: initTimer(song[].speed),
-        global: initGlobalState(),
+        timer: Timer.init(song[].speed),
+        global: GlobalState.init(),
         lockflags: 0,
         states: [
-            initChannelState(ch1),
-            initChannelState(ch2),
-            initChannelState(ch3),
-            initChannelState(ch4)
+            ChannelState.init(ch1),
+            ChannelState.init(ch2),
+            ChannelState.init(ch3),
+            ChannelState.init(ch4)
         ],
         trackControls: [
-            initTrackControl(ch1),
-            initTrackControl(ch2),
-            initTrackControl(ch3),
-            initTrackControl(ch4)
+            TrackControl.init(ch1),
+            TrackControl.init(ch2),
+            TrackControl.init(ch3),
+            TrackControl.init(ch4)
         ]
     )
 
@@ -845,7 +845,7 @@ proc step(r: var MusicRuntime, apu: var ApuIo, itable: InstrumentTable, wtable: 
     r.poststep(frame)
     result = false
 
-func initEngine*(): Engine =
+func init*(T: typedesc[Engine]): Engine =
     discard  # default init is sufficient
 
 proc module*(e: Engine): CRef[Module] =
@@ -894,7 +894,7 @@ proc play*(e: var Engine, song, pattern, row: Natural = 0) =
     if row >= songref[].trackSize():
         raise newException(IndexDefect, "invalid row index")
 
-    e.musicRuntime = some(initMusicRuntime(songref, pattern, row, e.patternRepeat))
+    e.musicRuntime = some(MusicRuntime.init(songref, pattern, row, e.patternRepeat))
     e.time = 0
 
 proc step*(e: var Engine, apu: var ApuIo) =

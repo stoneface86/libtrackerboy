@@ -55,7 +55,7 @@ proc close*(w: var WavWriter): void
 proc `=destroy`*(w: var WavWriter) =
     w.close()
 
-proc initWavWriter*(filename: sink string, channels, samplerate: int): WavWriter =
+proc init*(T: typedesc[WavWriter], filename: sink string, channels, samplerate: int): WavWriter =
     result = WavWriter(
         stream: openFileStream(filename, fmWrite),
         channels: channels,

@@ -383,7 +383,7 @@ proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): Format
 
 template readBlock(id: BlockId, stream: Stream, body: untyped): untyped =
     block:
-        var ib {.inject.} = initInputBlock(stream)
+        var ib {.inject.} = InputBlock.init(stream)
         invalidWhen ib.begin() != id, frInvalidBlock
         body
         invalidWhen not ib.isFinished()
@@ -532,7 +532,7 @@ proc deserialize*(w: var Waveform, stream: Stream): FormatResult {.raises: [].} 
 
 template writeBlock(id: BlockId, stream: Stream, body: untyped): untyped =
     block:
-        var ob {.inject.} = initOutputBlock(stream)
+        var ob {.inject.} = OutputBlock.init(stream)
         ob.begin(id)
         body
         ob.finish()

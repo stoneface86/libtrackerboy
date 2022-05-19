@@ -73,6 +73,6 @@ when isMainModule:
     s.volumeStepRight = volumeStep
     for i, preset in presetWaveforms.pairs:
         generateWaveform(s, preset)
-        s.takeSamples(gbClockrate, buf)
-        var wav = initWavWriter(joinPath(outDir, $preset), 2, preset.samplerate)
+        s.takeSamples(gbClockrate, buf.addr)
+        var wav = WavWriter.init(joinPath(outDir, $preset), 2, preset.samplerate)
         wav.write(buf)
