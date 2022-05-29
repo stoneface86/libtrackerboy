@@ -20,6 +20,14 @@ library can easily be used in other projects.
 
 This project uses Semantic Versioning v2.0.0
 
+## C++ library
+
+This library was previously written in C++ and is now written in Nim. The C++
+version is no longer mantained. The [cpp-last][1] tag
+points to the last commit that contains the C++ version.
+
+[1]: https://github.com/stoneface86/libtrackerboy/releases/tag/cpp-last
+
 ## Authors
 
  * stoneface ([@stoneface86](https://github.com/stoneface86)) - Owner
