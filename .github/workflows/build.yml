@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - nim-rewrite
+      - develop
     tags-ignore: '**'
 
 jobs:

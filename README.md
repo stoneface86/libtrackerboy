@@ -1,6 +1,3 @@
-**NOTICE**: This library is being rewritten in Nim. Thus the C++ version will no
-longer be maintained once the rewrite is complete. The rewrite is located in the
-[nim-rewrite](https://github.com/stoneface86/libtrackerboy/tree/nim-rewrite) branch.
 
 # libtrackerboy
 
