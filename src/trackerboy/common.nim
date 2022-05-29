@@ -114,7 +114,7 @@ func `==`*[T](lhs, rhs: EqRef[T]): bool =
     ## - they are both nil
     ## - they are not both nil and their referenced data is equivalent
     runnableExamples:
-        var a, b: DeepEqualsRef[int]
+        var a, b: EqRef[int]
         assert a == b   # both are nil
         a.src = new(int)
         b.src = new(int)

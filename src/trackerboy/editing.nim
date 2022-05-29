@@ -1,6 +1,8 @@
-##
-## Module for editing pattern data.
-##
+##[
+
+Module for editing pattern data.
+
+]##
 
 import common, data
 export common

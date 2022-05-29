@@ -2,7 +2,7 @@
 
 Game Boy APU emulation. Provides an Apu object that can synthesize audio to
 an internal buffer when stepping for a given number of cycles. The emulated
-registers can be read/written to, which can be used along side an full Game
+registers can be read/written to, which can be used along side a full Game
 Boy emulator, or to just generate audio when playing a module.
 
 See also

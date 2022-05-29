@@ -1,8 +1,10 @@
-##
-## The engine module is responsible for playing a song from a module. Similar
-## to a sound driver, the engine is stepped every frame and the APU's registers
-## are updated in order to play music.
-## 
+##[
+
+The engine module is responsible for playing a song from a module. Similar
+to a sound driver, the engine is stepped every frame and the APU's registers
+are updated in order to play music.
+
+]##
 
 ## common abbrievations
 ## fc - frequency control

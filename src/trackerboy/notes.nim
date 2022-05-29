@@ -1,3 +1,9 @@
+##[
+
+Note lookup procs. Contains lookup procs for the two types of notes in
+Trackerboy, tone notes and noise notes.
+
+]##
 
 type
     ToneNote* = range[0..83]

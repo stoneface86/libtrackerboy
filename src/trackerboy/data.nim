@@ -1,6 +1,8 @@
-##
-## This module contains data types used in the library.
-##
+##[
+
+Module for the data model. This module contains data types used in the library.
+
+]##
 
 import common, private/data, version 
 export common

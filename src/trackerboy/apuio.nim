@@ -9,10 +9,7 @@ import private/hardware
 
 type
     ApuRegister* = enum
-        ## Enum for Apu register addresses. For convenience you can use the
-        ## `readRegister<#readRegister.t,ApuIo,ApuRegister>`_ and
-        ## `writeRegister<#writeRegister.t,ApuIo,ApuRegister,uint8>`_
-        ## templates with this enum instead of an address.
+        ## Enum for Apu register addresses.
         ##
         # CH1 - Square 1 ------------------------------------------------------
         ar10 = rNR10    ## NR10 -PPP NSSS - CH1 sweep period, negate, shift

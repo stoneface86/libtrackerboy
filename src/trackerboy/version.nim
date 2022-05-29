@@ -1,6 +1,8 @@
-##
-## Version information about the library and Trackerboy application.
-##
+##[
+
+Version information about the library and Trackerboy application.
+
+]##
 
 import std/strutils
 

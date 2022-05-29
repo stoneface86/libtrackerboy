@@ -1,3 +1,9 @@
+##[
+
+Module I/O. Allows for the deserialization/serialization of Module and
+ModulePiece types.
+
+]##
 
 import data, private/[endian, ioblocks], version
 import private/data as dataPrivate
@@ -37,7 +43,9 @@ type
         frInvalidRowNumber = 10
             ## A RowFormat's rowno field exceeds the Song's track size
         frInvalidId = 11
+            ## An instrument or waveform has an invalid id
         frInvalidDuplicateId = 12
+            ## Two instruments or two waveforms have the same id
         frInvalidTerminator = 13
             ## The terminator is invalid.
         frReadError = 14
