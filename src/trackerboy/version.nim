@@ -22,7 +22,7 @@ template v*(m = 0, n = 0, p = 0): Version =
 const
     appVersion* = v(0, 6, 1)
         ## Trackerboy application version
-    libVersion* = v(0, 1, 0)
+    libVersion* = v(0, 2, 0)
         ## Trackerboy library version
 
     # current file format revision: 1.1 (Rev C)
