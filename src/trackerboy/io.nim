@@ -193,7 +193,7 @@ template invalidWhen(cond: bool, res = frInvalidSize): untyped =
         return res
 
 template checkChannel(channel: int): untyped =
-    if channel notin ch1..ch4:
+    if channel notin ChannelId.low.ord..ChannelId.high.ord:
         return frInvalidChannel
 
 func packEffectCounts(ec: EffectCounts): PackedEffects =
@@ -256,7 +256,7 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
         var format: InstrumentFormat
         invalidWhen ib.read(format)
         checkChannel format.channel.int
-        p.channel = format.channel
+        p.channel = format.channel.ChannelId
         p.initEnvelope = format.envelopeEnabled
         p.envelope = format.envelope
         for sequence in p.sequences.mitems:

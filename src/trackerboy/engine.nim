@@ -17,6 +17,8 @@ export common
 
 import std/[bitops, options, with]
 
+export Module, Song, ApuIo
+
 
 type
 
@@ -211,7 +213,8 @@ proc setBit[T: SomeInteger](v: var T; bit: BitsRange[T]; val: bool) {.inline.} =
         v.clearBit(bit)
 
 proc update(chno: static ChannelId, apu: var ApuIo, uf: UpdateFlags, state: ChannelState, wt: WaveformTable) =
-    const regaddr = rNR10 + (chno * 5).uint8
+    const chord = chno.ord
+    const regaddr = rNR10 + (chord * 5).uint8
     
     if ufTimbre in uf:
         when chno == ch1 or chno == ch2:
@@ -227,8 +230,8 @@ proc update(chno: static ChannelId, apu: var ApuIo, uf: UpdateFlags, state: Chan
             apu.writeRegister(rNR43, nr43)
     
     if ufPanning in uf:
-        const panningMask = 0x11u8 shl chno
-        const panningTable = [0x00u8 shl chno, 0x01u8 shl chno, 0x10u8 shl chno, 0x11u8 shl chno]
+        const panningMask = 0x11u8 shl chord
+        const panningTable = [0x00u8 shl chord, 0x01u8 shl chord, 0x10u8 shl chord, 0x11u8 shl chord]
         var nr51 = apu.readRegister(rNR51)
         nr51 = nr51 and (not panningMask)
         nr51 = nr51 or panningTable[state.panning.int]
@@ -279,7 +282,7 @@ proc update(chno: static ChannelId, apu: var ApuIo, uf: UpdateFlags, state: Chan
         apu.writeRegister(regaddr + 4, retrigger.get())
 
 proc clearChannel(chno: static ChannelId, apu: var ApuIo) =
-    const regstart = rNR10 + (chno * 5).uint8
+    const regstart = rNR10 + (chno.ord * 5).uint8
     const regend = when chno == ch3: regstart + 4 else: regstart + 3
     for regaddr in regstart..regend:
         apu.writeRegister(regaddr, 0x00)
@@ -572,8 +575,8 @@ proc step(r: var InstrumentRuntime): SequenceInput =
 func init(T: typedesc[TrackControl], ch: ChannelId): TrackControl =
     result = TrackControl(
         op: default(Operation),
-        fc: FrequencyControl.init(if ch == 3: noiseFrequencyBounds else: toneFrequencyBounds),
-        envelope: if ch == 2: 0 else: 0xF0,
+        fc: FrequencyControl.init(if ch == ch4: noiseFrequencyBounds else: toneFrequencyBounds),
+        envelope: if ch == ch3: 0 else: 0xF0,
         timbre: 3,
         panning: 3
     )
@@ -752,7 +755,7 @@ proc poststep(r: var MusicRuntime, frame: var EngineFrame) =
 proc haltAll(r: var MusicRuntime, apu: var ApuIo) =
     
     template haltChannel(chno: static ChannelId) =
-        if not r.lockflags.testBit(chno):
+        if not r.lockflags.testBit(chno.ord):
             clearChannel(chno, apu)
         r.states[chno] = default(ChannelState)
 
@@ -798,7 +801,7 @@ proc step(r: var MusicRuntime, apu: var ApuIo, itable: InstrumentTable, wtable: 
         # step the channel's track control
         let action = r.trackControls[chno].step(itable, state, r.global)
 
-        if not r.lockflags.testBit(chno):
+        if not r.lockflags.testBit(chno.ord):
             # only write to registers if the channel is locked
             
             var flags = difference(state, prev)
@@ -911,6 +914,10 @@ proc step*(e: var Engine, apu: var ApuIo) =
 
 func currentFrame*(e: Engine): EngineFrame =
     result = e.frame
+
+func currentSong*(e: Engine): CRef[Song] =
+    if e.musicRuntime.isSome():
+        result = e.musicRuntime.get().song
 
 # diagnostic functions
 

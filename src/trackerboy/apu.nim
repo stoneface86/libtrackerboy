@@ -744,7 +744,7 @@ func readRegister*(a: Apu, reg: uint8): uint8 =
             result = 0xF0
             template channelStatus(stat: var uint8, chno: ChannelId, ch: Channel) =
                 if ch.dacEnable:
-                    stat.setBit(chno)
+                    stat.setBit(chno.ord)
             channelStatus(result, ch1, a.ch1.channel)
             channelStatus(result, ch2, a.ch2.channel)
             channelStatus(result, ch3, a.ch3.channel)
@@ -1005,4 +1005,4 @@ func channelMix*(a: Apu, chno: ChannelId): MixMode =
         assert a.channelMix(ch2) == mixRight
         assert a.channelMix(ch3) == mixLeft
         assert a.channelMix(ch4) == mixMute
-    result = a.mix[chno]
+    result = a.mix[chno.ord]

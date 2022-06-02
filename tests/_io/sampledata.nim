@@ -76,11 +76,11 @@ let
             s.order[1] = [1u8, 1, 1, 1]
             s.order[2] = [2u8, 2, 2, 2]
             block:
-                var track = s.getTrack(0, 0)
+                var track = s.getTrack(ch1, 0)
                 track[].setNote(0, 0x1F)
                 track[].setNote(8, 0x1F)
             block:
-                var track = s.getTrack(2, 2)
+                var track = s.getTrack(ch3, 2)
                 track[].setNote(4, 0x1F)
             s
     ]

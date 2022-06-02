@@ -81,7 +81,7 @@ func init*(T: typedesc[PatternCursor], row: int, track: int, column: TrackColumn
     )
 
 func isValid(c: PatternCursor|PatternAnchor, rows: int): bool =
-    c.row >= 0 and c.row < rows and c.track >= low(ChannelId) and c.track <= high(ChannelId)
+    c.row >= 0 and c.row < rows and c.track >= ChannelId.low.ord and c.track <= ChannelId.high.ord
 
 func rows*(i: PatternIter): Slice[int] =
     result = i.first.row..i.last.row
@@ -179,7 +179,7 @@ proc moveTo*(s: var PatternSelection, pos: PatternAnchor) =
     
     # move to track
     s.first.track = pos.track
-    s.last.track = max(high(ChannelId).int, pos.track + iter.last.track - iter.first.track)
+    s.last.track = max(ChannelId.high.ord.int, pos.track + iter.last.track - iter.first.track)
 
 func toAnchor*(c: PatternCursor): PatternAnchor =
     result = PatternAnchor(
@@ -227,7 +227,7 @@ template offsetInto[T](src: ptr T, offset: Natural): pointer =
 
 proc save*(c: var PatternClip, pattern: CPattern, region: PatternSelection) =
 
-    if not region.isValid(pattern.tracks[0][].len()):
+    if not region.isValid(pattern.tracks[ch1][].len()):
         raise newException(RangeDefect, "selection is not in range of the pattern")
 
     c.location = region
@@ -272,7 +272,7 @@ proc pasteImpl(c: PatternClip, pattern: Pattern, pos: Option[PatternAnchor], mix
     var bufIndex = 0
 
     if pos.isSome():
-        let tracksize = pattern.tracks[0][].len()
+        let tracksize = pattern.tracks[ch1][].len()
         # when pos is set, we are pasting at a given location
 
         # determine the region we are pasting data to
@@ -289,10 +289,10 @@ proc pasteImpl(c: PatternClip, pattern: Pattern, pos: Option[PatternAnchor], mix
         elif iter.first.row >= tracksize:
             return # out of bounds, nothing to paste
         iter.last.row = min(tracksize - 1, iter.last.row)
-        if iter.last.track < low(ChannelId) or iter.first.track > high(ChannelId):
+        if iter.last.track < ChannelId.low.ord or iter.first.track > ChannelId.high.ord:
             return
-        iter.first.track = max(iter.first.track, low(ChannelId))
-        iter.last.track = min(iter.last.track, high(ChannelId))
+        iter.first.track = max(iter.first.track, ChannelId.low.ord)
+        iter.last.track = min(iter.last.track, ChannelId.high.ord)
 
     proc paster(c: PatternClip, pattern: Pattern, mix: static[bool]) =
         for track in iter.tracks():
@@ -304,7 +304,7 @@ proc pasteImpl(c: PatternClip, pattern: Pattern, pos: Option[PatternAnchor], mix
             assert length > 0
 
             var bufIndexInTrack = bufIndex
-            let trackRef = pattern.tracks[track]
+            let trackRef = pattern.tracks[track.ChannelId]
             for row in iter.rows():
                 let rowdata = trackRef[][row].addr
                 when mix:

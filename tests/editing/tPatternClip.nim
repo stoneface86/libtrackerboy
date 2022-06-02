@@ -12,8 +12,8 @@ unittests:
 
         const patternSize = 8
         const wholePattern = PatternSelection.init(
-            a(0, low(ChannelId), low(TrackSelect)),
-            a(patternSize - 1, high(ChannelId), high(TrackSelect))
+            a(0, ChannelId.low.ord, low(TrackSelect)),
+            a(patternSize - 1, ChannelId.high.ord, high(TrackSelect))
         )
 
         proc getSamplePattern(): Pattern = 
@@ -43,7 +43,7 @@ unittests:
                     setInstrument(0, 0)
                     setNote(4, "B-5".note)
                     setInstrument(4, 0)
-            setTrack0(result.tracks[0][])
+            setTrack0(result.tracks[ch1][])
 
             proc setTrack3(track: var Track) =
                 with track:
@@ -57,7 +57,7 @@ unittests:
                     setNote(6, "G-6".note)
                     setInstrument(6, 1)
                     setEffect(6, 0, etDelayedNote, 3)
-            setTrack3(result.tracks[3][])
+            setTrack3(result.tracks[ch4][])
 
         setup:
             var clip: PatternClip
@@ -75,7 +75,7 @@ unittests:
                 mkInput(a(-1, 0, selNote), a(4, 0, selNote), "negative row index"),
                 mkInput(a(1, 0, selNote), a(patternSize, 0, selNote), "row exceeds pattern"),
                 mkInput(a(0, 2, selInstrument), a(4, -2, selNote), "negative track index"),
-                mkInput(a(0, high(ChannelId) + 2, selEffect1), a(0, 0, selEffect2), "track exceeds pattern")
+                mkInput(a(0, ChannelId.high.ord + 2, selEffect1), a(0, 0, selEffect2), "track exceeds pattern")
             ]
             let pattern = getSamplePattern().toCPattern
             for input in inputs:
@@ -96,10 +96,10 @@ unittests:
                 Track.new(patternSize)
             ])
             clip.restore(copy)
-            check pattern.tracks[0][] == copy.tracks[0][]
-            check pattern.tracks[1][] == copy.tracks[1][]
-            check pattern.tracks[2][] == copy.tracks[2][]
-            check pattern.tracks[3][] == copy.tracks[3][]
+            check pattern.tracks[ch1][] == copy.tracks[ch1][]
+            check pattern.tracks[ch2][] == copy.tracks[ch2][]
+            check pattern.tracks[ch3][] == copy.tracks[ch3][]
+            check pattern.tracks[ch4][] == copy.tracks[ch4][]
 
         test "overwrite paste":
             # clip all of track1
@@ -116,10 +116,10 @@ unittests:
             let copyPattern = pattern.clone()
             clip.paste(copyPattern, PatternCursor(row: 0, track: 3, column: colNote), false)
 
-            check copyPattern.tracks[0][] == pattern.tracks[0][]
-            check copyPattern.tracks[1][] == pattern.tracks[1][]
-            check copyPattern.tracks[2][] == pattern.tracks[2][]
-            check copyPattern.tracks[3][] == pattern.tracks[0][]
+            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
+            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
+            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
+            check copyPattern.tracks[ch4][] == pattern.tracks[ch1][]
 
         test "mix paste":
             let pattern = getSamplePattern().toCPattern
@@ -132,10 +132,10 @@ unittests:
             # should be no change to the pattern
             clip.paste(copyPattern, PatternCursor(row: 0, track: 3, column: colNote), true)
 
-            check copyPattern.tracks[0][] == pattern.tracks[0][]
-            check copyPattern.tracks[1][] == pattern.tracks[1][]
-            check copyPattern.tracks[2][] == pattern.tracks[2][]
-            check copyPattern.tracks[3][] == pattern.tracks[3][]
+            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
+            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
+            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
+            check copyPattern.tracks[ch4][] == pattern.tracks[ch4][]
 
             # now mix paste at row 1:
             # 00 ... | G-6 01 ... |     ... | G-6 01 ... |
@@ -149,9 +149,9 @@ unittests:
             clip.paste(copyPattern, PatternCursor(row: 1, track: 3, column: colNote), true)
 
             # these track should remain unchanged
-            check copyPattern.tracks[0][] == pattern.tracks[0][]
-            check copyPattern.tracks[1][] == pattern.tracks[1][]
-            check copyPattern.tracks[2][] == pattern.tracks[2][]
+            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
+            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
+            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
 
             proc makeExpected(): Track =
                 result = Track.init(patternSize)
@@ -170,4 +170,4 @@ unittests:
                     setNote(6, "G-6".note)
                     setInstrument(6, 1)
                     setEffect(6, 0, etDelayedNote, 3)
-            check copyPattern.tracks[3][] == makeExpected()
+            check copyPattern.tracks[ch4][] == makeExpected()

@@ -417,7 +417,7 @@ proc len*(o: Order): int =
 
 proc nextUnused*(o: Order): OrderRow =
     result = [0u8, 0u8, 0u8, 0u8]
-    for track in low(ChannelId)..high(ChannelId):
+    for track in ChannelId:
         var idmap: set[uint8]
         for row in o.data:
             idmap.incl(row[track])
@@ -533,21 +533,21 @@ proc setLen*(t: var Track, size: TrackSize) =
 
 func toCPattern*(p: sink Pattern): CPattern =
     result = CPattern(
-        tracks: [p.tracks[0].toCRef, p.tracks[1].toCRef, p.tracks[2].toCRef, p.tracks[3].toCRef]
+        tracks: [p.tracks[ch1].toCRef, p.tracks[ch2].toCRef, p.tracks[ch3].toCRef, p.tracks[ch4].toCRef]
     )
 
 func clone*(p: CPattern): Pattern =
     template cloneTrack(t: Track): ref Track =
         (ref Track)(data: t.data)
     result = Pattern(tracks: [
-        cloneTrack(p.tracks[0][]),
-        cloneTrack(p.tracks[1][]),
-        cloneTrack(p.tracks[2][]),
-        cloneTrack(p.tracks[3][])
+        cloneTrack(p.tracks[ch1][]),
+        cloneTrack(p.tracks[ch2][]),
+        cloneTrack(p.tracks[ch3][]),
+        cloneTrack(p.tracks[ch4][])
     ])
 
 func rowsWhenRun*(p: CPattern): Natural =
-    for i in 0..p.tracks[0][].len-1:
+    for i in 0..<p.tracks[ch1][].len:
         inc result
         for track in p.tracks:
             let row = track[][i]
@@ -622,19 +622,19 @@ proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
 
 proc getPattern*(s: var Song, order: ByteIndex): Pattern =
     result = Pattern(tracks: [
-        s.getTrack(0, order),
-        s.getTrack(1, order),
-        s.getTrack(2, order),
-        s.getTrack(3, order)
+        s.getTrack(ch1, order),
+        s.getTrack(ch2, order),
+        s.getTrack(ch3, order),
+        s.getTrack(ch4, order)
         ]
     )
 
 proc getPattern*(s: Song, order: ByteIndex): CPattern =
     result = CPattern(tracks: [
-        s.getTrack(0, order),
-        s.getTrack(1, order),
-        s.getTrack(2, order),
-        s.getTrack(3, order)
+        s.getTrack(ch1, order),
+        s.getTrack(ch2, order),
+        s.getTrack(ch3, order),
+        s.getTrack(ch4, order)
         ]
     )
 

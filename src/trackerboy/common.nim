@@ -7,12 +7,6 @@ exported by other modules so you typically do not need to import it yourself.
 
 import std/bitops
 
-const
-    ch1* = 0    ## Integer constant for CH1
-    ch2* = 1    ## Integer constant for CH2
-    ch3* = 2    ## Integer constant for CH3
-    ch4* = 3    ## Integer constant for CH4
-
 type
     InvalidOperationDefect* = object of Defect
         ## Defect class for any operation that cannot be performed.
@@ -25,15 +19,17 @@ type
         ## Should be functionally similar to a `ref T` (minus the implicit derefencing)
         src: ref T
 
+    ChannelId* = enum
+        ch1
+        ch2
+        ch3
+        ch4
+
     PcmF32* = float32
         ## 32-bit floating point PCM sample
 
     Pcm* = PcmF32
         ## Type alias for the PCM type used in this library
-
-    ChannelId* = range[ch1..ch4]
-        ## Integer ID type for a channel. A ChannelId of 0 is CH1, 1 is CH2,
-        ## 2 is CH3 and 3 is CH4.
 
     ByteIndex* = range[low(uint8).int..high(uint8).int]
         ## Index type using the range of a uint8 (0-255)
