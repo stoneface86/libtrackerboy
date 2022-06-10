@@ -29,4 +29,4 @@ unittests:
 
         test "play raises IndexDefect on invalid row index":
             expect IndexDefect:
-                engine.play(0, 0, module.songs[0][].trackSize())
+                engine.play(0, 0, module.songs[0][].trackLen())

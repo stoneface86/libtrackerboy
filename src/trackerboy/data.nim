@@ -24,7 +24,7 @@ type
     OrderSize* = PositiveByte
         ## Size range of a song order.
     
-    TrackSize* = PositiveByte
+    TrackLen* = PositiveByte
         ## Size range of a Track
     
     TrackId* = uint8
@@ -146,19 +146,11 @@ type
         instrument*: uint8
         effects*: array[EffectIndex, Effect]
 
-    Track* {.requiresInit.} = object
-        ## Pattern data for a single channel, stored in a `seq[TrackRow]`. A
-        ## Track can have 1-256 rows.
+    Track* = object
+        ## Pattern data for a single track. Valid tracks contain 1-256 rows
+        ## of data. A Track is invalid (or has no data) if it was default
+        ## initialized, use isValid() to check for validity.
         data: seq[TrackRow]
-
-    SomeTrackRef = ref Track | CRef[Track]
-
-    GenericPattern[T: SomeTrackRef] {.requiresInit.} = object
-        tracks*: array[ChannelId, T]
-
-    Pattern* = GenericPattern[ref Track]
-    # Pattern with immutable access
-    CPattern* = GenericPattern[CRef[Track]]
 
     # Song
 
@@ -171,8 +163,8 @@ type
         speed*: Speed
         effectCounts*: array[4, EffectColumns]
         order*: Order
-        trackSize: TrackSize
-        tracks: array[ChannelId, tables.Table[ByteIndex, EqRef[Track]]]
+        trackLen: TrackLen
+        tracks: array[ChannelId, tables.Table[ByteIndex, Shallow[Track]]]
 
     SongList* {.requiresInit.} = object
         ## Container for songs. Songs stored in this container are references,
@@ -214,7 +206,7 @@ const
     defaultRpb* = 4
     defaultRpm* = 16
     defaultSpeed*: Speed = 0x60
-    defaultTrackSize*: TrackSize = 64
+    defaultTrackSize*: TrackLen = 64
     defaultFramerate*: Framerate = 30
 
 func effectTypeShortensPattern*(et: EffectType): bool =
@@ -462,43 +454,41 @@ func queryInstrument*(row: TrackRow): Option[uint8] =
         return none(uint8)
 
 func isEmpty*(row: TrackRow): bool =
+    #cast[uint64](row) == 0u64
     row == default(TrackRow)
 
 # Track
 
-template construct(T: typedesc[Track|ref Track], len: TrackSize): untyped =
-    T(data: newSeq[TrackRow](len))
+proc init*(T: typedesc[Track], len: TrackLen): T.typeOf =
+    Track(
+        data: newSeq[TrackRow](len)
+    )
 
-func init*(T: typedesc[Track], len: TrackSize): T.typeOf =
-    T.construct(len)
-
-func new*(T: typedesc[Track], len: TrackSize): ref T.typeOf =
-    (ref T).construct(len)
-
-iterator items*(t: Track): TrackRow =
-    for row in t.data:
-        yield row
-
-iterator items*(t: Track, slice: Slice[ByteIndex]): TrackRow =
-    for row in slice:
-        yield t.data[row]
-
-iterator mitems*(t: var Track): var TrackRow =
-    for row in t.data.mitems:
-        yield row
-
-iterator mitems*(t: var Track, slice: Slice[ByteIndex]): var TrackRow =
-    for row in slice:
-        yield t.data[row]
+func `[]`*(t: Track, i: ByteIndex): TrackRow =
+    t.data[i]
 
 proc `[]`*(t: var Track, i: ByteIndex): var TrackRow =
     t.data[i]
 
-proc `[]`*(t: Track, i: ByteIndex): TrackRow =
-    t.data[i]
+proc `[]=`*(t: var Track, i: ByteIndex, v: TrackRow) =
+    t.data[i] = v
 
-proc `[]=`*(t: var Track, i: ByteIndex, row: TrackRow) =
-    t.data[i] = row
+func isValid*(t: Track): bool =
+    t.data.len > 0
+
+func len*(t: Track): int =
+    t.data.len
+
+proc setLen*(t: var Track, len: TrackLen) =
+    t.data.setLen(len)
+
+iterator items*(t: Track): TrackRow =
+    for t in t.data:
+        yield t
+
+iterator mitems*(t: var Track): var TrackRow =
+    for t in t.data.mitems:
+        yield t
 
 proc setNote*(t: var Track, i: ByteIndex, note: uint8) =
     t.data[i].note = note + 1
@@ -516,44 +506,9 @@ proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectIndex, param: u
     t.data[i].effects[effectNo].param = param
 
 func totalRows*(t: Track): int =
-    for row in t.data:
+    for row in t:
         if not row.isEmpty():
             inc result
-
-proc data*(t: Track): lent seq[TrackRow] =
-    t.data
-
-proc len*(t: Track): int =
-    t.data.len
-
-proc setLen*(t: var Track, size: TrackSize) =
-    t.data.setLen(size)
-
-# Pattern
-
-func toCPattern*(p: sink Pattern): CPattern =
-    result = CPattern(
-        tracks: [p.tracks[ch1].toCRef, p.tracks[ch2].toCRef, p.tracks[ch3].toCRef, p.tracks[ch4].toCRef]
-    )
-
-func clone*(p: CPattern): Pattern =
-    template cloneTrack(t: Track): ref Track =
-        (ref Track)(data: t.data)
-    result = Pattern(tracks: [
-        cloneTrack(p.tracks[ch1][]),
-        cloneTrack(p.tracks[ch2][]),
-        cloneTrack(p.tracks[ch3][]),
-        cloneTrack(p.tracks[ch4][])
-    ])
-
-func rowsWhenRun*(p: CPattern): Natural =
-    for i in 0..<p.tracks[ch1][].len:
-        inc result
-        for track in p.tracks:
-            let row = track[][i]
-            for effect in row.effects:
-                if effectTypeShortensPattern(effect.effectType.EffectType):
-                    return
 
 # Song
 
@@ -565,8 +520,8 @@ template construct(T: typedesc[Song|ref Song]): untyped =
         speed: defaultSpeed,
         effectCounts: [2.EffectColumns, 2, 2, 2],
         order: Order.init,
-        trackSize: defaultTrackSize,
-        tracks: default(Song.tracks.type)
+        trackLen: defaultTrackSize,
+        tracks: default(Song.tracks.typeOf)
     )
 
 func init*(T: typedesc[Song]): T.typeOf =
@@ -576,7 +531,6 @@ func new*(T: typedesc[Song]): ref T.typeOf =
     (ref T).construct
 
 func new*(T: typedesc[Song], song: Song): ref T.typeOf =
-    # perhaps use deepCopy instead ?
     (ref T)(
         name: song.name,
         rowsPerBeat: song.rowsPerBeat,
@@ -584,13 +538,13 @@ func new*(T: typedesc[Song], song: Song): ref T.typeOf =
         speed: song.speed,
         effectCounts: song.effectCounts,
         order: song.order,
-        trackSize: song.trackSize,
+        trackLen: song.trackLen,
         tracks: song.tracks
     )
 
 proc removeAllTracks*(s: var Song) =
-    for tab in s.tracks.mitems:
-        tab.clear()
+    for table in s.tracks.mitems:
+        table.clear()
 
 proc speedToFloat*(speed: Speed): float =
     speed.float * (1.0 / (1 shl speedFractionBits))
@@ -598,58 +552,51 @@ proc speedToFloat*(speed: Speed): float =
 proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): float =
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
-proc getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): ref Track =
-    result = s.tracks[ch].getOrDefault(order).src
-    if result == nil:
-        result = Track.new(s.trackSize)
-        s.tracks[ch][order] = result.toEqRef
+proc getTrack(s: var Song, ch: ChannelId, order: ByteIndex): ptr Track =
+    if order notin s.tracks[ch]:
+        s.tracks[ch][order] = Track.init(s.trackLen).toShallow
+    s.tracks[ch].withValue(order, t):
+        # pointer return and not var since we cannot prove result will be initialized
+        # nil should never be returned though
+        result = t.src.addr
 
-proc getTrack*(s: Song, ch: ChannelId, order: ByteIndex): CRef[Track] =
-    result = s.tracks[ch].getOrDefault(order).src.toCRef
+template getShallowTrack(s: Song, ch: ChannelId, order: ByteIndex): Shallow[Track] =
+    s.tracks[ch].getOrDefault(order)
 
-iterator tracks*(s: Song, ch: ChannelId): (ByteIndex, CRef[Track]) =
-    for pair in s.tracks[ch].pairs:
-        yield (pair[0], pair[1].src.toCRef)
+func getTrack*(s: Song, ch: ChannelId, order: ByteIndex): Track =
+    ## Gets a copy of the track for the given channel and track id. If there is
+    ## no track for this address, an invalid Track is returned. Note that this
+    ## proc returns a copy! For non-copying access use the viewTrack template.
+    s.getShallowTrack(ch, order).src
+
+iterator trackIds*(s: Song, ch: ChannelId): ByteIndex =
+    for id in s.tracks[ch].keys:
+        yield id
 
 proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
-    result = s.getTrack(ch, order)[][row]
+    s.getTrack(ch, order)[][row]
 
 proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
-    if s.tracks[ch].contains(order):
-        result = s.tracks[ch][order].src[][row]
+    if order in s.tracks[ch]:
+        result = s.tracks[ch][order].src[row]
     else:
         result = TrackRow()
-
-proc getPattern*(s: var Song, order: ByteIndex): Pattern =
-    result = Pattern(tracks: [
-        s.getTrack(ch1, order),
-        s.getTrack(ch2, order),
-        s.getTrack(ch3, order),
-        s.getTrack(ch4, order)
-        ]
-    )
-
-proc getPattern*(s: Song, order: ByteIndex): CPattern =
-    result = CPattern(tracks: [
-        s.getTrack(ch1, order),
-        s.getTrack(ch2, order),
-        s.getTrack(ch3, order),
-        s.getTrack(ch4, order)
-        ]
-    )
 
 func totalTracks*(s: Song): int =
     for t in s.tracks:
         result += t.len
 
-proc trackSize*(s: Song): TrackSize {.inline.} =
-    s.trackSize
+proc trackLen*(s: Song): TrackLen {.inline.} =
+    s.trackLen
 
-proc setTrackSize*(s: var Song, size: TrackSize) =
+proc setTrackLen*(s: var Song, size: TrackLen) =
     for table in s.tracks.mitems:
         for track in table.mvalues:
-            track.src[].setLen(size)
-    s.trackSize = size
+            track.src.setLen(size)
+    s.trackLen = size
+
+proc setTrack*(s: var Song, ch: ChannelId, order: ByteIndex, track: sink Track) =
+    s.tracks[ch][order] = track.toShallow
 
 proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
     let speedFloat = speedToTempo(tempo, s.rowsPerBeat, framerate)
@@ -658,6 +605,61 @@ proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
 
 proc tempo*(s: Song, framerate: float): float =
     result = speedToTempo(speedToFloat(s.speed), s.rowsPerBeat, framerate)
+
+template editTrack*(s: var Song, ch: ChannelId, trackId: ByteIndex, value, body: untyped): untyped =
+    mixin getTrack
+    block:
+        let track = s.getTrack(ch, trackId)
+        template value(): var Track {.inject, used.} = track[]
+        body
+
+template viewTrack*(t: Song, ch: ChannelId, trackId: ByteIndex, value, body: untyped): untyped =
+    mixin getShallowTrack
+    block:
+        let shallow = t.getShallowTrack(ch, trackId)
+        template value(): lent Track {.inject, used.} = shallow.src
+        body
+
+template editPattern*(s: var Song, orderNo: ByteIndex, value, body: untyped): untyped =
+    mixin getTrack
+    block:
+        let pattern: array[ChannelId, ptr Track] = block:
+            let orderRow = s.order[orderNo]
+            [
+                s.getTrack(ch1, orderRow[ch1]),
+                s.getTrack(ch2, orderRow[ch2]),
+                s.getTrack(ch3, orderRow[ch3]),
+                s.getTrack(ch4, orderRow[ch4])
+            ]
+        template value(ch: ChannelId): var Track {.inject, used.} = pattern[ch][]
+        body
+
+template viewPattern*(s: Song, orderNo: ByteIndex, value, body: untyped): untyped =
+    mixin getShallowTrack
+    block:
+        let pattern: array[ChannelId, Shallow[Track]] = block:
+            let orderRow = s.order[orderNo]
+            [
+                s.getShallowTrack(ch1, orderRow[ch1]),
+                s.getShallowTrack(ch2, orderRow[ch2]),
+                s.getShallowTrack(ch3, orderRow[ch3]),
+                s.getShallowTrack(ch4, orderRow[ch4])
+            ]
+        template value(ch: ChannelId): lent Track {.inject, used.} = pattern[ch].src
+        body
+
+func patternLen*(s: Song, order: ByteIndex): Natural =
+    ## Gets the length, in rows, of a pattern taking effects into consideration.
+    ## If no pattern jump/halt effect is used then the track length is returned
+    s.viewPattern(order, pattern):
+        for i in 0..<s.trackLen:
+            inc result
+            for ch in ChannelId:
+                if pattern(ch).isValid:
+                    let row = pattern(ch)[i]
+                    for effect in row.effects:
+                        if effectTypeShortensPattern(effect.effectType.EffectType):
+                            return
 
 # SongList
 
@@ -758,3 +760,4 @@ proc framerate*(m: Module): float =
 converter toInfoString*(str: string): InfoString =
     for i in 0..<min(str.len, result.len):
         result[i] = str[i]
+

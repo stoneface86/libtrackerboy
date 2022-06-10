@@ -45,6 +45,16 @@ type
         mixRight    = 2
         mixMiddle   = mixLeft.ord or mixRight.ord
 
+    Derefable = pointer or ref
+
+    Immutable*[T] = object
+        ## Wrapper type that only allows immutable access to the wrapped data.
+        src: T
+
+    Shallow*[T] {.shallow.} = object
+        ## Wrapper type to allow shallow copying on T
+        src*: T
+
     EqRef*[T] = object
         ## EqRef: Deep equality ref
         ## 
@@ -52,6 +62,30 @@ type
         ## deep equality.
         src*: ref T
             ## The source reference of the wrapper
+
+func toImmutable*[T](src: sink T): Immutable[T] {.inline.} =
+    Immutable[T](src: src)
+
+func toShallow*[T](src: sink T): Shallow[T] {.inline.} =
+    Shallow[T](src: src)
+
+template `[]`*[T](i: Immutable[T]): lent auto =
+    mixin src
+    when T is Derefable:
+        i.src[]
+    else:
+        i.src
+
+template isNil*[T: Derefable](i: Immutable[T]): bool =
+    mixin src
+    i.src.isNil()
+
+template `==`*[T](i: Immutable[T], rhs: T): bool =
+    mixin src
+    i.src == rhs
+
+template `==`*[T](lhs: T, i: Immutable[T]): bool =
+    i == lhs
 
 func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
     ## Convert a ref to a CRef

@@ -7,57 +7,54 @@ import ../unittest_wrapper
 
 import std/with
 
+const 
+    patternSize = 8
+    wholePattern = PatternSelection.init(
+        a(0, ChannelId.low.ord, low(TrackSelect)),
+        a(patternSize - 1, ChannelId.high.ord, high(TrackSelect))
+    )
+
+proc makeTestSong(): Song =
+    result = Song.init
+    # sample pattern data (patterns 0 and 1)
+    #      ch1          ch2          ch3          ch4
+    # 00 | G-5 00 ... | ... .. ... | ... .. ... | G-6 01 ... |
+    # 01 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
+    # 02 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
+    # 03 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
+    # 04 | B-5 00 ... | ... .. ... | ... .. ... | G-6 02 ... |
+    # 05 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
+    # 06 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
+    # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
+    # pattern 2 is empty
+    result.setTrackLen(patternSize)
+    result.order.setLen(3)
+    result.order[1] = [1u8, 1, 1, 1]
+    result.order[2] = [2u8, 2, 2, 2]
+    for i in 0..1:
+        result.editPattern(i, pattern):
+            with pattern(ch1):
+                setNote(0, "G-5".note)
+                setInstrument(0, 0)
+                setNote(4, "B-5".note)
+                setInstrument(4, 0)
+            with pattern(ch4):
+                setNote(0, "G-6".note)
+                setInstrument(0, 1)
+                setNote(2, "G-6".note)
+                setInstrument(2, 1)
+                setEffect(2, 0, etDelayedNote, 3)
+                setNote(4, "G-6".note)
+                setInstrument(4, 2)
+                setNote(6, "G-6".note)
+                setInstrument(6, 1)
+                setEffect(6, 0, etDelayedNote, 3)
+    result.editPattern(2, pattern):
+        discard
+
+
 unittests:
     suite "PatternClip":
-
-        const patternSize = 8
-        const wholePattern = PatternSelection.init(
-            a(0, ChannelId.low.ord, low(TrackSelect)),
-            a(patternSize - 1, ChannelId.high.ord, high(TrackSelect))
-        )
-
-        proc getSamplePattern(): Pattern = 
-            result = Pattern(
-                tracks: [
-                    Track.new(patternSize),
-                    Track.new(patternSize),
-                    Track.new(patternSize),
-                    Track.new(patternSize)
-                ]
-            )
-
-            # sample pattern data
-            #      mCh1Track    mEmptyTrack  mEmptyTrack  mCh4Track
-            # 00 | G-5 00 ... | ... .. ... | ... .. ... | G-6 01 ... |
-            # 01 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-            # 02 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
-            # 03 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-            # 04 | B-5 00 ... | ... .. ... | ... .. ... | G-6 02 ... |
-            # 05 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-            # 06 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
-            # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-
-            proc setTrack0(track: var Track) =
-                with track:
-                    setNote(0, "G-5".note)
-                    setInstrument(0, 0)
-                    setNote(4, "B-5".note)
-                    setInstrument(4, 0)
-            setTrack0(result.tracks[ch1][])
-
-            proc setTrack3(track: var Track) =
-                with track:
-                    setNote(0, "G-6".note)
-                    setInstrument(0, 1)
-                    setNote(2, "G-6".note)
-                    setInstrument(2, 1)
-                    setEffect(2, 0, etDelayedNote, 3)
-                    setNote(4, "G-6".note)
-                    setInstrument(4, 2)
-                    setNote(6, "G-6".note)
-                    setInstrument(6, 1)
-                    setEffect(6, 0, etDelayedNote, 3)
-            setTrack3(result.tracks[ch4][])
 
         setup:
             var clip: PatternClip
@@ -77,35 +74,34 @@ unittests:
                 mkInput(a(0, 2, selInstrument), a(4, -2, selNote), "negative track index"),
                 mkInput(a(0, ChannelId.high.ord + 2, selEffect1), a(0, 0, selEffect2), "track exceeds pattern")
             ]
-            let pattern = getSamplePattern().toCPattern
+            var song = makeTestSong()
             for input in inputs:
                 checkpoint input.name
                 expect RangeDefect:
-                    clip.save(pattern, input.data)
+                    clip.save(song, 0, input.data)
 
         
         test "persistance":
-            let pattern = getSamplePattern().toCPattern
-            clip.save(pattern, wholePattern)
+            var song = makeTestSong()
+            clip.save(song, 0, wholePattern)
             check clip.hasData()
 
-            var copy = Pattern(tracks: [
-                Track.new(patternSize),
-                Track.new(patternSize),
-                Track.new(patternSize),
-                Track.new(patternSize)
-            ])
-            clip.restore(copy)
-            check pattern.tracks[ch1][] == copy.tracks[ch1][]
-            check pattern.tracks[ch2][] == copy.tracks[ch2][]
-            check pattern.tracks[ch3][] == copy.tracks[ch3][]
-            check pattern.tracks[ch4][] == copy.tracks[ch4][]
+            # restore the clip to a new pattern
+            clip.restore(song, 2)
+            song.viewPattern(0, p0):
+                song.viewPattern(2, p1):
+                    check:
+                        p0(ch1) == p1(ch1)
+                        p0(ch2) == p1(ch2)
+                        p0(ch3) == p1(ch3)
+                        p0(ch4) == p1(ch4)
 
         test "overwrite paste":
             # clip all of track1
-            let pattern = getSamplePattern().toCPattern
+            var song = makeTestSong()
             clip.save(
-                pattern,
+                song,
+                0,
                 PatternSelection.init(
                     a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)
                 )
@@ -113,29 +109,33 @@ unittests:
             check clip.hasData()
 
             # paste at Track 3 (CH4)
-            let copyPattern = pattern.clone()
-            clip.paste(copyPattern, PatternCursor(row: 0, track: 3, column: colNote), false)
+            clip.paste(song, 1, PatternCursor(row: 0, track: 3, column: colNote), false)
 
-            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
-            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
-            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
-            check copyPattern.tracks[ch4][] == pattern.tracks[ch1][]
+            song.viewPattern(0, p0):
+                song.viewPattern(1, p1):
+                    check:
+                        p0(ch1) == p1(ch1)
+                        p0(ch2) == p1(ch2)
+                        p0(ch3) == p1(ch3)
+                        p1(ch1) == p1(ch4)
 
         test "mix paste":
-            let pattern = getSamplePattern().toCPattern
-            let copyPattern = pattern.clone()
+            var song = makeTestSong()
             # clip track 0
-            clip.save(pattern, PatternSelection.init(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
+            clip.save(song, 0, PatternSelection.init(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
             check clip.hasData()
 
-            # mix paste at track 3
+            # mix paste at track 3 in pattern 1
             # should be no change to the pattern
-            clip.paste(copyPattern, PatternCursor(row: 0, track: 3, column: colNote), true)
+            clip.paste(song, 1, PatternCursor(row: 0, track: 3, column: colNote), true)
 
-            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
-            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
-            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
-            check copyPattern.tracks[ch4][] == pattern.tracks[ch4][]
+            song.viewPattern(0, p0):
+                song.viewPattern(1, p1):
+                    check:
+                        p0(ch1) == p1(ch1)
+                        p0(ch2) == p1(ch2)
+                        p0(ch3) == p1(ch3)
+                        p0(ch4) == p1(ch4)
 
             # now mix paste at row 1:
             # 00 ... | G-6 01 ... |     ... | G-6 01 ... |
@@ -146,12 +146,7 @@ unittests:
             # 05 ... | ... .. ... |     ... | B-5 00 ... |
             # 06 ... | G-6 01 G03 |     ... | G-6 01 G03 |
             # 07 ... | ... .. ... |     ... | ... .. ... |
-            clip.paste(copyPattern, PatternCursor(row: 1, track: 3, column: colNote), true)
-
-            # these track should remain unchanged
-            check copyPattern.tracks[ch1][] == pattern.tracks[ch1][]
-            check copyPattern.tracks[ch2][] == pattern.tracks[ch2][]
-            check copyPattern.tracks[ch3][] == pattern.tracks[ch3][]
+            clip.paste(song, 1, PatternCursor(row: 1, track: 3, column: colNote), true)
 
             proc makeExpected(): Track =
                 result = Track.init(patternSize)
@@ -170,4 +165,13 @@ unittests:
                     setNote(6, "G-6".note)
                     setInstrument(6, 1)
                     setEffect(6, 0, etDelayedNote, 3)
-            check copyPattern.tracks[ch4][] == makeExpected()
+
+            song.viewPattern(0, p0):
+                song.viewPattern(1, p1):
+                    check:
+                        # these tracks should remain unchanged
+                        p0(ch1) == p1(ch1)
+                        p0(ch2) == p1(ch2)
+                        p0(ch3) == p1(ch3)
+                        # check that the mix works
+                        p1(ch4) == makeExpected()

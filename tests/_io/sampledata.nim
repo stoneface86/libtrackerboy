@@ -70,18 +70,16 @@ let
             s.rowsPerMeasure = 8
             s.speed = 0x48
             s.effectCounts = [3.EffectColumns, 1, 1, 1]
-            s.setTrackSize(16)
+            s.setTrackLen(16)
             s.order.setLen(3)
             s.order[0] = [0u8, 0, 0, 0]
             s.order[1] = [1u8, 1, 1, 1]
             s.order[2] = [2u8, 2, 2, 2]
-            block:
-                var track = s.getTrack(ch1, 0)
-                track[].setNote(0, 0x1F)
-                track[].setNote(8, 0x1F)
-            block:
-                var track = s.getTrack(ch3, 2)
-                track[].setNote(4, 0x1F)
+            s.editTrack(ch1, 0, track):
+                track.setNote(0, 0x1F)
+                track.setNote(8, 0x1F)
+            s.editTrack(ch3, 2, track):
+                track.setNote(4, 0x1F)
             s
     ]
 

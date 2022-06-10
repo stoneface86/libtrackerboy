@@ -744,7 +744,7 @@ proc poststep(r: var MusicRuntime, frame: var EngineFrame) =
     if r.timer.step():
         # timer overflow, advance row counter
         inc r.rowCounter
-        if r.rowCounter >= r.song[].trackSize():
+        if r.rowCounter >= r.song[].trackLen():
             # end of pattern
             if r.global.patternCommand == pcNone:
                 # go to the next pattern in the order
@@ -896,7 +896,7 @@ proc play*(e: var Engine, song, pattern, row: Natural = 0) =
     let songref = e.module[].songs[song]
     if pattern >= songref[].order.len():
         raise newException(IndexDefect, "invalid pattern index")
-    if row >= songref[].trackSize():
+    if row >= songref[].trackLen():
         raise newException(IndexDefect, "invalid row index")
 
     e.musicRuntime = some(MusicRuntime.init(songref, pattern, row, e.patternRepeat))

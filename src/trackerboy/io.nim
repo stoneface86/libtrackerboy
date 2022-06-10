@@ -291,20 +291,20 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
             p.order.data = order
         # Track data
         p.removeAllTracks()
-        let trackSize = format.rowsPerTrack.unbias.TrackSize
-        p.setTrackSize(trackSize)
-        for i in 0..<toNE(format.numberOfTracks).int:
+        let trackSize = format.rowsPerTrack.unbias.TrackLen
+        p.setTrackLen(trackSize)
+        for i in 0..<format.numberOfTracks.toNE.int:
             var trackFormat: TrackFormat
             invalidWhen ib.read(trackFormat)
             checkChannel trackFormat.channel.int
-            let track = p.getTrack(trackFormat.channel.ChannelId, trackFormat.trackId)
-            let rowcount = trackFormat.rows.unbias.TrackSize
-            invalidWhen rowcount > trackSize, frInvalidRowCount
-            for j in 0..<rowcount:
-                var rowFormat: RowFormat
-                invalidWhen ib.read(rowFormat)
-                invalidWhen rowFormat.rowno.int >= trackSize.int, frInvalidRowNumber
-                track[][rowFormat.rowno] = rowFormat.rowdata
+            p.editTrack(trackFormat.channel.ChannelId, trackFormat.trackId, track):
+                let rowcount = trackFormat.rows.unbias.TrackLen
+                invalidWhen rowcount > trackSize, frInvalidRowCount
+                for j in 0..<rowcount:
+                    var rowFormat: RowFormat
+                    invalidWhen ib.read(rowFormat)
+                    invalidWhen rowFormat.rowno.int >= trackSize.int, frInvalidRowNumber
+                    track[rowFormat.rowno] = rowFormat.rowdata
     else:   # Waveform
         invalidWhen ib.read(p.data)
     frNone
@@ -334,29 +334,31 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
             rowsPerMeasure: p.rowsPerMeasure.uint8,
             speed: p.speed.uint8,
             patternCount: p.order.len.bias,
-            rowsPerTrack: p.trackSize.bias,
+            rowsPerTrack: p.trackLen.bias,
             numberOfTracks: p.totalTracks().uint16.toLE
         ))
         ob.write(packEffectCounts(p.effectCounts))
         # write the song order
         ob.write(p.order.data)
         # write out all tracks
-        for chno in ch1..ch4:
-            for trackid, track in p.tracks(chno):
-                let rowcount = track[].totalRows()
-                if rowcount > 0:
-                    # only save non-empty tracks
-                    ob.write(TrackFormat(
-                        channel: chno.uint8,
-                        trackId: trackid.uint8,
-                        rows: rowcount.bias
-                    ))
-                    for rowno, row in track[].data.pairs:
-                        if not row.isEmpty():
-                            ob.write(RowFormat(
-                                rowno: rowno.uint8,
-                                rowdata: row
-                            ))
+        for chno in ChannelId:
+            for trackid in p.trackIds(chno):
+                p.viewTrack(chno, trackid, track):
+                    let rowcount = track.totalRows()
+                    if rowcount > 0:
+                        # only save non-empty tracks
+                        ob.write(TrackFormat(
+                            channel: chno.uint8,
+                            trackId: trackid.uint8,
+                            rows: rowcount.bias
+                        ))
+                        for rowno in 0..<track.len:
+                            let row = track[rowno.ByteIndex]
+                            if not row.isEmpty():
+                                ob.write(RowFormat(
+                                    rowno: rowno.uint8,
+                                    rowdata: row
+                                ))
 
     else:   # Waveform
         ob.write(p.data)

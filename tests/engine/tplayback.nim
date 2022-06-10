@@ -5,7 +5,7 @@ import ../../src/trackerboy/private/hardware
 import ../../src/trackerboy/[data, engine]
 import ../unittest_wrapper
 
-import std/[bitops, with]
+import std/[bitops]
 
 type
     ApuWrite = tuple[address, value: uint8]
@@ -104,7 +104,7 @@ unittests:
         test "song looping":
             let song = module.songs[0]
             song.speed = unitSpeed
-            song[].setTrackSize(1)
+            song[].setTrackLen(1)
             song.order.setLen(3)
             engine.play()
 
@@ -122,10 +122,10 @@ unittests:
             song.speed = unitSpeed
             song.order.setLen(3)
             song.order[1] = [1u8, 0, 0, 0]
-            var track = song[].getTrack(ch1, 0)
-            track[].setEffect(0, 0, etPatternGoto, 1)
-            track = song[].getTrack(ch1, 1)
-            track[].setEffect(0, 0, etPatternGoto, 0xFF)
+            song[].editTrack(ch1, 0, track):
+                track.setEffect(0, 0, etPatternGoto, 1)
+            song[].editTrack(ch1, 1, track):
+                track.setEffect(0, 0, etPatternGoto, 0xFF)
 
             engine.play()
             engine.step(apu)
@@ -142,10 +142,10 @@ unittests:
             let song = module.songs[0]
             song.speed = unitSpeed
             song.order.insert([0u8, 0, 1, 0], 1)
-            var track = song[].getTrack(ch1, 0)
-            track[].setEffect(0, 0, etPatternSkip, 10)
-            track = song[].getTrack(ch3, 1)
-            track[].setEffect(10, 1, etPatternSkip, 32)
+            song[].editTrack(ch1, 0, track):
+                track.setEffect(0, 0, etPatternSkip, 10)
+            song[].editTrack(ch3, 1, track):
+                track.setEffect(10, 1, etPatternSkip, 32)
 
             engine.play()
             engine.step(apu)
@@ -165,8 +165,8 @@ unittests:
         test "C00 effect":
             let song = module.songs[0]
             song.speed = unitSpeed
-            let track = song[].getTrack(ch1, 0)
-            track[].setEffect(0, 0, etPatternHalt, 0)
+            song[].editTrack(ch1, 0, track):
+                track.setEffect(0, 0, etPatternHalt, 0)
             engine.play()
             # halt effect occurs here
             engine.step(apu)
@@ -180,11 +180,10 @@ unittests:
 
         test "Fxx effect":
             let song = module.songs[0]
-            let track = song[].getTrack(ch1, 0)
-            with track[]:
-                setEffect(4, 0, etSetTempo, 0x40)
-                setEffect(5, 0, etSetTempo, 0x02) # invalid speed
-                setEffect(6, 0, etSetTempo, 0xFF) # invalid speed
+            song[].editTrack(ch1, 0, track):
+                track.setEffect(4, 0, etSetTempo, 0x40)
+                track.setEffect(5, 0, etSetTempo, 0x02) # invalid speed
+                track.setEffect(6, 0, etSetTempo, 0xFF) # invalid speed
             engine.play()
             for i in 0..<4:
                 engine.stepRow(apu)

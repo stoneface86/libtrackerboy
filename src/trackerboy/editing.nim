@@ -128,7 +128,7 @@ proc clamp*(s: var PatternSelection, maxRows: ByteIndex) =
     for anchor in s.corners.mitems:
         anchor.row = clamp(anchor.row, low(ByteIndex), maxRows)
 
-func isValid*(s: PatternSelection, rows: TrackSize): bool =
+func isValid*(s: PatternSelection, rows: TrackLen): bool =
     s.first.isValid(rows) and s.last.isValid(rows)
 
 
@@ -225,9 +225,9 @@ func selection*(c: PatternClip): PatternSelection =
 template offsetInto[T](src: ptr T, offset: Natural): pointer =
     cast[ptr array[T.sizeof, byte]](src)[][offset].addr
 
-proc save*(c: var PatternClip, pattern: CPattern, region: PatternSelection) =
+proc save*(c: var PatternClip, song: Song, order: ByteIndex, region: PatternSelection) =
 
-    if not region.isValid(pattern.tracks[ch1][].len()):
+    if not region.isValid(song.trackLen):
         raise newException(RangeDefect, "selection is not in range of the pattern")
 
     c.location = region
@@ -238,41 +238,41 @@ proc save*(c: var PatternClip, pattern: CPattern, region: PatternSelection) =
     assert seqsize > 0
     c.data.setLen(seqsize)
 
-    var bufIndex = 0
-    for track in iter.tracks():
-        let columnIter = iter.columnIter(track)
-        let offset = columnToOffset(columnIter.columnStart)
-        let length = columnToLength(columnIter.columnEnd) - offset
+    song.viewPattern(order, pattern):
+        var bufIndex = 0
+        for track in iter.tracks():
+            let columnIter = iter.columnIter(track)
+            let offset = columnToOffset(columnIter.columnStart)
+            let length = columnToLength(columnIter.columnEnd) - offset
 
-        # assert that we won't read past the bounds of a TrackRow
-        assert offset + length <= sizeof(TrackRow)
-        # assert that we're actually reading something
-        assert length > 0
+            # assert that we won't read past the bounds of a TrackRow
+            assert offset + length <= sizeof(TrackRow)
+            # assert that we're actually reading something
+            assert length > 0
 
-        var bufIndexInTrack = bufIndex
-        let trackRef = pattern.tracks[track.ChannelId]
-        for row in iter.rows():
-            var src = trackRef[][row]
-            copyMem(
-                c.data[bufIndexInTrack].addr,
-                # convert the source row to an array of bytes, then take its
-                # address from the offset
-                offsetInto(src.addr, offset),
-                length
-            )
-            bufIndexInTrack += rowlen
+            var bufIndexInTrack = bufIndex
+            for row in iter.rows():
+                var src = pattern(track.ChannelId)[row]
+                copyMem(
+                    c.data[bufIndexInTrack].addr,
+                    # convert the source row to an array of bytes, then take its
+                    # address from the offset
+                    offsetInto(src.addr, offset),
+                    length
+                )
+                bufIndexInTrack += rowlen
 
-        # advance to the next track
-        bufIndex += length
+            # advance to the next track
+            bufIndex += length
 
-proc pasteImpl(c: PatternClip, pattern: Pattern, pos: Option[PatternAnchor], mix: bool) =
+proc pasteImpl(c: PatternClip, song: var Song, order: ByteIndex, pos: Option[PatternAnchor], mix: bool) =
 
     var iter = c.location.iter()
     let rowlen = rowLength(iter)
     var bufIndex = 0
 
     if pos.isSome():
-        let tracksize = pattern.tracks[ch1][].len()
+        let tracksize = song.trackLen
         # when pos is set, we are pasting at a given location
 
         # determine the region we are pasting data to
@@ -294,57 +294,57 @@ proc pasteImpl(c: PatternClip, pattern: Pattern, pos: Option[PatternAnchor], mix
         iter.first.track = max(iter.first.track, ChannelId.low.ord)
         iter.last.track = min(iter.last.track, ChannelId.high.ord)
 
-    proc paster(c: PatternClip, pattern: Pattern, mix: static[bool]) =
-        for track in iter.tracks():
-            let columnIter = iter.columnIter(track)
-            let offset = columnToOffset(columnIter.columnStart)
-            let length = columnToLength(columnIter.columnEnd) - offset
+    proc paster(c: PatternClip, song: var Song, order: ByteIndex, mix: static[bool]) =
+        song.editPattern(order, pattern):
+            for track in iter.tracks():
+                let columnIter = iter.columnIter(track)
+                let offset = columnToOffset(columnIter.columnStart)
+                let length = columnToLength(columnIter.columnEnd) - offset
 
-            assert offset + length <= TrackRow.sizeof
-            assert length > 0
+                assert offset + length <= TrackRow.sizeof
+                assert length > 0
 
-            var bufIndexInTrack = bufIndex
-            let trackRef = pattern.tracks[track.ChannelId]
-            for row in iter.rows():
-                let rowdata = trackRef[][row].addr
-                when mix:
-                    # mix paste, only empty columns will be pasted data from clip
-                    # create a (partial) TrackRow from the clip data
-                    var src: TrackRow
-                    copyMem(
-                        offsetInto(src.addr, offset),
-                        c.data[bufIndexInTrack].unsafeAddr,  # unsafeAddr because c.data is immutable
-                        length
-                    )
-                    if columnIter.hasColumn(selNote) and rowdata.note == 0:
-                        rowdata.note = src.note
-                    if columnIter.hasColumn(selInstrument) and rowdata.instrument == 0:
-                        rowdata.instrument = src.instrument
-                    for effectCol in selEffect1..selEffect3:
-                        if columnIter.hasColumn(effectCol):
-                            let effno = effectCol.effectNumber()
-                            if rowdata.effects[effno].effectType == etNoEffect.uint8:
-                                rowdata.effects[effno] = src.effects[effno]
-                else:
-                    # overwrite paste, copy clip data to destination track row
-                    copyMem(
-                        offsetInto(rowdata, offset),
-                        c.data[bufIndexInTrack].unsafeAddr,
-                        length
-                    )
-                # advance to next row
-                bufIndexInTrack += rowlen
+                var bufIndexInTrack = bufIndex
+                for row in iter.rows():
+                    let rowdata = pattern(track.ChannelId)[row].addr
+                    when mix:
+                        # mix paste, only empty columns will be pasted data from clip
+                        # create a (partial) TrackRow from the clip data
+                        var src: TrackRow
+                        copyMem(
+                            offsetInto(src.addr, offset),
+                            c.data[bufIndexInTrack].unsafeAddr,  # unsafeAddr because c.data is immutable
+                            length
+                        )
+                        if columnIter.hasColumn(selNote) and rowdata.note == 0:
+                            rowdata.note = src.note
+                        if columnIter.hasColumn(selInstrument) and rowdata.instrument == 0:
+                            rowdata.instrument = src.instrument
+                        for effectCol in selEffect1..selEffect3:
+                            if columnIter.hasColumn(effectCol):
+                                let effno = effectCol.effectNumber()
+                                if rowdata.effects[effno].effectType == etNoEffect.uint8:
+                                    rowdata.effects[effno] = src.effects[effno]
+                    else:
+                        # overwrite paste, copy clip data to destination track row
+                        copyMem(
+                            offsetInto(rowdata, offset),
+                            c.data[bufIndexInTrack].unsafeAddr,
+                            length
+                        )
+                    # advance to next row
+                    bufIndexInTrack += rowlen
 
-            # advance to next track
-            bufIndex += length
+                # advance to next track
+                bufIndex += length
     if mix:
-        paster(c, pattern, true)
+        paster(c, song, order, true)
     else:
-        paster(c, pattern, false)
+        paster(c, song, order, false)
 
-proc paste*(c: PatternClip, pattern: Pattern, pos: PatternCursor, mix = false) =
-    c.pasteImpl(pattern, some(pos.toAnchor()), mix)
+proc paste*(c: PatternClip, song: var Song, order: ByteIndex, pos: PatternCursor, mix = false) =
+    c.pasteImpl(song, order, some(pos.toAnchor()), mix)
 
-proc restore*(c: PatternClip, pattern: Pattern) =
-    c.pasteImpl(pattern, none[PatternAnchor](), false)
+proc restore*(c: PatternClip, song: var Song, order: ByteIndex) =
+    c.pasteImpl(song, order, none[PatternAnchor](), false)
 
