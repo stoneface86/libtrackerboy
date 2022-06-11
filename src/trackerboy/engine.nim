@@ -71,7 +71,7 @@ type
 
     InstrumentRuntime = object
         ## Enumerates all sequences in an instrument
-        instrument: CRef[Instrument]
+        instrument: Immutable[ref Instrument]
         sequenceCounters: array[SequenceKind, int]
 
     FrequencyLookupFunc = proc(note: Natural): uint16
@@ -149,7 +149,7 @@ type
         period, counter: int
 
     MusicRuntime {.requiresInit.} = object
-        song: CRef[Song]
+        song: Immutable[ref Song]
         halted: bool
         orderCounter: int
         rowCounter: int
@@ -172,7 +172,7 @@ type
         row*: int
 
     Engine* = object
-        module: CRef[Module]
+        module: Immutable[ref Module]
         musicRuntime: Option[MusicRuntime]
 
         time: int
@@ -548,7 +548,7 @@ proc step(fc: var FrequencyControl, arpIn, pitchIn: Option[uint8]): uint16 =
 proc reset(r: var InstrumentRuntime) =
     r.sequenceCounters = default(r.sequenceCounters.type)
 
-proc setInstrument(r: var InstrumentRuntime, i: sink CRef[Instrument]) =
+proc setInstrument(r: var InstrumentRuntime, i: sink Immutable[ref Instrument]) =
     r.instrument = i
     r.reset()
 
@@ -666,7 +666,7 @@ proc step(tc: var TrackControl, itable: InstrumentTable, state: var ChannelState
         readInput(state.panning, skPanning)
         readInput(state.timbre, skTimbre)
 
-func init(T: typedesc[MusicRuntime], song: sink CRef[Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
+func init(T: typedesc[MusicRuntime], song: sink Immutable[ref Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
     result = MusicRuntime(
         song: song,
         halted: false,
@@ -853,10 +853,10 @@ proc step(r: var MusicRuntime, apu: var ApuIo, itable: InstrumentTable, wtable: 
 func init*(T: typedesc[Engine]): Engine =
     discard  # default init is sufficient
 
-proc module*(e: Engine): CRef[Module] =
+proc module*(e: Engine): Immutable[ref Module] =
     result = e.module
 
-proc `module=`*(e: var Engine, module: sink CRef[Module]) =
+proc `module=`*(e: var Engine, module: sink Immutable[ref Module]) =
     if e.module != module:
         e.module = module
         e.musicRuntime = none(MusicRuntime)
@@ -915,7 +915,7 @@ proc step*(e: var Engine, apu: var ApuIo) =
 func currentFrame*(e: Engine): EngineFrame =
     result = e.frame
 
-func currentSong*(e: Engine): CRef[Song] =
+func currentSong*(e: Engine): Immutable[ref Song] =
     if e.musicRuntime.isSome():
         result = e.musicRuntime.get().song
 

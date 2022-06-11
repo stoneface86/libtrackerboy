@@ -328,8 +328,8 @@ proc capacity*[T: SomeData](t: Table[T]): static[int] =
 proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
     t.data[id].src
 
-func `[]`*[T: SomeData](t: Table[T], id: TableId): CRef[T] =
-    t.data[id].src.toCRef
+func `[]`*[T: SomeData](t: Table[T], id: TableId): Immutable[ref T] =
+    t.data[id].src.toImmutable
 
 iterator items*[T: SomeData](t: Table[T]): TableId {.noSideEffect.} =
     ## Iterates all items in the table, via their id, in order.
@@ -673,8 +673,8 @@ func init*(T: typedesc[SongList], len: PositiveByte = 1): T.typeOf =
 proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
     l.data[i].src
 
-func `[]`*(l: SongList, i: ByteIndex): CRef[Song] =
-    toCRef(l.data[i].src)
+func `[]`*(l: SongList, i: ByteIndex): Immutable[ref Song] =
+    l.data[i].src.toImmutable
 
 proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
     l.data[i].src = s

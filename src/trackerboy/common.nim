@@ -11,14 +11,6 @@ type
     InvalidOperationDefect* = object of Defect
         ## Defect class for any operation that cannot be performed.
 
-    CRef*[T] = object
-        ## CRef: Const Ref
-        ## 
-        ## Ref wrapper providing immutable access to the ref's data
-        ## Inspired by C++'s `std::shared_ptr<const T>`
-        ## Should be functionally similar to a `ref T` (minus the implicit derefencing)
-        src: ref T
-
     ChannelId* = enum
         ch1
         ch2
@@ -45,15 +37,19 @@ type
         mixRight    = 2
         mixMiddle   = mixLeft.ord or mixRight.ord
 
-    Derefable = pointer or ref
-
     Immutable*[T] = object
-        ## Wrapper type that only allows immutable access to the wrapped data.
+        ## Container object that only provides immutable access to its source.
+        ## Accessing the source is done through the [] overload proc. Both
+        ## value and ref semantics can be used. When the source is a ref or
+        ## ptr, accessing the source will dereference the ref/ptr.
         src: T
 
     Shallow*[T] {.shallow.} = object
-        ## Wrapper type to allow shallow copying on T
+        ## Wrapper type to allow shallow copying on T. Suitable for avoiding
+        ## wasteful copies being made when viewing data.
         src*: T
+            ## The source data. When a Shallow[T] object is copied, the compiler
+            ## may make a shallow copy (ie only copying the pointer for seqs).
 
     EqRef*[T] = object
         ## EqRef: Deep equality ref
@@ -63,108 +59,88 @@ type
         src*: ref T
             ## The source reference of the wrapper
 
-func toImmutable*[T](src: sink T): Immutable[T] {.inline.} =
-    Immutable[T](src: src)
-
 func toShallow*[T](src: sink T): Shallow[T] {.inline.} =
+    ## Converts a value to a Shallow. The compiler is free to make shallow
+    ## copies of the returned object.
     Shallow[T](src: src)
 
-template `[]`*[T](i: Immutable[T]): lent auto =
-    mixin src
-    when T is Derefable:
-        i.src[]
-    else:
-        i.src
+func toImmutable*[T](src: sink T): Immutable[T] =
+    ## Converts a value to an Immutable. Note that a copy of the value might
+    ## be made.
+    Immutable[T](src: src)
 
-template isNil*[T: Derefable](i: Immutable[T]): bool =
-    mixin src
+func `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
+    ## Access the Immutable's ref/ptr source. The source is dereferenced and
+    ## is returned.
+    runnableExamples:
+        let myref = new(int)
+        myref[] = 2
+        let immutableRef = myref.toImmutable
+        assert immutableRef[] == myref[]
+        assert not compiles(immutableRef[] = 3)
+    i.src[]
+
+func `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
+    ## Access the Immutable's value source. Lent is used so a copy can be
+    ## avoided.
+    runnableExamples:
+        let myval = 2
+        let immutableVal = myval.toImmutable
+        assert immutableVal[] == myval
+        assert not compiles(immutableVal[] = 3)
+    i.src
+
+func isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
+    ## Test if the Immutable source is nil.
     i.src.isNil()
 
-template `==`*[T](i: Immutable[T], rhs: T): bool =
-    mixin src
+func `==`*[T](i: Immutable[T], rhs: T): bool =
+    ## Test if the Immutable's source is equivalent to the given value
     i.src == rhs
 
 template `==`*[T](lhs: T, i: Immutable[T]): bool =
     i == lhs
 
-func toCRef*[T](src: sink ref T): CRef[T] {.inline.} =
-    ## Convert a ref to a CRef
-    result = CRef[T](src: src)
+template `==`*[T: ptr|ref](lhs: nil.typeof, rhs: Immutable[T]): bool =
+    rhs == lhs
 
-func `[]`*[T](cref: CRef[T]): lent T {.inline.} =
-    ## Dereference operator for the CRef. Just like plain refs, does not check
-    ## for nil!
-    runnableExamples:
-        let myref = new(int)
-        myref[] = 2
-        let mycref = myref.toCRef
-        assert myref[] == mycref[]
-        assert not compiles(mycref[] = 3)
-    cref.src[]
-
-func isRef*[T](cref: CRef[T], data: ref T): bool {.inline.} =
-    ## Check if the CRef's reference is equal to the given one
-    runnableExamples:
-        let myref = new int
-        let mycref = myref.toCRef
-        assert mycref.isRef(myref)
-    cref.src == data
-
-template `==`*[T](cref: CRef[T], data: ref T): bool =
-    ## Shortcut for `isRef<#isRef,CRef[T],ref T>`_ using the `==` operator
-    runnableExamples:
-        let cref = default(CRef[int])
-        assert cref == nil
-    cref.isRef(data)
-
-template `==`*[T](data: ref T, cref: CRef[T]): bool =
-    ## Shortcut for `isRef<#isRef,CRef[T],ref T>`_ using the `==` operator
-    runnableExamples:
-        let cref = default(CRef[int])
-        assert nil == cref
-    cref.isRef(data)
-
-template noRef*(T: typedesc): CRef[T] =
-    ## returns a CRef of type T with no reference set (nil). Same as doing
-    ## `nil.toCRef[T]`
-    runnableExamples:
-        assert noRef(int) == toCRef[int](nil)
-    toCRef[T](nil)
-
-func isNil*[T](cref: CRef[T]): bool =
-    ## Overload for the system module's `isNil`. Returns `true` if the cref's
-    ## source reference is `nil`
-    cref.src.isNil()
-
-func toEqRef*[T](val: ref T): EqRef[T] {.inline.} =
-    EqRef[T](src: val)
-
-func `==`*[T](lhs, rhs: EqRef[T]): bool =
-    ## Equality test for the given EqRefs. The refs are equal if either:
+func deepEquals*[T](a, b: ref T): bool =
+    ## Deep equality test for two refs. Returns true if either:
     ## - they are both nil
     ## - they are not both nil and their referenced data is equivalent
     runnableExamples:
-        var a, b: EqRef[int]
-        assert a == b   # both are nil
-        a.src = new(int)
-        b.src = new(int)
-        a.src[] = 2
-        b.src[] = 3
-        assert a != b   # both are not nil, but the referenced data are not the same
-        b.src[] = a.src[]
-        assert a == b   # both are not nil and the referenced data are the same
-        b.src = nil
-        assert a != b   # one of the refs is nil
+        var a, b: ref int
+        assert a.deepEquals(b)      # both are nil
+        a = new(int)
+        b = new(int)
+        a[] = 2
+        b[] = 3
+        assert not a.deepEquals(b)  # both are not nil, but the referenced data are not the same
+        b[] = a[]
+        assert a.deepEquals(b)      # both are not nil and the referenced data are the same
+        b = nil
+        assert not a.deepEquals(b)  # one of the refs is nil
 
-    if lhs.src.isNil:
+    if a.isNil:
         # return true if both are nil
-        rhs.src.isNil
-    elif rhs.src.isNil:
+        b.isNil
+    elif b.isNil:
         # lhs is not nil but rhs is nil
         false
     else:
         # check if the referenced data is equal (deep equality)
-        lhs.src[] == rhs.src[]
+        a[] == b[]
+
+func toEqRef*[T](val: ref T): EqRef[T] =
+    ## Converts a ref to an EqRef
+    EqRef[T](src: val)
+
+template `==`*[T](lhs, rhs: EqRef[T]): bool =
+    ## Equality test using deepEquals
+    runnableExamples:
+        var a, b: EqRef[int]
+        assert a == b
+    lhs.src.deepEquals(rhs.src)
 
 func pansLeft*(mode: MixMode): bool {.inline.} =
     ## Determine whether the mode pans left, returns `true` when mode is

@@ -73,7 +73,7 @@ unittests:
             apu.writes.setLen(0)
             module[] = Module.init()
             engine = Engine.init()
-            engine.module = module.toCRef()
+            engine.module = module.toImmutable()
 
         test "empty pattern":
             engine.play()

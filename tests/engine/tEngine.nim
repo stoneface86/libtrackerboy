@@ -12,10 +12,10 @@ unittests:
 
         setup:
             var engine = Engine.init()
-            engine.module = module.toCRef()
+            engine.module = module.toImmutable
 
         test "play raises InvalidOperationDefect on nil module":
-            engine.module = noRef(Module)
+            engine.module = toImmutable[ref Module](nil)
             expect InvalidOperationDefect:
                 engine.play()
         
