@@ -1,6 +1,3 @@
-discard """
-  action: "compile"
-"""
 
 import ../../src/trackerboy/common
 

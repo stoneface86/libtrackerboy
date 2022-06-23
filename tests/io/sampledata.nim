@@ -3,7 +3,7 @@
 # Sample data to be used in testing the io module
 #
 
-import ../../src/trackerboy/data
+import trackerboy/data
 
 type
     InstrumentSamples* = enum
@@ -55,39 +55,30 @@ const
             w
     ]
 
-let 
-    songData: array[SongSamples, Song] = [
-        block:
-            var s = Song.init
-            s.name = "empty"
-            s
-        ,
-        block:
-            # file path: data/sample.tbs
-            var s = Song.init
-            s.name = "test song"
-            s.rowsPerBeat = 2
-            s.rowsPerMeasure = 8
-            s.speed = 0x48
-            s.effectCounts = [3.EffectColumns, 1, 1, 1]
-            s.setTrackLen(16)
-            s.order.setLen(3)
-            s.order[0] = [0u8, 0, 0, 0]
-            s.order[1] = [1u8, 1, 1, 1]
-            s.order[2] = [2u8, 2, 2, 2]
-            s.editTrack(ch1, 0, track):
-                track.setNote(0, 0x1F)
-                track.setNote(8, 0x1F)
-            s.editTrack(ch3, 2, track):
-                track.setNote(4, 0x1F)
-            s
-    ]
-
 func get*(sample: InstrumentSamples): lent Instrument =
     instrumentData[sample]
 
 func get*(sample: WaveformSamples): lent Waveform = 
     waveformData[sample]
 
-proc get*(sample: SongSamples): lent Song =
-    songData[sample]
+func get*(sample: SongSamples): Song =
+    result = Song.init
+    case sample:
+    of sampleSongEmpty:
+        result.name = "empty"
+    of sampleSongTest:
+        result.name = "test song"
+        result.rowsPerBeat = 2
+        result.rowsPerMeasure = 8
+        result.speed = 0x48
+        result.effectCounts = [3.EffectColumns, 1, 1, 1]
+        result.setTrackLen(16)
+        result.order.setLen(3)
+        result.order[0] = [0u8, 0, 0, 0]
+        result.order[1] = [1u8, 1, 1, 1]
+        result.order[2] = [2u8, 2, 2, 2]
+        result.editTrack(ch1, 0, track):
+            track.setNote(0, 0x1F)
+            track.setNote(8, 0x1F)
+        result.editTrack(ch3, 2, track):
+            track.setNote(4, 0x1F)

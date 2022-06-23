@@ -6,22 +6,50 @@ description   = "Trackerboy utility library"
 license       = "MIT"
 srcDir        = "src"
 binDir        = "bin"
-
+# tbc is a command-line frontend for the library
+# it is not required for users of the library
+bin           = @["tbc"]
+skipFiles     = @["tbc.nim"]
 
 # Dependencies
 
 requires "nim >= 1.6.0"
+# only the unit tester needs this package
+requires "unittest2"
 
 # Tasks
 
+task endianTests, "Runs tests/private/tendian.nim with different configurations":
+    # test matrix
+    # 0. Native endian w/ builtin bswap
+    # 1. Native endian w/ reference bswap
+    # 2. Inverse endian w/ builtin bswap
+    # 3. Inverse endian w/ reference bswap
+    const matrix = [
+        "",
+        "-d:noIntrinsicsEndians",
+        "-d:tbEndianInverse",
+        "-d:noIntrinsicsEndians -d:tbEndianInverse"
+    ]
+    for defs in matrix:
+        exec "nim r --hints:off --path:src " & defs & " tests/private/tendian.nim"
+
 task test, "Runs the unit tester":
-    exec "testament --targets:c all"
+    --run
+    --threads:on
+    switch("d", "nimtestParallel")
+    switch("outdir", binDir)
+    setCommand("c", "tests/tester.nim")
 
 task docgen, "Generate documentation":
     exec "nim --hints:off docgen.nims"
 
 task apugen, "Generate demo APU wav files":
-    exec("nim c -r --outdir:" & binDir & " tests/apugen.nim")
+    --run
+    switch("outdir", binDir)
+    setCommand "c", "tests/apugen.nim"
 
 task wavegen, "Generate demo synth waveforms":
-    exec("nim c -r --outdir:" & binDir & " tests/wavegen.nim")
+    --run
+    switch("outdir", binDir)
+    setCommand "c", "tests/wavegen.nim"

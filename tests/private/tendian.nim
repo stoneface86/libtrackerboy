@@ -1,19 +1,12 @@
-discard """
-  matrix: "; -d:noIntrinsicsEndians; -d:tbEndianInverse; -d:tbEndianInverse -d:noIntrinsicsEndians"
-"""
-
-# test matrix
-# 1. Native endian w/ builtin bswap
-# 2. Native endian w/ reference bswap
-# 3. Inverse endian w/ builtin bswap
-# 4. Inverse endian w/ reference bswap
 
 # the inverse endian tests allow us to mock the endian opposite to the system's
 # endian.
 
 
-import ../../src/trackerboy/private/endian
-import ../unittest_wrapper
+import trackerboy/private/endian
+import ../testing
+
+testclass "endian"
 
 const testData = (
     [0x1234'u16,             0x3412'u16],
@@ -31,22 +24,19 @@ static:
     assert LittleEndian[uint32].sizeof == uint32.sizeof
     assert LittleEndian[uint64].sizeof == uint64.sizeof
 
-unittests:
-    suite "endian":
+dtest "involution":
+    # endian conversion has an involutory property
+    # converting a value to LE, then converting that to NE should result
+    # in the original value.
+    for val in testData.fields:
+        check val[0].toLE.toNE == val[0]
 
-        test "involution":
-            # endian conversion has an involutory property
-            # converting a value to LE, then converting that to NE should result
-            # in the original value.
-            for val in testData.fields:
-                check val[0].toLE.toNE == val[0]
-
-        test "toLE/toNE":
-            for val in testData.fields:
-                when willCorrect:
-                    let input = val[0]
-                    let output = val[1]
-                    check cast[input.type](input.toLE) == output
-                else:
-                    let input = val[0]
-                    check cast[input.type](input.toLE) == input
+dtest "toLE/toNE":
+    for val in testData.fields:
+        when willCorrect:
+            let input = val[0]
+            let output = val[1]
+            check cast[input.type](input.toLE) == output
+        else:
+            let input = val[0]
+            check cast[input.type](input.toLE) == input

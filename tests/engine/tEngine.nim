@@ -1,32 +1,29 @@
-discard """
-"""
 
-import ../../src/trackerboy/[data, engine]
+import trackerboy/[data, engine]
+import ../testing
 
-import ../unittest_wrapper
+testclass "Engine"
 
-unittests:
-    suite "Engine":
+func makeEngine(): Engine =
+    result = Engine.init()
+    result.module = Module.new.toImmutable
 
-        var module = Module.new()
+dtest "play raises InvalidOperationDefect on nil module":
+    var engine = Engine.init()
+    expect InvalidOperationDefect:
+        engine.play()
 
-        setup:
-            var engine = Engine.init()
-            engine.module = module.toImmutable
+dtest "play raises IndexDefect on invalid song index":
+    var engine = makeEngine()
+    expect IndexDefect:
+        engine.play(engine.module[].songs.len)
 
-        test "play raises InvalidOperationDefect on nil module":
-            engine.module = toImmutable[ref Module](nil)
-            expect InvalidOperationDefect:
-                engine.play()
-        
-        test "play raises IndexDefect on invalid song index":
-            expect IndexDefect:
-                engine.play(module.songs.len())
+dtest "play raises IndexDefect on invalid pattern index":
+    var engine = makeEngine()
+    expect IndexDefect:
+        engine.play(0, engine.module[].songs[0][].order.len)
 
-        test "play raises IndexDefect on invalid pattern index":
-            expect IndexDefect:
-                engine.play(0, module.songs[0][].order.len)
-
-        test "play raises IndexDefect on invalid row index":
-            expect IndexDefect:
-                engine.play(0, 0, module.songs[0][].trackLen())
+dtest "play raises IndexDefect on invalid row index":
+    var engine = makeEngine()
+    expect IndexDefect:
+        engine.play(0, 0, engine.module[].songs[0][].trackLen)

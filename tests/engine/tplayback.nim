@@ -1,11 +1,11 @@
-discard """
-"""
 
-import ../../src/trackerboy/private/hardware 
-import ../../src/trackerboy/[data, engine]
-import ../unittest_wrapper
+import trackerboy/private/hardware 
+import trackerboy/[data, engine]
+import ../testing
 
 import std/[bitops]
+
+testclass "Engine.playback"
 
 type
     ApuWrite = tuple[address, value: uint8]
@@ -58,139 +58,142 @@ proc stepRow(engine: var Engine, apu: var DumbApu) =
         if engine.currentFrame().startedNewRow:
             break
 
-unittests:
-    suite "Engine playback tests":
+# the suite setup template doesn't seem to work, nim complains that
+# the variables are global and not GC-safe
+template testsetup(): untyped {.dirty.} =
+    var apu: DumbApu
+    var module = Module.new()
+    var engine = Engine.init()
+    apu.writes.setLen(0)
+    engine.module = module.toImmutable()
 
-        # these test the behavior of the engine. Sample module data is played and
-        # diagnostic data from the engine is checked, or the writes made to the
-        # apu.
 
-        var apu: DumbApu
-        var module = Module.new()
-        var engine: Engine
+# these test the behavior of the engine. Sample module data is played and
+# diagnostic data from the engine is checked, or the writes made to the
+# apu.
 
-        setup:
-            apu.writes.setLen(0)
-            module[] = Module.init()
-            engine = Engine.init()
-            engine.module = module.toImmutable()
+dtest "empty pattern":
+    testsetup
+    engine.play()
+    for i in 0..32:
+        engine.step(apu)
+        check engine.currentFrame().time == i
+    check apu.writes.len == 0
 
-        test "empty pattern":
-            engine.play()
-            for i in 0..32:
+dtest "speed timing":
+    testsetup
+    proc speedtest(expected: openarray[bool], engine: var Engine, apu: var DumbApu, song: var Song, speed: Speed) =
+        const testAmount = 5
+        checkpoint "speed = " & $speed
+        song.speed = speed
+        engine.play()
+        for i in 0..<testAmount:
+            for startedNewRow in expected:
                 engine.step(apu)
-                check engine.currentFrame().time == i
-            check apu.writes.len == 0
+                let frame = engine.currentFrame()
+                check frame.speed == speed
+                check frame.startedNewRow == startedNewRow
 
-        test "speed timing":
+    let song = module.songs[0]
+    speedtest([true], engine, apu, song[], 0x10)
+    speedtest([true, false, false, true, false], engine, apu, song[], 0x28)
+    speedtest([true, false, false, false, false, false], engine, apu, song[], 0x60)
 
-            proc speedtest(expected: openarray[bool], engine: var Engine, apu: var DumbApu, song: var Song, speed: Speed) =
-                const testAmount = 5
-                checkpoint "speed = " & $speed
-                song.speed = speed
-                engine.play()
-                for i in 0..<testAmount:
-                    for startedNewRow in expected:
-                        engine.step(apu)
-                        let frame = engine.currentFrame()
-                        check frame.speed == speed
-                        check frame.startedNewRow == startedNewRow
+dtest "song looping":
+    testsetup
+    let song = module.songs[0]
+    song.speed = unitSpeed
+    song[].setTrackLen(1)
+    song.order.setLen(3)
+    engine.play()
 
-            let song = module.songs[0]
-            speedtest([true], engine, apu, song[], 0x10)
-            speedtest([true, false, false, true, false], engine, apu, song[], 0x28)
-            speedtest([true, false, false, false, false, false], engine, apu, song[], 0x60)
+    engine.step(apu)
+    check engine.currentFrame().order == 0
+    engine.step(apu)
+    check engine.currentFrame().order == 1 and engine.currentFrame().startedNewPattern
+    engine.step(apu)
+    check engine.currentFrame().order == 2 and engine.currentFrame().startedNewPattern
+    engine.step(apu)
+    check engine.currentFrame().order == 0 and engine.currentFrame().startedNewPattern
 
-        test "song looping":
-            let song = module.songs[0]
-            song.speed = unitSpeed
-            song[].setTrackLen(1)
-            song.order.setLen(3)
-            engine.play()
+dtest "Bxx effect":
+    testsetup
+    let song = module.songs[0]
+    song.speed = unitSpeed
+    song.order.setLen(3)
+    song.order[1] = [1u8, 0, 0, 0]
+    song[].editTrack(ch1, 0, track):
+        track.setEffect(0, 0, etPatternGoto, 1)
+    song[].editTrack(ch1, 1, track):
+        track.setEffect(0, 0, etPatternGoto, 0xFF)
 
-            engine.step(apu)
-            check engine.currentFrame().order == 0
-            engine.step(apu)
-            check engine.currentFrame().order == 1 and engine.currentFrame().startedNewPattern
-            engine.step(apu)
-            check engine.currentFrame().order == 2 and engine.currentFrame().startedNewPattern
-            engine.step(apu)
-            check engine.currentFrame().order == 0 and engine.currentFrame().startedNewPattern
+    engine.play()
+    engine.step(apu)
+    var frame = engine.currentFrame()
+    check frame.order == 0
+    engine.step(apu)
+    frame = engine.currentFrame()
+    check frame.order == 1 and frame.startedNewPattern
+    engine.step(apu)
+    frame = engine.currentFrame()
+    check frame.order == 2 and frame.startedNewPattern
 
-        test "Bxx effect":
-            let song = module.songs[0]
-            song.speed = unitSpeed
-            song.order.setLen(3)
-            song.order[1] = [1u8, 0, 0, 0]
-            song[].editTrack(ch1, 0, track):
-                track.setEffect(0, 0, etPatternGoto, 1)
-            song[].editTrack(ch1, 1, track):
-                track.setEffect(0, 0, etPatternGoto, 0xFF)
+dtest "Dxx effect":
+    testsetup
+    let song = module.songs[0]
+    song.speed = unitSpeed
+    song.order.insert([0u8, 0, 1, 0], 1)
+    song[].editTrack(ch1, 0, track):
+        track.setEffect(0, 0, etPatternSkip, 10)
+    song[].editTrack(ch3, 1, track):
+        track.setEffect(10, 1, etPatternSkip, 32)
 
-            engine.play()
-            engine.step(apu)
-            var frame = engine.currentFrame()
-            check frame.order == 0
-            engine.step(apu)
-            frame = engine.currentFrame()
-            check frame.order == 1 and frame.startedNewPattern
-            engine.step(apu)
-            frame = engine.currentFrame()
-            check frame.order == 2 and frame.startedNewPattern
+    engine.play()
+    engine.step(apu)
+    var frame = engine.currentFrame()
+    check frame.order == 0
+    engine.step(apu)
+    frame = engine.currentFrame()
+    check:
+        frame.order == 1
+        frame.row == 10
+    engine.step(apu)
+    frame = engine.currentFrame()
+    check:
+        frame.order == 0
+        frame.row == 32
 
-        test "Dxx effect":
-            let song = module.songs[0]
-            song.speed = unitSpeed
-            song.order.insert([0u8, 0, 1, 0], 1)
-            song[].editTrack(ch1, 0, track):
-                track.setEffect(0, 0, etPatternSkip, 10)
-            song[].editTrack(ch3, 1, track):
-                track.setEffect(10, 1, etPatternSkip, 32)
+dtest "C00 effect":
+    testsetup
+    let song = module.songs[0]
+    song.speed = unitSpeed
+    song[].editTrack(ch1, 0, track):
+        track.setEffect(0, 0, etPatternHalt, 0)
+    engine.play()
+    # halt effect occurs here
+    engine.step(apu)
+    check not engine.currentFrame().halted
+    # halt takes effect before the start of a new row
+    engine.step(apu)
+    check engine.currentFrame().halted
+    # check that we are still halted after repeated calls to step
+    engine.step(apu)
+    check engine.currentFrame().halted
 
-            engine.play()
-            engine.step(apu)
-            var frame = engine.currentFrame()
-            check frame.order == 0
-            engine.step(apu)
-            frame = engine.currentFrame()
-            check:
-                frame.order == 1
-                frame.row == 10
-            engine.step(apu)
-            frame = engine.currentFrame()
-            check:
-                frame.order == 0
-                frame.row == 32
-
-        test "C00 effect":
-            let song = module.songs[0]
-            song.speed = unitSpeed
-            song[].editTrack(ch1, 0, track):
-                track.setEffect(0, 0, etPatternHalt, 0)
-            engine.play()
-            # halt effect occurs here
-            engine.step(apu)
-            check not engine.currentFrame().halted
-            # halt takes effect before the start of a new row
-            engine.step(apu)
-            check engine.currentFrame().halted
-            # check that we are still halted after repeated calls to step
-            engine.step(apu)
-            check engine.currentFrame().halted
-
-        test "Fxx effect":
-            let song = module.songs[0]
-            song[].editTrack(ch1, 0, track):
-                track.setEffect(4, 0, etSetTempo, 0x40)
-                track.setEffect(5, 0, etSetTempo, 0x02) # invalid speed
-                track.setEffect(6, 0, etSetTempo, 0xFF) # invalid speed
-            engine.play()
-            for i in 0..<4:
-                engine.stepRow(apu)
-                check engine.currentFrame().speed == defaultSpeed
-            engine.stepRow(apu)
-            check engine.currentFrame().speed == 0x40
-            engine.stepRow(apu)
-            check engine.currentFrame().speed == 0x40 # speed should be unchanged
-            engine.stepRow(apu)
-            check engine.currentFrame().speed == 0x40 # speed should be unchanged
+dtest "Fxx effect":
+    testsetup
+    let song = module.songs[0]
+    song[].editTrack(ch1, 0, track):
+        track.setEffect(4, 0, etSetTempo, 0x40)
+        track.setEffect(5, 0, etSetTempo, 0x02) # invalid speed
+        track.setEffect(6, 0, etSetTempo, 0xFF) # invalid speed
+    engine.play()
+    for i in 0..<4:
+        engine.stepRow(apu)
+        check engine.currentFrame().speed == defaultSpeed
+    engine.stepRow(apu)
+    check engine.currentFrame().speed == 0x40
+    engine.stepRow(apu)
+    check engine.currentFrame().speed == 0x40 # speed should be unchanged
+    engine.stepRow(apu)
+    check engine.currentFrame().speed == 0x40 # speed should be unchanged

@@ -1,12 +1,12 @@
 
-import ../../src/trackerboy/[data, io, version]
-import ../unittest_wrapper
+import trackerboy/[data, io, version]
+import ../testing
 import std/streams
 
 export data
 export io
 export streams
-export unittest_wrapper
+export testing
 
 
 proc corruptSignature*(strm: Stream) =
@@ -34,7 +34,7 @@ template pieceTests*(
         var strm {.inject.} = newStringStream()
         setupBody
     
-    test "deserialize":
+    dtest "deserialize":
         strm.write(correctBin)
         strm.setPosition(0)
 
@@ -44,14 +44,14 @@ template pieceTests*(
         if res == frNone:
             check dataIn == correctData
 
-    test "deserialize - bad signature":
+    dtest "deserialize - bad signature":
         strm.write(correctBin)
         corruptSignature(strm)
         strm.setPosition(0)
         var dataIn = PieceType.init()
         check dataIn.deserialize(strm) == frInvalidSignature
 
-    test "deserialize - bad revision":
+    dtest "deserialize - bad revision":
         strm.write(correctBin)
         overwriteRevMajor(strm, fileMajor + 1)
         strm.setPosition(0)
@@ -62,14 +62,14 @@ template pieceTests*(
         strm.setPosition(0)
         check dataIn.deserialize(strm) == frInvalidRevision
 
-    test "serialize":
+    dtest "serialize":
         let res = correctData.serialize(strm)
         check res == frNone
         if res == frNone:
             strm.setPosition(0)
             check correctBin == strm.readAll()
 
-    test "persistance":
+    dtest "persistance":
         let serializeRes = correctData.serialize(strm)
         check serializeRes == frNone
         if serializeRes == frNone:

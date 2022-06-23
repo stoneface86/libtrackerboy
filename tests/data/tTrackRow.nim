@@ -1,19 +1,12 @@
-discard """
-"""
 
-import ../../src/trackerboy/data
-import ../unittest_wrapper
+import trackerboy/data
 
 static:
     assert TrackRow.sizeof == 8
+    let row = default(TrackRow)
+    assert row.queryNote().isNone()
+    assert row.queryInstrument().isNone()
 
-unittests:
-
-    test "TrackRow is empty on default init":
-        let row = default(TrackRow)
-        check row.queryNote().isNone()
-        check row.queryInstrument().isNone()
-
-        for effect in row.effects:
-            check effect.effectType == etNoEffect.uint8
-            check effect.param == 0u8
+    for effect in row.effects:
+        assert effect.effectType == etNoEffect.uint8
+        assert effect.param == 0u8

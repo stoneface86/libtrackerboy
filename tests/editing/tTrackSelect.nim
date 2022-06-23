@@ -1,8 +1,5 @@
-discard """
-  action: "compile"
-"""
 
-import ../../src/trackerboy/editing
+import trackerboy/editing
 
 static:
     assert not isEffect(selNote)

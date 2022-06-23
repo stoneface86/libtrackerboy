@@ -74,7 +74,7 @@ type
         instrument: Immutable[ref Instrument]
         sequenceCounters: array[SequenceKind, int]
 
-    FrequencyLookupFunc = proc(note: Natural): uint16
+    FrequencyLookupFunc = proc(note: Natural): uint16 {.nimcall, noSideEffect.}
 
     FrequencyBounds = object
         maxFrequency: uint16
