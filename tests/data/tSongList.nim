@@ -41,14 +41,14 @@ testgroup:
         songlist.remove(1)
         check songlist.len == 1
 
-    dtest "removing when len=1 raises InvalidOperationDefect":
-        expect InvalidOperationDefect:
+    dtest "removing when len=1 raises AssertionDefect":
+        expect AssertionDefect:
             songlist.remove(0)
 
-    dtest "adding/duplicating when len=256 raises InvalidOperationDefect":
+    dtest "adding/duplicating when len=256 raises AssertionDefect":
         for i in 0..254:
             songlist.add()
-        expect InvalidOperationDefect:
+        expect AssertionDefect:
             songlist.add()
-        expect InvalidOperationDefect:
+        expect AssertionDefect:
             songlist.duplicate(2)

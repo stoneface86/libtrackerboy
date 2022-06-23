@@ -887,8 +887,7 @@ proc setup*(e: var Engine, apu: var ApuIo) =
     clearIfLocked(3)
 
 proc play*(e: var Engine, song, pattern, row: Natural = 0) =
-    if e.module == nil:
-        raise newException(InvalidOperationDefect, "cannot play: module not set")
+    doAssert e.module != nil, "cannot play: module not set"
     
     if song >= e.module[].songs.len():
         raise newException(IndexDefect, "invalid song index")

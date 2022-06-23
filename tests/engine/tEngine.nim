@@ -8,9 +8,9 @@ func makeEngine(): Engine =
     result = Engine.init()
     result.module = Module.new.toImmutable
 
-dtest "play raises InvalidOperationDefect on nil module":
+dtest "play raises AssertionDefect on nil module":
     var engine = Engine.init()
-    expect InvalidOperationDefect:
+    expect AssertionDefect:
         engine.play()
 
 dtest "play raises IndexDefect on invalid song index":

@@ -232,8 +232,7 @@ func data*(s: Sequence): lent seq[uint8] =
     s.data
 
 proc `data=`*(s: var Sequence, data: sink seq[uint8]) =
-    if data.len > 256:
-        raise newException(InvalidOperationDefect, "cannot set data: sequence is too big")
+    doAssert data.len <= 256, "cannot set data: sequence is too big"
     s.data = data
 
 func `$`*(s: Sequence): string =
@@ -342,25 +341,25 @@ proc insert[T: SomeData](t: var Table[T], id: TableId) =
     inc t.len
 
 proc add*[T: SomeData](t: var Table[T]): TableId =
-    assert t.len < t.capacity
+    doAssert t.len < t.capacity, "cannot add: table is full"
     t.insert(t.nextId)
     result = t.nextId
     t.updateNextId()
 
 proc add*[T: SomeData](t: var Table[T], id: TableId) =
-    assert t.len < t.capacity and id notin t
+    doAssert t.len < t.capacity and id notin t, "cannot add: table is full or slot is taken"
     t.insert(id)
     if t.nextId == id:
         t.updateNextId()
 
 proc duplicate*[T: SomeData](t: var Table[T], id: TableId): TableId =
-    assert id in t
+    doAssert id in t, "cannot duplicate: item does not exist"
     result = t.add()
     # duplicate the newly added item
     t.data[result].src[] = t.data[id].src[]
 
 proc remove*[T: SomeData](t: var Table[T], id: TableId) =
-    assert id in t
+    doAssert id in t, "cannot remove: item does not exist"
     t.data[id].src = nil
     dec t.len
     if t.nextId > id:
@@ -381,7 +380,7 @@ func next*[T: SomeData](t: Table[T], start: TableId = 0): Option[TableId] =
 func wavedata*(t: WaveformTable, id: TableId): WaveData =
     ## Shortcut for getting the waveform's wavedata via id. The waveform must
     ## exist in the table!
-    assert id in t
+    doAssert id in t, "item does not exist"
     t.data[id].src.data
 
 # Order
@@ -401,7 +400,7 @@ proc data*(o: Order): lent seq[OrderRow] =
     o.data
 
 proc `data=`*(o: var Order, data: sink seq[OrderRow]) =
-    assert data.len >= 1
+    doAssert data.len in PositiveByte.low..PositiveByte.high, "cannot assign data, len must be in 1..256"
     o.data = data
 
 proc len*(o: Order): int =
@@ -418,19 +417,16 @@ proc nextUnused*(o: Order): OrderRow =
                 result[track] = id
                 break
 
-template assertCanInsert(o: Order) =
-    assert o.data.len < high(OrderSize)
-
 proc insert*(o: var Order, row: OrderRow, before: ByteIndex = 0) =
-    o.assertCanInsert()
+    doAssert o.data.len < OrderSize.high, "cannot insert: Order is full"
     o.data.insert(row, before)
 
 proc insert*(o: var Order, data: openarray[OrderRow], before: ByteIndex) =
-    assert o.data.len + data.len <= high(OrderSize)
+    doAssert o.data.len + data.len <= OrderSize.high, "cannot insert: not enough room in Order"
     o.data.insert(data, before)
 
 proc remove*(o: var Order, index: ByteIndex, count: OrderSize = 1) =
-    assert o.data.len > count
+    doAssert o.data.len > count, "cannot remove: Order must always have 1 row"
     o.data.delete(index.int..(index + count - 1))
 
 proc setLen*(o: var Order, len: OrderSize) =
@@ -680,8 +676,7 @@ proc `[]=`*(l: var SongList, i: ByteIndex, s: ref Song) =
     l.data[i].src = s
 
 proc canAdd(l: SongList) =
-    if l.data.len == 256:
-        raise newException(InvalidOperationDefect, "SongList cannot have more than 256 songs")
+    doAssert l.data.len < 256, "SongList cannot have more than 256 songs"
 
 proc add*(l: var SongList) =
     l.canAdd()
@@ -696,8 +691,7 @@ proc duplicate*(l: var SongList, i: ByteIndex) =
     l.data.add( Song.new( l.data[i].src[] ).toEqRef )
 
 proc remove*(l: var SongList, i: ByteIndex) =
-    if l.data.len == 1:
-        raise newException(InvalidOperationDefect, "SongList must have at least 1 song")
+    doAssert l.data.len > 1, "SongList must have at least 1 song"
     l.data.delete(i)
 
 proc moveUp*(l: var SongList, i: ByteIndex) =

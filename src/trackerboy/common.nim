@@ -8,10 +8,10 @@ exported by other modules so you typically do not need to import it yourself.
 import std/bitops
 
 type
-    InvalidOperationDefect* = object of Defect
-        ## Defect class for any operation that cannot be performed.
 
     ChannelId* = enum
+        ## Channel identifier. Used to specify a hardware channel of the game
+        ## boy APU
         ch1
         ch2
         ch3
