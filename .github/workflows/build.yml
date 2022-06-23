@@ -27,5 +27,5 @@ jobs:
       - name: test
         run: nimble -y test
 
-      - name: endianTest
-        run: nimble -y endianTest
+      - name: endian tests
+        run: nimble -y endianTests
