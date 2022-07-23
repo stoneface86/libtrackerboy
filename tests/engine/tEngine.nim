@@ -4,26 +4,19 @@ import ../testing
 
 testclass "Engine"
 
-func makeEngine(): Engine =
-    result = Engine.init()
-    result.module = Module.new.toImmutable
-
-dtest "play raises AssertionDefect on nil module":
+dtest "play raises AssertionDefect on nil song":
     var engine = Engine.init()
     expect AssertionDefect:
-        engine.play()
-
-dtest "play raises IndexDefect on invalid song index":
-    var engine = makeEngine()
-    expect IndexDefect:
-        engine.play(engine.module[].songs.len)
+        engine.play(toImmutable[ref Song](nil))
 
 dtest "play raises IndexDefect on invalid pattern index":
-    var engine = makeEngine()
+    var engine = Engine.init()
+    var song = Song.new()
     expect IndexDefect:
-        engine.play(0, engine.module[].songs[0][].order.len)
+        engine.play(song.toImmutable, song.order.len)
 
 dtest "play raises IndexDefect on invalid row index":
-    var engine = makeEngine()
+    var engine = Engine.init()
+    var song = Song.new()
     expect IndexDefect:
-        engine.play(0, 0, engine.module[].songs[0][].trackLen)
+        engine.play(song.toImmutable, 0, song[].trackLen)

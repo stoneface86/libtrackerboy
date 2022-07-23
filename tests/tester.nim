@@ -24,6 +24,7 @@ import editing/[
 ]
 
 import engine/[
+    tapucontrol,
     tEngine,
     tplayback
 ]

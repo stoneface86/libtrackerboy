@@ -1,3 +1,5 @@
+import std/[os, strutils]
+
 # Package
 
 version       = "0.2.0"
@@ -34,12 +36,19 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
     for defs in matrix:
         exec "nim r --hints:off --path:src " & defs & " tests/private/tendian.nim"
 
-task test, "Runs the unit tester":
-    --run
+task tester, "Builds the unit tester":
     --threads:on
     switch("d", "nimtestParallel")
     switch("outdir", binDir)
     setCommand("c", "tests/tester.nim")
+
+task test, "Runs the unit tester":
+    exec "nimble tester"
+    let args = commandLineParams()
+    let i = args.find("test")
+    assert i != -1
+    let taskParams = args[i+1..^1]
+    exec(binDir / "tester " & taskParams.quoteShellCommand())
 
 task docgen, "Generate documentation":
     exec "nim --hints:off docgen.nims"
