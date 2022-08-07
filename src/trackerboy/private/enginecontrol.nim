@@ -10,6 +10,8 @@ import ../data, ../notes
 import std/[bitops, options, with]
 
 type
+    Counter = distinct int
+
     FrequencyMod* = enum
         freqNone
         freqPortamento
@@ -99,12 +101,13 @@ type
         op*: Operation
         ir*: InstrumentRuntime
         fc*: FrequencyControl
-        delayCounter*: Option[int]
-        cutCounter*: Option[int]
+        delayCounter*: Counter #Option[int]
+        cutCounter*: Counter #Option[int]
         playing*: bool
         envelope*: uint8
         panning*: uint8
         timbre*: uint8
+        state*: ChannelState
 
     Timer* = object
         period*, counter*: int
@@ -120,6 +123,14 @@ type
         unlocked*: set[ChannelId]
         states*: array[ChannelId, ChannelState]
         trackControls*: array[ChannelId, TrackControl]
+
+func noCounter(): Counter = discard
+func counter(v: int): Counter = (v + 1).Counter
+
+proc step(c: var Counter): bool =
+    if c.int > 0:
+        c = (c.int - 1).Counter
+        result = c.int == 0
 
 func identityLookup(note: Natural): uint16 = note.uint16
 
@@ -140,6 +151,8 @@ proc setBit[T: SomeInteger](v: var T; bit: BitsRange[T]; val: bool) {.inline.} =
         v.setBit(bit)
     else:
         v.clearBit(bit)
+
+# === Timer ===================================================================
 
 func init(T: typedesc[Timer], speed: Speed): Timer =
     result = Timer(
@@ -162,6 +175,8 @@ proc step(t: var Timer): bool =
     if result:
         # timer overflow
         t.counter -= t.period
+
+# === Operation ===============================================================
 
 func toOperation(row: TrackRow): Operation =
     # note column
@@ -240,6 +255,8 @@ func toOperation(row: TrackRow): Operation =
 #     else:
 #         result.note = some(note)
 
+# === FrequencyControl ========================================================
+
 func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyControl =
     result.bounds = bounds
 
@@ -254,6 +271,9 @@ proc apply(fc: var FrequencyControl, op: Operation) =
     case op.freqMod:
     of freqArpeggio:
         if op.freqModParam == 0:
+            if fc.mode == fcmArpeggio:
+                fc.frequency = fc.chord[0]
+                fc.chordIndex = 0
             fc.mode = fcmNone
         else:
             fc.mode = fcmArpeggio
@@ -396,6 +416,8 @@ proc step(fc: var FrequencyControl, arpIn, pitchIn: Option[uint8]): uint16 =
         calcfreq += fc.vibratoValue.int
     result = clamp(calcfreq, 0, fc.bounds.maxFrequency.int).uint16
 
+# === InstrumentRuntime =======================================================
+
 proc reset(r: var InstrumentRuntime) =
     r.sequenceCounters = default(r.sequenceCounters.type)
 
@@ -421,6 +443,8 @@ proc step(r: var InstrumentRuntime): SequenceInput =
         for kind, sequence in r.instrument[].sequences.pairs:
             result[kind] = next(sequence, r.sequenceCounters[kind])
 
+# === TrackControl ============================================================
+
 func init(T: typedesc[TrackControl], ch: ChannelId): TrackControl =
     result = TrackControl(
         op: default(Operation),
@@ -437,81 +461,80 @@ proc setRow(tc: var TrackControl, row: TrackRow) =
 
     # convert the row to an operation
     tc.op = row.toOperation
-    tc.delayCounter = some(tc.op.delay.int)
+    tc.delayCounter = counter(tc.op.delay.int)
+    # note that the operation gets applied in step(), in case there was a Gxx
+    # effect. If Gxx is not present or the parameter is 00, then the operation
+    # is immediately applied on the next call to step()
 
-proc step(tc: var TrackControl, itable: InstrumentTable, state: var ChannelState, global: var GlobalState): NoteAction =
+proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): NoteAction =
     result = naSustain
 
-    if tc.delayCounter.isSome():
-        if tc.delayCounter.get() == 0:
-            # apply the operation
+    if tc.delayCounter.step():
+        # apply the operation
 
-            # global effects
-            if tc.op.patternCommand != pcNone:
-                global.patternCommand = tc.op.patternCommand
-                global.patternCommandParam = tc.op.patternCommandParam
+        # global effects
+        if tc.op.patternCommand != pcNone:
+            global.patternCommand = tc.op.patternCommand
+            global.patternCommandParam = tc.op.patternCommandParam
 
-            if tc.op.speed != 0:
-                global.speed = tc.op.speed
-            if tc.op.halt:
-                global.halt = true
-            global.volume = tc.op.volume
+        if tc.op.speed != 0:
+            # update speed if Fxx was specified
+            global.speed = tc.op.speed
+        if tc.op.halt:
+            global.halt = true
+        global.volume = tc.op.volume
 
-            # instrument column
-            if tc.op.instrument.isSome():
-                let instrument = itable[tc.op.instrument.get()]
-                if instrument != nil:
-                    tc.ir.setInstrument(instrument)
+        # instrument column
+        if tc.op.instrument.isSome():
+            let instrument = itable[tc.op.instrument.get()]
+            if instrument != nil:
+                tc.ir.setInstrument(instrument)
 
-            template updateSetting(setting: untyped): untyped =
-                if tc.op.setting.isSome():
-                    tc.setting = tc.op.setting.get()
-                    state.setting = tc.setting
+        template updateSetting(setting: untyped): untyped =
+            if tc.op.setting.isSome():
+                tc.setting = tc.op.setting.get()
 
-            updateSetting(envelope)
-            updateSetting(panning)
-            updateSetting(timbre)
+        updateSetting(envelope)
+        updateSetting(panning)
+        updateSetting(timbre)
 
-            global.sweep = tc.op.sweep
+        global.sweep = tc.op.sweep
 
-            # note column
-            if tc.op.note.isSome():
-                tc.ir.reset()
-                tc.playing = true
-                if tc.ir.instrument != nil and tc.ir.instrument[].initEnvelope:
-                    state.envelope = tc.ir.instrument[].envelope
-                else:
-                    state.envelope = tc.envelope
-                state.panning = tc.panning
-                state.timbre = tc.timbre
-                result = naTrigger
-                tc.cutCounter = none(int)
+        # note column
+        if tc.op.note.isSome():
+            tc.ir.reset()
+            tc.playing = true
+            if tc.ir.instrument != nil and tc.ir.instrument[].initEnvelope:
+                tc.state.envelope = tc.ir.instrument[].envelope
+            else:
+                tc.state.envelope = tc.envelope
+            result = naTrigger
 
-            tc.fc.apply(tc.op)
-            tc.delayCounter = none(int)
+        tc.fc.apply(tc.op)
+        tc.delayCounter = noCounter()
+        if tc.op.duration.isSome():
+            tc.cutCounter = counter(tc.op.duration.get().int)
         else:
-            dec tc.delayCounter.get()
+            tc.cutCounter = noCounter()
     
     if tc.playing:
-        if tc.cutCounter.isSome():
-            if tc.cutCounter.get() == 0:
-                tc.playing = false
-                tc.cutCounter = none(int)
-                result = naCut
-            else:
-                dec tc.cutCounter.get()
+        if tc.cutCounter.step():
+            tc.playing = false
+            return naCut
         
         let inputs = tc.ir.step()
 
         # Frequency calculation
-        state.frequency = tc.fc.step(inputs[skArp], inputs[skPitch])
+        tc.state.frequency = tc.fc.step(inputs[skArp], inputs[skPitch])
         
-        template readInput(dest: var uint8, kind: SequenceKind): untyped =
+        template readInput(dest: untyped, kind: SequenceKind): untyped =
             if inputs[kind].isSome():
-                dest = inputs[kind].get()
-
-        readInput(state.panning, skPanning)
-        readInput(state.timbre, skTimbre)
+                tc.state.dest = inputs[kind].get()
+            else:
+                tc.state.dest = tc.dest
+            
+        readInput(panning, skPanning)
+        readInput(timbre, skTimbre)
     else:
         result = naOff
 
@@ -623,11 +646,11 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
 
     for chno in ChannelId:
     
-        var state = r.states[chno]
-        let prev = state
+        #var state = r.states[chno]
+        #let prev = state
         
         # step the channel's track control
-        let action = r.trackControls[chno].step(itable, state, r.global)
+        let action = r.trackControls[chno].step(itable, r.global)
 
         if chno notin r.unlocked:
             op.updates[chno] = block:
@@ -635,16 +658,18 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
                 of naOff:
                     ChannelUpdate(action: caNone)
                 of naTrigger, naSustain:
-                    ChannelUpdate(
+                    let state = r.trackControls[chno].state
+                    let up = ChannelUpdate(
                         action: caUpdate,
-                        flags: difference(state, prev),
+                        flags: difference(state, r.states[chno]),
                         state: state,
                         trigger: action == naTrigger
                     )
+                    r.states[chno] = state
+                    up
                 of naCut:
                     ChannelUpdate(action: caCut)
 
-        r.states[chno] = state
 
     if op.updates[ch1].action == caUpdate and r.global.sweep.isSome():
         op.updates[ch1].trigger = true

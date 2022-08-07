@@ -98,13 +98,31 @@ proc takeOperation*(e: var Engine): ApuOperation =
 
 # diagnostic functions
 
+template onSome[T](o: Option[T], body: untyped): untyped =
+    if o.isSome():
+        template it(): lent T = o.get()
+        body
+
 func currentState*(e: Engine, chno: ChannelId): ChannelState =
-    if e.musicRuntime.isSome():
-        result = e.musicRuntime.get().states[chno]
+    onSome(e.musicRuntime):
+        result = it.states[chno]
 
 func currentNote*(e: Engine, chno: ChannelId): int =
-    if e.musicRuntime.isSome():
-        result = e.musicRuntime.get().trackControls[chno].fc.note.int
+    onSome(e.musicRuntime):
+        result = it.trackControls[chno].fc.note.int
+
+template getTrackParameter(e: Engine, chno: ChannelId, param: untyped): untyped =
+    onSome(e.musicRuntime):
+        result = it.trackControls[chno].param
+
+func getTrackTimbre*(e: Engine, chno: ChannelId): uint8 =
+    getTrackParameter(e, chno, timbre)
+
+func getTrackEnvelope*(e: Engine, chno: ChannelId): uint8 =
+    getTrackParameter(e, chno, envelope)
+
+func getTrackPanning*(e: Engine, chno: ChannelId): uint8 =
+    getTrackParameter(e, chno, panning)
 
 # Apu stuff ===================================================================
 

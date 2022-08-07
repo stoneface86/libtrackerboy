@@ -22,7 +22,8 @@ template dtest*(name: string, body: untyped): untyped =
     ##  - *.<classname>.* # all tests with classname
     ##  - <parentDir>.<classname>.* # all test with both parentDir and classname
     block:
-        static: assert declared(testpath), "you must set testclass first!"
+        when not declared(testpath):
+            {.error: "you must set testclass first!".}
         test testpath[0] & "." & testpath[1] & "." & name:
             when declared(dtestSetupIMPLFlag):
                 dtestSetupIMPL()

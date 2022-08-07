@@ -1,6 +1,7 @@
 
 import trackerboy/private/[enginestate, apucontrol, hardware]
 import trackerboy/[data, notes]
+import utils
 import ../testing
 
 import std/strformat
@@ -35,46 +36,6 @@ func `==`(a, b: ApuWriteList): bool =
         if a.data[i] != b.data[i]:
             return false
     result = true
-
-func getSampleTable(): WaveformTable =
-    result = WaveformTable.init
-    let id = result.add()
-    result[id][].data = "0123456789ABCDEFFEDCBA9876543210".parseWave
-
-# shortcut constructors
-
-template mkState(f = 0u16, e = 0u16, t = 0u8, p = 0u8): ChannelState =
-    ChannelState(
-        frequency: f,
-        envelope: e,
-        timbre: t,
-        panning: p
-    )
-
-template mkCut(): ChannelUpdate =
-    ChannelUpdate(action: caCut)
-
-template mkShutdown(): ChannelUpdate =
-    ChannelUpdate(action: caShutdown)
-
-template mkUpdate(s = ChannelState(), f: UpdateFlags = {}, t = false): ChannelUpdate =
-    ChannelUpdate(
-        action: caUpdate,
-        state: s,
-        flags: f,
-        trigger: t
-    )
-
-template mkUpdates(up1, up2, up3, up4 = ChannelUpdate()): array[ChannelId, ChannelUpdate] =
-    [up1, up2, up3, up4]
-
-template mkOperation(u: array[ChannelId, ChannelUpdate], s = none(uint8), v = none(uint8)): ApuOperation =
-    ApuOperation(
-        updates: u,
-        sweep: s,
-        volume: v
-    )
-
 
 dtest "ApuWriteList":
     var list: ApuWriteList
