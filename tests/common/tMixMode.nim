@@ -1,5 +1,5 @@
 
-import ../../src/trackerboy/common
+import trackerboy/common
 
 static:
     assert not mixMute.pansLeft

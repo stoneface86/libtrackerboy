@@ -6,12 +6,12 @@ version       = "0.2.0"
 author        = "stoneface"
 description   = "Trackerboy utility library"
 license       = "MIT"
-srcDir        = "src"
 binDir        = "bin"
 # tbc is a command-line frontend for the library
 # it is not required for users of the library
 bin           = @["tbc"]
-skipFiles     = @["tbc.nim"]
+installFiles  = @["trackerboy.nim"]
+installDirs   = @["trackerboy"]
 
 # Dependencies
 
