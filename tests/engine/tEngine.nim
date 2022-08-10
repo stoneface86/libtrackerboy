@@ -1,5 +1,5 @@
 
-import trackerboy/[data, engine]
+import libtrackerboy/[data, engine]
 import ../testing
 
 testclass "Engine"

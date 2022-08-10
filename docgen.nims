@@ -32,8 +32,7 @@ for filename in rstFiles:
 
 # generate project documentation via src/trackerboy.nim
 echo "Generating documentation for whole project..."
-let srcpath = "src".absolutePath()
-tryExec 2, &"nim doc --hints:off --project --index:on --outdir:htmldocs -p:\"{srcpath}\" src/trackerboy.nim"
+tryExec 2, "nim doc --hints:off --project --index:on --outdir:htmldocs libtrackerboy.nim"
 
 # generate the index
 echo "Building index..."

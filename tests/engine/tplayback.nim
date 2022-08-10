@@ -1,7 +1,7 @@
 
-#import trackerboy/private/hardware 
-#import trackerboy/[notes]
-import trackerboy/private/[enginestate]
+#import libtrackerboy/private/hardware 
+#import libtrackerboy/[notes]
+import libtrackerboy/private/[enginestate]
 import utils
 import ../testing
 

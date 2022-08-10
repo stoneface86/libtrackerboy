@@ -1,6 +1,6 @@
 
 import ../testing
-import trackerboy/data
+import libtrackerboy/data
 
 testclass "Order"
 

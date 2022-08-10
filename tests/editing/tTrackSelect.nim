@@ -1,5 +1,5 @@
 
-import trackerboy/editing
+import libtrackerboy/editing
 
 static:
     assert not isEffect(selNote)

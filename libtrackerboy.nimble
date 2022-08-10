@@ -10,8 +10,8 @@ binDir        = "bin"
 # tbc is a command-line frontend for the library
 # it is not required for users of the library
 bin           = @["tbc"]
-installFiles  = @["trackerboy.nim"]
-installDirs   = @["trackerboy"]
+installFiles  = @["libtrackerboy.nim"]
+installDirs   = @["libtrackerboy"]
 
 # Dependencies
 

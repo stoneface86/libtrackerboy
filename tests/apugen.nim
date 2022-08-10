@@ -2,8 +2,8 @@
 ## each test is a sequence of register writes using the vblank interval as a time
 ## step. Each test will test a specific part of the APU.
 
-import ../src/trackerboy/apu
-import ../src/trackerboy/private/hardware
+import libtrackerboy/apu
+import libtrackerboy/private/hardware
 
 
 type
@@ -259,7 +259,7 @@ const tests* = (
 )
 
 when isMainModule:
-    import ../src/trackerboy/private/wavwriter
+    import libtrackerboy/private/wavwriter
 
     proc runTest(test: openarray[ApuTestCommand], apu: var Apu, wav: var WavWriter) =
         var buf: seq[Pcm]
@@ -286,7 +286,7 @@ when isMainModule:
     import std/os
 
     var a = Apu.init(testSamplerate, testSamplerate)
-    let outDir = getAppDir().joinPath("apugen")
+    let outDir = getAppDir().joinPath("apugen.d")
     outDir.createDir()
     
     for name, data in tests.fieldPairs:

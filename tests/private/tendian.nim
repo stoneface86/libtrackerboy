@@ -3,7 +3,7 @@
 # endian.
 
 
-import trackerboy/private/endian
+import libtrackerboy/private/endian
 import ../testing
 
 testclass "endian"

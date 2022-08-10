@@ -1,5 +1,5 @@
 
-import trackerboy/[data, io]
+import libtrackerboy/[data, io]
 import ../testing
 
 import std/streams

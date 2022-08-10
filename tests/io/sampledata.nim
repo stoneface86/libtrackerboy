@@ -3,7 +3,7 @@
 # Sample data to be used in testing the io module
 #
 
-import trackerboy/data
+import libtrackerboy/data
 
 type
     InstrumentSamples* = enum

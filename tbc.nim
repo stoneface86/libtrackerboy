@@ -4,8 +4,8 @@
 import std/[options, parseopt, streams, strformat, strutils]
 export options
 
-import trackerboy/data
-import trackerboy/exports/wav
+import libtrackerboy/data
+import libtrackerboy/exports/wav
 
 # types/fields are exported solely for unit testing
 
@@ -168,7 +168,7 @@ proc init*(tbc: var Tbc, cmd = ""): ExitCodes =
 
 
 when isMainModule:
-    import trackerboy/[io, version]
+    import libtrackerboy/[io, version]
     import std/exitprocs
 
     const subcommandDesc: array[SubCommand, string] = [

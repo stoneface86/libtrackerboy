@@ -1,5 +1,5 @@
 
-import trackerboy/editing
+import libtrackerboy/editing
 import utils
 import ../testing
 

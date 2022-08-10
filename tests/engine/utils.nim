@@ -1,6 +1,6 @@
 
-import trackerboy/[data, engine]
-import trackerboy/private/enginestate
+import libtrackerboy/[data, engine]
+import libtrackerboy/private/enginestate
 
 export data, engine
 

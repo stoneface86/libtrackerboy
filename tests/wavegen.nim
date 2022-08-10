@@ -4,8 +4,8 @@
 # the wav files are generated in a folder called "wavegen" in the same directory
 # as the executable
 
-import ../src/trackerboy/private/[hardware, synth, wavwriter]
-import ../src/trackerboy/common
+import libtrackerboy/private/[hardware, synth, wavwriter]
+import libtrackerboy/common
 
 import std/[os, strformat, typetraits]
 
@@ -65,7 +65,7 @@ proc `$`(w: Waveform): string =
 when isMainModule:
 
     var buf: seq[Pcm]
-    let outDir = getAppDir().joinPath("wavegen")
+    let outDir = getAppDir().joinPath("wavegen.d")
     outDir.createDir()
 
     var s = Synth.init()

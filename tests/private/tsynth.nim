@@ -1,6 +1,6 @@
 
-import trackerboy/private/[hardware, synth]
-import trackerboy/common
+import libtrackerboy/private/[hardware, synth]
+import libtrackerboy/common
 import ../testing
 
 testclass "Synth"

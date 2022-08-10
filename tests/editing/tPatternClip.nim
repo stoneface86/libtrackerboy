@@ -1,5 +1,5 @@
 
-import trackerboy/[data, editing, notes]
+import libtrackerboy/[data, editing, notes]
 import utils
 import ../testing
 

@@ -1,5 +1,5 @@
 
-import trackerboy/data
+import libtrackerboy/data
 import ../testing
 
 testclass "WaveData"

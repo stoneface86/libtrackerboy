@@ -1,5 +1,5 @@
 
-import trackerboy/version
+import libtrackerboy/version
 import ../testing
 
 testclass "Version"

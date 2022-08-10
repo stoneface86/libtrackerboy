@@ -1,5 +1,5 @@
 
-import trackerboy/[data, io]
+import libtrackerboy/[data, io]
 
 import sampledata
 import utils

@@ -1,5 +1,5 @@
 
-import trackerboy/private/ioblocks
+import libtrackerboy/private/ioblocks
 import ../testing
 import std/streams
 

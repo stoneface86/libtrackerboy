@@ -1,6 +1,6 @@
 
 import ../testing
-import trackerboy/common
+import libtrackerboy/common
 
 testclass "Immutable"
 

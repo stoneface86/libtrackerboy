@@ -1,5 +1,5 @@
 
-import trackerboy/data
+import libtrackerboy/data
 
 static:
     assert TrackRow.sizeof == 8
