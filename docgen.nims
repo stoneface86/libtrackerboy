@@ -19,7 +19,8 @@ else:
 const
     rstFiles = [
         "docs/module-file-format-spec.rst",
-        "docs/piece-file-format-spec.rst"
+        "docs/piece-file-format-spec.rst",
+        "docs/tbc.rst"
     ]
 
 when not dryRun:
