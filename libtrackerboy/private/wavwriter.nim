@@ -7,12 +7,12 @@
 import ../common, endian
 export PcmF32
 
-import std/[streams, with]
+import std/[with]
 
 type
 
     WavWriter* {.requiresInit.} = object
-        stream: FileStream
+        file: File
         channels: int
         samplerate: int
         samplesWritten: int
@@ -22,6 +22,7 @@ type
     # [I] indicates the field is set on init
 
     u32le = LittleEndian[uint32]
+    u16le = LittleEndian[uint16]
 
     WavHeader {.packed.} = object
         riffId: array[4, char]      # = "RIFF"
@@ -30,13 +31,13 @@ type
         # fmt subchunk
         fmtId: array[4, char]       # = "fmt "
         fmtChunkSize: u32le         # = 18
-        fmtTag: uint16              # = 3 (IEEE_FLOAT)
-        fmtChannels: uint16         # [I]
+        fmtTag: u16le               # = 3 (IEEE_FLOAT)
+        fmtChannels: u16le          # [I]
         fmtSampleRate: u32le        # [I]
         fmtAvgBytesPerSec: u32le    # [I] = sizeof(Sample) * fmtSampleRate * fmtChannels
-        fmtBlockAlign: uint16       # [I] = sizeof(Sample) * fmtChannels
-        fmtBitsPerSample: uint16    # = sizeof(Sample) * 8
-        fmtCbSize: uint16           # = 0
+        fmtBlockAlign: u16le        # [I] = sizeof(Sample) * fmtChannels
+        fmtBitsPerSample: u16le     # = sizeof(Sample) * 8
+        fmtCbSize: u16le            # = 0
         # fact subchunk
         # for integer PCM this is not needed, but is needed for "all new WAVE formats"
         # it is assumed that float PCM requires this chunk
@@ -55,9 +56,13 @@ proc close*(w: var WavWriter): void
 proc `=destroy`*(w: var WavWriter) =
     w.close()
 
-proc init*(T: typedesc[WavWriter], filename: sink string, channels, samplerate: int): WavWriter =
+proc checkedWriteBuffer(f: File, buffer: pointer, buflen: int) =
+    if f.writeBuffer(buffer, buflen) != buflen:
+        raise newException(IOError, "could not write entire buffer")
+
+proc init*(_: typedesc[WavWriter], filename: sink string, channels, samplerate: int): WavWriter =
     result = WavWriter(
-        stream: openFileStream(filename, fmWrite),
+        file: open(filename, fmWrite),
         channels: channels,
         samplerate: samplerate,
         samplesWritten: 0
@@ -71,13 +76,13 @@ proc init*(T: typedesc[WavWriter], filename: sink string, channels, samplerate: 
         waveId: ['W', 'A', 'V', 'E'],
         fmtId: ['f', 'm', 't', ' '],
         fmtChunkSize: 18'u32.toLE,
-        fmtTag: 3,
-        fmtChannels: channels.uint16,
+        fmtTag: 3'u16.toLE,
+        fmtChannels: channels.uint16.toLE,
         fmtSampleRate: samplerate.uint32.toLE,
         fmtAvgBytesPerSec: (bytesPerChannel * samplerate).uint32.toLE,
-        fmtBlockAlign: bytesPerChannel.uint16,
-        fmtBitsPerSample: sizeof(PcmF32) * 8,
-        fmtCbSize: 0,
+        fmtBlockAlign: bytesPerChannel.uint16.toLE,
+        fmtBitsPerSample: (sizeof(PcmF32) * 8).uint16.toLE,
+        fmtCbSize: 0'u16.toLE,
         factId: ['f', 'a', 'c', 't'],
         factChunkSize: 4'u32.toLE,
         factSampleCount: 0'u32.toLE,
@@ -85,10 +90,13 @@ proc init*(T: typedesc[WavWriter], filename: sink string, channels, samplerate: 
         dataChunkSize: 0'u32.toLE
     )
 
-    result.stream.write(header)
+    result.file.checkedWriteBuffer(header.unsafeAddr, header.sizeof)
+
+proc write[T: SomeWord](f: File, i: LittleEndian[T]) =
+    f.checkedWriteBuffer(i.unsafeAddr, T.sizeof)
 
 proc close(w: var WavWriter) =
-    if w.stream != nil:
+    if w.file != nil:
         let totalSamples = w.samplesWritten.uint32
         let dataChunkSize = totalSamples * w.channels.uint32 * sizeof(PcmF32).uint32
 
@@ -102,28 +110,32 @@ proc close(w: var WavWriter) =
 
         # do we need a pad byte?
         if (dataChunkSize and 1) == 1:
-            w.stream.write(0u8)
+            w.file.write('\0')
             inc chunkSize
         
-        with w.stream:
+        with w.file:
             # overwrite the chunk size for the entire file (also equal to filesize - 8)
-            setPosition(offsetOf(WavHeader, chunkSize))
+            setFilePos(offsetOf(WavHeader, chunkSize))
             write(chunkSize.toLE)
 
             # overwrite the sample count in the fact subchunk
-            setPosition(offsetOf(WavHeader, factSampleCount))
+            setFilePos(offsetOf(WavHeader, factSampleCount))
             write(totalSamples.toLE)
 
             # overwrite the chunk size of the data subchunk
-            setPosition(offsetOf(WavHeader, dataChunkSize))
+            setFilePos(offsetOf(WavHeader, dataChunkSize))
             write(dataChunkSize.toLE)
 
-        w.stream = nil
+        w.file = nil
 
 #
 # Writes the sampled data in the given array to the file
 #
 proc write*(w: var WavWriter, data: openArray[PcmF32]) =
     let samples = data.len div w.channels
-    w.stream.writeData(unsafeAddr(data), sizeof(PcmF32) * samples * w.channels)
+    when cpuEndian == littleEndian:
+        w.file.checkedWriteBuffer(data.unsafeAddr, PcmF32.sizeof * samples * w.channels)
+    else:
+        for sample in data:
+            w.file.write(toLE(cast[uint32](sample)))
     w.samplesWritten += samples
