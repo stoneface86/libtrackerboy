@@ -45,11 +45,6 @@ import private/[
     tsynth
 ]
 
-import tbc/[
-    tshortcircuit,
-    tsubWav
-]
-
 import version/[
     tVersion
 ]

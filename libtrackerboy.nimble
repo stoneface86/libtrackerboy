@@ -7,9 +7,6 @@ author        = "stoneface"
 description   = "Trackerboy utility library"
 license       = "MIT"
 binDir        = "bin"
-# tbc is a command-line frontend for the library
-# it is not required for users of the library
-bin           = @["tbc"]
 installFiles  = @["libtrackerboy.nim"]
 installDirs   = @["libtrackerboy"]
 
@@ -56,8 +53,7 @@ task docgen, "Generate documentation":
     --hints:off
     const rstFiles = [
         "docs/module-file-format-spec.rst",
-        "docs/piece-file-format-spec.rst",
-        "docs/tbc.rst"
+        "docs/piece-file-format-spec.rst"
     ]
     rmDir "htmldocs"
     # Generate all rst documents

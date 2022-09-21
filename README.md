@@ -11,13 +11,6 @@ This library handles:
  * Module playback
  * (Coming soon) export to [tbengine](https://github.com/stoneface86/tbengine) format.
 
-## Building
-
-This library package also contains a command line utility, `tbc`
-(Trackerboy compiler). To build, simply run `nimble build` from the root of
-the project directory. The compiled executable will be located in the `bin/`
-directory.
-
 ## Testing
 
 The unit tester can be built using the `tester` task
