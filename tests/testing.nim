@@ -5,6 +5,25 @@ export parentDir, splitPath
 import unittest2
 export unittest2
 
+import std/macros
+
+macro checkout*(conds: varargs[untyped]): untyped =
+    ## Same as unittest2.check, but will end the test if any of `conds` was `false`
+    
+
+    if conds[0].kind == nnkStmtList:
+        result = newNimNode(nnkStmtList)
+        for node in conds[0]:
+            if node.kind != nnkCommentStmt:
+                result.add(newCall(newIdentNode("checkout"), node))
+    else:
+        result = quote do:
+            when not declared(testStatusIMPL):
+                {.error: "you can only use this in a test!".}
+            check `conds`
+            if testStatusIMPL == FAILED:
+                return
+
 template testclass*(name: string): untyped {.dirty.} =
     ## set the testclass string used by dtest
     const testpath {.used.} = [

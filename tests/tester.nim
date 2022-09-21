@@ -41,6 +41,7 @@ import io/[
 import private/[
     tendian,
     tioblocks,
+    tplayer,
     tsynth
 ]
 
