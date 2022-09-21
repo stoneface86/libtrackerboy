@@ -44,6 +44,9 @@ type
 func init*(_: typedesc[Engine]): Engine =
     discard  # default init is sufficient
 
+func isHalted*(e: Engine): bool =
+    e.musicRuntime.isNone() or e.frame.halted
+
 proc lock*(e: var Engine, chno: ChannelId) =
     withSome e.musicRuntime, lock(chno, e.apuOp)
 
@@ -58,6 +61,8 @@ proc halt*(e: var Engine) =
 
 proc reset*(e: var Engine) =
     e.musicRuntime = none(MusicRuntime)
+    e.time = 0
+    e.apuOp = ApuOperation.default
 
 proc play*(e: var Engine, song: sink Immutable[ref Song], pattern, row: Natural = 0) =
     
@@ -69,6 +74,7 @@ proc play*(e: var Engine, song: sink Immutable[ref Song], pattern, row: Natural 
         raise newException(IndexDefect, "invalid row index")
 
     e.musicRuntime = some(MusicRuntime.init(song, pattern, row, e.patternRepeat))
+    e.frame = EngineFrame(startedNewPattern: true)
     e.time = 0
 
 proc step*(e: var Engine, itable: InstrumentTable) =
@@ -133,7 +139,7 @@ proc setup*(apu: var ApuIo) =
 
 proc apply*(apu: var ApuIo, op: ApuOperation, wt: WaveformTable) =
     mixin getWrites, items
-    for reg, val in getWrites(op, wt, apu.readRegister(rNR51)):
+    for reg, val in getWrites(op, wt, apu.readRegister(rNR51)).items:
         apu.writeRegister(reg, val)
 
 proc stepAndApply*(e: var Engine, itable: InstrumentTable, wtable: WaveformTable, apu: var ApuIo) =

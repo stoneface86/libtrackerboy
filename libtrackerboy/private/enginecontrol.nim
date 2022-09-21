@@ -588,7 +588,7 @@ proc lock*(r: var MusicRuntime, chno: ChannelId, op: var ApuOperation) =
 proc unlock*(r: var MusicRuntime, chno: ChannelId, op: var ApuOperation) =
     if chno notin r.unlocked:
         r.unlocked.incl(chno)
-        op.updates[chno].action = caShutdown
+        op.updates[chno] = ChannelUpdate(action: caShutdown)
 
 func difference(state, prev: ChannelState): UpdateFlags =
     template check(flag: UpdateFlag, param: untyped): untyped =
@@ -634,8 +634,9 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
                 frame.startedNewPattern = true
         
         # set current track row to the track controls
+        let order = r.song[].order[r.orderCounter]
         for chno in ChannelId:
-            r.trackControls[chno].setRow(r.song[].getRow(chno, r.orderCounter, r.rowCounter))
+            r.trackControls[chno].setRow(r.song[].getRow(chno, order[chno], r.rowCounter))
         
         if r.global.halt:
             r.halt(op)
