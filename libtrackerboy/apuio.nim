@@ -21,7 +21,7 @@ type
         ar21 = rNR21    ## NR21 DDLL LLLL - CH2 duty, length
         ar22 = rNR22    ## NR22 VVVV APPP - CH2 envelope volume, mode, period
         ar23 = rNR23    ## NR23 FFFF FFFF - CH2 frequency LSB
-        ar24 = rNR24    ## NR24 TL-- -FFF - CH3 trigger, length enable, frequency MSB
+        ar24 = rNR24    ## NR24 TL-- -FFF - CH2 trigger, length enable, frequency MSB
         # CH3 - Wave ----------------------------------------------------------
         ar30 = rNR30    ## NR30 E--- ---- - CH3 DAC enable
         ar31 = rNR31    ## NR31 LLLL LLLL - CH3 length
@@ -40,10 +40,10 @@ type
         # Wave RAM
         arWaveram = rWAVERAM    ## CH3 Wave RAM, 0xFF30 to 0xFF3F
 
-    ApuIo* = concept a, var b
+    ApuIo* = concept var a
         ## Concept for a generic Apu emulator that provides I/O access procs.
         readRegister(a, uint8) is uint8
-        writeRegister(b, uint8, uint8)
+        writeRegister(a, uint8, uint8)
 
 template toAddress*(reg: ApuRegister): uint8 = reg.ord.uint8
     ## Convert the register to its address. This just converts the result of

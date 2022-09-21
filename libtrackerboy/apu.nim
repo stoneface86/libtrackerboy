@@ -17,7 +17,7 @@ the hardware being emulated.
 import common, private/[hardware, synth]
 export common
 
-import std/[bitops, algorithm]
+import std/[bitops, algorithm, math]
 
 const
     dcOffset: float32 = 7.5f
@@ -115,6 +115,10 @@ type
         nr51: uint8
         enabled: bool
         volumeStep: float32
+        autostep*: uint32
+        framerate: float
+        cyclesPerFrame: float
+        cycleOffset: float
 
 # Timer =======================================================================
 
@@ -526,7 +530,7 @@ proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
     ## should range from 0.0f to 1.0f. The default volume level is a linear
     ## value of 0.625f or about -4 dB
     runnableExamples:
-        var a = Apu.init(44100, 44100)
+        var a = Apu.init(44100)
         a.setVolume(0.5f)
 
     # 4 channels
@@ -537,15 +541,23 @@ proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
     a.volumeStep = gain / 480.0f
     a.updateVolume()
 
-func init*(T: typedesc[Apu], samplerate: int, buffersize: Natural = 0): T.typeOf =
-    ## Initializes an Apu with the given samplerate and internal buffer size.
-    ## `samplerate` is in Hz and must be greater than 0. `buffersize` is in
-    ## number of samples, use 0 to set the buffer later.
+proc setFramerate*(a: var Apu, framerate: float) =
+    ## Changes the size of frame to the given framerate. The APU must be reset
+    ## when changing the framerate.
+    a.framerate = framerate
+    a.cyclesPerFrame = gbClockrate.float / framerate
+    a.cycleOffset = 0.0
+    a.synth.setBufferSize((a.synth.samplerate.float / framerate).ceil.int + 1)
+
+func init*(_: typedesc[Apu], samplerate: int, framerate = 59.7): Apu =
+    ## Initializes an Apu with the given samplerate and internal buffer size
+    ## that contains a single frame with the given framerate.
+    ## `samplerate` and `framerate` are in Hz and must be greater than 0.
     ## 
     ## The returned `Apu` is in its default, or hardware reset, state. The
     ## volume step is set to a default of 0.625f.
     runnableExamples:
-        var a = Apu.init(24000, 2400) # 24000 Hz, with a 0.1s buffer
+        var a = Apu.init(24000, 60.0) # 24000 Hz samplerate with a 60 Hz framerate
     result = Apu(
         ch1: initPulseChannel(),
         ch2: initPulseChannel(),
@@ -553,7 +565,7 @@ func init*(T: typedesc[Apu], samplerate: int, buffersize: Natural = 0): T.typeOf
         ch4: initNoiseChannel(),
         sweep: initSweep(),
         sequencer: initSequencer(),
-        synth: Synth.init(samplerate, buffersize),
+        synth: Synth.init(samplerate),
         mix: default(Apu.mix.type),
         lastOutputs: default(Apu.lastOutputs.type),
         time: 0,
@@ -561,15 +573,20 @@ func init*(T: typedesc[Apu], samplerate: int, buffersize: Natural = 0): T.typeOf
         rightVolume: 1,
         nr51: 0,
         enabled: false,
-        volumeStep: 0.0f
+        volumeStep: 0.0f,
+        autostep: 16,
+        framerate: 0.0,
+        cyclesPerFrame: 0.0,
+        cycleOffset: 0.0
     )
     result.setVolume(0.625f)
+    result.setFramerate(framerate)
 
 proc reset*(a: var Apu) =
     ## Resets the apu to its initial state. Should behave similarly to a
     ## hardware reset. The internal sample buffer is also cleared.
     runnableExamples:
-        var a = Apu.init(44100, 44100)
+        var a = Apu.init(44100)
         a.writeRegister(0x26, 0x80)
         a.writeRegister(0x12, 0xF2)
         assert a.readRegister(0x12) == 0xF2u8
@@ -590,6 +607,7 @@ proc reset*(a: var Apu) =
     a.enabled = false
     a.leftVolume = 1
     a.rightVolume = 1
+    a.cycleOffset = 0.0
 
 proc silence(a: var Apu, ch: int, time: uint32) =
     let output = a.lastOutputs[ch]
@@ -647,7 +665,7 @@ proc run*(a: var Apu, cycles: uint32) =
     ## processing, or `removeSamples<#removeSamples,Apu>`_ to discard them.
 
     runnableExamples:
-        var a = Apu.init(44100, 44100)
+        var a = Apu.init(44100, 1.0)
         a.run(4194304) # 1 second
         assert a.availableSamples == 44100
         # another call to run will overrun the buffer
@@ -669,10 +687,28 @@ proc run*(a: var Apu, cycles: uint32) =
         cycleCountdown -= toStep
         a.time += toStep
 
+proc runToFrame*(a: var Apu) =
+    ## Runs the apu `a` for the required number of cycles to complete a frame.
+    ## The amount of cycles that is run is determined by `a`'s current time and
+    ## the framerate setting.
+    runnableExamples:
+        var a = Apu.init(48000, 60.0)
+        a.runToFrame()
+        # there are 800 samples in a frame
+        # and 69905.06 cycles in a frame
+        # so we step 69905 cycles which results in 799 samples instead
+        # (eventually there will be one frame with 800 samples)
+        assert a.availableSamples == 799
+    let cycles = a.cyclesPerFrame - a.time.float + a.cycleOffset
+    if cycles > 0.0:
+        let split = splitDecimal(cycles)
+        a.run(split.intpart.uint32)
+        a.cycleOffset = split.floatpart
+
 template cannotAccessRegister(a: Apu, reg: uint8): bool =
     not a.enabled and reg < rNR52
 
-func readRegister*(a: Apu, reg: uint8): uint8 =
+func readRegister*(a: var Apu, reg: uint8): uint8 =
     ##
     ## Reads the register at address `reg`. This proc emulates the behavior of
     ## reading the memory-mapped registers on an actual Game Boy. Since some
@@ -689,15 +725,16 @@ func readRegister*(a: Apu, reg: uint8): uint8 =
     ## 
     
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         # sound is OFF, all reads should result in 0xFF
         assert a.readRegister(0x10) == 0xFFu8
         # NR52 should be 0x70
         assert a.readRegister(0x26) == 0x70u8
 
-
     template readNRx4(lc: LengthCounter): uint8 =
         if lc.enabled: 0xFF else: 0xBF
+
+    a.run(a.autostep)
 
     if a.cannotAccessRegister(reg):
         return 0xFF
@@ -767,13 +804,15 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
     ## ignored. Like readRegister, the write occurs at the apu's current `time`.
     
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         a.writeRegister(0x12, 0xC0) # APU is off, write is ignored
         a.writeRegister(0x26, 0x80) # turn APU on
         assert a.readRegister(0x12) == 0x00
         a.writeRegister(0x12, 0xC0)
         assert a.readRegister(0x12) == 0xC0
         a.writeRegister(0xD3, 0xCC) # invalid register, write is ignored
+
+    a.run(a.autostep)
 
     if a.cannotAccessRegister(reg):
         return
@@ -906,7 +945,7 @@ func time*(a: Apu): uint32 =
     ## Gets the apu's current time, in cycles. Calling `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
     ## resets the time to 0.
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         assert a.time == 0
         a.run(1000)
         assert a.time == 1000
@@ -954,7 +993,7 @@ func channelFrequency*(a: Apu, chno: ChannelId): int =
     ## purposes. Channels 1-3 will result in a value from 0 to 2047. Channel
     ## 4 will result in the contents of its NR43 register.
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         assert a.channelFrequency(ch2) == 0
     case chno:
     of ch1: result = a.ch1.frequency.int
@@ -968,7 +1007,7 @@ func channelVolume*(a: Apu, chno: ChannelId): int =
     ## volume of the envelope. For the Wave channel, this value is the maximum
     ## possible determined by the wave volume setting (NR32).
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         assert a.channelVolume(ch1) == 0
         assert a.channelVolume(ch3) == 0
         a.writeRegister(0x26, 0x80)  # NR52 <- 0x80
@@ -998,7 +1037,7 @@ func channelMix*(a: Apu, chno: ChannelId): MixMode =
     ## Gets the current mix mode for the given channel. Provided as an alternative
     ## to reading ar51.
     runnableExamples:
-        var a = Apu.init(44100, 4410)
+        var a = Apu.init(44100)
         a.writeRegister(0x26, 0x80)         # NR52 <- 0x80
         a.writeRegister(0x25, 0b00110101)   # NR51 <- 0x35
         assert a.channelMix(ch1) == mixMiddle

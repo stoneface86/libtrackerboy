@@ -24,11 +24,6 @@ proc cmdHold(frames: int): ApuTestCommand =
 proc cmdWrite(address, value: uint8): ApuTestCommand =
     ApuTestCommand(op: opWrite, address: address, value: value)
 
-const
-    testSamplerate* = 44100
-    cyclesPerWrite = 12
-    cyclesPerFrame = 70256u32
-
 const tests* = (
     duty: [
         cmdWrite(rNR52, 0x80), cmdWrite(rNR50, 0x77), cmdWrite(rNR51, 0x11),
@@ -265,30 +260,26 @@ when isMainModule:
         var buf: seq[Pcm]
         apu.reset()
 
-        var time = 0u32
         for cmd in test:
             case cmd.op
             of opHold:
                 var frames = cmd.frames
                 while frames > 0:
-                    apu.run(cyclesPerFrame - time)
+                    apu.runToFrame()
                     apu.takeSamples(buf)
-                    time = 0
                     wav.write(buf)
-
                     dec frames
             of opWrite:
-                apu.run(cyclesPerWrite)
-                time += cyclesPerWrite
                 apu.writeRegister(cmd.address, cmd.value)
 
 
     import std/os
 
-    var a = Apu.init(testSamplerate, testSamplerate)
-    let outDir = getAppDir().joinPath("apugen.d")
+    const testSamplerate = 44100
+    var a = Apu.init(testSamplerate)
+    let outDir = getAppDir() / "apugen.d"
     outDir.createDir()
     
     for name, data in tests.fieldPairs:
-        var wav = WavWriter.init(joinPath(outDir, "apu_test_" & name & ".wav"), 2, testSamplerate)
+        var wav = WavWriter.init(outDir / ("apu_test_" & name & ".wav"), 2, testSamplerate)
         runTest(data, a, wav)
