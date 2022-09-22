@@ -5,7 +5,8 @@
 import common/[
     tdeepEquals,
     tImmutable,
-    tMixMode
+    tMixMode,
+    tShallow
 ]
 
 import data/[

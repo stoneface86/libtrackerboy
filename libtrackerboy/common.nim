@@ -59,17 +59,17 @@ type
         src*: ref T
             ## The source reference of the wrapper
 
-func toShallow*[T](src: sink T): Shallow[T] {.inline.} =
+template toShallow*[T](s: T): Shallow[T] =
     ## Converts a value to a Shallow. The compiler is free to make shallow
     ## copies of the returned object.
-    Shallow[T](src: src)
+    Shallow[T](src: s)
 
-func toImmutable*[T](src: sink T): Immutable[T] =
+template toImmutable*[T](s: T): Immutable[T] =
     ## Converts a value to an Immutable. Note that a copy of the value might
     ## be made.
-    Immutable[T](src: src)
+    Immutable[T](src: s)
 
-func `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
+template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
     ## Access the Immutable's ref/ptr source. The source is dereferenced and
     ## is returned.
     runnableExamples:
@@ -80,7 +80,7 @@ func `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
         assert not compiles(immutableRef[] = 3)
     i.src[]
 
-func `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
+template `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
     ## Access the Immutable's value source. Lent is used so a copy can be
     ## avoided.
     runnableExamples:
@@ -90,11 +90,11 @@ func `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
         assert not compiles(immutableVal[] = 3)
     i.src
 
-func isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
+template isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
     ## Test if the Immutable source is nil.
     i.src.isNil()
 
-func `==`*[T](i: Immutable[T], rhs: T): bool =
+template `==`*[T](i: Immutable[T], rhs: T): bool =
     ## Test if the Immutable's source is equivalent to the given value
     i.src == rhs
 
@@ -131,7 +131,7 @@ func deepEquals*[T](a, b: ref T): bool =
         # check if the referenced data is equal (deep equality)
         a[] == b[]
 
-func toEqRef*[T](val: ref T): EqRef[T] =
+template toEqRef*[T](val: ref T): EqRef[T] =
     ## Converts a ref to an EqRef
     EqRef[T](src: val)
 
