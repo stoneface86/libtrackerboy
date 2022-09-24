@@ -142,6 +142,9 @@ template `==`*[T](lhs, rhs: EqRef[T]): bool =
         assert a == b
     lhs.src.deepEquals(rhs.src)
 
+template defaultInit*(): untyped = discard
+    ## Alias for `discard`, to indicate that default initialization is intended.
+
 func pansLeft*(mode: MixMode): bool {.inline.} =
     ## Determine whether the mode pans left, returns `true` when mode is
     ## `mixLeft` or `mixMiddle`
