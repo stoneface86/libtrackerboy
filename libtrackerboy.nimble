@@ -1,9 +1,8 @@
 import std/[os, strformat, strutils]
-import libtrackerboy/version as tbversion
 
 # Package
 
-version       = $tbversion.currentVersion
+version       = "0.7.0"
 author        = "stoneface"
 description   = "Trackerboy utility library"
 license       = "MIT"
