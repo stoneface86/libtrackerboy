@@ -4,7 +4,7 @@ Version information about the library and Trackerboy application.
 
 ]##
 
-import std/strutils
+import std/strformat
 
 type
     Version* = object
@@ -20,29 +20,27 @@ template v*(m = 0, n = 0, p = 0): Version =
     Version(major: m, minor: n, patch: p)
 
 const
-    appVersion* = v(0, 6, 1)
-        ## Trackerboy application version
-    libVersion* = v(0, 2, 0)
-        ## Trackerboy library version
+    currentVersion* = v(0, 7, 0)
+        ## libtrackerboy version
 
     # current file format revision: 1.1 (Rev C)
 
-    fileMajor* = 1
+    currentFileMajor* = 1
         ## The current major revision of the file format
-    fileMinor* = 1
+    currentFileMinor* = 1
         ## The current minor revision of the file format
 
-proc `$`*(v: Version): string =
+func `$`*(v: Version): string =
     ## Convert a `Version` to a `string`. The string has the
     ## format `"major.minor.patch"`.
-    "$1.$2.$3".format(v.major, v.minor, v.patch)
+    &"{v.major}.{v.minor}.{v.patch}"
 
-proc `<`*(lhs: Version, rhs: Version): bool =
+func `<`*(lhs: Version, rhs: Version): bool =
     ## `<` operator for comparing two Versions. Returns true if `rhs` is a
     ## newer version than `lhs`.
-    lhs.major < rhs.major or lhs.minor < rhs.major or lhs.patch < rhs.patch
+    lhs.major < rhs.major or lhs.minor < rhs.minor or lhs.patch < rhs.patch
 
-proc `<=`*(lhs: Version, rhs: Version): bool =
+func `<=`*(lhs: Version, rhs: Version): bool =
     ## `<=` operator for comparing two Versions. Returns true if `rhs` is a
     ## newer or equivalent version compared to `lhs`.
     lhs < rhs or lhs == rhs

@@ -172,11 +172,11 @@ static:
 func currentVersionHeader(): BasicHeader =
     BasicHeader(
         signature: signature,
-        versionMajor: toLE(appVersion.major.uint32),
-        versionMinor: toLE(appVersion.minor.uint32),
-        versionPatch: toLE(appVersion.patch.uint32),
-        revMajor: fileMajor,
-        revMinor: fileMinor,
+        versionMajor: toLE(currentVersion.major.uint32),
+        versionMinor: toLE(currentVersion.minor.uint32),
+        versionPatch: toLE(currentVersion.patch.uint32),
+        revMajor: currentFileMajor,
+        revMinor: currentFileMinor,
     )
 
 template errorCheck(body: untyped): untyped =

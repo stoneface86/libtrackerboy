@@ -966,9 +966,9 @@ template construct(_: typedesc[Module | ref Module]): untyped =
         system: systemDmg,
         customFramerate: defaultFramerate,
         private: ModulePrivate(
-            version: appVersion,
-            revisionMajor: fileMajor,
-            revisionMinor: fileMinor
+            version: currentVersion,
+            revisionMajor: currentFileMajor,
+            revisionMinor: currentFileMinor
         )
     )
 

@@ -53,7 +53,7 @@ template pieceTests*(
 
     dtest "deserialize - bad revision":
         strm.write(correctBin)
-        overwriteRevMajor(strm, fileMajor + 1)
+        overwriteRevMajor(strm, currentFileMajor + 1)
         strm.setPosition(0)
         var dataIn = PieceType.init()
         check dataIn.deserialize(strm) == frInvalidRevision

@@ -1,11 +1,11 @@
 
-# run this when appVersion in src/trackerboy/version.nim is changed
-# otherwise the _io tests will fail!
+# run this when currentVersion in libtrackerboy/version.nim is changed
+# otherwise the io tests will fail!
 
 import std/[os, streams]
 
-import ../../../src/trackerboy/version
-import ../../../src/trackerboy/private/endian
+import ../../../libtrackerboy/version
+import ../../../libtrackerboy/private/endian
 
 const filesToPatch = [
     "sample.tbi",
@@ -19,7 +19,7 @@ let dataDir = currentSourcePath().parentDir()
 for filename in filesToPatch:
     let strm = newFileStream(dataDir.joinPath(filename), fmReadWriteExisting)
     strm.setPosition(12)
-    strm.write(appVersion.major.uint32.toLE)
-    strm.write(appVersion.minor.uint32.toLE)
-    strm.write(appVersion.patch.uint32.toLE)
+    strm.write(currentVersion.major.uint32.toLE)
+    strm.write(currentVersion.minor.uint32.toLE)
+    strm.write(currentVersion.patch.uint32.toLE)
     strm.close()
