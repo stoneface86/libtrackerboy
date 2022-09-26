@@ -4,7 +4,7 @@ Module for the data model. This module contains data types used in the library.
 
 ]##
 
-import common, private/data, version 
+import common, private/[data, utils], version 
 export common
 
 import std/[math, options, parseutils, sequtils, tables]
@@ -1024,3 +1024,11 @@ converter toInfoString*(str: string): InfoString =
     for i in 0..<min(str.len, result.len):
         result[i] = str[i]
 
+func `==`*(a, b: SongList): bool =
+    ## Equality test for two song lists. Uses deep equality checking.
+    a.data == b.data
+
+func `==`*(a, b: SomeTable): bool =
+    ## Equality test for two tables. Uses deep equality checking.
+    bind utils.`==`, deepEquals
+    system.`==`(a, b)

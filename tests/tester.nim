@@ -3,10 +3,8 @@
 {.warning[UnusedImport]: off.}
 
 import common/[
-    tdeepEquals,
     tImmutable,
-    tMixMode,
-    tShallow
+    tMixMode
 ]
 
 import data/[
@@ -40,9 +38,11 @@ import io/[
 ]
 
 import private/[
+    tdeepEquals,
     tendian,
     tioblocks,
     tplayer,
+    tShallow,
     tsynth
 ]
 

@@ -1,6 +1,6 @@
 
 import ../testing
-import libtrackerboy/common
+import libtrackerboy/private/utils
 
 testclass "deepEquals"
 

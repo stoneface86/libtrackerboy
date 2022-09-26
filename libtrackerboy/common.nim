@@ -37,37 +37,18 @@ type
         mixRight    = 2
         mixMiddle   = mixLeft.ord or mixRight.ord
 
-    Immutable*[T] = object
-        ## Container object that only provides immutable access to its source.
-        ## Accessing the source is done through the [] overload proc. Both
-        ## value and ref semantics can be used. When the source is a ref or
-        ## ptr, accessing the source will dereference the ref/ptr.
-        src: T
-
-    Shallow*[T] {.shallow.} = object
-        ## Wrapper type to allow shallow copying on T. Suitable for avoiding
-        ## wasteful copies being made when viewing data.
-        src*: T
-            ## The source data. When a Shallow[T] object is copied, the compiler
-            ## may make a shallow copy (ie only copying the pointer for seqs).
-
-    EqRef*[T] = object
-        ## EqRef: Deep equality ref
-        ## 
-        ## Ref wrapper type that changes the equality operator by testing for
-        ## deep equality.
-        src*: ref T
-            ## The source reference of the wrapper
-
-template toShallow*[T](s: T): Shallow[T] =
-    ## Converts a value to a Shallow. The compiler is free to make shallow
-    ## copies of the returned object.
-    Shallow[T](src: s)
+    Immutable*[T] = distinct T
+        ## Wrapper type that forces immutability on T. Useful for `ref` or `ptr`
+        ## types. Accessing the source is done through the [] overload proc.
+        ## Both value and ref semantics can be used. When the source is a `ref`
+        ## or `ptr`, accessing the source will dereference the ref/ptr.
 
 template toImmutable*[T](s: T): Immutable[T] =
     ## Converts a value to an Immutable. Note that a copy of the value might
     ## be made.
-    Immutable[T](src: s)
+    Immutable[T](s)
+
+template getType[T](_: Immutable[T]): untyped = T
 
 template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
     ## Access the Immutable's ref/ptr source. The source is dereferenced and
@@ -78,72 +59,30 @@ template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
         let immutableRef = myref.toImmutable
         assert immutableRef[] == myref[]
         assert not compiles(immutableRef[] = 3)
-    i.src[]
+    cast[getType(i)](i)[]
 
 template `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
-    ## Access the Immutable's value source. Lent is used so a copy can be
-    ## avoided.
+    ## Access the Immutable's value source.
     runnableExamples:
         let myval = 2
         let immutableVal = myval.toImmutable
         assert immutableVal[] == myval
         assert not compiles(immutableVal[] = 3)
-    i.src
+    cast[T](i)
 
 template isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
     ## Test if the Immutable source is nil.
-    i.src.isNil()
+    cast[getType(i)](i).isNil
 
 template `==`*[T](i: Immutable[T], rhs: T): bool =
     ## Test if the Immutable's source is equivalent to the given value
-    i.src == rhs
+    cast[T](i) == rhs
 
 template `==`*[T](lhs: T, i: Immutable[T]): bool =
     i == lhs
 
 template `==`*[T: ptr|ref](lhs: nil.typeof, rhs: Immutable[T]): bool =
     rhs == lhs
-
-func deepEquals*[T](a, b: ref T): bool =
-    ## Deep equality test for two refs. Returns true if either:
-    ## - they are both nil
-    ## - they are not both nil and their referenced data is equivalent
-    runnableExamples:
-        var a, b: ref int
-        assert a.deepEquals(b)      # both are nil
-        a = new(int)
-        b = new(int)
-        a[] = 2
-        b[] = 3
-        assert not a.deepEquals(b)  # both are not nil, but the referenced data are not the same
-        b[] = a[]
-        assert a.deepEquals(b)      # both are not nil and the referenced data are the same
-        b = nil
-        assert not a.deepEquals(b)  # one of the refs is nil
-
-    if a.isNil:
-        # return true if both are nil
-        b.isNil
-    elif b.isNil:
-        # lhs is not nil but rhs is nil
-        false
-    else:
-        # check if the referenced data is equal (deep equality)
-        a[] == b[]
-
-template toEqRef*[T](val: ref T): EqRef[T] =
-    ## Converts a ref to an EqRef
-    EqRef[T](src: val)
-
-template `==`*[T](lhs, rhs: EqRef[T]): bool =
-    ## Equality test using deepEquals
-    runnableExamples:
-        var a, b: EqRef[int]
-        assert a == b
-    lhs.src.deepEquals(rhs.src)
-
-template defaultInit*(): untyped = discard
-    ## Alias for `discard`, to indicate that default initialization is intended.
 
 func pansLeft*(mode: MixMode): bool {.inline.} =
     ## Determine whether the mode pans left, returns `true` when mode is
