@@ -22,13 +22,13 @@ jobs:
           nim-version: ${{ matrix.nim-version }}
 
       - name: dependencies
-        run: nimble install -y --depsOnly
+        run: ./nut init
 
       - name: check
-        run: nimble check
+        run: ./nut check
 
       - name: test
-        run: nimble tester && bin/tester
+        run: ./nut test
 
       - name: endian tests
-        run: nimble endianTests
+        run: ./nut endianTests

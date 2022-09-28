@@ -34,7 +34,10 @@ let argTuple = block:
     res
 
 proc getCompflags(): string =
-    quoteShellCommand(argTuple.compflags)
+    argTuple.compflags.quoteShellCommand
+
+proc getTaskArgs(): string = 
+    argTuple.taskargs.quoteShellCommand
 
 template execCmd(cmd, sub, args: string): untyped =
     var cmdline = cmd & " " & sub
@@ -49,6 +52,27 @@ template execNimble(cmd, args: string): untyped =
 
 template execNim(cmd, args: string): untyped =
     execCmd("nim", cmd, args)
+
+template withTests(body: untyped): untyped =
+    withDir "tests":
+        body
+
+template onEachPackage(body: untyped): untyped =
+    body
+    withTests:
+        body
+
+task check, "Runs nimble check on each package":
+    proc check() =
+        exec "nimble check"
+    onEachPackage:
+        check()    
+
+task init, "Installs dependencies needed for the project":
+    proc installDeps() =
+        exec "nimble install -y --depsOnly"
+    onEachPackage:
+        installDeps()
 
 task endianTests, "Runs tests/private/tendian.nim with different configurations":
     # test matrix
@@ -66,21 +90,24 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
         execNim "r", &"--hints:off --path:src {defs} tests/private/tendian.nim"
 
 task tester, "Builds the unit tester":
-    execNimble "c", "--outdir:bin tests/tester.nim"
+    withTests:
+        execNimble "build", ""
 
 task test, "Runs the unit tester":
     testerTask()
-    exec &"bin/tester {argTuple.taskargs.quoteShellCommand}"
+    exec &"bin/tester {getTaskArgs()}"
 
 task dumpArgs, "Echos the parsed compflags and taskargs":
     echo "Compiler flags: ", argTuple.compflags
     echo "Task arguments: ", argTuple.taskargs
 
 task apugen, "Generate demo APU wav files":
-    execNimble "c", "--outdir:bin --run tests/standalones/apugen.nim"
+    withTests:
+        execNimble "c", "--outdir:../bin --run standalones/apugen.nim"
 
 task wavegen, "Generate demo synth waveforms":
-    execNimble "c", "--outdir:bin --run tests/standalones/wavegen.nim"
+    withTests:
+        execNimble "c", "--outdir:../bin --run standalones/wavegen.nim"
 
 task docgen, "Generate documentation":
     --hints:off
@@ -101,3 +128,7 @@ task docgen, "Generate documentation":
     # generate the index
     echo "Building index..."
     exec "nim buildIndex --hints:off -o:htmldocs/theindex.html htmldocs"
+
+task clean, "Clears the bin and htmldocs folders":
+    rmDir "bin"
+    rmDir "htmldocs"
