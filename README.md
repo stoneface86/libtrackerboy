@@ -11,16 +11,37 @@ This library handles:
  * Module playback
  * (Coming soon) export to [tbengine](https://github.com/stoneface86/tbengine) format.
 
+## `./nut`
+
+The [nut](nut) script is a shortcut for executing the [nut.nims](nut.nims) nimscript via
+the nim compiler. This script contains utility tasks like nimble tasks, but
+can properly forward compiler flags and can easily handle task arguments. Use
+this script instead of nimble for tasks.
+
+```sh
+# usage:
+./nut [compiler-flags...] task [task-arguments...]
+# for available tasks:
+./nut help
+```
+
+### Example
+
+```sh
+# builds and runs bin/apugen in release mode with ARC memory management
+./nut --mm:arc -d:release apugen
+```
+
 ## Testing
 
-The unit tester can be built using the `tester` task
+The unit tester can be built using the `tester` task via `./nut`
 ```sh
 # build the unit tester
-nimble tester
+./nut tester
 # build and run the unit tester with optional filter
-nimble test [filter]
+./nut test [filter]
 # alternatively:
-nimble tester && ./bin/tester [filter]
+./nut tester && ./bin/tester [filter]
 ```
 
 When launching the tester you can supply a filter argument with a wildcard
@@ -30,17 +51,17 @@ omitted all tests will run.
 ### Miscellaneous test programs
 
 There are some extra programs for testing that are not automated. These programs
-generate audio files to be verified by ear. To run, use the `apugen` and `wavegen`
-nimble tasks.
+generate audio files to be verified by ear. To run, use the apugen and wavegen
+`./nut` tasks.
 
 ```sh
 # apugen, generates sample audio by testing the APU emulator
 # generated audio files are located in ./bin/apugen.d/
-nimble apugen
+./nut apugen
 
 # wavegen, tests the bandlimited synthesis module by generating simple square tones
 # generated audio files are located in ./bin/wavegen.d/
-nimble wavegen
+./nut wavegen
 ```
 
 ## Migration from Trackerboy
