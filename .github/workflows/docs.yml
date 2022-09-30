@@ -32,7 +32,7 @@ jobs:
         run: |
           rm -rf gh-pages/docs/develop
           mkdir -p gh-pages/docs
-          cp htmldocs gh-pages/docs/develop
+          cp -r htmldocs gh-pages/docs/develop
           cd gh-pages
           git add .
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
