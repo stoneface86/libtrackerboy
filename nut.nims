@@ -121,7 +121,7 @@ task docgen, "Generate documentation":
 
     # generate project documentation via libtrackerboy.nim
     echo "Generating documentation for whole project..."
-    exec "nim doc --hints:off --project --index:on --outdir:htmldocs libtrackerboy.nim"
+    exec "nim doc --hints:off --project --index:on --outdir:htmldocs --git.url:https://github.com/stoneface86/libtrackerboy --git.commit:develop --git.devel:develop libtrackerboy.nim"
 
     # generate the index
     echo "Building index..."

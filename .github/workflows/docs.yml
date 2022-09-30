@@ -1,0 +1,41 @@
+name: develop-docgen
+on:
+  push:
+    branches:
+      - develop
+    tags-ignore: '**'
+
+jobs:
+  build:
+    name: 'Generate and upload documentation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: 'stable'
+
+      - name: Generate documentation
+        run: ./nut docgen
+      
+      - name: Clone gh-pages
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: gh-pages
+          fetch-depth: 0
+      
+      - name: Upload documentation
+        run: |
+          rm -rf gh-pages/docs/develop
+          mkdir -p gh-pages/docs
+          cp htmldocs gh-pages/docs/develop
+          cd gh-pages
+          git add .
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git config -a -m "update docs for develop branch"
+          git push origin gh-pages
