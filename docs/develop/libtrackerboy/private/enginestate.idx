@@ -1,0 +1,23 @@
+EngineFrame	libtrackerboy/private/enginestate.html#EngineFrame	enginestate: EngineFrame	
+pcNone	libtrackerboy/private/enginestate.html#pcNone	PatternCommand.pcNone	
+pcNext	libtrackerboy/private/enginestate.html#pcNext	PatternCommand.pcNext	
+pcJump	libtrackerboy/private/enginestate.html#pcJump	PatternCommand.pcJump	
+PatternCommand	libtrackerboy/private/enginestate.html#PatternCommand	enginestate: PatternCommand	
+ufTimbre	libtrackerboy/private/enginestate.html#ufTimbre	UpdateFlag.ufTimbre	
+ufEnvelope	libtrackerboy/private/enginestate.html#ufEnvelope	UpdateFlag.ufEnvelope	
+ufPanning	libtrackerboy/private/enginestate.html#ufPanning	UpdateFlag.ufPanning	
+ufFrequency	libtrackerboy/private/enginestate.html#ufFrequency	UpdateFlag.ufFrequency	
+UpdateFlag	libtrackerboy/private/enginestate.html#UpdateFlag	enginestate: UpdateFlag	
+UpdateFlags	libtrackerboy/private/enginestate.html#UpdateFlags	enginestate: UpdateFlags	
+ChannelState	libtrackerboy/private/enginestate.html#ChannelState	enginestate: ChannelState	
+caNone	libtrackerboy/private/enginestate.html#caNone	ChannelAction.caNone	
+caUpdate	libtrackerboy/private/enginestate.html#caUpdate	ChannelAction.caUpdate	
+caCut	libtrackerboy/private/enginestate.html#caCut	ChannelAction.caCut	
+caShutdown	libtrackerboy/private/enginestate.html#caShutdown	ChannelAction.caShutdown	
+ChannelAction	libtrackerboy/private/enginestate.html#ChannelAction	enginestate: ChannelAction	
+ChannelUpdate	libtrackerboy/private/enginestate.html#ChannelUpdate	enginestate: ChannelUpdate	
+GlobalState	libtrackerboy/private/enginestate.html#GlobalState	enginestate: GlobalState	
+ApuOperation	libtrackerboy/private/enginestate.html#ApuOperation	enginestate: ApuOperation	
+ufAll	libtrackerboy/private/enginestate.html#ufAll	enginestate: ufAll	
+init	libtrackerboy/private/enginestate.html#init,typedesc[ChannelState]	enginestate: init(_: typedesc[ChannelState]): ChannelState	
+init	libtrackerboy/private/enginestate.html#init,typedesc[GlobalState]	enginestate: init(T: typedesc[GlobalState]): GlobalState	

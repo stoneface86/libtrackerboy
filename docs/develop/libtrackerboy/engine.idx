@@ -1,0 +1,21 @@
+Engine	libtrackerboy/engine.html#Engine	engine: Engine	
+init	libtrackerboy/engine.html#init,typedesc[Engine]	engine: init(_: typedesc[Engine]): Engine	
+isHalted	libtrackerboy/engine.html#isHalted,Engine	engine: isHalted(e: Engine): bool	
+lock	libtrackerboy/engine.html#lock,Engine,ChannelId	engine: lock(e: var Engine; chno: ChannelId)	
+unlock	libtrackerboy/engine.html#unlock,Engine,ChannelId	engine: unlock(e: var Engine; chno: ChannelId)	
+jump	libtrackerboy/engine.html#jump,Engine,Natural	engine: jump(e: var Engine; pattern: Natural)	
+halt	libtrackerboy/engine.html#halt,Engine	engine: halt(e: var Engine)	
+reset	libtrackerboy/engine.html#reset,Engine	engine: reset(e: var Engine)	
+play	libtrackerboy/engine.html#play,Engine,sinkImmutable[ref.Song],Natural,Natural	engine: play(e: var Engine; song: sink Immutable[ref Song]; pattern, row: Natural = 0)	
+step	libtrackerboy/engine.html#step,Engine,InstrumentTable	engine: step(e: var Engine; itable: InstrumentTable)	
+currentFrame	libtrackerboy/engine.html#currentFrame,Engine	engine: currentFrame(e: Engine): EngineFrame	
+currentSong	libtrackerboy/engine.html#currentSong,Engine	engine: currentSong(e: Engine): Immutable[ref Song]	
+takeOperation	libtrackerboy/engine.html#takeOperation,Engine	engine: takeOperation(e: var Engine): ApuOperation	
+currentState	libtrackerboy/engine.html#currentState,Engine,ChannelId	engine: currentState(e: Engine; chno: ChannelId): ChannelState	
+currentNote	libtrackerboy/engine.html#currentNote,Engine,ChannelId	engine: currentNote(e: Engine; chno: ChannelId): int	
+getTrackTimbre	libtrackerboy/engine.html#getTrackTimbre,Engine,ChannelId	engine: getTrackTimbre(e: Engine; chno: ChannelId): uint8	
+getTrackEnvelope	libtrackerboy/engine.html#getTrackEnvelope,Engine,ChannelId	engine: getTrackEnvelope(e: Engine; chno: ChannelId): uint8	
+getTrackPanning	libtrackerboy/engine.html#getTrackPanning,Engine,ChannelId	engine: getTrackPanning(e: Engine; chno: ChannelId): uint8	
+setup	libtrackerboy/engine.html#setup,ApuIo	engine: setup(apu: var ApuIo)	
+apply	libtrackerboy/engine.html#apply,ApuIo,ApuOperation,WaveformTable	engine: apply(apu: var ApuIo; op: ApuOperation; wt: WaveformTable)	
+stepAndApply	libtrackerboy/engine.html#stepAndApply,Engine,InstrumentTable,WaveformTable,ApuIo	engine: stepAndApply(e: var Engine; itable: InstrumentTable; wtable: WaveformTable;\n             apu: var ApuIo)	

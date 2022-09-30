@@ -1,0 +1,6 @@
+ApuWrite	libtrackerboy/private/apucontrol.html#ApuWrite	apucontrol: ApuWrite	
+ApuWriteList	libtrackerboy/private/apucontrol.html#ApuWriteList	apucontrol: ApuWriteList	
+add	libtrackerboy/private/apucontrol.html#add,ApuWriteList,uint8,uint8	apucontrol: add(l: var ApuWriteList; regaddr, value: uint8)	
+items	libtrackerboy/private/apucontrol.html#items.i,ApuWriteList	apucontrol: items(l: ApuWriteList): ApuWrite	
+clearChannel	libtrackerboy/private/apucontrol.html#clearChannel,ChannelId,ApuWriteList	apucontrol: clearChannel(chno: ChannelId; writes: var ApuWriteList)	
+getWrites	libtrackerboy/private/apucontrol.html#getWrites,ApuOperation,WaveformTable,uint8	apucontrol: getWrites(op: ApuOperation; wt: WaveformTable; nr51: uint8): ApuWriteList	

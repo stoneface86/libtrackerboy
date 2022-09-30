@@ -1,0 +1,8 @@
+Version	libtrackerboy/version.html#Version	version: Version	
+v	libtrackerboy/version.html#v.t,int,int,int	version: v(m = 0; n = 0; p = 0): Version	
+currentVersion	libtrackerboy/version.html#currentVersion	version: currentVersion	
+currentFileMajor	libtrackerboy/version.html#currentFileMajor	version: currentFileMajor	
+currentFileMinor	libtrackerboy/version.html#currentFileMinor	version: currentFileMinor	
+`$`	libtrackerboy/version.html#$,Version	version: `$`(v: Version): string	
+`&lt;`	libtrackerboy/version.html#<,Version,Version	version: `&lt;`(lhs: Version; rhs: Version): bool	
+`&lt;=`	libtrackerboy/version.html#<=,Version,Version	version: `&lt;=`(lhs: Version; rhs: Version): bool	

@@ -1,0 +1,11 @@
+Synth	libtrackerboy/private/synth.html#Synth	synth: Synth	
+sampletime	libtrackerboy/private/synth.html#sampletime,Synth,uint32	synth: sampletime(s: Synth; cycletime: uint32): float32	
+mix	libtrackerboy/private/synth.html#mix,Synth,staticMixMode,int8,uint32	synth: mix(s: var Synth; mode: static MixMode; delta: int8; cycletime: uint32)	
+mix	libtrackerboy/private/synth.html#mix,Synth,MixMode,int8,uint32	synth: mix(s: var Synth; mode: MixMode; delta: int8; cycletime: uint32)	
+mixDc	libtrackerboy/private/synth.html#mixDc,Synth,PcmF32,PcmF32,uint32	synth: mixDc(s: var Synth; dcLeft, dcRight: PcmF32; cycletime: uint32)	
+clear	libtrackerboy/private/synth.html#clear,Synth	synth: clear(s: var Synth)	
+samplerate	libtrackerboy/private/synth.html#samplerate,Synth	synth: samplerate(s: Synth): int	
+samplerate=	libtrackerboy/private/synth.html#samplerate=,Synth,int	synth: samplerate=(s: var Synth; samplerate: int)	
+setBufferSize	libtrackerboy/private/synth.html#setBufferSize,Synth,Natural	synth: setBufferSize(s: var Synth; samples: Natural)	
+init	libtrackerboy/private/synth.html#init,typedesc[Synth],int,Natural	synth: init(T: typedesc[Synth]; samplerate = 44100; buffersize: Natural = 0): T.typeOf	
+takeSamples	libtrackerboy/private/synth.html#takeSamples,Synth,uint32,ptr.seq[Pcm]	synth: takeSamples(s: var Synth; endtime: uint32; buf: ptr seq[Pcm])	

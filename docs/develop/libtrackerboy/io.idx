@@ -1,0 +1,25 @@
+frNone	libtrackerboy/io.html#frNone	FormatResult.frNone	
+frInvalidSignature	libtrackerboy/io.html#frInvalidSignature	FormatResult.frInvalidSignature	
+frInvalidRevision	libtrackerboy/io.html#frInvalidRevision	FormatResult.frInvalidRevision	
+frCannotUpgrade	libtrackerboy/io.html#frCannotUpgrade	FormatResult.frCannotUpgrade	
+frInvalidSize	libtrackerboy/io.html#frInvalidSize	FormatResult.frInvalidSize	
+frInvalidCount	libtrackerboy/io.html#frInvalidCount	FormatResult.frInvalidCount	
+frInvalidBlock	libtrackerboy/io.html#frInvalidBlock	FormatResult.frInvalidBlock	
+frInvalidChannel	libtrackerboy/io.html#frInvalidChannel	FormatResult.frInvalidChannel	
+frInvalidSpeed	libtrackerboy/io.html#frInvalidSpeed	FormatResult.frInvalidSpeed	
+frInvalidRowCount	libtrackerboy/io.html#frInvalidRowCount	FormatResult.frInvalidRowCount	
+frInvalidRowNumber	libtrackerboy/io.html#frInvalidRowNumber	FormatResult.frInvalidRowNumber	
+frInvalidId	libtrackerboy/io.html#frInvalidId	FormatResult.frInvalidId	
+frInvalidDuplicateId	libtrackerboy/io.html#frInvalidDuplicateId	FormatResult.frInvalidDuplicateId	
+frInvalidTerminator	libtrackerboy/io.html#frInvalidTerminator	FormatResult.frInvalidTerminator	
+frReadError	libtrackerboy/io.html#frReadError	FormatResult.frReadError	
+frWriteError	libtrackerboy/io.html#frWriteError	FormatResult.frWriteError	
+FormatResult	libtrackerboy/io.html#FormatResult	io: FormatResult	
+deserialize	libtrackerboy/io.html#deserialize,Module,Stream	io: deserialize(m: var Module; stream: Stream): FormatResult	
+deserialize	libtrackerboy/io.html#deserialize,Instrument,Stream	io: deserialize(i: var Instrument; stream: Stream): FormatResult	
+deserialize	libtrackerboy/io.html#deserialize,Song,Stream	io: deserialize(s: var Song; stream: Stream): FormatResult	
+deserialize	libtrackerboy/io.html#deserialize,Waveform,Stream	io: deserialize(w: var Waveform; stream: Stream): FormatResult	
+serialize	libtrackerboy/io.html#serialize,Module,Stream	io: serialize(m: Module; stream: Stream): FormatResult	
+serialize	libtrackerboy/io.html#serialize,Instrument,Stream	io: serialize(i: Instrument; stream: Stream): FormatResult	
+serialize	libtrackerboy/io.html#serialize,Song,Stream	io: serialize(s: Song; stream: Stream): FormatResult	
+serialize	libtrackerboy/io.html#serialize,Waveform,Stream	io: serialize(w: Waveform; stream: Stream): FormatResult	
