@@ -34,25 +34,52 @@ this script instead of nimble for tasks.
 
 ## Testing
 
-The unit tester can be built using the `tester` task via `./nut`
+The unit tester can be run using the `test` task via `./nut`
 ```sh
-# build the unit tester
-./nut tester
-# build and run the unit tester with optional filter
-./nut test [filter]
-# alternatively:
-./nut tester && ./bin/tester [filter]
+# build and run the unit tester with optional test name matchers
+./nut test [matchers...]
 ```
 
-When launching the tester you can supply a filter argument with a wildcard
-character(s), `*`, to only run tests whose name matches a certain pattern. If
-omitted all tests will run.
+When launching the tester you can supply any number of matcher arguments that
+when specified will only run the tests that match the names given. Use wildcard
+character(s), `*`, as a glob to match 0 or more characters in the name. If
+no matchers are given, all tests will run.
+
+The names of each test in the tester use the following syntax:
+```
+modulename[.classname].testname
+ 
+ - modulename: The name of the module in the library being tested
+ - classname: An optional category, typically the name of the type being tested
+ - testname: The name of the test, or a description of what's being tested
+```
+
+### Examples
+
+```sh
+# Runs everything
+./nut test
+# Runs all tests for the common and io modules
+./nut test common.\* io.\*
+# Runs all tests for the Immutable type defined in the common module
+./nut test common.Immutable.\*
+```
+
+### unittest2
+
+[unittest2][unittest2-link] is used as the unit testing framework, as it
+provides parallel test execution unlike std/unittest. For performance reasons,
+test suites are not used, as they impose a barrier before and after each suite
+during execution. If you require `setup` and `teardown` functionality that
+suites provide, use `testgroup` instead, which is provided by the
+[testing module](tests/units/testing.nim).
 
 ### Miscellaneous test programs
 
-There are some extra programs for testing that are not automated. These programs
-generate audio files to be verified by ear. To run, use the apugen and wavegen
-`./nut` tasks.
+There are some extra programs for testing that are not automated. The source
+for these programs are located in [tests/standalones](tests/standalones).
+These programs generate audio files to be verified by ear. To run, use the
+apugen and wavegen `./nut` tasks.
 
 ```sh
 # apugen, generates sample audio by testing the APU emulator
@@ -89,3 +116,5 @@ points to the last commit that contains the C++ version.
 ## License
 
 This project is licensed under the MIT License - See [LICENSE](LICENSE) for more details
+
+[unittest2-link]: https://github.com/status-im/nim-unittest2
