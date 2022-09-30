@@ -53,6 +53,7 @@ dtest "resizing":
     order[0] = testrow1
     order[1] = testrow2
     order.setLen(2)
-    doAssert order.len == 2
-    doAssert order[0] == testrow1
-    doAssert order[1] == testrow2
+    check:
+        order.len == 2
+        order[0] == testrow1
+        order[1] == testrow2

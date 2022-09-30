@@ -62,6 +62,9 @@ template onEachPackage(body: untyped): untyped =
     withTests:
         body
 
+proc installDeps() =
+    exec "nimble install -y --depsOnly"
+
 task check, "Runs nimble check on each package":
     proc check() =
         exec "nimble check"
@@ -69,8 +72,7 @@ task check, "Runs nimble check on each package":
         check()    
 
 task init, "Installs dependencies needed for the project":
-    proc installDeps() =
-        exec "nimble install -y --depsOnly"
+    
     onEachPackage:
         installDeps()
 
@@ -87,15 +89,11 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
         "-d:noIntrinsicsEndians -d:tbEndianInverse"
     ]
     for defs in matrix:
-        execNim "r", &"--hints:off --path:src {defs} tests/private/tendian.nim"
+        execNim "r", &"--hints:off --path:src {defs} tests/units/private/tendian.nim"
 
-task tester, "Builds the unit tester":
+task test, "Runs unit tests":
     withTests:
-        execNimble "build", ""
-
-task test, "Runs the unit tester":
-    testerTask()
-    exec &"bin/tester {getTaskArgs()}"
+        execNimble "run", "tests " & getTaskArgs()
 
 task dumpArgs, "Echos the parsed compflags and taskargs":
     echo "Compiler flags: ", argTuple.compflags

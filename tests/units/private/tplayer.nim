@@ -2,7 +2,8 @@
 import libtrackerboy/private/player as playerModule
 import ../testing
 
-testclass "player"
+testunit "private/player"
+testclass "Player"
 
 type
     PlayerState = (bool, int, int)

@@ -3,7 +3,8 @@ import libtrackerboy/private/ioblocks
 import ../testing
 import std/streams
 
-testclass "ioblocks"
+testunit "private/ioblocks"
+testclass ""
 
 const testBlockId = "TEST".toBlockId
 const testBlockData = ['e', 'x', 'a', 'm', 'p', 'l', 'e']

@@ -3,6 +3,7 @@ import libtrackerboy/private/[hardware, synth]
 import libtrackerboy/common
 import ../testing
 
+testunit "private/synth"
 testclass "Synth"
 
 iterator iterateChannel(buf: openArray[Pcm], channel: int): Pcm =

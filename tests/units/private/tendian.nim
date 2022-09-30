@@ -6,7 +6,8 @@
 import libtrackerboy/private/endian
 import ../testing
 
-testclass "endian"
+testunit "private/endian"
+testclass ""
 
 const testData = (
     [0x1234'u16,             0x3412'u16],

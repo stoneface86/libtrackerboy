@@ -1,7 +1,8 @@
 
 import libtrackerboy/version
-import ../testing
+import testing
 
+testunit "version"
 testclass "Version"
 
 dtest "version to string":
