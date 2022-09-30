@@ -1,6 +1,9 @@
 ## Welcome
 
-libtrackerboy is a support library for the [Trackerboy](https://github.com/stoneface86/trackerboy). 
+libtrackerboy is a support library for the [Trackerboy][trackerboy-repo-link].
+This library is also known as the back end of Trackerboy, used by the graphical front end, [Trackerboy][trackerboy-repo-link], and
+the command line front end, [tbc][tbc-repo-link].
+
 The library handles:
  * Reading/Writing trackerboy module files
  * Manipulating/reading module data
@@ -10,39 +13,16 @@ The library handles:
 
 ## Documentation
 
-Coming soon.
+ * [develop branch](docs/develop/)
 
-## Build
+## Use
 
 You will need:
- - git
- - cmake (3.9 or newer)
- - C++ compiler with the C++17 standard
- - (optional) Catch2 for testing
+ - [Nim](https://nim-lang.org/install.html)
 
 ```sh
-git clone https://github.com/stoneface86/libtrackerboy
-cd libtrackerboy
-cmake -S . -B build -DBUILD_TESTING=OFF
-cmake --build build  --target all
-# (optional) install
-cmake --build build --target install
+nimble install https://github.com/stoneface86/libtrackerboy
 ```
 
-## Use (installed in system)
-
-In your CMakeLists.txt
-```cmake
-find_package(trackerboy CONFIG REQUIRED)
-# ...
-target_link_libraries(app PRIVATE trackerboy::trackerboy)
-```
-
-## Use (as a subdirectory)
-
-In your CMakeLists.txt
-```cmake
-add_subdirectory(path_to_libtrackerboy)
-# ...
-target_link_libraries(app PRIVATE trackerboy)
-```
+[trackerboy-repo-link]: https://github.com/stoneface86/trackerboy
+[tbc-repo-link]: https://github.com/stoneface86/tbc
