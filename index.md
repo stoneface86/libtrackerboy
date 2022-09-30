@@ -13,7 +13,7 @@ The library handles:
 
 ## Documentation
 
- * [develop branch](docs/develop/)
+ * [develop branch](docs/develop/libtrackerboy.html)
 
 ## Use
 
