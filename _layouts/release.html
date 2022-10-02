@@ -1,0 +1,44 @@
+---
+layout: default
+---
+
+<style type="text/css" media="screen">
+  .header-table {
+    table-layout: auto;
+    width: 100%;
+  }
+  .header-table .stretch {
+    width: 100%;
+  }
+  .header-table td {
+    vertical-align: bottom;
+  }
+
+  .header-table .col-docs, .header-table .col-source, .header-table .col-released {
+    text-align: center;
+  }
+</style>
+
+<table class="header-table">
+  <colgroup>
+    <col span="1">
+    <col span="1">
+    <col span="1">
+    <col span="1">
+  </colgroup>
+  <thead>
+  </thead>
+  <tbody>
+    <tr>
+      <td><h1 style="margin: 0px;">{{ page.title }}</h1></td>
+      <td class="stretch col-released">Released on: {{ page.date | date: "%Y-%m-%d" }}</td>
+      {% include version-links.html version=page.title %}
+    </tr>
+  </tbody>
+</table>
+
+
+<div class="changes">
+  <h2>Changes</h2>
+  {{-content-}}
+</div>

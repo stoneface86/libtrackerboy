@@ -1,0 +1,39 @@
+{% if include.limit %}
+  {% assign limit = include.limit %}
+{% else %}
+  {% assign limit = -1 %}
+{% endif %}
+
+<table>
+  <colgroup>
+    <col span="1" style="width: 80%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 10%;">
+  </colgroup>
+  <thead>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>develop</code> branch</td>
+      {% include version-links.html style='table' version='develop' %}
+    </tr>
+
+    {% comment %}
+      the following loop looks odd, cause 
+        for release in site.releases reversed limit:limit
+      did not work. So we use our own counter variable instead of limit.
+    {% endcomment %}
+
+    {% assign counter = 0 %}
+    {% for release in site.releases reversed %}
+      {% if counter == limit %}
+        {% break %}
+      {% endif %}
+      <tr>
+        <td><a href="{{release.url}}">{{release.version}}</a></td>
+        {% include version-links.html style='table' version=release.version %}
+      </tr>
+      {% assign counter = counter | plus: 1 %}
+    {% endfor %}
+  </tbody>
+</table>
