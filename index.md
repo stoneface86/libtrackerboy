@@ -34,7 +34,7 @@ See below for documentation.
 
 {% include version-table.html limit=3 %}
 
-[Full release history](/releases/)
+[Full release history]({% link releases.md %})
 
 [trackerboy-repo-link]: https://github.com/stoneface86/trackerboy
 [tbc-repo-link]: https://github.com/stoneface86/tbc
