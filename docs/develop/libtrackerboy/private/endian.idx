@@ -1,5 +1,0 @@
-willCorrect	libtrackerboy/private/endian.html#willCorrect	endian: willCorrect	
-SomeWord	libtrackerboy/private/endian.html#SomeWord	endian: SomeWord	
-LittleEndian	libtrackerboy/private/endian.html#LittleEndian	endian: LittleEndian	
-toLE	libtrackerboy/private/endian.html#toLE,T	endian: toLE[T: SomeWord](val: T): LittleEndian[T]	
-toNE	libtrackerboy/private/endian.html#toNE,LittleEndian[T: SomeWord]	endian: toNE[T: SomeWord](val: LittleEndian[T]): T	

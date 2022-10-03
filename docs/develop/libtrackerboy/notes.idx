@@ -1,6 +1,0 @@
-ToneNote	libtrackerboy/notes.html#ToneNote	notes: ToneNote	
-NoiseNote	libtrackerboy/notes.html#NoiseNote	notes: NoiseNote	
-noteCut	libtrackerboy/notes.html#noteCut	notes: noteCut	
-lookupToneNote	libtrackerboy/notes.html#lookupToneNote,Natural	notes: lookupToneNote(note: Natural): uint16	
-lookupNoiseNote	libtrackerboy/notes.html#lookupNoiseNote,Natural	notes: lookupNoiseNote(note: Natural): uint8	
-note	libtrackerboy/notes.html#note,string	notes: note(str: string): uint8	

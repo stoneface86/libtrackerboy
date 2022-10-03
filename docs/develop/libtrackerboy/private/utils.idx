@@ -1,7 +1,0 @@
-Shallow	libtrackerboy/private/utils.html#Shallow	utils: Shallow	
-EqRef	libtrackerboy/private/utils.html#EqRef	utils: EqRef	
-toShallow	libtrackerboy/private/utils.html#toShallow.t,T	utils: toShallow[T](s: T): Shallow[T]	
-deepEquals	libtrackerboy/private/utils.html#deepEquals,ref.T,ref.T	utils: deepEquals[T](a, b: ref T): bool	
-toEqRef	libtrackerboy/private/utils.html#toEqRef.t,ref.T	utils: toEqRef[T](val: ref T): EqRef[T]	
-`==`	libtrackerboy/private/utils.html#==.t,EqRef[T],EqRef[T]	utils: `==`[T](lhs, rhs: EqRef[T]): bool	
-defaultInit	libtrackerboy/private/utils.html#defaultInit.t	utils: defaultInit(): untyped	
