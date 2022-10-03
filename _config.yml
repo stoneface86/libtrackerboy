@@ -2,6 +2,7 @@
 title: libtrackerboy
 color-scheme: auto
 logo: /assets/img/logo.png
+baseurl: /libtrackerboy
 favicon: false
 description: >-
   Support library for Trackerboy, also known as the back end of Trackerboy.

@@ -1,5 +1,6 @@
 ---
 layout: default
+permalink: /
 ---
 
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/stoneface86/libtrackerboy?include_prereleases)
@@ -34,7 +35,7 @@ See below for documentation.
 
 {% include version-table.html limit=3 %}
 
-[Full release history]({% link releases.md %})
+[Full release history]({{ '/releases/' | relative_url }})
 
 [trackerboy-repo-link]: https://github.com/stoneface86/trackerboy
 [tbc-repo-link]: https://github.com/stoneface86/tbc
