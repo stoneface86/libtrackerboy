@@ -30,8 +30,8 @@
         {% break %}
       {% endif %}
       <tr>
-        <td><a href="{{release.url}}">{{release.version}}</a></td>
-        {% include version-links.html style='table' version=release.version %}
+        <td><a href="{{release.url | relative_url}}">{{release.title}}</a></td>
+        {% include version-links.html style='table' version=release.title %}
       </tr>
       {% assign counter = counter | plus: 1 %}
     {% endfor %}

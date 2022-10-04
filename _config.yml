@@ -27,3 +27,4 @@ github: [metadata]
 
 exclude:
   - README.md
+  - ci.py

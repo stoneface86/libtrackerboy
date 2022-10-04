@@ -10,7 +10,7 @@ release information and to host the documentation.
  1. `gem install bundler`
  1. `bundle install`
  1. `bundle exec jekyll serve`
- 1. Test the site via [http://localhost:4000](http://localhost:4000)
+ 1. Test the site via [http://localhost:4000/libtrackerboy/](http://localhost:4000/libtrackerboy/)
 
 ## Site structure
 
@@ -29,9 +29,10 @@ CI should do this automatically, but here is the process for adding a release:
 
  - Add a `<version>.md` page to the `_releases` directory
    - `version` is the tag name of the release (ie `v1.0.0`)
-   -  the front matter must have a `date` and `version` field, use the release
-      layout for the page.
-   - The page's content should be the changes for that version from CHANGELOG.md
+   -  the front matter must have a `date` and `title` field, use the release
+      layout for the page. Set `title` to `version`, and `date` to the date of
+      the release as specified in CHANGELOG.md
+   - The page's content should be the changes for that version in CHANGELOG.md
  - Add the generated documentation for this release to `docs/<version>/`
  - Add an `index.html` page with no content to `docs/<version>` with
    `layout: docs_redirect` in the front matter.
