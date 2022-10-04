@@ -19,7 +19,7 @@ For the module file format see `here<module-file-format-spec.html>`_.
 
 The libtrackerboy library provides a reference implementation for serializing
 and deserialing module pieces with this format. See the
-`io module<trackerboy/io.html>`_ for more documentation.
+`io module<libtrackerboy/io.html>`_ for more documentation.
 
 Structure
 =========

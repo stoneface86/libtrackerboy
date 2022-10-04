@@ -11,13 +11,13 @@ This document is a formal specification of the file format for Trackerboy
 module files, or \*.tbm files. This document is for the current revision, or
 revision 1.1. See the revision history for previous revisions.
 
-A Module file is a serialized form of the `Module<trackerboy/data.html#Module>`_ object.
+A Module file is a serialized form of the `Module<libtrackerboy/data.html#Module>`_ object.
 
 For the piece file format see `here<piece-file-format-spec.html>`_.
 
 The libtrackerboy library provides a reference implementation for serializing
 and deserialing module files with this format. See the
-`io module<trackerboy/io.html>`_ for more documentation.
+`io module<libtrackerboy/io.html>`_ for more documentation.
 
 .. note:: All multi-byte fields in this specification are stored in
           little-endian byte order.

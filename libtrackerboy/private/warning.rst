@@ -3,4 +3,4 @@
 
 This module is intended to only be used internally by trackerboy modules.
 
-`take me back home ↩<../../trackerboy.html>`_
+`take me back home ↩<../../libtrackerboy.html>`_

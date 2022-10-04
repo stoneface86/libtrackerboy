@@ -9,7 +9,7 @@
 
 # why nut? cause having to use this instead of nimble is nutty
 
-import std/[os, strformat]
+import std/[os, strformat, strutils]
 
 #mode = ScriptMode.WhatIf
 
@@ -108,7 +108,15 @@ task wavegen, "Generate demo synth waveforms":
         execNimble "c", "--outdir:../bin --run standalones/wavegen.nim"
 
 task docgen, "Generate documentation":
-    --hints:off
+    let gitargs = block:
+        let commit = block:
+            if argTuple.taskargs.len == 1:
+                argTuple.taskargs[0]
+            else:
+                "develop"
+        &"--git.url:https://github.com/stoneface86/libtrackerboy --git.commit:{commit} --git.devel:develop"
+
+
     const rstFiles = [
         "docs/module-file-format-spec.rst",
         "docs/piece-file-format-spec.rst"
@@ -117,15 +125,21 @@ task docgen, "Generate documentation":
     # Generate all rst documents
     for filename in rstFiles:
         echo &"Generating page for '{filename}'"
-        exec &"nim rst2html --hints:off --index:on --outdir:htmldocs \"{filename}\""
+        exec &"nim rst2html --hints:off --index:on --outdir:htmldocs {gitargs} \"{filename}\""
 
     # generate project documentation via libtrackerboy.nim
     echo "Generating documentation for whole project..."
-    exec "nim doc --hints:off --project --index:on --outdir:htmldocs --git.url:https://github.com/stoneface86/libtrackerboy --git.commit:develop --git.devel:develop libtrackerboy.nim"
+    exec &"nim doc --hints:off --project --index:on --outdir:htmldocs {gitargs} libtrackerboy.nim"
 
     # generate the index
     echo "Building index..."
-    exec "nim buildIndex --hints:off -o:htmldocs/theindex.html htmldocs"
+    exec &"nim buildIndex --hints:off -o:htmldocs/theindex.html {gitargs} htmldocs"
+
+    # remove .idx files
+    for filename in walkDirRec("htmldocs"):
+        if filename.endsWith(".idx"):
+            rmFile(filename)
+
 
 task clean, "Clears the bin and htmldocs folders":
     rmDir "bin"

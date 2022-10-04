@@ -5,6 +5,12 @@ on:
     branches:
       - develop
     tags-ignore: '**'
+    paths:
+      - 'libtrackerboy/**'
+      - 'tests/**'
+      - 'libtrackerboy.nim'
+      - 'libtrackerboy.nimble'
+      
 
 jobs:
   build:

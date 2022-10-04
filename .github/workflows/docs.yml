@@ -4,6 +4,10 @@ on:
     branches:
       - develop
     tags-ignore: '**'
+    paths:
+      - 'libtrackerboy/**'
+      - 'libtrackerboy.nim'
+      - 'docs/**'
 
 jobs:
   build:
@@ -17,6 +21,10 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: 'stable'
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
 
       - name: Generate documentation
         run: ./nut docgen
@@ -30,10 +38,8 @@ jobs:
       
       - name: Upload documentation
         run: |
-          rm -rf gh-pages/docs/develop
-          mkdir -p gh-pages/docs
-          cp -r htmldocs gh-pages/docs/develop
           cd gh-pages
+          ./ci.py develop ../htmldocs
           git add .
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
