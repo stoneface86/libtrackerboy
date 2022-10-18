@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Home
 permalink: /
 ---
 
@@ -8,7 +9,7 @@ permalink: /
 ![GitHub](https://img.shields.io/github/license/stoneface86/libtrackerboy)
 [![Discord](https://img.shields.io/discord/770034905231917066?svg=true)](https://discord.gg/m6wcAK3)
 
-# Welcome
+# About
 
 libtrackerboy is a support library for [Trackerboy][trackerboy-repo-link].
 This library is also known as the back end of Trackerboy and is used by the

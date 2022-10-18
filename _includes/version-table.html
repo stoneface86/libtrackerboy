@@ -1,39 +1,39 @@
-{% if include.limit %}
-  {% assign limit = include.limit %}
-{% else %}
-  {% assign limit = -1 %}
-{% endif %}
-
-<table>
+{%- if include.limit %}
+  {%- assign limit = include.limit %}
+{%- else %}
+  {%- assign limit = -1 %}
+{%- endif %}
+<table class="release-table">
   <colgroup>
-    <col span="1" style="width: 80%;">
-    <col span="1" style="width: 10%;">
-    <col span="1" style="width: 10%;">
+    <col class="release-table-col-stretched" span="1">
+    <col class="release-table-col-fit" span="2">
   </colgroup>
   <thead>
   </thead>
   <tbody>
     <tr>
       <td><code>develop</code> branch</td>
-      {% include version-links.html style='table' version='develop' %}
+      <td><a href="{% include docs-link.html version='develop' %}">docs</a></td>
+      <td><a href="{% include source-link.html version='develop' %}">source</a></td>
     </tr>
 
-    {% comment %}
+    {%- comment -%}
       the following loop looks odd, cause 
         for release in site.releases reversed limit:limit
       did not work. So we use our own counter variable instead of limit.
-    {% endcomment %}
+    {%- endcomment -%}
 
-    {% assign counter = 0 %}
-    {% for release in site.releases reversed %}
-      {% if counter == limit %}
-        {% break %}
-      {% endif %}
+    {%- assign counter = 0 %}
+    {%- for release in site.releases reversed %}
+      {%- if counter == limit %}
+        {%- break %}
+      {%- endif %}
       <tr>
-        <td><a href="{{release.url | relative_url}}">{{release.title}}</a></td>
-        {% include version-links.html style='table' version=release.title %}
+        <td><a href="{{ release.url | relative_url }}">{{release.title}}</a></td>
+        <td><a href="{% include docs-link.html version=release.title %}">docs</a></td>
+        <td><a href="{% include source-link.html version=release.title %}">source</a></td>
       </tr>
-      {% assign counter = counter | plus: 1 %}
-    {% endfor %}
+      {%- assign counter = counter | plus: 1 %}
+    {%- endfor %}
   </tbody>
 </table>

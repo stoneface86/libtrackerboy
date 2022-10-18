@@ -1,0 +1,188 @@
+---
+---
+
+@use 'normalize'
+@use 'base-styles'
+@use 'breakpoints'
+@use 'colors'
+@use 'components/buttons'
+@use 'components/group-boxes'
+
+// padding amount for all sections (#header, #content)
+$section-padding: 8px
+
+// sizing of #header when it becomes a sidebar
+$sidebar-width: 224px
+// spacing between #header and #content
+$sidebar-padding: 20px
+// max-width for #content
+$content-max-width: 600px
+
+$container-max-width: $content-max-width + $sidebar-padding + $sidebar-width
+
+$shadow-offset: 3px
+$shadow-blur: 5px
+
+@mixin shadow($offset-x, $offset-y, $blur, $color) 
+  -webkit-box-shadow: $offset-x $offset-y $blur $color
+  -moz-box-shadow: $offset-x $offset-y $blur $color
+  box-shadow: $offset-x $offset-y $blur $color
+
+// Page layout ----------------------------------------------------------------
+
+// body
+// - div#page
+//   - div#container
+//     - section#header
+//     - main#content
+
+#page 
+  min-height: 100vh
+
+#container 
+  position: relative
+  
+  display: flex
+  flex-direction: column
+  width: 100%
+  max-width: $container-max-width
+  min-height: 100vh
+  margin: 0 auto
+
+#content 
+  box-sizing: border-box
+  padding: $section-padding
+  width: 100%
+
+// Header ---------------------------------------------------------------------
+
+// by default, the header is a simple header at the top of the page, which
+// becomes a sidebar located to the left of #content if there is enough
+// width.
+
+#header 
+  @include shadow(0, $shadow-offset, $shadow-blur, colors.$shadow)
+  
+  display: flex
+  flex-direction: row
+  overflow-x: auto
+  overflow-y: hidden
+  padding: $section-padding
+
+  color: colors.$pal1
+  background-color: colors.$pal3
+
+  a
+    color: colors.$pal0
+    &:hover
+      color: white
+
+#header-info
+  display: flex
+  flex-direction: column
+
+#header-title, #header-description
+  text-align: center
+
+#header-logo
+  display: none
+  align-self: center
+  flex: 0 0 auto
+
+#header-ul
+  align-self: center
+  padding: 0
+  
+  font-size: 0
+  list-style: none
+  white-space: nowrap
+  
+  li
+    float: left
+    margin-left: 1rem
+  
+  svg
+    display: inline-block
+    width: 1.5rem
+    height: 1.5rem
+    margin-right: 6px
+    
+    vertical-align: middle
+  
+  span
+    display: inline-block
+    
+    font-size: 1.5rem
+    vertical-align: middle
+
+// Release heading -----------------------------------------------------------
+
+#release-heading
+  display: flex
+  align-items: center
+  margin-bottom: 2rem
+  
+  font-size: 3rem
+
+#release-title
+  color: colors.$pal1
+
+#release-date
+  flex: 1 0 auto
+  margin-left: 1rem
+  
+  color: colors.$pal2
+  text-align: right
+
+// release-table -------------------------------------------------------------
+
+.release-table
+  width: 100%
+
+.release-table-col-stretched
+  width: 100%
+
+.release-table-col-fit
+  white-space: nowrap
+
+// Media Queries --------------------------------------------------------------
+
+// only display the logo for phablets and up
+@media screen and (#{breakpoints.$larger-than-phablet})
+  #header-logo
+    display: block
+  
+// Sidebar mode
+@media screen and (min-width: $container-max-width)
+  #page
+    // this fills the left margin of #container with #header's background-color
+    background-image: linear-gradient(to right, colors.$pal3 0%, colors.$pal3 50%, white 50%)
+
+  #container
+    flex-direction: row
+  
+  #content
+    box-sizing: content-box
+    padding-left: $sidebar-width + $sidebar-padding
+    
+    background-color: white
+  
+  #header
+    @include shadow($shadow-offset, 0, $shadow-blur, colors.$shadow)
+    
+    position: fixed
+    
+    box-sizing: border-box
+    flex-direction: column
+    justify-content: space-between
+    width: $sidebar-width
+    height: 100%
+    overflow-y: auto
+    overflow-x: hidden
+
+  #header-ul
+    align-self: flex-start
+    
+    li 
+      float: none
+      margin-left: 0

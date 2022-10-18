@@ -1,0 +1,40 @@
+@use '../colors'
+  
+$button-border: 1px
+$button-xpadding: 12px
+$button-ypadding: 4px
+
+$button-font-size: 16px
+$button-small-font-size: 11px
+
+$button-height: 32px !default
+
+.button, button
+  display: inline-block
+  border: $button-border solid colors.$pal2
+  border-radius: 4px
+  margin-bottom: 1rem
+  padding: $button-ypadding $button-xpadding
+  height: $button-height
+  
+  background-color: transparent
+  color: colors.$pal2
+  cursor: pointer
+  line-height: $button-height
+  text-align: center
+  text-decoration: none
+  white-space: nowrap
+
+  &:hover
+    border-color: colors.$pal1
+    color: colors.$pal1
+
+.button-filled
+  background-color: colors.$pal2
+  border-color: colors.$pal2
+  color: white
+  
+  &:hover
+    border-color: colors.$pal1
+    background-color: colors.$pal1
+    color: white

@@ -1,0 +1,105 @@
+
+@use 'colors'
+
+$font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif !default
+
+// 1 rem = 10px
+html
+  font-size: 62.5%
+
+body
+  margin: 0
+
+  color: colors.$pal3
+  font-family: $font-family
+  font-size: 1.5em
+  font-weight: 400
+
+hr 
+  margin-top: 3rem
+  margin-bottom: 3.5rem
+  border-width: 0
+  border-top: 1px solid colors.$pal0
+
+// Headers
+
+%-h-base
+  margin-top: 0
+  margin-bottom: 2rem
+  
+  font-weight: 300
+
+@mixin -h($font-size, $line-height, $letter-spacing, $color)
+  @extend %-h-base
+  
+  color: $color
+  font-size: $font-size
+  line-height: $line-height
+  letter-spacing: $letter-spacing
+
+h1
+  @include -h(4.0rem, 1.2, -.1rem, colors.$pal1)
+h2
+  @include -h(3.6rem, 1.25, -.1rem, colors.$pal1)
+h3
+  @include -h(3.0rem, 1.3 , -.1rem, colors.$pal2)
+h4
+  @include -h(2.4rem, 1.35, -.08rem, colors.$pal2) 
+h5
+  @include -h(1.8rem, 1.5 , -.05rem, colors.$pal2)
+h6
+  @include -h(1.5rem, 1.6, 0, colors.$pal2) 
+
+// Links
+
+a 
+  color: colors.$pal2
+  text-decoration: none
+  &:hover 
+    color: colors.$pal1
+
+// Images
+
+img 
+  max-width: 100%
+  max-height: 100%
+
+// Code
+
+code 
+  margin: 0 .2rem
+  border: 1px solid colors.$pal1
+  border-radius: 2px
+  padding: .2rem .5rem
+  
+  background-color: colors.$pal0
+  font-size: 90%
+  white-space: nowrap
+
+
+pre > code 
+  display: block
+  padding: 1rem 1.5rem
+  overflow: scroll
+
+  white-space: pre
+
+
+// Tables
+
+table 
+  width: 100%
+  
+  table-layout: auto
+
+th, td 
+  border-bottom: 1px solid colors.$pal0
+  padding: 4px 8px
+  
+  text-align: left
+
+// no padding needed for the first and last columns
+th:first-child, td:first-child
+  padding-left: 0 
+th:last-child, td:last-child
+  padding-right: 0 
