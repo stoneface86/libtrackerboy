@@ -21,6 +21,7 @@ github: [metadata]
 exclude:
   - .sass-cache/
   - .jekyll-cache/
+  - .github/
   - gemfiles/
   - ci.py
   - Gemfile
