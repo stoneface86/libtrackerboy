@@ -13,7 +13,7 @@ release information and to host the documentation.
 
 ## Deploying
  1. `npm install`
- 1. `npm build`
+ 1. `npm run build`
  1. The production built site is located in the `_site` folder and can be
     deployed to github pages.
 
