@@ -1,0 +1,8 @@
+---
+layout: layouts/default.njk
+title: Releases
+permalink: releases/
+---
+<h1>Releases</h1>
+{% import 'version-table.njk' as vt %}
+{{ vt.versionTable(releases) }}

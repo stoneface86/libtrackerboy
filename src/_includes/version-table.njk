@@ -1,0 +1,32 @@
+
+{% macro versionTable(data, limit = -1)%}
+<table class="release-table">
+  <colgroup>
+    <col class="release-table__col-stretched" span="1">
+    <col class="release-table__col-fit" span="2">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th class="release-table__links-th" colspan="2">Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>develop</code> branch</td>
+      <td><a href="{{ 'develop' | docsLink | url }}">docs</a></td>
+      <td><a href="{{ 'develop' | srcLink }}">source</a></td>
+    </tr>
+    {%- for release in data %}
+      {%- if limit == -1 or loop.index0 < limit %}
+      <tr>
+        {% set page %}/releases/{{ release.version }}{% endset %}
+        <td><a href="{{ page | url }}">{{ release.version }}</a></td>
+        <td><a href="{{ release.version | docsLink | url }}">docs</a></td>
+        <td><a href="{{ release.version | srcLink }}">source</a></td>
+      </tr>
+      {%- endif %}
+    {%- endfor %}
+  </tbody>
+</table>
+{% endmacro %}

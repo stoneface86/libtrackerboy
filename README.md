@@ -1,16 +1,21 @@
 
 # libtrackerboy gh-pages
 
-This branch is used for github pages. Jekyll is used to build the web site.
-The site will just display a basic summary of the project, as well as
+This branch is used for github pages. 11ty and Sass is used to build the web
+site. The site will just display a basic summary of the project, as well as
 release information and to host the documentation.
 
 ## Testing locally
- 1. Install ruby
- 1. `gem install bundler`
- 1. `bundle install`
- 1. `bundle exec jekyll serve`
- 1. Test the site via [http://localhost:4000/libtrackerboy/](http://localhost:4000/libtrackerboy/)
+ 1. Install npm
+ 1. `npm install`
+ 1. `npm start`
+ 1. Test the site via [http://localhost:8080/libtrackerboy/](http://localhost:8080/libtrackerboy/)
+
+## Deploying
+ 1. `npm install`
+ 1. `npm build`
+ 1. The production built site is located in the `_site` folder and can be
+    deployed to github pages.
 
 ## Site structure
 
@@ -26,21 +31,31 @@ release information and to host the documentation.
 ## Adding a release
 
 CI should do this automatically, but here is the process for adding a release:
+```sh
+./ci.py release <pathToDocs> <tag> <pathToChangelog>
+```
+Where:
+   - `pathToDocs` is the path to the generated html documentation for this release
+   - `tag` is the tag name of the release
+   - `pathToChanglog` is the path of libtrackerboy's changelog
 
- - Add a `<version>.md` page to the `_releases` directory
-   - `version` is the tag name of the release (ie `v1.0.0`)
-   -  the front matter must have a `date` and `title` field, use the release
-      layout for the page. Set `title` to `version`, and `date` to the date of
-      the release as specified in CHANGELOG.md
-   - The page's content should be the changes for that version in CHANGELOG.md
- - Add the generated documentation for this release to `docs/<version>/`
- - Add an `index.html` page with no content to `docs/<version>` with
-   `layout: docs_redirect` in the front matter.
+### Removing a release
+
+If a release needs to be removed for whatever reason, use this command and
+commit changes:
+```sh
+./ci.py remove <tag>
+```
 
 ## Updating `develop` documentation
 
 The `develop` branch shows up in the releases table, and contains the generated
-documentation for the latest commit in that branch. To update the documentation,
-follow the same instructions of adding a release but instead replace the
-contents of `docs/develop` with the generated documentation. Same with adding a
-release, CI should handle this automatically.
+documentation for the latest commit in that branch. CI will also do this
+automatically, but for manual updates run the following command:
+
+```sh
+./ci.py develop <pathToDocs>
+```
+
+Where `pathToDocs` is the path of the generated html documentation for the 
+`develop` branch.

@@ -1,12 +1,5 @@
----
----
 
-@use 'normalize'
-@use 'base-styles'
-@use 'breakpoints'
-@use 'colors'
-@use 'components/buttons'
-@use 'components/group-boxes'
+@use 'plums'
 
 // padding amount for all sections (#header, #content)
 $section-padding: 8px
@@ -61,7 +54,7 @@ $shadow-blur: 5px
 // width.
 
 #header 
-  @include shadow(0, $shadow-offset, $shadow-blur, colors.$shadow)
+  @include shadow(0, $shadow-offset, $shadow-blur, plums.$colors-shadow)
   
   display: flex
   flex-direction: row
@@ -69,11 +62,11 @@ $shadow-blur: 5px
   overflow-y: hidden
   padding: $section-padding
 
-  color: colors.$pal1
-  background-color: colors.$pal3
+  color: plums.$colors-pal1
+  background-color: plums.$colors-pal3
 
   a
-    color: colors.$pal0
+    color: plums.$colors-pal0
     &:hover
       color: white
 
@@ -125,30 +118,46 @@ $shadow-blur: 5px
   font-size: 3rem
 
 #release-title
-  color: colors.$pal1
+  color: plums.$colors-pal1
 
 #release-date
   flex: 1 0 auto
   margin-left: 1rem
   
-  color: colors.$pal2
+  color: plums.$colors-pal2
   text-align: right
 
 // release-table -------------------------------------------------------------
 
 .release-table
   width: 100%
+  
+  &__col-stretched
+    width: 100%
 
-.release-table-col-stretched
-  width: 100%
+  &__col-fit
+    white-space: nowrap
+  
+  &__links-th
+    text-align: center
 
-.release-table-col-fit
-  white-space: nowrap
+// 404 page ------------------------------------------------------------------
+
+.section-404
+  display: flex
+  flex-direction: column
+  justify-content: center
+  min-height: 100%
+
+  text-align: center
+
+  &__h1
+    font-size: 4em
 
 // Media Queries --------------------------------------------------------------
 
 // only display the logo for phablets and up
-@media screen and (#{breakpoints.$larger-than-phablet})
+@media screen and (#{plums.$bp-larger-than-phablet})
   #header-logo
     display: block
   
@@ -156,7 +165,7 @@ $shadow-blur: 5px
 @media screen and (min-width: $container-max-width)
   #page
     // this fills the left margin of #container with #header's background-color
-    background-image: linear-gradient(to right, colors.$pal3 0%, colors.$pal3 50%, white 50%)
+    background-image: linear-gradient(to right, plums.$colors-pal3 0%, plums.$colors-pal3 50%, white 50%)
 
   #container
     flex-direction: row
@@ -168,7 +177,7 @@ $shadow-blur: 5px
     background-color: white
   
   #header
-    @include shadow($shadow-offset, 0, $shadow-blur, colors.$shadow)
+    @include shadow($shadow-offset, 0, $shadow-blur, plums.$colors-shadow)
     
     position: fixed
     

@@ -1,0 +1,26 @@
+---
+layout: layouts/default.njk
+---
+<section id="release-heading">
+  <span id="release-title">{{- release.version -}}</span>
+  <span id="release-date">{{ release.date }}</span>
+</section>
+
+<div class="gbox">
+  <div class="gbox__title">
+    Links
+  </div>
+  <div class="gbox__content">
+    <a class="btn btn--filled" href="{{ release.version | docsLink | url }}">Docs</a>
+    <a class="btn btn--filled" href="{{ release.version | srcLink }}">Source</a>
+  </div>
+</div>
+
+<div class="gbox">
+  <div class="gbox__title">
+    Changes
+  </div>
+  <div class="gbox__content">
+    {{- content | safe -}}
+  </div>
+</div>
