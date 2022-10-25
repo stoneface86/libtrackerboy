@@ -16,23 +16,19 @@ $container-max-width: $content-max-width + $sidebar-padding + $sidebar-width
 $shadow-offset: 3px
 $shadow-blur: 5px
 
-@mixin shadow($offset-x, $offset-y, $blur, $color) 
-  -webkit-box-shadow: $offset-x $offset-y $blur $color
-  -moz-box-shadow: $offset-x $offset-y $blur $color
-  box-shadow: $offset-x $offset-y $blur $color
 
 // Page layout ----------------------------------------------------------------
 
 // body
-// - div#page
-//   - div#container
-//     - section#header
-//     - main#content
+// - div.page
+//   - div.container
+//     - section.header
+//     - main.content
 
-#page 
+.page 
   min-height: 100vh
 
-#container 
+.container 
   position: relative
   
   display: flex
@@ -42,7 +38,7 @@ $shadow-blur: 5px
   min-height: 100vh
   margin: 0 auto
 
-#content 
+.content 
   box-sizing: border-box
   padding: $section-padding
   width: 100%
@@ -53,8 +49,8 @@ $shadow-blur: 5px
 // becomes a sidebar located to the left of #content if there is enough
 // width.
 
-#header 
-  @include shadow(0, $shadow-offset, $shadow-blur, plums.$colors-shadow)
+.header 
+  @include plums.utils-shadow(0, $shadow-offset, $shadow-blur, plums.$colors-shadow)
   
   display: flex
   flex-direction: row
@@ -65,36 +61,36 @@ $shadow-blur: 5px
   color: plums.$colors-pal1
   background-color: plums.$colors-pal3
 
-  a
+  &__logo
+    display: none
+    align-self: center
+    flex: 0 0 auto
+
+  &__info
+    display: flex
+    flex-direction: column
+
+  &__title, &__description
+    text-align: center
+
+  &__link
     color: plums.$colors-pal0
     &:hover
       color: white
 
-#header-info
-  display: flex
-  flex-direction: column
-
-#header-title, #header-description
-  text-align: center
-
-#header-logo
-  display: none
-  align-self: center
-  flex: 0 0 auto
-
-#header-ul
-  align-self: center
-  padding: 0
-  
-  font-size: 0
-  list-style: none
-  white-space: nowrap
-  
-  li
+  &__ul
+    align-self: center
+    padding: 0
+    
+    font-size: 0
+    list-style: none
+    white-space: nowrap
+    
+  &__li
     float: left
     margin-left: 1rem
   
-  svg
+  &__svg
     display: inline-block
     width: 1.5rem
     height: 1.5rem
@@ -102,7 +98,7 @@ $shadow-blur: 5px
     
     vertical-align: middle
   
-  span
+  &__span
     display: inline-block
     
     font-size: 1.5rem
@@ -110,22 +106,22 @@ $shadow-blur: 5px
 
 // Release heading -----------------------------------------------------------
 
-#release-heading
+.release-heading
   display: flex
   align-items: center
   margin-bottom: 2rem
   
   font-size: 3rem
 
-#release-title
-  color: plums.$colors-pal1
+  &__title
+    color: plums.$colors-pal1
 
-#release-date
-  flex: 1 0 auto
-  margin-left: 1rem
-  
-  color: plums.$colors-pal2
-  text-align: right
+  &__date
+    flex: 1 0 auto
+    margin-left: 1rem
+    
+    color: plums.$colors-pal2
+    text-align: right
 
 // release-table -------------------------------------------------------------
 
@@ -158,26 +154,26 @@ $shadow-blur: 5px
 
 // only display the logo for phablets and up
 @media screen and (#{plums.$bp-larger-than-phablet})
-  #header-logo
+  .header__logo
     display: block
   
 // Sidebar mode
 @media screen and (min-width: $container-max-width)
-  #page
+  .page
     // this fills the left margin of #container with #header's background-color
     background-image: linear-gradient(to right, plums.$colors-pal3 0%, plums.$colors-pal3 50%, white 50%)
 
-  #container
+  .container
     flex-direction: row
   
-  #content
+  .content
     box-sizing: content-box
     padding-left: $sidebar-width + $sidebar-padding
     
     background-color: white
   
-  #header
-    @include shadow($shadow-offset, 0, $shadow-blur, plums.$colors-shadow)
+  .header
+    @include plums.utils-shadow($shadow-offset, 0, $shadow-blur, plums.$colors-shadow)
     
     position: fixed
     
@@ -189,9 +185,9 @@ $shadow-blur: 5px
     overflow-y: auto
     overflow-x: hidden
 
-  #header-ul
-    align-self: flex-start
-    
-    li 
+    &__ul
+      align-self: flex-start
+      
+    &__li 
       float: none
       margin-left: 0
