@@ -1,0 +1,5 @@
+{
+  "version": "v0.7.0",
+  "date": "2022-11-09",
+  "changes": "Initial version of the Nim rewrite, also the canonical first version of the\nlibrary."
+}
