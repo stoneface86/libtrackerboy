@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.7.0] - ???
+## [0.7.0] - 2022-11-09
 
 Initial version of the Nim rewrite, also the canonical first version of the
 library.

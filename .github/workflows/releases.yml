@@ -4,8 +4,13 @@ on:
     branches:
       - main
     tags:
-      - testtag
       - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The tag name to run this workflow for
+        required: true
+        type: string
 
 jobs:
   draft-release:
@@ -14,8 +19,13 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
-      - name: Get version
+      - name: Get version (from dispatch)
         id: get-version
+        if: inputs.tag != ''
+        run: echo "::set-output name=version::${{ inputs.tag }}"
+      
+      - name: Get version (from pushed tag)
+        if: steps.get-version.conclusion == 'skipped'
         run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
       
       - name: Draft release
