@@ -17,15 +17,24 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
-      - name: Get version (from dispatch)
+      - name: Get version
         id: get-version
-        if: inputs.tag != ''
-        run: echo "::set-output name=version::${{ inputs.tag }}"
+        run: |
+          if [ -z "${{ inputs.tag }}" ]; then
+            echo "version=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          fi
       
-      - name: Get version (from pushed tag)
-        if: steps.get-version.conclusion == 'skipped'
-        run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
-      
+      - name: Check version
+        run: |
+          if [ -z "${{ steps.get-version.outputs.version }}" ]; then
+            echo "Could not get version!"
+            false
+          else
+            echo "${{ steps.get-version.outputs.version }}"
+          fi
+
       - name: Draft release
         uses: softprops/action-gh-release@v1
         with:
