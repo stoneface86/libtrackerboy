@@ -18,10 +18,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        nim-version: ['stable', 'devel']
+        # ignore devel for now, not ready for Nim 2.0.0 just yet
+        nim-version: ['stable'] #, 'devel']
     steps:
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: jiro4989/setup-nim-action@v1
         with:
@@ -38,3 +39,9 @@ jobs:
 
       - name: endian tests
         run: ./nut endianTests
+
+      - name: Build and test C Library
+        run: |
+          cmake -S . -B bin/lib -G Ninja -DLIBTRACKERBOY_ENABLE_EXAMPLE=ON
+          cmake --build bin/lib
+          bin/lib/example
