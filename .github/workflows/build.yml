@@ -23,6 +23,8 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
+      
+      - uses: lukka/get-cmake@latest
 
       - uses: jiro4989/setup-nim-action@v1
         with:
