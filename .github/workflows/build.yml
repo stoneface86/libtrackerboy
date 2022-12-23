@@ -41,9 +41,3 @@ jobs:
 
       - name: endian tests
         run: ./nut endianTests
-
-      - name: Build and test C Library
-        run: |
-          cmake -S . -B bin/lib -G Ninja -DLIBTRACKERBOY_ENABLE_EXAMPLE=ON
-          cmake --build bin/lib
-          bin/lib/example
