@@ -1,6 +1,7 @@
 --noMain
 --app:staticLib
 --path:"../"
+--panics:on
 
 const cmakeBuildType {.strdefine.} = "Debug"
 

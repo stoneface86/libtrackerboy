@@ -4,12 +4,12 @@ import libtrackerboy/version as ltb_version
 
 let versionStr = static: ($currentVersion).cstring
 
-func ltbVersionMajor*(): cint = currentVersion.major.cint
-func ltbVersionMinor*(): cint = currentVersion.minor.cint
-func ltbVersionPatch*(): cint = currentVersion.patch.cint
-proc ltbVersionString*(): cstring = versionStr
+func tbVersionMajor*(): cint = currentVersion.major.cint
+func tbVersionMinor*(): cint = currentVersion.minor.cint
+func tbVersionPatch*(): cint = currentVersion.patch.cint
+proc tbVersionString*(): cstring = versionStr
 
-func ltbVersionFileMajor*(): cint = currentFileMajor
-func ltbVersionFileMinor*(): cint = currentFileMinor
+func tbVersionFileMajor*(): cint = currentFileMajor
+func tbVersionFileMinor*(): cint = currentFileMinor
 
 {.pop.}

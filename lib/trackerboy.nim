@@ -1,9 +1,10 @@
 # exported C interface for libtrackerboy
 
 import modules/[
+    notes,
     version
 ]
-export version
+export notes, version
 
 proc NimMain() {.importc, cdecl.}
 

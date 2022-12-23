@@ -48,6 +48,7 @@ set(LIB_PROJECT "lib/trackerboy.nim")
 set(LIB_SRC
     "${LIB_PROJECT}"
     "lib/modules/version.nim"
+    "lib/modules/notes.nim"
     "lib/config.nims"
 )
 set(LIB_TARGET "${CMAKE_STATIC_LIBRARY_PREFIX}trackerboy${CMAKE_STATIC_LIBRARY_SUFFIX}")
