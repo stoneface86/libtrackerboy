@@ -300,7 +300,7 @@ Order  Identifier  Count
 COMM block format
 -----------------
 
-The COMM block just contains a UTF-8 string the is the user's comment data. The
+The COMM block just contains a UTF-8 string that is the user's comment data. The
 string is not null-terminated since the length of the string is the length of
 the block. If the user has no comment set, then this block is empty
 (length = 0).
@@ -313,16 +313,181 @@ same order as they were in the module's song list. The first song block is song
 #0 and so on.
 
 Song data is composed of the following, in this order:
-1. Name, as an `LString`
+1. Song name
 2. A `SongFormat` record
 3. The song order, as an array of `OrderRow`
 4. The track data, as a sequence of `TrackFormat` and `RowFormat` records
 
+Song name
+~~~~~~~~~
+
+The first part of a SONG block is the song's name, as an `LString`
+
+SongFormat
+~~~~~~~~~~
+
+Following the name is a `SongFormat` record:
+
+======  ====  ===========  ===================
+Offset  Size  Type         Field name
+======  ====  ===========  ===================
++0      1     BiasedUint8  rowsPerBeat
++1      1     BiasedUint8  rowsPerMeasure
++2      1     Uint8        speed
++3      1     BiasedUint8  patternCount
++4      1     BiasedUint8  rowsPerTrack
++5      2     Uint16       numberOfTracks
+======  ====  ===========  ===================
+
+- **rowsPerBeat**: number of rows that make up a beat, used by the front end
+  for highlighting and tempo calculation.
+- **rowsPerMeasure**: number of rows that make up a measure, used by the front
+  end for highlighting.
+- **speed**: Initial speed setting for the song in Q4.4 format
+- **patternCount**: number of patterns for the song
+- **rowsPerTrack**: the size, in rows, of a track (all tracks have the same size).
+- **numberOfTracks**: number of tracks stored in this song block.
+
+Song Order
+~~~~~~~~~~
+
+Next is the song order, an array of `OrderRow` records with the dimension being
+the `patternCount` field from the song format record. An `OrderRow` record is a
+set of 4 `Uint8` track ids, with the first being the track id for channel 1 and
+the last being the id for channel 4.
+
+Track data
+~~~~~~~~~~
+
+Finally, the rest of the block contains the pattern data for every track in the
+song. Each track gets its own `TrackFormat` record and an array of `RowFormat`
+records.
+
+The `TrackFormat` record:
+
+======  ====  ===========  ===================
+Offset  Size  Type         Field name
+======  ====  ===========  ===================
++0      1     Uint8        channel
++1      1     Uint8        trackId
++2      1     BiasedUint8  rows
+======  ====  ===========  ===================
+
+- **channel** (0-3): determines which channel the track is for
+- **trackId** (0-255): determines the track id to use for this track
+- **rows**: the number of RowFormat records that follow this structure
+
+The `RowFormat` record:
+
+======  ====  ===========  ===================
+Offset  Size  Type         Field name
+======  ====  ===========  ===================
++0      1     Uint8        rowno
++1      8     TrackRow     rowdata
+======  ====  ===========  ===================
+
+- **rowno**: the index in the track's row array to set
+- **rowdata**: the data to set at this index
+
+The last `RowFormat` record for the last track ends the `SONG` block.
+
 INST block format
 -----------------
 
+The `INST` block contains the data for a single instrument. The data is
+structured in this order:
+
+1. The instrument's id, `Uint8`
+2. The instrument's name, `LString`
+3. An `InstrumentFormat` record
+4. (4) `SequenceFormat` records
+
+Id and name
+~~~~~~~~~~~
+
+The `INST` block data begins with a 1 byte id (0-63), followed by an `LString`
+name.
+
+.. note:: `WAVE` blocks also begin with an id and name in the same format.
+
+InstrumentFormat
+~~~~~~~~~~~~~~~~
+
+After the instrument's name is an `InstrumentFormat` record:
+
+======  ====  ===========  ===================
+Offset  Size  Type         Field name
+======  ====  ===========  ===================
++0      1     Uint8        channel
++1      1     Bool         envelopeEnabled
++2      1     Uint8        envelope
+======  ====  ===========  ===================
+
+- **channel** (0-3): determines which channel the instrument is for
+- **envelopeEnabled** (0-1): the instrument's envelope enable setting
+- **envelope**: the instruments envelope setting
+
+Sequence data
+~~~~~~~~~~~~~
+
+The sequence data follows the `InstrumentFormat` record. Data for a sequence is
+structured as a `SequenceFormat` record followed by the sequence data. There
+are 4 sequences for every instrument. The kind of sequence the data is for is
+determined by its order in the block:
+
+=====  ============
+Order  SequenceKind
+=====  ============
+0      skArp
+1      skPanning
+2      skPitch
+3      skTimbre
+=====  ============
+
+The `SequenceFormat` record:
+
+======  ====  ===========  ===================
+Offset  Size  Type         Field name
+======  ====  ===========  ===================
++0      2     Uint16       length
++2      1     Bool         loopEnabled
++3      1     Uint8        loopIndex
+======  ====  ===========  ===================
+
+- **length** (0-256): the length of the sequence
+- **loopEnabled** (0-1): determines whether there is a loop index
+- **loopIndex**: the index of the loop point (0 when loopEnabled = 0)
+
+The sequence data follows the record and is an array of bytes with dimension
+being the `length` field in the record.
+
+The last sequence (SequenceFormat + data) ends the `INST` block.
+
 WAVE block format
 -----------------
+
+The `WAVE` block contains the data for a single waveform. The data
+is structured in this order:
+
+1. The waveform's id, `Uint8`
+2. The waveform's name, `LString`
+3. The waveform's data, a 16 byte array of packed 4-bit PCM samples
+
+id and name
+~~~~~~~~~~~
+
+Same as `INST` blocks, the `WAVE` block's data begins with the waveform's id
+and name.
+
+Waveform data
+~~~~~~~~~~~~~
+
+Next is the waveform's data, a 16 byte array of 32 4-bit PCM samples, with the
+same layout as the Game Boy's CH3 Wave RAM. The first sample in the waveform is
+the upper nibble of the first byte in the array, whereas the last sample is the
+lower nibble of the last byte in the array.
+
+The waveform data ends the `WAVE` block.
 
 Terminator
 ==========
@@ -340,19 +505,24 @@ will be ignored.
 Revision history
 ================
 
-Changes to the file format are listed here, ordered from new to last.
+Changes to the file format are listed here, ordered from new to last. Revision
+names use alphabet letters ie A, B, C, .., Z, AA, AB, .. onwards. Any change in
+the major or minor version results in the letter being advanced.
+
+.. note:: Revisions A, B and C use Trackerboy's versioning. Revisions D and
+          later use libtrackerboy's versioning.
 
 Revision C (1.1)
 ----------------
 
-Introduced in v0.6.0
+Introduced in Trackerboy v0.6.0.
  - adds a new effect, Jxy, for setting the global volume
  - added specification for instrument/waveform files (\*.tbi/\*.tbw)
 
 Revision B (1.0)
 ----------------
 
-Introduced in v0.5.0, adds multiple song support.
+Introduced in Trackerboy v0.5.0, adds multiple song support.
  - file revision is now a major/minor set of numbers
  - SONG, INST, and WAVE blocks each store a single song, instrument and
    waveform, respectively.
@@ -364,10 +534,10 @@ Introduced in v0.5.0, adds multiple song support.
    blocks present in the payload. Note that only scount is biased (0 => 1).
  - String encoding now specified for all strings. Header strings use ASCII,
    everything else uses UTF-8.
- - `lstring` now uses a 2-byte length instead of 1-byte
+ - `LString` now uses a 2-byte length instead of 1-byte
  - Added a terminator to the format
 
 Revision A (0.0)
 ----------------
 
-First initial version, introduced in v0.2.0.
+First initial version, introduced in Trackerboy v0.2.0.
