@@ -117,9 +117,18 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference" id="payload-block-ordering_toc" href="#payload-block-ordering">Block ordering</a></li>
 <li><a class="reference" id="payload-comm-block-format_toc" href="#payload-comm-block-format">COMM block format</a></li>
 <li><a class="reference" id="payload-song-block-format_toc" href="#payload-song-block-format">SONG block format</a></li>
-<li><a class="reference" id="payload-inst-block-format_toc" href="#payload-inst-block-format">INST block format</a></li>
-<li><a class="reference" id="payload-wave-block-format_toc" href="#payload-wave-block-format">WAVE block format</a></li>
-</ul><li><a class="reference" id="terminator_toc" href="#terminator">Terminator</a></li>
+<ul class="simple"><li><a class="reference" id="song-block-format-song-name_toc" href="#song-block-format-song-name">Song name</a></li>
+<li><a class="reference" id="song-block-format-songformat_toc" href="#song-block-format-songformat">SongFormat</a></li>
+<li><a class="reference" id="song-block-format-song-order_toc" href="#song-block-format-song-order">Song Order</a></li>
+<li><a class="reference" id="song-block-format-track-data_toc" href="#song-block-format-track-data">Track data</a></li>
+</ul><li><a class="reference" id="payload-inst-block-format_toc" href="#payload-inst-block-format">INST block format</a></li>
+<ul class="simple"><li><a class="reference" id="inst-block-format-id-and-name_toc" href="#inst-block-format-id-and-name">Id and name</a></li>
+<li><a class="reference" id="inst-block-format-instrumentformat_toc" href="#inst-block-format-instrumentformat">InstrumentFormat</a></li>
+<li><a class="reference" id="inst-block-format-sequence-data_toc" href="#inst-block-format-sequence-data">Sequence data</a></li>
+</ul><li><a class="reference" id="payload-wave-block-format_toc" href="#payload-wave-block-format">WAVE block format</a></li>
+<ul class="simple"><li><a class="reference" id="wave-block-format-id-and-name_toc" href="#wave-block-format-id-and-name">id and name</a></li>
+<li><a class="reference" id="wave-block-format-waveform-data_toc" href="#wave-block-format-waveform-data">Waveform data</a></li>
+</ul></ul><li><a class="reference" id="terminator_toc" href="#terminator">Terminator</a></li>
 <li><a class="reference" id="revision-history_toc" href="#revision-history">Revision history</a></li>
 <ul class="simple"><li><a class="reference" id="revision-history-revision-c-1dot1_toc" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></li>
 <li><a class="reference" id="revision-history-revision-b-1dot0_toc" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></li>
@@ -311,34 +320,125 @@ The size and naming of these strings are identical to the ones in *.gbs file for
 <tr><td>3</td><td>INST</td><td>0-64</td></tr>
 <tr><td>4</td><td>WAVE</td><td>0-64</td></tr>
 </table>
-<h2><a class="toc-backref" id="payload-comm-block-format" href="#payload-comm-block-format">COMM block format</a></h2><p>The COMM block just contains a UTF-8 string the is the user's comment data. The string is not null-terminated since the length of the string is the length of the block. If the user has no comment set, then this block is empty (length = 0).</p>
+<h2><a class="toc-backref" id="payload-comm-block-format" href="#payload-comm-block-format">COMM block format</a></h2><p>The COMM block just contains a UTF-8 string that is the user's comment data. The string is not null-terminated since the length of the string is the length of the block. If the user has no comment set, then this block is empty (length = 0).</p>
 
 <h2><a class="toc-backref" id="payload-song-block-format" href="#payload-song-block-format">SONG block format</a></h2><p>The SONG block contains the data for a single song. Songs are stored in the same order as they were in the module's song list. The first song block is song #0 and so on.</p>
 <p>Song data is composed of the following, in this order:</p>
-<ol class="simple"><li>Name, as an <tt class="docutils literal"><span class="pre">LString</span></tt></li>
+<ol class="simple"><li>Song name</li>
 <li>A <tt class="docutils literal"><span class="pre">SongFormat</span></tt> record</li>
 <li>The song order, as an array of <tt class="docutils literal"><span class="pre">OrderRow</span></tt></li>
 <li>The track data, as a sequence of <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> and <tt class="docutils literal"><span class="pre">RowFormat</span></tt> records</li>
 </ol>
 
-<h2><a class="toc-backref" id="payload-inst-block-format" href="#payload-inst-block-format">INST block format</a></h2>
-<h2><a class="toc-backref" id="payload-wave-block-format" href="#payload-wave-block-format">WAVE block format</a></h2>
+<h3><a class="toc-backref" id="song-block-format-song-name" href="#song-block-format-song-name">Song name</a></h3><p>The first part of a SONG block is the song's name, as an <tt class="docutils literal"><span class="pre">LString</span></tt></p>
+
+<h3><a class="toc-backref" id="song-block-format-songformat" href="#song-block-format-songformat">SongFormat</a></h3><p>Following the name is a <tt class="docutils literal"><span class="pre">SongFormat</span></tt> record:</p>
+<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
+<tr><td>+0</td><td>1</td><td>BiasedUint8</td><td>rowsPerBeat</td></tr>
+<tr><td>+1</td><td>1</td><td>BiasedUint8</td><td>rowsPerMeasure</td></tr>
+<tr><td>+2</td><td>1</td><td>Uint8</td><td>speed</td></tr>
+<tr><td>+3</td><td>1</td><td>BiasedUint8</td><td>patternCount</td></tr>
+<tr><td>+4</td><td>1</td><td>BiasedUint8</td><td>rowsPerTrack</td></tr>
+<tr><td>+5</td><td>2</td><td>Uint16</td><td>numberOfTracks</td></tr>
+</table><ul class="simple"><li><strong>rowsPerBeat</strong>: number of rows that make up a beat, used by the front end for highlighting and tempo calculation.</li>
+<li><strong>rowsPerMeasure</strong>: number of rows that make up a measure, used by the front end for highlighting.</li>
+<li><strong>speed</strong>: Initial speed setting for the song in Q4.4 format</li>
+<li><strong>patternCount</strong>: number of patterns for the song</li>
+<li><strong>rowsPerTrack</strong>: the size, in rows, of a track (all tracks have the same size).</li>
+<li><strong>numberOfTracks</strong>: number of tracks stored in this song block.</li>
+</ul>
+
+<h3><a class="toc-backref" id="song-block-format-song-order" href="#song-block-format-song-order">Song Order</a></h3><p>Next is the song order, an array of <tt class="docutils literal"><span class="pre">OrderRow</span></tt> records with the dimension being the <tt class="docutils literal"><span class="pre">patternCount</span></tt> field from the song format record. An <tt class="docutils literal"><span class="pre">OrderRow</span></tt> record is a set of 4 <tt class="docutils literal"><span class="pre">Uint8</span></tt> track ids, with the first being the track id for channel 1 and the last being the id for channel 4.</p>
+
+<h3><a class="toc-backref" id="song-block-format-track-data" href="#song-block-format-track-data">Track data</a></h3><p>Finally, the rest of the block contains the pattern data for every track in the song. Each track gets its own <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> record and an array of <tt class="docutils literal"><span class="pre">RowFormat</span></tt> records.</p>
+<p>The <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> record:</p>
+<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
+<tr><td>+0</td><td>1</td><td>Uint8</td><td>channel</td></tr>
+<tr><td>+1</td><td>1</td><td>Uint8</td><td>trackId</td></tr>
+<tr><td>+2</td><td>1</td><td>BiasedUint8</td><td>rows</td></tr>
+</table><ul class="simple"><li><strong>channel</strong> (0-3): determines which channel the track is for</li>
+<li><strong>trackId</strong> (0-255): determines the track id to use for this track</li>
+<li><strong>rows</strong>: the number of RowFormat records that follow this structure</li>
+</ul>
+<p>The <tt class="docutils literal"><span class="pre">RowFormat</span></tt> record:</p>
+<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
+<tr><td>+0</td><td>1</td><td>Uint8</td><td>rowno</td></tr>
+<tr><td>+1</td><td>8</td><td>TrackRow</td><td>rowdata</td></tr>
+</table><ul class="simple"><li><strong>rowno</strong>: the index in the track's row array to set</li>
+<li><strong>rowdata</strong>: the data to set at this index</li>
+</ul>
+<p>The last <tt class="docutils literal"><span class="pre">RowFormat</span></tt> record for the last track ends the <tt class="docutils literal"><span class="pre">SONG</span></tt> block.</p>
+
+<h2><a class="toc-backref" id="payload-inst-block-format" href="#payload-inst-block-format">INST block format</a></h2><p>The <tt class="docutils literal"><span class="pre">INST</span></tt> block contains the data for a single instrument. The data is structured in this order:</p>
+<ol class="simple"><li>The instrument's id, <tt class="docutils literal"><span class="pre">Uint8</span></tt></li>
+<li>The instrument's name, <tt class="docutils literal"><span class="pre">LString</span></tt></li>
+<li>An <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record</li>
+<li><ol class="simple" start="4"><li><tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> records</li>
+</ol>
+</li>
+</ol>
+
+<h3><a class="toc-backref" id="inst-block-format-id-and-name" href="#inst-block-format-id-and-name">Id and name</a></h3><p>The <tt class="docutils literal"><span class="pre">INST</span></tt> block data begins with a 1 byte id (0-63), followed by an <tt class="docutils literal"><span class="pre">LString</span></tt> name.</p>
+<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
+<tt class="docutils literal"><span class="pre">WAVE</span></tt> blocks also begin with an id and name in the same format.</div>
+
+<h3><a class="toc-backref" id="inst-block-format-instrumentformat" href="#inst-block-format-instrumentformat">InstrumentFormat</a></h3><p>After the instrument's name is an <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record:</p>
+<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
+<tr><td>+0</td><td>1</td><td>Uint8</td><td>channel</td></tr>
+<tr><td>+1</td><td>1</td><td>Bool</td><td>envelopeEnabled</td></tr>
+<tr><td>+2</td><td>1</td><td>Uint8</td><td>envelope</td></tr>
+</table><ul class="simple"><li><strong>channel</strong> (0-3): determines which channel the instrument is for</li>
+<li><strong>envelopeEnabled</strong> (0-1): the instrument's envelope enable setting</li>
+<li><strong>envelope</strong>: the instruments envelope setting</li>
+</ul>
+
+<h3><a class="toc-backref" id="inst-block-format-sequence-data" href="#inst-block-format-sequence-data">Sequence data</a></h3><p>The sequence data follows the <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record. Data for a sequence is structured as a <tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> record followed by the sequence data. There are 4 sequences for every instrument. The kind of sequence the data is for is determined by its order in the block:</p>
+<table border="1" class="docutils"><tr><th>Order</th><th>SequenceKind</th></tr>
+<tr><td>0</td><td>skArp</td></tr>
+<tr><td>1</td><td>skPanning</td></tr>
+<tr><td>2</td><td>skPitch</td></tr>
+<tr><td>3</td><td>skTimbre</td></tr>
+</table><p>The <tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> record:</p>
+<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
+<tr><td>+0</td><td>2</td><td>Uint16</td><td>length</td></tr>
+<tr><td>+2</td><td>1</td><td>Bool</td><td>loopEnabled</td></tr>
+<tr><td>+3</td><td>1</td><td>Uint8</td><td>loopIndex</td></tr>
+</table><ul class="simple"><li><strong>length</strong> (0-256): the length of the sequence</li>
+<li><strong>loopEnabled</strong> (0-1): determines whether there is a loop index</li>
+<li><strong>loopIndex</strong>: the index of the loop point (0 when loopEnabled = 0)</li>
+</ul>
+<p>The sequence data follows the record and is an array of bytes with dimension being the <tt class="docutils literal"><span class="pre">length</span></tt> field in the record.</p>
+<p>The last sequence (SequenceFormat + data) ends the <tt class="docutils literal"><span class="pre">INST</span></tt> block.</p>
+
+<h2><a class="toc-backref" id="payload-wave-block-format" href="#payload-wave-block-format">WAVE block format</a></h2><p>The <tt class="docutils literal"><span class="pre">WAVE</span></tt> block contains the data for a single waveform. The data is structured in this order:</p>
+<ol class="simple"><li>The waveform's id, <tt class="docutils literal"><span class="pre">Uint8</span></tt></li>
+<li>The waveform's name, <tt class="docutils literal"><span class="pre">LString</span></tt></li>
+<li>The waveform's data, a 16 byte array of packed 4-bit PCM samples</li>
+</ol>
+
+<h3><a class="toc-backref" id="wave-block-format-id-and-name" href="#wave-block-format-id-and-name">id and name</a></h3><p>Same as <tt class="docutils literal"><span class="pre">INST</span></tt> blocks, the <tt class="docutils literal"><span class="pre">WAVE</span></tt> block's data begins with the waveform's id and name.</p>
+
+<h3><a class="toc-backref" id="wave-block-format-waveform-data" href="#wave-block-format-waveform-data">Waveform data</a></h3><p>Next is the waveform's data, a 16 byte array of 32 4-bit PCM samples, with the same layout as the Game Boy's CH3 Wave RAM. The first sample in the waveform is the upper nibble of the first byte in the array, whereas the last sample is the lower nibble of the last byte in the array.</p>
+<p>The waveform data ends the <tt class="docutils literal"><span class="pre">WAVE</span></tt> block.</p>
+
 <h1><a class="toc-backref" id="terminator" href="#terminator">Terminator</a></h1><p>Following the payload is the terminator, which signifies the end of the file. The terminator is the signature, reversed:</p>
 <p><pre class="listing">
 &quot;\0YOBREKCART\0&quot;
 </pre></p>
 <p>There should be no data after this terminator. Any data after the terminator will be ignored.</p>
 
-<h1><a class="toc-backref" id="revision-history" href="#revision-history">Revision history</a></h1><p>Changes to the file format are listed here, ordered from new to last.</p>
+<h1><a class="toc-backref" id="revision-history" href="#revision-history">Revision history</a></h1><p>Changes to the file format are listed here, ordered from new to last. Revision names use alphabet letters ie A, B, C, .., Z, AA, AB, .. onwards. Any change in the major or minor version results in the letter being advanced.</p>
+<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
+Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libtrackerboy's versioning.</div>
 
-<h2><a class="toc-backref" id="revision-history-revision-c-1dot1" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></h2><dl class="docutils"><dt>Introduced in v0.6.0</dt>
+<h2><a class="toc-backref" id="revision-history-revision-c-1dot1" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></h2><dl class="docutils"><dt>Introduced in Trackerboy v0.6.0.</dt>
 <dd><ul class="simple"><li>adds a new effect, Jxy, for setting the global volume</li>
 <li>added specification for instrument/waveform files (*.tbi/*.tbw)</li>
 </ul>
 </dd>
 </dl>
 
-<h2><a class="toc-backref" id="revision-history-revision-b-1dot0" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></h2><dl class="docutils"><dt>Introduced in v0.5.0, adds multiple song support.</dt>
+<h2><a class="toc-backref" id="revision-history-revision-b-1dot0" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></h2><dl class="docutils"><dt>Introduced in Trackerboy v0.5.0, adds multiple song support.</dt>
 <dd><ul class="simple"><li>file revision is now a major/minor set of numbers</li>
 <li>SONG, INST, and WAVE blocks each store a single song, instrument and waveform, respectively.</li>
 <li>The payload can now contain up to 256 songs</li>
@@ -346,13 +446,13 @@ The size and naming of these strings are identical to the ones in *.gbs file for
 <li>Removed numberOfInstruments and numberOfWaveforms fields</li>
 <li>Added scount, icount and wcount fields at offset 124 (replacing the removed numberOf* fields). These fields contain the number of SONG, INST and WAVE blocks present in the payload. Note that only scount is biased (0 =&gt; 1).</li>
 <li>String encoding now specified for all strings. Header strings use ASCII, everything else uses UTF-8.</li>
-<li><tt class="docutils literal"><span class="pre">lstring</span></tt> now uses a 2-byte length instead of 1-byte</li>
+<li><tt class="docutils literal"><span class="pre">LString</span></tt> now uses a 2-byte length instead of 1-byte</li>
 <li>Added a terminator to the format</li>
 </ul>
 </dd>
 </dl>
 
-<h2><a class="toc-backref" id="revision-history-revision-a-0dot0" href="#revision-history-revision-a-0dot0">Revision A (0.0)</a></h2><p>First initial version, introduced in v0.2.0. </p>
+<h2><a class="toc-backref" id="revision-history-revision-a-0dot0" href="#revision-history-revision-a-0dot0">Revision A (0.0)</a></h2><p>First initial version, introduced in Trackerboy v0.2.0. </p>
 </p>
   
   </div>
@@ -362,7 +462,7 @@ The size and naming of these strings are identical to the ones in *.gbs file for
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-04 04:58:48 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-24 16:45:59 UTC</small>
       </div>
     </div>
   </div>
