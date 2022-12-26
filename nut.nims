@@ -89,7 +89,8 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
         "-d:noIntrinsicsEndians -d:tbEndianInverse"
     ]
     for defs in matrix:
-        execNim "r", &"--hints:off --path:src {defs} tests/units/private/tendian.nim"
+        echo "switches: ", defs
+        execNim "r", &"--hints:off {defs} tests/endianTests.nim"
 
 task test, "Runs unit tests":
     withTests:

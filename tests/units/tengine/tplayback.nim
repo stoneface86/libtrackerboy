@@ -44,7 +44,7 @@ dtest "speed timing":
 dtest "song looping":
     testsetup
     song.speed = unitSpeed
-    song[].setTrackLen(1)
+    song.trackLen = 1
     song.order.setLen(3)
     engine.play(song.toImmutable)
 

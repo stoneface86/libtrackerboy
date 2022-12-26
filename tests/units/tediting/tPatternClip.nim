@@ -27,7 +27,7 @@ proc makeTestSong(): Song =
     # 06 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
     # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
     # pattern 2 is empty
-    result.setTrackLen(patternSize)
+    result.trackLen = patternSize
     result.order.setLen(3)
     result.order[1] = [1u8, 1, 1, 1]
     result.order[2] = [2u8, 2, 2, 2]
@@ -173,4 +173,4 @@ testgroup:
                     p0(ch2) == p1(ch2)
                     p0(ch3) == p1(ch3)
                     # check that the mix works
-                    p1(ch4) == makeExpected()
+                    p1(ch4) == TrackView.init(makeExpected())

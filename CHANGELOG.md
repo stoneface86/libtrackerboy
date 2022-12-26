@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Added
+ - `TrackView` and `SomeTrack` types to libtrackerboy/data
+ - `Song.getTrackView` member proc
+
+### Changed
+ - Track data is stored using a `ref array` instead of a `seq`
+ - Each track is allocated for 256 rows, regardless of the song's trackLen
+   parameter. This allows for changing the trackLen without losing data at
+   the cost of extra memory consumption when trackLen < 256.
+
+### Removed
+ - `len` and `setLen` overloads for `Track` instances, use the `Track.len` 
+   field instead.
+ - `trackLen` and `setTrackLen` procs, use the `Song.trackLen` field instead.
+
 ## [0.7.0] - 2022-11-09
 
 Initial version of the Nim rewrite, also the canonical first version of the

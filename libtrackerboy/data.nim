@@ -169,11 +169,25 @@ type
         effects*: array[EffectIndex, Effect]
             ## 3 available effect columns
 
+    TrackData = array[ByteIndex, TrackRow]
+
     Track* = object
         ## Pattern data for a single track. Valid tracks contain 1-256 rows
         ## of data. A Track is invalid (or has no data) if it was default
         ## initialized, use isValid() to check for validity.
-        data: seq[TrackRow]
+        data: ref TrackData
+        len*: Natural
+
+    TrackView* {.borrow: `.`.} = distinct Track
+        ## Same as track, but only provides immutable access to the track data.
+        ## Mutable access can be acquired by converting the view to a Track via
+        ## the Track.init overload.
+
+    SomeTrack* = Track | TrackView
+
+
+    TrackMap = object
+        data: array[ChannelId, tables.Table[ByteIndex, EqRef[TrackData]]]
 
     # Song
 
@@ -195,8 +209,8 @@ type
             ## the number of effect columns shown for each channel.
         order*: Order
             ## The song's Order
-        trackLen: TrackLen
-        tracks: array[ChannelId, tables.Table[ByteIndex, Shallow[Track]]]
+        trackLen*: TrackLen
+        tracks: TrackMap
 
     SongList* {.requiresInit.} = object
         ## Container for songs. Songs stored in this container are references,
@@ -567,73 +581,127 @@ func isEmpty*(row: TrackRow): bool =
 
 # Track
 
+func `==`*(lhs, rhs: Track): bool =
+    lhs.len == rhs.len and toEqRef(lhs.data) == toEqRef(rhs.data)
+
+func `==`*(lhs, rhs: TrackView): bool {.borrow.}
+
 proc init*(_: typedesc[Track], len: TrackLen): Track =
     ## Value constructor for a Track with the given length. All rows in the
     ## returned Track are empty.
     _(
-        data: newSeq[TrackRow](len)
+        data: TrackData.new,
+        len: len
     )
+
+func init*(_: typedesc[Track], view: TrackView): Track =
+    ## Value constructor for a Track by deep copying the TrackView. The track
+    ## returned has the same data as the view, but can now be mutated.
+    if view.data != nil:
+        result.data = TrackData.new
+        result.data[] = view.data[]
+        result.len = view.len
+
+func init(_: typedesc[Track], data: ref TrackData, len: TrackLen): Track =
+    _(
+        data: data,
+        len: if data == nil: 0 else: len
+    )
+
+template init(_: typedesc[TrackView], data: ref TrackData, len: TrackLen): TrackView =
+    cast[TrackView](Track.init(data, len))
+
+func init*(_: typedesc[TrackView], track: sink Track): TrackView =
+    result.data = track.data
+    result.len = track.len
+
+template get(t: Track | var Track, i: ByteIndex): untyped =
+    t.data[][i]
 
 func `[]`*(t: Track, i: ByteIndex): TrackRow =
     ## Gets the `i`th row in the track.
-    t.data[i]
+    t.get(i)
+
+func `[]`*(t: TrackView, i: ByteIndex): TrackRow {.borrow.}
 
 proc `[]`*(t: var Track, i: ByteIndex): var TrackRow =
     ## Gets the `i`th row in the track, allowing mutations.
-    t.data[i]
+    t.get(i)
 
 proc `[]=`*(t: var Track, i: ByteIndex, v: TrackRow) =
     ## Replaces the `i`th row in the track with the given one.
-    t.data[i] = v
+    t.get(i) = v
 
 func isValid*(t: Track): bool =
     ## Determines if the track is valid, or if the track has more than 0 rows.
-    t.data.len > 0
+    t.data != nil
 
-func len*(t: Track): int =
-    ## Gets the len, or number of rows contained in this track.
-    t.data.len
+func isValid*(t: TrackView): bool {.borrow.}
 
-proc setLen*(t: var Track, len: TrackLen) =
-    ## Resizes the track to the given number of rows.
-    t.data.setLen(len)
+template itemsImpl(t: Track | var Track): untyped =
+    for i in 0..<t.len:
+        yield t.get(i)
 
 iterator items*(t: Track): TrackRow =
     ## Convenience iterator for iterating every row in the track.
-    for t in t.data:
-        yield t
+    itemsImpl(t)
+
+iterator items*(t: TrackView): TrackRow {.borrow.}
 
 iterator mitems*(t: var Track): var TrackRow =
     ## Convenience iterator for iterating every row in the track,
     ## allowing mutations.
-    for t in t.data.mitems:
-        yield t
+    itemsImpl(t)
 
 proc setNote*(t: var Track, i: ByteIndex, note: uint8) =
     ## Sets the note index at the `i`th row to the given note index
-    t.data[i].note = note + 1
+    t.get(i).note = note + 1
 
 proc setInstrument*(t: var Track, i: ByteIndex, instrument: TableId) =
     ## Sets the instrument index at the `i`th row to the given instrument
-    t.data[i].instrument = instrument + 1
+    t.get(i).instrument = instrument + 1
 
 proc setEffect*(t: var Track, i: ByteIndex, effectNo: EffectIndex, et: EffectType, param = 0u8) =
     ## Sets the effect type and parameter at the `i`th row and `effectNo` column.
-    t.data[i].effects[effectNo] = Effect(effectType: et.uint8, param: param)
+    t.get(i).effects[effectNo] = Effect(effectType: et.uint8, param: param)
 
 proc setEffectType*(t: var Track, i: ByteIndex, effectNo: EffectIndex, et: EffectType) =
     ## Sets the effect type at the `i`th row and `effectNo` column.
-    t.data[i].effects[effectNo].effectType = et.uint8
+    t.get(i).effects[effectNo].effectType = et.uint8
 
 proc setEffectParam*(t: var Track, i: ByteIndex, effectNo: EffectIndex, param: uint8) =
     ## Sets the effect parameter at the `i`th row and `effectNo` column.
-    t.data[i].effects[effectNo].param = param
+    t.get(i).effects[effectNo].param = param
 
 func totalRows*(t: Track): int =
     ## Gets the total number of rows that are non-empty.
     for row in t:
         if not row.isEmpty():
             inc result
+
+func totalRows*(t: TrackView): int {.borrow.}
+
+# TrackMap
+
+proc clear(m: var TrackMap) =
+    for table in m.data.mitems:
+        table.clear()
+
+proc put(m: var TrackMap, ch: ChannelId, order: ByteIndex, val: sink ref TrackData) =
+    m.data[ch][order] = EqRef[TrackData](src: val)
+
+func get(m: TrackMap, ch: ChannelId, order: ByteIndex): ref TrackData =
+    m.data[ch].getOrDefault(order).src
+
+proc getAlways(m: var TrackMap, ch: ChannelId, order: ByteIndex): ref TrackData =
+    result = m.get(ch, order)
+    if result == nil:
+        result = TrackData.new
+        m.put(ch, order, result)
+
+func len(m: TrackMap): int =
+    for t in m.data:
+        result += t.len
 
 # Song
 
@@ -673,8 +741,7 @@ func new*(_: typedesc[Song], song: Song): ref Song =
 
 proc removeAllTracks*(s: var Song) =
     ## Removes all tracks for each channel in the song.
-    for table in s.tracks.mitems:
-        table.clear()
+    s.tracks.clear()
 
 proc speedToFloat*(speed: Speed): float =
     ## Converts a fixed point speed to floating point.
@@ -686,62 +753,60 @@ proc speedToTempo*(speed: float, rowsPerBeat: PositiveByte, framerate: float): f
     ## is the update rate of music playback, in hertz.
     (framerate * 60.0) / (speed * rowsPerBeat.float)
 
-proc getTrack(s: var Song, ch: ChannelId, order: ByteIndex): ptr Track =
-    if order notin s.tracks[ch]:
-        s.tracks[ch][order] = Track.init(s.trackLen).toShallow
-    s.tracks[ch].withValue(order, t):
-        # pointer return and not var since we cannot prove result will be initialized
-        # nil should never be returned though
-        result = t.src.addr
+# proc getTrack(s: var Song, ch: ChannelId, order: ByteIndex): ptr Track =
+#     if order notin s.tracks[ch]:
+#         s.tracks[ch][order] = Track.init(s.trackLen).toShallow
+#     s.tracks[ch].withValue(order, t):
+#         # pointer return and not var since we cannot prove result will be initialized
+#         # nil should never be returned though
+#         result = t.src.addr
 
-template getShallowTrack(s: Song, ch: ChannelId, order: ByteIndex): Shallow[Track] =
-    s.tracks[ch].getOrDefault(order)
+# template getShallowTrack(s: Song, ch: ChannelId, order: ByteIndex): Shallow[Track] =
+#     s.tracks[ch].getOrDefault(order)
 
-func getTrack*(s: Song, ch: ChannelId, order: ByteIndex): Track =
+func getTrackView*(s: Song, ch: ChannelId, order: ByteIndex): TrackView =
     ## Gets a copy of the track for the given channel and track id. If there is
     ## no track for this address, an invalid Track is returned. Note that this
     ## proc returns a copy! For non-copying access use the viewTrack template.
-    s.getShallowTrack(ch, order).src
+    result.data = s.tracks.get(ch, order)
+    result.len = s.trackLen
+
+func getTrack*(s: var Song, ch: ChannelId, order: ByteIndex): Track =
+    Track.init(s.tracks.getAlways(ch, order), s.trackLen)
 
 iterator trackIds*(s: Song, ch: ChannelId): ByteIndex =
     ## Iterates all of tracks contained in this song, yielding their id.
-    for id in s.tracks[ch].keys:
+    for id in s.tracks.data[ch].keys:
         yield id
 
 proc getRow*(s: var Song, ch: ChannelId, order, row: ByteIndex): var TrackRow =
     ## same as `getRow<#getRow,Song,ChannelId,ByteIndex,ByteIndex_2>`_ but
     ## allows the returned row to be mutated. As a result of this if the track
     ## did not exist beforehand, it will be added.
-    s.getTrack(ch, order)[][row]
+    s.tracks.getAlways(ch, order)[][row]
 
 proc getRow*(s: Song, ch: ChannelId, order, row: ByteIndex): TrackRow =
     ## Gets the track row for the channel, order row (pattern id), and row in the
     ## pattern. If there was no such row, an empty row is returned.
-    if order in s.tracks[ch]:
-        result = s.tracks[ch][order].src[row]
+    let data = s.tracks.get(ch, order)
+    if data != nil:
+        data[][row]
     else:
-        result = TrackRow()
+        TrackRow()
 
 func totalTracks*(s: Song): int =
     ## Gets the total number of tracks from all channels in this song.
-    for t in s.tracks:
-        result += t.len
+    s.tracks.len
 
-func trackLen*(s: Song): TrackLen {.inline.} =
-    ## Gets the length of every track in the song.
-    s.trackLen
-
-proc setTrackLen*(s: var Song, size: TrackLen) =
+proc setTrackLen*(s: var Song, size: TrackLen) {.deprecated: "modify s.trackLen instead".} =
     ## Changes the length of every track in the song to `size`. If `size` is
     ## less than the current length, all rows past the new `size` will lost.
-    for table in s.tracks.mitems:
-        for track in table.mvalues:
-            track.src.setLen(size)
     s.trackLen = size
 
 proc setTrack*(s: var Song, ch: ChannelId, order: ByteIndex, track: sink Track) =
     ## Puts the given track into the song for the given channel and order.
-    s.tracks[ch][order] = track.toShallow
+    if track.isValid():
+        s.tracks.put(ch, order, track.data)
 
 proc estimateSpeed*(s: Song, tempo, framerate: float): Speed =
     ## Calculate the closest speed value for the given `tempo`, in beats per
@@ -768,13 +833,12 @@ template editTrack*(s: var Song, ch: ChannelId, trackId: ByteIndex, value, body:
         song.viewTrack(ch3, 0, track):
             doAssert track[1].note == 11
             doAssert track[4].instrument == 1
-    mixin getTrack
     block:
-        let track = s.getTrack(ch, trackId)
-        template value(): var Track {.inject, used.} = track[]
+        var track = s.getTrack(ch, trackId)
+        template value(): var Track {.inject, used.} = track
         body
 
-template viewTrack*(t: Song, ch: ChannelId, trackId: ByteIndex, value, body: untyped): untyped =
+template viewTrack*(s: Song, ch: ChannelId, trackId: ByteIndex, value, body: untyped): untyped =
     ## Similar to `editTrack<#editTrack.t,Song,ChannelId,ByteIndex,untyped,untyped>`_
     ## but instead only provides read-only access to a track, in place.
     ## `value` is the name of the template that returns a `lent Track` of the
@@ -786,10 +850,9 @@ template viewTrack*(t: Song, ch: ChannelId, trackId: ByteIndex, value, body: unt
     ## See the example in `editTrack<#editTrack.t,Song,ChannelId,ByteIndex,untyped,untyped>`_
     ## for example usage.
     ## 
-    mixin getShallowTrack
     block:
-        let shallow = t.getShallowTrack(ch, trackId)
-        template value(): lent Track {.inject, used.} = shallow.src
+        let track = s.getTrackView(ch, trackId)
+        template value(): lent TrackView {.inject, used.} = track
         body
 
 template editPattern*(s: var Song, orderNo: ByteIndex, value, body: untyped): untyped =
@@ -812,10 +875,8 @@ template editPattern*(s: var Song, orderNo: ByteIndex, value, body: untyped): un
                 row.effects[1] = Effect(effectType: etTuning.ord.uint8, param: 0x82)
                 row
             doAssert pattern(ch2)[0] == expected
-
-    mixin getTrack
     block:
-        let pattern: array[ChannelId, ptr Track] = block:
+        var pattern: array[ChannelId, Track] = block:
             let orderRow = s.order[orderNo]
             [
                 s.getTrack(ch1, orderRow[ch1]),
@@ -823,7 +884,7 @@ template editPattern*(s: var Song, orderNo: ByteIndex, value, body: untyped): un
                 s.getTrack(ch3, orderRow[ch3]),
                 s.getTrack(ch4, orderRow[ch4])
             ]
-        template value(ch: ChannelId): var Track {.inject, used.} = pattern[ch][]
+        template value(ch: ChannelId): var Track {.inject, used.} = pattern[ch]
         body
 
 template viewPattern*(s: Song, orderNo: ByteIndex, value, body: untyped): untyped =
@@ -839,17 +900,16 @@ template viewPattern*(s: Song, orderNo: ByteIndex, value, body: untyped): untype
     ## See the example in `editPattern<#editPattern.t,Song,ByteIndex,untyped,untyped>`_
     ## for example usage.
     ## 
-    mixin getShallowTrack
     block:
-        let pattern: array[ChannelId, Shallow[Track]] = block:
+        let pattern: array[ChannelId, TrackView] = block:
             let orderRow = s.order[orderNo]
             [
-                s.getShallowTrack(ch1, orderRow[ch1]),
-                s.getShallowTrack(ch2, orderRow[ch2]),
-                s.getShallowTrack(ch3, orderRow[ch3]),
-                s.getShallowTrack(ch4, orderRow[ch4])
+                s.getTrackView(ch1, orderRow[ch1]),
+                s.getTrackView(ch2, orderRow[ch2]),
+                s.getTrackView(ch3, orderRow[ch3]),
+                s.getTrackView(ch4, orderRow[ch4])
             ]
-        template value(ch: ChannelId): lent Track {.inject, used.} = pattern[ch].src
+        template value(ch: ChannelId): lent TrackView {.inject, used.} = pattern[ch]
         body
 
 func patternLen*(s: Song, order: ByteIndex): Natural =

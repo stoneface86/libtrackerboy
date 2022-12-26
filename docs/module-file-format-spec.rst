@@ -217,9 +217,9 @@ strings are fixed, null-termination is not needed.
 icount, scount and wcount
 -------------------------
 
-- `icount` - **i**nstrument count
-- `scount` - **s**ong count
-- `wcount` - **w**aveform count
+- `icount` - instrument count
+- `scount` - song count
+- `wcount` - waveform count
 
 These counter fields determine the number of INST, SONG and WAVE blocks present
 in the payload, respectively. `icount` and `wcount` can range from 0-64 and is

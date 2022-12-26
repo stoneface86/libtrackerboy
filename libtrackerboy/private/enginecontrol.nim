@@ -688,7 +688,7 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
     if r.timer.step():
         # timer overflow, advance row counter
         inc r.rowCounter
-        if r.rowCounter >= r.song[].trackLen():
+        if r.rowCounter >= r.song[].trackLen:
             # end of pattern
             if r.global.patternCommand == pcNone:
                 # go to the next pattern in the order

@@ -17,7 +17,7 @@ converter toPlayerState(p: Player): PlayerState =
 func getSampleSong(): ref Song =
     result = Song.new()
     result.speed = unitSpeed
-    result[].setTrackLen(1)
+    result.trackLen = 1
     # 0 0 0 0
     # 0 0 0 0
     # 0 0 0 0

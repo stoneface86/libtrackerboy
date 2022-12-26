@@ -72,7 +72,7 @@ func get*(sample: SongSamples): Song =
         result.rowsPerMeasure = 8
         result.speed = 0x48
         result.effectCounts = [3.EffectColumns, 1, 1, 1]
-        result.setTrackLen(16)
+        result.trackLen = 16
         result.order.setLen(3)
         result.order[0] = [0u8, 0, 0, 0]
         result.order[1] = [1u8, 1, 1, 1]

@@ -6,7 +6,7 @@ author      = "stoneface"
 description = "libtrackerboy unit tests"
 license     = "MIT"
 binDir      = "../bin"
-bin         = @["tests"]
+bin         = @["tests", "endianTests"]
 
 # Dependencies
 

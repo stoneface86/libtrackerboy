@@ -1,5 +1,5 @@
 
-name: build
+name: '[push][develop] build'
 on:
   push:
     branches:
@@ -18,14 +18,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # ignore devel for now, not ready for Nim 2.0.0 just yet
-        nim-version: ['stable'] #, 'devel']
+        nim-version: ['stable', 'devel']
     steps:
 
       - uses: actions/checkout@v3
       
-      - uses: lukka/get-cmake@latest
-
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim-version }}

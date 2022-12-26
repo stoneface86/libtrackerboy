@@ -7,13 +7,6 @@ Miscellaneous utilities.
 ]##
 
 type
-    Shallow*[T] {.shallow.} = object
-        ## Wrapper type to allow shallow copying on T. Suitable for avoiding
-        ## wasteful copies being made when viewing data.
-        src*: T
-            ## The source data. When a Shallow[T] object is copied, the compiler
-            ## may make a shallow copy (ie only copying the pointer for seqs).
-
     EqRef*[T] = object
         ## EqRef: Deep equality ref
         ## 
@@ -21,11 +14,6 @@ type
         ## deep equality.
         src*: ref T
             ## The source reference of the wrapper
-
-template toShallow*[T](s: T): Shallow[T] =
-    ## Converts a value to a Shallow. The compiler is free to make shallow
-    ## copies of the returned object.
-    Shallow[T](src: s)
 
 func deepEquals*[T](a, b: ref T): bool =
     ## Deep equality test for two refs. Returns true if either:
