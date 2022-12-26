@@ -99,6 +99,10 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="data: `==`(a, b: SongList): bool" href="libtrackerboy/data.html#%3D%3D%2CSongList%2CSongList">data: `==`(a, b: SongList): bool</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="data: `==`(lhs, rhs: Track): bool" href="libtrackerboy/data.html#%3D%3D%2CTrack%2CTrack">data: `==`(lhs, rhs: Track): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: `==`(lhs, rhs: TrackView): bool" href="libtrackerboy/data.html#%3D%3D%2CTrackView%2CTrackView">data: `==`(lhs, rhs: TrackView): bool</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="utils: `==`[T](lhs, rhs: EqRef[T]): bool" href="libtrackerboy/private/utils.html#%3D%3D.t%2CEqRef%5BT%5D%2CEqRef%5BT%5D">utils: `==`[T](lhs, rhs: EqRef[T]): bool</a></li>
           </ul></dd>
 <dt><a name="%60%5B%5D%3D%60" href="#%60%5B%5D%3D%60"><span>`[]=`:</span></a></dt><dd><ul class="simple">
@@ -132,6 +136,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: `[]`(t: Track; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrack%2CByteIndex">data: `[]`(t: Track; i: ByteIndex): TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: `[]`(t: var Track; i: ByteIndex): var TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrack%2CByteIndex_2">data: `[]`(t: var Track; i: ByteIndex): var TrackRow</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: `[]`(t: TrackView; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrackView%2CByteIndex">data: `[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
           </ul></dd>
 <dt><a name="add" href="#add"><span>add:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -817,7 +823,7 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="getTrack" href="#getTrack"><span>getTrack:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: getTrack(s: Song; ch: ChannelId; order: ByteIndex): Track" href="libtrackerboy/data.html#getTrack%2CSong%2CChannelId%2CByteIndex">data: getTrack(s: Song; ch: ChannelId; order: ByteIndex): Track</a></li>
+          data-doc-search-tag="data: getTrack(s: var Song; ch: ChannelId; order: ByteIndex): Track" href="libtrackerboy/data.html#getTrack%2CSong%2CChannelId%2CByteIndex">data: getTrack(s: var Song; ch: ChannelId; order: ByteIndex): Track</a></li>
           </ul></dd>
 <dt><a name="getTrackEnvelope" href="#getTrackEnvelope"><span>getTrackEnvelope:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -830,6 +836,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="getTrackTimbre" href="#getTrackTimbre"><span>getTrackTimbre:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: getTrackTimbre(e: Engine; chno: ChannelId): uint8" href="libtrackerboy/engine.html#getTrackTimbre%2CEngine%2CChannelId">engine: getTrackTimbre(e: Engine; chno: ChannelId): uint8</a></li>
+          </ul></dd>
+<dt><a name="getTrackView" href="#getTrackView"><span>getTrackView:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="data: getTrackView(s: Song; ch: ChannelId; order: ByteIndex): TrackView" href="libtrackerboy/data.html#getTrackView%2CSong%2CChannelId%2CByteIndex">data: getTrackView(s: Song; ch: ChannelId; order: ByteIndex): TrackView</a></li>
           </ul></dd>
 <dt><a name="getWrites" href="#getWrites"><span>getWrites:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -878,6 +888,10 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: init(_: typedesc[SongList]; len: PositiveByte = 1): SongList" href="libtrackerboy/data.html#init%2Ctypedesc%5BSongList%5D%2CPositiveByte">data: init(_: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: init(_: typedesc[Track]; len: TrackLen): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackLen">data: init(_: typedesc[Track]; len: TrackLen): Track</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: init(_: typedesc[Track]; view: TrackView): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackView">data: init(_: typedesc[Track]; view: TrackView): Track</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: init(_: typedesc[TrackView]; track: sink Track): TrackView" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack">data: init(_: typedesc[TrackView]; track: sink Track): TrackView</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: init(_: typedesc[Waveform]): Waveform" href="libtrackerboy/data.html#init%2Ctypedesc%5BWaveform%5D">data: init(_: typedesc[Waveform]): Waveform</a></li>
           <li><a class="reference external"
@@ -947,6 +961,8 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="data: isValid(t: Track): bool" href="libtrackerboy/data.html#isValid%2CTrack">data: isValid(t: Track): bool</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="data: isValid(t: TrackView): bool" href="libtrackerboy/data.html#isValid%2CTrackView">data: isValid(t: TrackView): bool</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="editing: isValid(s: PatternSelection; rows: TrackLen): bool" href="libtrackerboy/editing.html#isValid%2CPatternSelection%2CTrackLen">editing: isValid(s: PatternSelection; rows: TrackLen): bool</a></li>
           </ul></dd>
 <dt><a name="items" href="#items"><span>items:</span></a></dt><dd><ul class="simple">
@@ -954,6 +970,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: items[T: SomeData](t: Table[T]): TableId" href="libtrackerboy/data.html#items.i%2CTable%5BT%3A%20SomeData%5D">data: items[T: SomeData](t: Table[T]): TableId</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: items(t: Track): TrackRow" href="libtrackerboy/data.html#items.i%2CTrack">data: items(t: Track): TrackRow</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: items(t: TrackView): TrackRow" href="libtrackerboy/data.html#items.i%2CTrackView">data: items(t: TrackView): TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="apucontrol: items(l: ApuWriteList): ApuWrite" href="libtrackerboy/private/apucontrol.html#items.i%2CApuWriteList">apucontrol: items(l: ApuWriteList): ApuWrite</a></li>
           </ul></dd>
@@ -976,8 +994,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: len(l: SongList): Natural" href="libtrackerboy/data.html#len%2CSongList">data: len(l: SongList): Natural</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: len[T: SomeData](t: Table[T]): int" href="libtrackerboy/data.html#len%2CTable%5BT%3A%20SomeData%5D">data: len[T: SomeData](t: Table[T]): int</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="data: len(t: Track): int" href="libtrackerboy/data.html#len%2CTrack">data: len(t: Track): int</a></li>
           </ul></dd>
 <dt><a name="LittleEndian" href="#LittleEndian"><span>LittleEndian:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1476,8 +1492,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: setLen(o: var Order; len: OrderSize)" href="libtrackerboy/data.html#setLen%2COrder%2COrderSize">data: setLen(o: var Order; len: OrderSize)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: setLen(s: var Sequence; len: SequenceSize)" href="libtrackerboy/data.html#setLen%2CSequence%2CSequenceSize">data: setLen(s: var Sequence; len: SequenceSize)</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="data: setLen(t: var Track; len: TrackLen)" href="libtrackerboy/data.html#setLen%2CTrack%2CTrackLen">data: setLen(t: var Track; len: TrackLen)</a></li>
           </ul></dd>
 <dt><a name="setNote" href="#setNote"><span>setNote:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1502,10 +1516,6 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="setVolume" href="#setVolume"><span>setVolume:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="apu: setVolume(a: var Apu; gain: range[0.0&apos;f32 .. 1.0&apos;f32])" href="libtrackerboy/apu.html#setVolume%2CApu%2Crange%5B%5D">apu: setVolume(a: var Apu; gain: range[0.0&apos;f32 .. 1.0&apos;f32])</a></li>
-          </ul></dd>
-<dt><a name="Shallow" href="#Shallow"><span>Shallow:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="utils: Shallow" href="libtrackerboy/private/utils.html#Shallow">utils: Shallow</a></li>
           </ul></dd>
 <dt><a name="size" href="#size"><span>size:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1534,6 +1544,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="SomeTable" href="#SomeTable"><span>SomeTable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: SomeTable" href="libtrackerboy/data.html#SomeTable">data: SomeTable</a></li>
+          </ul></dd>
+<dt><a name="SomeTrack" href="#SomeTrack"><span>SomeTrack:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="data: SomeTrack" href="libtrackerboy/data.html#SomeTrack">data: SomeTrack</a></li>
           </ul></dd>
 <dt><a name="SomeWord" href="#SomeWord"><span>SomeWord:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1659,13 +1673,11 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="notes: ToneNote" href="libtrackerboy/notes.html#ToneNote">notes: ToneNote</a></li>
           </ul></dd>
-<dt><a name="toShallow" href="#toShallow"><span>toShallow:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="utils: toShallow[T](s: T): Shallow[T]" href="libtrackerboy/private/utils.html#toShallow.t%2CT">utils: toShallow[T](s: T): Shallow[T]</a></li>
-          </ul></dd>
 <dt><a name="totalRows" href="#totalRows"><span>totalRows:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: totalRows(t: Track): int" href="libtrackerboy/data.html#totalRows%2CTrack">data: totalRows(t: Track): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: totalRows(t: TrackView): int" href="libtrackerboy/data.html#totalRows%2CTrackView">data: totalRows(t: TrackView): int</a></li>
           </ul></dd>
 <dt><a name="totalTracks" href="#totalTracks"><span>totalTracks:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1695,10 +1707,6 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="data: TrackLen" href="libtrackerboy/data.html#TrackLen">data: TrackLen</a></li>
           </ul></dd>
-<dt><a name="trackLen" href="#trackLen"><span>trackLen:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="data: trackLen(s: Song): TrackLen" href="libtrackerboy/data.html#trackLen%2CSong">data: trackLen(s: Song): TrackLen</a></li>
-          </ul></dd>
 <dt><a name="TrackRow" href="#TrackRow"><span>TrackRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: TrackRow" href="libtrackerboy/data.html#TrackRow">data: TrackRow</a></li>
@@ -1710,6 +1718,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="TrackSelect" href="#TrackSelect"><span>TrackSelect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: TrackSelect" href="libtrackerboy/editing.html#TrackSelect">editing: TrackSelect</a></li>
+          </ul></dd>
+<dt><a name="TrackView" href="#TrackView"><span>TrackView:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="data: TrackView" href="libtrackerboy/data.html#TrackView">data: TrackView</a></li>
           </ul></dd>
 <dt><a name="translate" href="#translate"><span>translate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1771,7 +1783,7 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="viewTrack" href="#viewTrack"><span>viewTrack:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: viewTrack(t: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped" href="libtrackerboy/data.html#viewTrack.t%2CSong%2CChannelId%2CByteIndex%2Cuntyped%2Cuntyped">data: viewTrack(t: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped</a></li>
+          data-doc-search-tag="data: viewTrack(s: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped" href="libtrackerboy/data.html#viewTrack.t%2CSong%2CChannelId%2CByteIndex%2Cuntyped%2Cuntyped">data: viewTrack(s: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped</a></li>
           </ul></dd>
 <dt><a name="WaveData" href="#WaveData"><span>WaveData:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1812,7 +1824,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-24 16:46:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-26 16:29:38 UTC</small>
       </div>
     </div>
   </div>
