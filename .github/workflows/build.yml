@@ -1,5 +1,5 @@
 
-name: '[push][develop] build'
+name: '[push][develop] Build'
 on:
   push:
     branches:

@@ -1,4 +1,4 @@
-name: develop-docgen
+name: '[push][develop] Documentation'
 on:
   push:
     branches:
