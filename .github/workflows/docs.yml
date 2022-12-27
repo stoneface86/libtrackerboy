@@ -35,6 +35,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
           fetch-depth: 0
+          token: ${{ secrets.LIBTRACKERBOY_PAT }}
       
       - name: Upload documentation
         run: |

@@ -65,7 +65,7 @@ type
 
     Sequence* = object
         ## A sequence is a sequence of parameter changes with looping capability.
-        ## (Not to be confused with a Nim sequence, seq[T]).
+        ## (Not to be confused with a Nim sequence, `seq[T]`).
         loopIndex*: Option[ByteIndex]
             ## If set, the sequence will loop to this index at the end. If unset
             ## or the index exceeds the bounds of the sequence data, the sequence
@@ -172,18 +172,32 @@ type
     TrackData = array[ByteIndex, TrackRow]
 
     Track* = object
-        ## Pattern data for a single track. Valid tracks contain 1-256 rows
-        ## of data. A Track is invalid (or has no data) if it was default
-        ## initialized, use isValid() to check for validity.
+        ## Pattern data for a single track. A track can store up to 256 rows.
+        ## The data is stored using ref semantics, so assigning a track from
+        ## another track will result in a shallow copy. Use the init proc to
+        ## deep copy a track if needed. A Track is invalid if it was default
+        ## initialized, or if its internal data ref is `nil`. Use isValid() to
+        ## check for validity.
+        ## 
+        ## Regarding mutability, all `Track` objects are mutable. If you need
+        ## immutable access, use `TrackView`. A `Track` can be converted to a
+        ## `TrackView` at no cost, but the opposite is not true. Converting a
+        ## `TrackView` to a `Track` will result in a deep copy of the `TrackView`'s
+        ## data being made.
+        ## 
         data: ref TrackData
-        len*: Natural
+        when NimMajor >= 2:
+            len*: TrackLen = TrackLen.low
+        else:
+            len*: TrackLen
 
     TrackView* {.borrow: `.`.} = distinct Track
         ## Same as track, but only provides immutable access to the track data.
         ## Mutable access can be acquired by converting the view to a Track via
-        ## the Track.init overload.
+        ## the Track.init overload, while making a deep copy of the data.
 
     SomeTrack* = Track | TrackView
+        ## Type class for all Track types.
 
 
     TrackMap = object
@@ -605,13 +619,16 @@ func init*(_: typedesc[Track], view: TrackView): Track =
 func init(_: typedesc[Track], data: ref TrackData, len: TrackLen): Track =
     _(
         data: data,
-        len: if data == nil: 0 else: len
+        len: if data == nil: TrackLen.low else: len
     )
 
 template init(_: typedesc[TrackView], data: ref TrackData, len: TrackLen): TrackView =
     cast[TrackView](Track.init(data, len))
 
 func init*(_: typedesc[TrackView], track: sink Track): TrackView =
+    ## Value constructor for a TrackView by shallow copying the given Track.
+    ## While the returned TrackView is immutable, its data can be mutated if
+    ## a Track still refers to this data.
     result.data = track.data
     result.len = track.len
 
@@ -633,7 +650,8 @@ proc `[]=`*(t: var Track, i: ByteIndex, v: TrackRow) =
     t.get(i) = v
 
 func isValid*(t: Track): bool =
-    ## Determines if the track is valid, or if the track has more than 0 rows.
+    ## Determines if the track is valid, or if the track has a reference to
+    ## the track data.
     t.data != nil
 
 func isValid*(t: TrackView): bool {.borrow.}

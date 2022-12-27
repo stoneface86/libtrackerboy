@@ -292,7 +292,7 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
         # Track data
         p.removeAllTracks()
         let trackSize = format.rowsPerTrack.unbias.TrackLen
-        p.setTrackLen(trackSize)
+        p.trackLen = trackSize
         for i in 0..<format.numberOfTracks.toNE.int:
             var trackFormat: TrackFormat
             invalidWhen ib.read(trackFormat)
