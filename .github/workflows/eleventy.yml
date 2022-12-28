@@ -1,5 +1,5 @@
 
-name: Deploy 11ty site to Pages
+name: '[push] [gh-pages] 11ty build and deploy'
 
 on:
   # Runs on pushes targeting the default branch
