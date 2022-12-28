@@ -816,11 +816,6 @@ func totalTracks*(s: Song): int =
     ## Gets the total number of tracks from all channels in this song.
     s.tracks.len
 
-proc setTrackLen*(s: var Song, size: TrackLen) {.deprecated: "modify s.trackLen instead".} =
-    ## Changes the length of every track in the song to `size`. If `size` is
-    ## less than the current length, all rows past the new `size` will lost.
-    s.trackLen = size
-
 proc setTrack*(s: var Song, ch: ChannelId, order: ByteIndex, track: sink Track) =
     ## Puts the given track into the song for the given channel and order.
     if track.isValid():

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.7.1] - 2022-12-27
 
 ### Added
  - `TrackView` and `SomeTrack` types to libtrackerboy/data

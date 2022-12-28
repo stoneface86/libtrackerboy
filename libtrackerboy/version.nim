@@ -20,7 +20,7 @@ template v*(m = 0, n = 0, p = 0): Version =
     Version(major: m, minor: n, patch: p)
 
 const
-    currentVersion* = v(0, 7, 0)
+    currentVersion* = v(0, 7, 1)
         ## libtrackerboy version
 
     # current file format revision: 1.1 (Rev C)
