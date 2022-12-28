@@ -1,4 +1,4 @@
-name: '[push][develop] Documentation'
+name: '[push] [develop] Documentation'
 on:
   push:
     branches:
