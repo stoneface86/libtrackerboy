@@ -1,0 +1,5 @@
+{
+  "version": "v0.7.1",
+  "date": "2022-12-27",
+  "changes": "### Added\n - `TrackView` and `SomeTrack` types to libtrackerboy/data\n - `Song.getTrackView` member proc\n\n### Changed\n - Track data is stored using a `ref array` instead of a `seq`\n - Each track is allocated for 256 rows, regardless of the song's trackLen\n   parameter. This allows for changing the trackLen without losing data at\n   the cost of extra memory consumption when trackLen < 256.\n\n### Removed\n - `len` and `setLen` overloads for `Track` instances, use the `Track.len` \n   field instead.\n - `trackLen` and `setTrackLen` procs, use the `Song.trackLen` field instead."
+}
