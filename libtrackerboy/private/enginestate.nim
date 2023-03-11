@@ -14,12 +14,19 @@ type
         ## Informational data about the current engine frame being stepped.
         ## 
         halted*: bool
+            ## Indicates if the song has halted
         startedNewRow*: bool
+            ## Indicates if this frame is the first of a new row being stepped.
         startedNewPattern*: bool
+            ## Indicates if this frame is the first step of a new pattern.
         speed*: uint8
+            ## Current playback speed, in Q4.4 format.
         time*: int
+            ## time index of the frame
         order*: int
+            ## Current pattern index
         row*: int
+            ## Current row index
 
     PatternCommand* = enum
         pcNone
