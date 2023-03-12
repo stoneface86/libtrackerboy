@@ -51,13 +51,13 @@ See also
 ]##
 
 import libtrackerboy/[
-    apu,
-    common,
-    data,
-    editing,
-    engine,
-    io,
-    notes,
-    version
+  apu,
+  common,
+  data,
+  editing,
+  engine,
+  io,
+  notes,
+  version
 ]
 export apu, common, data, editing, engine, io, notes, version

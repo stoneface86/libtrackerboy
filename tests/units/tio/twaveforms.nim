@@ -6,12 +6,12 @@ testclass "waveforms"
 
 # correct serialized waveform
 const
-    waveformBinary = slurp("data/sample.tbw")
+  waveformBinary = slurp("data/sample.tbw")
 
 
 testgroup:
 
-    pieceTests get(sampleWaveformTriangle), waveformBinary:
-        discard
+  pieceTests get(sampleWaveformTriangle), waveformBinary:
+    discard
 
 

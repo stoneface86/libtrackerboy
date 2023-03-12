@@ -14,4 +14,4 @@ requires "nim >= 1.6.0"
 requires "unittest2"
 
 before install:
-    raise newException(AssertionDefect, "cannot install this package!")
+  raise newException(AssertionDefect, "cannot install this package!")

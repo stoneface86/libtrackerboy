@@ -6,100 +6,100 @@ import ../testing
 testclass "PatternSelection"
 
 dtest "clamp":
-    const startingSelection = PatternSelection.init(a(0, 0, selNote), a(36, 1, selInstrument))
-    var sel = startingSelection
+  const startingSelection = PatternSelection.init(a(0, 0, selNote), a(36, 1, selInstrument))
+  var sel = startingSelection
 
-    sel.clamp(64)
-    check sel == startingSelection
+  sel.clamp(64)
+  check sel == startingSelection
 
-    sel.clamp(32)
-    check sel != startingSelection
-    check sel == PatternSelection.init(a(0, 0, selNote), a(32, 1, selInstrument))
+  sel.clamp(32)
+  check sel != startingSelection
+  check sel == PatternSelection.init(a(0, 0, selNote), a(32, 1, selInstrument))
 
 dtest "translate":
-    const sample = PatternSelection.init(a(0, 0, selNote), a(1, 0, selEffect3))
-    var sel = sample
-    sel.translate(1)
-    check sel == PatternSelection.init(a(1, 0, selNote), a(2, 0, selEffect3))
-    
-    # check clamping when out of bounds
-    sel = sample
-    sel.translate(-100)
-    check sel == PatternSelection.init(a(0, 0, selNote), a(0, 0, selEffect3))
+  const sample = PatternSelection.init(a(0, 0, selNote), a(1, 0, selEffect3))
+  var sel = sample
+  sel.translate(1)
+  check sel == PatternSelection.init(a(1, 0, selNote), a(2, 0, selEffect3))
+  
+  # check clamping when out of bounds
+  sel = sample
+  sel.translate(-100)
+  check sel == PatternSelection.init(a(0, 0, selNote), a(0, 0, selEffect3))
 
-    sel = sample
-    sel.translate(300)
-    check sel == PatternSelection.init(a(high(ByteIndex), 0, selNote), a(high(ByteIndex), 0, selEffect3))
+  sel = sample
+  sel.translate(300)
+  check sel == PatternSelection.init(a(high(ByteIndex), 0, selNote), a(high(ByteIndex), 0, selEffect3))
 
 dtest "iter":
 
-    type TestData = object
-        name: string
-        input: PatternSelection
-        expectedRows: Slice[int]
-        expectedTracks: Slice[int]
-        expectedColumns: int
+  type TestData = object
+    name: string
+    input: PatternSelection
+    expectedRows: Slice[int]
+    expectedTracks: Slice[int]
+    expectedColumns: int
 
-    const tests = [
-        TestData(
-            name: "empty",
-            input: default(PatternSelection),
-            expectedRows: 0..0,
-            expectedTracks: 0..0,
-            expectedColumns: 1
-        ),
-        TestData(
-            name: "single column",
-            input: PatternSelection.init(a(1, 0, selNote), a(6, 0, selNote)),
-            expectedRows: 1..6,
-            expectedTracks: 0..0,
-            expectedColumns: 1
-        ),
-        TestData(
-            name: "multiple columns, single track",
-            input: PatternSelection.init(a(10, 3, selInstrument), a(1, 3, selEffect3)),
-            expectedRows: 1..10,
-            expectedTracks: 3..3,
-            expectedColumns: 4
-        ),
-        TestData(
-            name: "single column, multiple tracks",
-            input: PatternSelection.init(a(3, 1, selEffect2), a(3, 3, selEffect2)),
-            expectedRows: 3..3,
-            expectedTracks: 1..3,
-            expectedColumns: 11
-        ),
-        TestData(
-            name: "multiple columns, multiple tracks",
-            input: PatternSelection.init(a(1, 3, selEffect3), a(10, 1, selInstrument)),
-            expectedRows: 1..10,
-            expectedTracks: 1..3,
-            expectedColumns: 14
-        )
-    ]
-    
-    for testcase in tests:
-        checkpoint testcase.name
-        var iter = testcase.input.iter()
-        check iter.rows() == testcase.expectedRows
-        check iter.tracks() == testcase.expectedTracks
-        var columnCount = 0
-        for track in iter.tracks():
-            let columnIter = iter.columnIter(track)
-            for column in TrackSelect:
-                if columnIter.hasColumn(column):
-                    inc columnCount
+  const tests = [
+    TestData(
+      name: "empty",
+      input: default(PatternSelection),
+      expectedRows: 0..0,
+      expectedTracks: 0..0,
+      expectedColumns: 1
+    ),
+    TestData(
+      name: "single column",
+      input: PatternSelection.init(a(1, 0, selNote), a(6, 0, selNote)),
+      expectedRows: 1..6,
+      expectedTracks: 0..0,
+      expectedColumns: 1
+    ),
+    TestData(
+      name: "multiple columns, single track",
+      input: PatternSelection.init(a(10, 3, selInstrument), a(1, 3, selEffect3)),
+      expectedRows: 1..10,
+      expectedTracks: 3..3,
+      expectedColumns: 4
+    ),
+    TestData(
+      name: "single column, multiple tracks",
+      input: PatternSelection.init(a(3, 1, selEffect2), a(3, 3, selEffect2)),
+      expectedRows: 3..3,
+      expectedTracks: 1..3,
+      expectedColumns: 11
+    ),
+    TestData(
+      name: "multiple columns, multiple tracks",
+      input: PatternSelection.init(a(1, 3, selEffect3), a(10, 1, selInstrument)),
+      expectedRows: 1..10,
+      expectedTracks: 1..3,
+      expectedColumns: 14
+    )
+  ]
+  
+  for testcase in tests:
+    checkpoint testcase.name
+    var iter = testcase.input.iter()
+    check iter.rows() == testcase.expectedRows
+    check iter.tracks() == testcase.expectedTracks
+    var columnCount = 0
+    for track in iter.tracks():
+      let columnIter = iter.columnIter(track)
+      for column in TrackSelect:
+        if columnIter.hasColumn(column):
+          inc columnCount
 
-        check columnCount == testcase.expectedColumns
+    check columnCount == testcase.expectedColumns
 
 dtest "contains":
-    let first = a(10, 1, selInstrument)
-    let last = a(32, 2, selEffect2)
-    let sel = PatternSelection.init(first, last)
-    check sel.contains(first)
-    check sel.contains(last)
-    check sel.contains(a(16, 1, selEffect1))
-    check not sel.contains(a(9, 1, selInstrument))
-    check not sel.contains(a(36, 1, selInstrument))
-    check not sel.contains(a(16, 1, selNote))
-    check not sel.contains(a(16, 2, selEffect3))
+  let first = a(10, 1, selInstrument)
+  let last = a(32, 2, selEffect2)
+  let sel = PatternSelection.init(first, last)
+  check sel.contains(first)
+  check sel.contains(last)
+  check sel.contains(a(16, 1, selEffect1))
+  check not sel.contains(a(9, 1, selInstrument))
+  check not sel.contains(a(36, 1, selInstrument))
+  check not sel.contains(a(16, 1, selNote))
+  check not sel.contains(a(16, 2, selEffect3))

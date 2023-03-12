@@ -5,7 +5,7 @@
 import ../version
 
 type
-    ModulePrivate* = object
-        version*: Version
-        revisionMajor*: int
-        revisionMinor*: int
+  ModulePrivate* = object
+    version*: Version
+    revisionMajor*: int
+    revisionMinor*: int

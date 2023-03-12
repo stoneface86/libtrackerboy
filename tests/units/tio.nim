@@ -5,9 +5,9 @@ import testing
 testunit "io"
 
 import tio/[
-    tinstruments,
-    tmajor0,
-    tmodules,
-    tsongs,
-    twaveforms
+  tinstruments,
+  tmajor0,
+  tmodules,
+  tsongs,
+  twaveforms
 ]

@@ -5,7 +5,7 @@ import testing
 testunit "editing"
 
 import tediting/[
-    tPatternClip,
-    tPatternSelection,
-    tTrackSelect
+  tPatternClip,
+  tPatternSelection,
+  tTrackSelect
 ]

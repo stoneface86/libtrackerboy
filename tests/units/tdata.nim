@@ -6,10 +6,10 @@ import testing
 testunit "data"
 
 import tdata/[
-    tOrder,
-    tSequence,
-    tSongList,
-    tTable,
-    tTrackRow,
-    tWaveData
+  tOrder,
+  tSequence,
+  tSongList,
+  tTable,
+  tTrackRow,
+  tWaveData
 ]

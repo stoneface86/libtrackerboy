@@ -18,4 +18,4 @@ requires "nim >= 1.6.0"
 # Use nut.nims instead for tasks
 
 task packageVersion, "Prints package version and exits":
-    echo version
+  echo version
