@@ -21,15 +21,16 @@ template frequencyTest(ch: ChannelId): untyped =
 dtest "0xy":  # arpeggio
   testsetup
 
-  const baseNote1 = "C-4".note
-  const baseNote2 = "C-8".note
-  const maxFreq = lookupToneNote(ToneNote.high)
-  const chord12 = [
-    lookupToneNote(baseNote1),
-    lookupToneNote(baseNote1 + 1),
-    lookupToneNote(baseNote1 + 2)
-  ]
-  const noiseBaseNote = NoiseNote.high - 11
+  const
+    baseNote1 = "C-4".note
+    baseNote2 = "C-8".note
+    maxFreq = lookupToneNote(ToneNote.high)
+    chord12 = [
+      lookupToneNote(baseNote1),
+      lookupToneNote(baseNote1 + 1),
+      lookupToneNote(baseNote1 + 2)
+    ]
+    noiseBaseNote = NoiseNote.high - 11
 
   song.speed = unitSpeed
   song[].editTrack(ch1, 0, track):
@@ -81,9 +82,10 @@ dtest "1xx":  # pitch slide up
   testsetup
   song.speed = unitSpeed
 
-  const startToneNote = ToneNote.high.uint8
-  const toneNote2 = "C-4".note
-  const startFreq = lookupToneNote(startToneNote)
+  const
+    startToneNote = ToneNote.high.uint8
+    toneNote2 = "C-4".note
+    startFreq = lookupToneNote(startToneNote)
   song[].editTrack(ch1, 0, track):
     with track:
       setNote(0, startToneNote)
@@ -208,8 +210,56 @@ dtest "Fxx":  # set speed
 dtest "Exx":  # set envelope
   discard
 
-# dtest "Gxx":  # note delay
-#     discard
+dtest "Gxx":  # note delay
+  testsetup
+  song[].speed = 0x20
+  const 
+    testNote1 = "A-4".note
+    testNote2 = "G-3".note
+    testNote3 = "F-3".note
+  # 00 : A-4 -- G01
+  # 01 : G-3 -- G04
+  # 02 : --- -- ---
+  # 03 : --- -- ---
+  # 04 : A-4 -- G02 <- this note doesn't play since row 5 occurs before the delay expires
+  # 05 : F-3 -- ---
+  song[].editTrack(ch1, 0, track):
+    with track:
+      setNote(0, testNote1)
+      setEffect(0, 0, etDelayedNote, 1)
+      setNote(1, testNote2)
+      setEffect(1, 0, etDelayedNote, 4)
+      setNote(4, testNote1)
+      setEffect(4, 0, etDelayedNote, 2)
+      setNote(5, testNote3)
+
+  engine.play(song.toImmutable)
+  
+  # frame 0: no change
+  engine.step(instruments)
+  check engine.currentNote(ch1) == 0
+  # frame 1: note was set to testNote1 (row 00 delayed by 1 frame)
+  engine.step(instruments)
+  check engine.currentNote(ch1) == testNote1.int
+
+  # frames 2-5, no change
+  for i in 2..5:
+    engine.step(instruments)
+    check engine.currentNote(ch1) == testNote1.int
+
+  # frame 6: not was set to testNote2 (row 01 delayed by 4 frames)
+  engine.step(instruments)
+  check engine.currentNote(ch1) == testNote2.int
+
+  # frames 7-9: no change
+  for i in 7..9:
+    engine.step(instruments)
+    check engine.currentNote(ch1) == testNote2.int
+
+  # frame 10: note was set to testNote3 (row 05 performed)
+  engine.step(instruments)
+  check engine.currentNote(ch1) == testNote3.int
+
 
 # dtest "Hxx":  # set sweep register
 #     discard
@@ -220,8 +270,31 @@ dtest "Exx":  # set envelope
 # dtest "Jxy":  # set global volume
 #     discard
 
-# dtest "L00":  # lock channel (music priority)
-#     discard
+dtest "L00":  # lock channel (music priority)
+  testsetup
+  song[].speed = unitSpeed
+  song[].editPattern(0, pat):
+    pat(ch1).setEffect(0, 0, etLock)
+    pat(ch2).setEffect(1, 0, etLock)
+    pat(ch3).setEffect(2, 0, etLock)
+    pat(ch4).setEffect(3, 0, etLock)
+  engine.play(song.toImmutable)
+  for ch in ChannelId:
+    engine.unlock(ch)
+
+  check engine.getLocked() == {}
+  
+  engine.step(instruments)
+  check engine.getLocked() == { ch1 }
+
+  engine.step(instruments)
+  check engine.getLocked() == { ch1..ch2 }
+
+  engine.step(instruments)
+  check engine.getLocked() == { ch1..ch3 }
+
+  engine.step(instruments)
+  check engine.getLocked() == { ch1..ch4 }
 
 # dtest "Pxx":  # fine tuning
 #     discard

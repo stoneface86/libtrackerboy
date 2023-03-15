@@ -173,6 +173,14 @@ func getTrackPanning*(e: Engine, chno: ChannelId): uint8 =
   ## 
   getTrackParameter(e, chno, panning)
 
+func isLocked*(e: Engine, chno: ChannelId): bool =
+  if e.musicRuntime.isSome():
+    result = chno notin e.musicRuntime.get().unlocked
+
+func getLocked*(e: Engine): set[ChannelId] =
+  if e.musicRuntime.isSome():
+    result = {ch1..ch4} - e.musicRuntime.get().unlocked
+
 # Apu stuff ===================================================================
 
 proc setup*(apu: var ApuIo) =

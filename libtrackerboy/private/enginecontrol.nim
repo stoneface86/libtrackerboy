@@ -49,6 +49,7 @@ type
     vibrato*: Option[uint8]
     vibratoDelay*: Option[uint8]
     tune*: Option[uint8]
+    shouldLock*: bool
 
   SequenceInput* = array[SequenceKind, Option[uint8]]
     ## Input data to pass to TrackControl and FrequencyControl from
@@ -218,7 +219,7 @@ func toOperation(row: TrackRow): Operation =
     of etDelayedNote.uint8:
       result.delay = effect.param
     of etLock.uint8:
-      discard  # TBD
+      result.shouldLock = true
     of etArpeggio.uint8:
       result.freqMod = freqArpeggio
       result.freqModParam = effect.param
@@ -383,7 +384,9 @@ proc step(fc: var FrequencyControl, arpIn, pitchIn: Option[uint8]): uint16 =
         dec fc.vibratoCounter
 
   if pitchIn.isSome():
-    fc.instrumentPitch += pitchIn.get().int8
+    # a simple cast should always work since 2s complement is a safe assumption
+    # might need to refactor with a proc that guarantees this
+    fc.instrumentPitch += cast[int8](pitchIn.get())
 
   if arpIn.isSome():
     fc.frequency = fc.bounds.lookupFn(clamp(fc.note.int + arpIn.get().int, 0, fc.bounds.maxNote.int).uint8)
@@ -466,11 +469,13 @@ proc setRow(tc: var TrackControl, row: TrackRow) =
   # effect. If Gxx is not present or the parameter is 00, then the operation
   # is immediately applied on the next call to step()
 
-proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): NoteAction =
-  result = naSustain
+proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): (NoteAction, bool) =
+  result[0] = naSustain
 
   if tc.delayCounter.step():
     # apply the operation
+
+    result[1] = tc.op.shouldLock
 
     # global effects
     if tc.op.patternCommand != pcNone:
@@ -508,7 +513,7 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
         tc.state.envelope = tc.ir.instrument[].envelope
       else:
         tc.state.envelope = tc.envelope
-      result = naTrigger
+      result[0] = naTrigger
 
     tc.fc.apply(tc.op)
     tc.delayCounter = noCounter()
@@ -520,7 +525,8 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
   if tc.playing:
     if tc.cutCounter.step():
       tc.playing = false
-      return naCut
+      result[0] = naCut
+      return
     
     let inputs = tc.ir.step()
 
@@ -536,7 +542,7 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
     readInput(panning, skPanning)
     readInput(timbre, skTimbre)
   else:
-    result = naOff
+    result[0] = naOff
 
 func init*(T: typedesc[MusicRuntime], song: sink Immutable[ref Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
   result = MusicRuntime(
@@ -651,9 +657,9 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
     #let prev = state
     
     # step the channel's track control
-    let action = r.trackControls[chno].step(itable, r.global)
+    let (action, shouldLock) = r.trackControls[chno].step(itable, r.global)
 
-    if chno notin r.unlocked:
+    if chno notin r.unlocked or shouldLock:
       op.updates[chno] = block:
         case action:
         of naOff:
@@ -670,6 +676,8 @@ proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame,
           up
         of naCut:
           ChannelUpdate(action: caCut)
+      if shouldLock:
+        r.unlocked.excl(chno)
 
 
   if op.updates[ch1].action == caUpdate and r.global.sweep.isSome():
