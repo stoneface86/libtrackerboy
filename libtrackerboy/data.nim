@@ -291,6 +291,14 @@ func effectTypeShortensPattern*(et: EffectType): bool =
        et == etPatternSkip or
        et == etPatternGoto
 
+func toEffectType*(x: uint8): EffectType =
+  ## Converts a uint8 to an EffectType enum safely. etNoEffect is returned if
+  ## x is not in the range of EffectType.
+  if x.int in EffectType.low.ord..EffectType.high.ord:
+    x.EffectType
+  else:
+    etNoEffect
+
 # Sequence
 
 proc `[]`*(s: Sequence, i: ByteIndex): uint8 =
@@ -596,7 +604,7 @@ func isEmpty*(row: TrackRow): bool =
 # Track
 
 func `==`*(lhs, rhs: Track): bool =
-  lhs.len == rhs.len and toEqRef(lhs.data) == toEqRef(rhs.data)
+  lhs.len == rhs.len and deepEquals(lhs.data, rhs.data)
 
 func `==`*(lhs, rhs: TrackView): bool {.borrow.}
 

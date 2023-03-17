@@ -31,16 +31,16 @@ func deepEquals*[T](a, b: ref T): bool =
     assert a.deepEquals(b)      # both are not nil and the referenced data are the same
     b = nil
     assert not a.deepEquals(b)  # one of the refs is nil
-
-  if a.isNil:
-    # return true if both are nil
-    b.isNil
-  elif b.isNil:
-    # lhs is not nil but rhs is nil
-    false
+  if a == b:
+    # a and b are both nil, or are the same ref, so a == b
+    true
   else:
-    # check if the referenced data is equal (deep equality)
-    a[] == b[]
+    if a.isNil or b.isNil:
+      # a or b is nil (but not both), so a != b
+      false
+    else:
+      # a and b are not nil but different refs, check if their data is equivalent.
+      a[] == b[]
 
 template toEqRef*[T](val: ref T): EqRef[T] =
   ## Converts a ref to an EqRef

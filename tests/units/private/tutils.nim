@@ -23,6 +23,12 @@ dtest "equal when a, b are nil":
   setup
   checkEqual
 
+dtest "equal when a, b are the same reference":
+  setup
+  new(a)
+  b = a
+  checkEqual
+
 dtest "not equal when a is nil, b is not nil":
   setup
   new(a)
