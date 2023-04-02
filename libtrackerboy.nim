@@ -35,6 +35,7 @@ Module                                  Description
 `editing<libtrackerboy/editing.html>`_  Utilities for editing pattern data
 `engine<libtrackerboy/engine.html>`_    Song playback, or driver implementation
 `io<libtrackerboy/io.html>`_            Module serialization/deserialization
+`ir<libtrackerboy/ir.html>`_            Intermediate representation for import/export
 `notes<libtrackerboy/notes.html>`_      Note lookup procs, note values
 `version<libtrackerboy/version.html>`_  Version type and consts
 ======================================  ==============================================

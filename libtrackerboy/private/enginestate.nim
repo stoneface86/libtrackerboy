@@ -5,7 +5,7 @@
 ]##
 
 
-import ../common
+import ../common, ../ir
 
 import std/options
 
@@ -27,11 +27,6 @@ type
       ## Current pattern index
     row*: int
       ## Current row index
-
-  PatternCommand* = enum
-    pcNone
-    pcNext
-    pcJump
 
   UpdateFlag* = enum
     ufTimbre

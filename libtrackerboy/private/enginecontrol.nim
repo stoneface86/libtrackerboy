@@ -5,21 +5,12 @@
 ]##
 
 import enginestate
-import ../data, ../notes
+import ../data, ../notes, ../ir
 
 import std/[bitops, options, with]
 
 type
   Counter = distinct int
-
-  FrequencyMod* = enum
-    freqNone
-    freqPortamento
-    freqPitchUp
-    freqPitchDown
-    freqNoteUp
-    freqNoteDown
-    freqArpeggio
 
   FcMode* = enum
     fcmNone,
@@ -27,29 +18,6 @@ type
     fcmPitchSlide,
     fcmNoteSlide,
     fcmArpeggio
-
-  Operation* = object
-    ## An Operation is the processed form of a TrackRow, that is ready to
-    ## be perfomed by the TrackControl
-    patternCommand*: PatternCommand
-    patternCommandParam*: uint8
-    speed*: uint8
-    volume*: Option[uint8]
-    halt*: bool
-    note*: Option[uint8]
-    instrument*: Option[uint8]
-    delay*: uint8
-    duration*: Option[uint8]
-    envelope*: Option[uint8]
-    timbre*: Option[uint8]
-    panning*: Option[uint8]
-    sweep*: Option[uint8]
-    freqMod*: FrequencyMod
-    freqModParam*: uint8
-    vibrato*: Option[uint8]
-    vibratoDelay*: Option[uint8]
-    tune*: Option[uint8]
-    shouldLock*: bool
 
   SequenceInput* = array[SequenceKind, Option[uint8]]
     ## Input data to pass to TrackControl and FrequencyControl from
@@ -177,85 +145,6 @@ proc step(t: var Timer): bool =
     # timer overflow
     t.counter -= t.period
 
-# === Operation ===============================================================
-
-func toOperation(row: TrackRow): Operation =
-  # note column
-  result.note = row.queryNote()
-  if result.note.isSome() and result.note.get() == noteCut:
-    # noteCut behaves exactly the same as effect S00
-    result.note = none[uint8]()
-    result.duration = some(0u8)
-
-  # instrument column
-  result.instrument = row.queryInstrument()
-  
-  # effects
-  for effect in row.effects:
-    case effect.effectType:
-    of etPatternGoto.uint8:
-      result.patternCommand = pcJump
-      result.patternCommandParam = effect.param
-    of etPatternHalt.uint8:
-      result.halt = true
-    of etPatternSkip.uint8:
-      result.patternCommand = pcNext
-      result.patternCommandParam = effect.param
-    of etSetTempo.uint8:
-      if effect.param >= low(Speed) and effect.param <= high(Speed):
-        result.speed = effect.param
-    of etSfx.uint8:
-      discard  # TBD
-    of etSetEnvelope.uint8:
-      result.envelope = some(effect.param)
-    of etSetTimbre.uint8:
-      result.timbre = some(clamp(effect.param, 0, 3))
-    of etSetPanning.uint8:
-      result.panning = some(clamp(effect.param, 0, 3))
-    of etSetSweep.uint8:
-      result.sweep = some(effect.param)
-    of etDelayedCut.uint8:
-      result.duration = some(effect.param)
-    of etDelayedNote.uint8:
-      result.delay = effect.param
-    of etLock.uint8:
-      result.shouldLock = true
-    of etArpeggio.uint8:
-      result.freqMod = freqArpeggio
-      result.freqModParam = effect.param
-    of etPitchUp.uint8:
-      result.freqMod = freqPitchUp
-      result.freqModParam = effect.param
-    of etPitchDown.uint8:
-      result.freqMod = freqPitchDown
-      result.freqModParam = effect.param
-    of etAutoPortamento.uint8:
-      result.freqMod = freqPortamento
-      result.freqModParam = effect.param
-    of etVibrato.uint8:
-      result.vibrato = some(effect.param)
-    of etVibratoDelay.uint8:
-      result.vibratoDelay = some(effect.param)
-    of etTuning.uint8:
-      result.tune = some(effect.param)
-    of etNoteSlideUp.uint8:
-      result.freqMod = freqNoteUp
-      result.freqModParam = effect.param
-    of etNoteSlideDown.uint8:
-      result.freqMod = freqNoteDown
-      result.freqModParam = effect.param
-    of etSetGlobalVolume.uint8:
-      if effect.param < 0x80:
-        result.volume = some(effect.param and 0x77)
-    else:
-      discard  # ignore any unknown effect
-
-# func toOperation(note: uint8): Operation =
-#     if note == noteCut:
-#         result.duration = some(1u8)
-#     else:
-#         result.note = some(note)
-
 # === FrequencyControl ========================================================
 
 func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyControl =
@@ -263,62 +152,62 @@ func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyCont
 
 proc apply(fc: var FrequencyControl, op: Operation) =
   var updateChord = false
-  if op.note.isSome():
+  op.forFlagPresent(opsNote):
     if fc.mode == fcmNoteSlide:
       # setting a new note cancels a slide
       fc.mode = fcmNone
-    fc.note = min(op.note.get(), fc.bounds.maxNote)
+    fc.note = min(op[opsNote], fc.bounds.maxNote)
 
-  case op.freqMod:
-  of freqArpeggio:
-    if op.freqModParam == 0:
-      if fc.mode == fcmArpeggio:
-        fc.frequency = fc.chord[0]
-        fc.chordIndex = 0
-      fc.mode = fcmNone
-    else:
-      fc.mode = fcmArpeggio
-      fc.chordOffset1 = op.freqModParam shr 4
-      fc.chordOffset2 = op.freqModParam and 0xF
-      updateChord = true
-  of freqPitchUp, freqPitchDown:
-    if op.freqModParam == 0:
-      fc.mode = fcmNone
-    else:
-      fc.mode = fcmPitchSlide
-      if op.freqMod == freqPitchUp:
-        fc.slideTarget = fc.bounds.maxFrequency
+  op.forFlagPresent(opsFreqMod):
+    let param = op[opsFreqMod]
+    case op.freqMod:
+    of freqArpeggio:
+      if param == 0:
+        if fc.mode == fcmArpeggio:
+          fc.frequency = fc.chord[0]
+          fc.chordIndex = 0
+        fc.mode = fcmNone
       else:
-        fc.slideTarget = 0
-      fc.slideAmount = op.freqModParam
-  of freqNoteUp, freqNoteDown:
-    fc.slideAmount = 1 + (2 * (op.freqModParam and 0xF))
-    # upper 4 bits is the # of semitones to slide to
-    let semitones = op.freqModParam shr 4
-    let targetNote = block:
-      if op.freqMod == freqNoteUp:
-        min(fc.note + semitones, fc.bounds.maxNote)
+        fc.mode = fcmArpeggio
+        fc.chordOffset1 = param shr 4
+        fc.chordOffset2 = param and 0xF
+        updateChord = true
+    of freqPitchUp, freqPitchDown:
+      if param == 0:
+        fc.mode = fcmNone
       else:
-        if fc.note < semitones:
-          0u8
+        fc.mode = fcmPitchSlide
+        if op.freqMod == freqPitchUp:
+          fc.slideTarget = fc.bounds.maxFrequency
         else:
-          fc.note - semitones
-    fc.mode = fcmNoteSlide
-    fc.slideTarget = fc.bounds.lookupFn(targetNote)
-    fc.note = targetNote
-  of freqPortamento:
-    if op.freqModParam == 0:
-      fc.mode = fcmNone
-    else:
-      if fc.mode != fcmPortamento:
-        fc.slideTarget = fc.frequency
-        fc.mode = fcmPortamento
-      fc.slideAmount = op.freqModParam
-  else:
-    discard
+          fc.slideTarget = 0
+        fc.slideAmount = param
+    of freqNoteUp, freqNoteDown:
+      fc.slideAmount = 1 + (2 * (param and 0xF))
+      # upper 4 bits is the # of semitones to slide to
+      let semitones = param shr 4
+      let targetNote = block:
+        if op.freqMod == freqNoteUp:
+          min(fc.note + semitones, fc.bounds.maxNote)
+        else:
+          if fc.note < semitones:
+            0u8
+          else:
+            fc.note - semitones
+      fc.mode = fcmNoteSlide
+      fc.slideTarget = fc.bounds.lookupFn(targetNote)
+      fc.note = targetNote
+    of freqPortamento:
+      if param == 0:
+        fc.mode = fcmNone
+      else:
+        if fc.mode != fcmPortamento:
+          fc.slideTarget = fc.frequency
+          fc.mode = fcmPortamento
+        fc.slideAmount = param
 
-  if op.vibrato.isSome():
-    fc.vibratoParam = op.vibrato.get()
+  op.forFlagPresent(opsVibrato):
+    fc.vibratoParam = op[opsVibrato]
     let extent = (fc.vibratoParam and 0xF).int8
     if extent == 0:
       # extent is 0, disable vibrato
@@ -332,17 +221,17 @@ proc apply(fc: var FrequencyControl, op: Operation) =
       else:
         fc.vibratoValue = extent
 
-  if op.vibratoDelay.isSome():
-    fc.vibratoDelay = op.vibratoDelay.get()
+  op.forFlagPresent(opsVibratoDelay):
+    fc.vibratoDelay = op[opsVibratoDelay]
 
-  if op.tune.isSome():
+  op.forFlagPresent(opsTune):
     # tune values have a bias of 0x80, so 0x80 is 0, is in tune
     # 0x81 is +1, frequency is pitch adjusted by 1
     # 0x7F is -1, frequency is pitch adjusted by -1
-    fc.tune = (op.tune.get() - 0x80).int8
+    fc.tune = (op[opsTune] - 0x80).int8
 
-  if op.note.isSome():
-    let freq = fc.bounds.lookupFn(op.note.get())
+  op.forFlagPresent(opsNote):
+    let freq = fc.bounds.lookupFn(op[opsNote])
     if fc.mode == fcmPortamento:
       # automatic portamento, slide to this note
       fc.slideTarget = freq
@@ -463,8 +352,8 @@ proc setRow(tc: var TrackControl, row: TrackRow) =
     return
 
   # convert the row to an operation
-  tc.op = row.toOperation
-  tc.delayCounter = counter(tc.op.delay.int)
+  tc.op = row.toOperation()
+  tc.delayCounter = counter(tc.op[opsDelay].int)
   # note that the operation gets applied in step(), in case there was a Gxx
   # effect. If Gxx is not present or the parameter is 00, then the operation
   # is immediately applied on the next call to step()
@@ -475,38 +364,40 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
   if tc.delayCounter.step():
     # apply the operation
 
-    result[1] = tc.op.shouldLock
+    result[1] = opsShouldLock in tc.op
 
     # global effects
-    if tc.op.patternCommand != pcNone:
+    tc.op.forFlagPresent(opsPatternCommand):
       global.patternCommand = tc.op.patternCommand
-      global.patternCommandParam = tc.op.patternCommandParam
+      global.patternCommandParam = tc.op[opsPatternCommand]
 
-    if tc.op.speed != 0:
+    tc.op.forFlagPresent(opsSpeed):
       # update speed if Fxx was specified
-      global.speed = tc.op.speed
-    if tc.op.halt:
+      global.speed = tc.op[opsSpeed]
+    if opsHalt in tc.op:
       global.halt = true
-    global.volume = tc.op.volume
+    tc.op.forFlagPresent(opsVolume):
+      global.volume = some(tc.op[opsVolume])
 
     # instrument column
-    if tc.op.instrument.isSome():
-      let instrument = itable[tc.op.instrument.get()]
+    tc.op.forFlagPresent(opsInstrument):
+      let instrument = itable[tc.op[opsInstrument]]
       if instrument != nil:
         tc.ir.setInstrument(instrument)
 
-    template updateSetting(setting: untyped): untyped =
-      if tc.op.setting.isSome():
-        tc.setting = tc.op.setting.get()
+    template updateSetting(setting: OperationSetting, field: untyped): untyped =
+      tc.op.forFlagPresent(setting):
+        tc.field = tc.op[setting]
 
-    updateSetting(envelope)
-    updateSetting(panning)
-    updateSetting(timbre)
+    updateSetting(opsEnvelope, envelope)
+    updateSetting(opsPanning, panning)
+    updateSetting(opsTimbre, timbre)
 
-    global.sweep = tc.op.sweep
+    tc.op.forFlagPresent(opsSweep):
+      global.sweep = some(tc.op[opsSweep])
 
     # note column
-    if tc.op.note.isSome():
+    if opsNote in tc.op:
       tc.ir.reset()
       tc.playing = true
       if tc.ir.instrument != nil and tc.ir.instrument[].initEnvelope:
@@ -517,10 +408,12 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
 
     tc.fc.apply(tc.op)
     tc.delayCounter = noCounter()
-    if tc.op.duration.isSome():
-      tc.cutCounter = counter(tc.op.duration.get().int)
-    else:
-      tc.cutCounter = noCounter()
+    tc.cutCounter = (
+      if opsDuration in tc.op:
+        counter(tc.op[opsDuration].int)
+      else:
+        noCounter()
+    )
   
   if tc.playing:
     if tc.cutCounter.step():
