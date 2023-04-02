@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Documents: <a href="module-file-format-spec.html">Module File Format</a>, <a href="piece-file-format-spec.html">Module Piece File Format</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
+    Documents: <a href="module-file-format-spec.html">Module File Format</a>, <a href="piece-file-format-spec.html">Module Piece File Format</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: `$`(s: Sequence): string" href="libtrackerboy/data.html#%24%2CSequence">data: `$`(s: Sequence): string</a></li>
@@ -138,6 +138,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: `[]`(t: var Track; i: ByteIndex): var TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrack%2CByteIndex_2">data: `[]`(t: var Track; i: ByteIndex): var TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: `[]`(t: TrackView; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrackView%2CByteIndex">data: `[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="ir: `[]`(op: Operation; flag: OperationSetting): uint8" href="libtrackerboy/ir.html#%5B%5D.t%2COperation%2COperationSetting">ir: `[]`(op: Operation; flag: OperationSetting): uint8</a></li>
           </ul></dd>
 <dt><a name="add" href="#add"><span>add:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -430,6 +432,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: contains[T: SomeData](t: Table[T]; id: TableId): bool" href="libtrackerboy/data.html#contains%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: contains[T: SomeData](t: Table[T]; id: TableId): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="editing: contains(s: PatternSelection; pos: PatternAnchor): bool" href="libtrackerboy/editing.html#contains%2CPatternSelection%2CPatternAnchor">editing: contains(s: PatternSelection; pos: PatternAnchor): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="ir: contains(op: Operation; flag: OperationFlag): bool" href="libtrackerboy/ir.html#contains.t%2COperation%2COperationFlag">ir: contains(op: Operation; flag: OperationFlag): bool</a></li>
           </ul></dd>
 <dt><a name="currentFileMajor" href="#currentFileMajor"><span>currentFileMajor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -687,6 +691,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: finish(b: var OutputBlock)" href="libtrackerboy/private/ioblocks.html#finish%2COutputBlock">ioblocks: finish(b: var OutputBlock)</a></li>
           </ul></dd>
+<dt><a name="forflagPresent" href="#forflagPresent"><span>forflagPresent:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: forflagPresent(op: Operation; flag: OperationFlag; body: untyped): untyped" href="libtrackerboy/ir.html#forflagPresent.t%2COperation%2COperationFlag%2Cuntyped">ir: forflagPresent(op: Operation; flag: OperationFlag; body: untyped): untyped</a></li>
+          </ul></dd>
 <dt><a name="FormatResult" href="#FormatResult"><span>FormatResult:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="io: FormatResult" href="libtrackerboy/io.html#FormatResult">io: FormatResult</a></li>
@@ -705,31 +713,27 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="freqArpeggio" href="#freqArpeggio"><span>freqArpeggio:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqArpeggio" href="libtrackerboy/private/enginecontrol.html#freqArpeggio">FrequencyMod.freqArpeggio</a></li>
-          </ul></dd>
-<dt><a name="freqNone" href="#freqNone"><span>freqNone:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqNone" href="libtrackerboy/private/enginecontrol.html#freqNone">FrequencyMod.freqNone</a></li>
+          data-doc-search-tag="FrequencyMod.freqArpeggio" href="libtrackerboy/ir.html#freqArpeggio">FrequencyMod.freqArpeggio</a></li>
           </ul></dd>
 <dt><a name="freqNoteDown" href="#freqNoteDown"><span>freqNoteDown:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqNoteDown" href="libtrackerboy/private/enginecontrol.html#freqNoteDown">FrequencyMod.freqNoteDown</a></li>
+          data-doc-search-tag="FrequencyMod.freqNoteDown" href="libtrackerboy/ir.html#freqNoteDown">FrequencyMod.freqNoteDown</a></li>
           </ul></dd>
 <dt><a name="freqNoteUp" href="#freqNoteUp"><span>freqNoteUp:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqNoteUp" href="libtrackerboy/private/enginecontrol.html#freqNoteUp">FrequencyMod.freqNoteUp</a></li>
+          data-doc-search-tag="FrequencyMod.freqNoteUp" href="libtrackerboy/ir.html#freqNoteUp">FrequencyMod.freqNoteUp</a></li>
           </ul></dd>
 <dt><a name="freqPitchDown" href="#freqPitchDown"><span>freqPitchDown:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqPitchDown" href="libtrackerboy/private/enginecontrol.html#freqPitchDown">FrequencyMod.freqPitchDown</a></li>
+          data-doc-search-tag="FrequencyMod.freqPitchDown" href="libtrackerboy/ir.html#freqPitchDown">FrequencyMod.freqPitchDown</a></li>
           </ul></dd>
 <dt><a name="freqPitchUp" href="#freqPitchUp"><span>freqPitchUp:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqPitchUp" href="libtrackerboy/private/enginecontrol.html#freqPitchUp">FrequencyMod.freqPitchUp</a></li>
+          data-doc-search-tag="FrequencyMod.freqPitchUp" href="libtrackerboy/ir.html#freqPitchUp">FrequencyMod.freqPitchUp</a></li>
           </ul></dd>
 <dt><a name="freqPortamento" href="#freqPortamento"><span>freqPortamento:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="FrequencyMod.freqPortamento" href="libtrackerboy/private/enginecontrol.html#freqPortamento">FrequencyMod.freqPortamento</a></li>
+          data-doc-search-tag="FrequencyMod.freqPortamento" href="libtrackerboy/ir.html#freqPortamento">FrequencyMod.freqPortamento</a></li>
           </ul></dd>
 <dt><a name="FrequencyBounds" href="#FrequencyBounds"><span>FrequencyBounds:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -745,7 +749,7 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="FrequencyMod" href="#FrequencyMod"><span>FrequencyMod:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FrequencyMod" href="libtrackerboy/private/enginecontrol.html#FrequencyMod">enginecontrol: FrequencyMod</a></li>
+          data-doc-search-tag="ir: FrequencyMod" href="libtrackerboy/ir.html#FrequencyMod">ir: FrequencyMod</a></li>
           </ul></dd>
 <dt><a name="frInvalidBlock" href="#frInvalidBlock"><span>frInvalidBlock:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -799,6 +803,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="FormatResult.frNone" href="libtrackerboy/io.html#frNone">FormatResult.frNone</a></li>
           </ul></dd>
+<dt><a name="fromIr" href="#fromIr"><span>fromIr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: fromIr(ir: TrackIr): Track" href="libtrackerboy/ir.html#fromIr%2CTrackIr">ir: fromIr(ir: TrackIr): Track</a></li>
+          </ul></dd>
 <dt><a name="frReadError" href="#frReadError"><span>frReadError:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="FormatResult.frReadError" href="libtrackerboy/io.html#frReadError">FormatResult.frReadError</a></li>
@@ -815,11 +823,19 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="hardware: gbVblank" href="libtrackerboy/private/hardware.html#gbVblank">hardware: gbVblank</a></li>
           </ul></dd>
+<dt><a name="getLocked" href="#getLocked"><span>getLocked:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="engine: getLocked(e: Engine): set[ChannelId]" href="libtrackerboy/engine.html#getLocked%2CEngine">engine: getLocked(e: Engine): set[ChannelId]</a></li>
+          </ul></dd>
 <dt><a name="getRow" href="#getRow"><span>getRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: getRow(s: var Song; ch: ChannelId; order, row: ByteIndex): var TrackRow" href="libtrackerboy/data.html#getRow%2CSong%2CChannelId%2CByteIndex%2CByteIndex">data: getRow(s: var Song; ch: ChannelId; order, row: ByteIndex): var TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: getRow(s: Song; ch: ChannelId; order, row: ByteIndex): TrackRow" href="libtrackerboy/data.html#getRow%2CSong%2CChannelId%2CByteIndex%2CByteIndex_2">data: getRow(s: Song; ch: ChannelId; order, row: ByteIndex): TrackRow</a></li>
+          </ul></dd>
+<dt><a name="getSetting" href="#getSetting"><span>getSetting:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: getSetting(op: Operation; flag: OperationSetting): uint8" href="libtrackerboy/ir.html#getSetting.t%2COperation%2COperationSetting">ir: getSetting(op: Operation; flag: OperationSetting): uint8</a></li>
           </ul></dd>
 <dt><a name="getTrack" href="#getTrack"><span>getTrack:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -953,9 +969,17 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="engine: isHalted(e: Engine): bool" href="libtrackerboy/engine.html#isHalted%2CEngine">engine: isHalted(e: Engine): bool</a></li>
           </ul></dd>
+<dt><a name="isLocked" href="#isLocked"><span>isLocked:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="engine: isLocked(e: Engine; chno: ChannelId): bool" href="libtrackerboy/engine.html#isLocked%2CEngine%2CChannelId">engine: isLocked(e: Engine; chno: ChannelId): bool</a></li>
+          </ul></dd>
 <dt><a name="isNil" href="#isNil"><span>isNil:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="common: isNil[T](i: Immutable[[type node]]): bool" href="libtrackerboy/common.html#isNil.t%2CImmutable%5B%5D">common: isNil[T](i: Immutable[[type node]]): bool</a></li>
+          </ul></dd>
+<dt><a name="isNoop" href="#isNoop"><span>isNoop:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: isNoop(op: Operation): bool" href="libtrackerboy/ir.html#isNoop%2COperation">ir: isNoop(op: Operation): bool</a></li>
           </ul></dd>
 <dt><a name="isValid" href="#isValid"><span>isValid:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -994,6 +1018,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: len(l: SongList): Natural" href="libtrackerboy/data.html#len%2CSongList">data: len(l: SongList): Natural</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: len[T: SomeData](t: Table[T]): int" href="libtrackerboy/data.html#len%2CTable%5BT%3A%20SomeData%5D">data: len[T: SomeData](t: Table[T]): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="ir: len(ir: TrackIr): int" href="libtrackerboy/ir.html#len%2CTrackIr">ir: len(ir: TrackIr): int</a></li>
           </ul></dd>
 <dt><a name="LittleEndian" href="#LittleEndian"><span>LittleEndian:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1133,7 +1159,87 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="Operation" href="#Operation"><span>Operation:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: Operation" href="libtrackerboy/private/enginecontrol.html#Operation">enginecontrol: Operation</a></li>
+          data-doc-search-tag="ir: Operation" href="libtrackerboy/ir.html#Operation">ir: Operation</a></li>
+          </ul></dd>
+<dt><a name="OperationFlag" href="#OperationFlag"><span>OperationFlag:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: OperationFlag" href="libtrackerboy/ir.html#OperationFlag">ir: OperationFlag</a></li>
+          </ul></dd>
+<dt><a name="OperationSetting" href="#OperationSetting"><span>OperationSetting:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: OperationSetting" href="libtrackerboy/ir.html#OperationSetting">ir: OperationSetting</a></li>
+          </ul></dd>
+<dt><a name="ops" href="#ops"><span>ops:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: ops(ir: TrackIr): tuple[rowno: int, op: Operation]" href="libtrackerboy/ir.html#ops.i%2CTrackIr">ir: ops(ir: TrackIr): tuple[rowno: int, op: Operation]</a></li>
+          </ul></dd>
+<dt><a name="opsDelay" href="#opsDelay"><span>opsDelay:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsDelay" href="libtrackerboy/ir.html#opsDelay">OperationFlag.opsDelay</a></li>
+          </ul></dd>
+<dt><a name="opsDuration" href="#opsDuration"><span>opsDuration:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsDuration" href="libtrackerboy/ir.html#opsDuration">OperationFlag.opsDuration</a></li>
+          </ul></dd>
+<dt><a name="opsEnvelope" href="#opsEnvelope"><span>opsEnvelope:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsEnvelope" href="libtrackerboy/ir.html#opsEnvelope">OperationFlag.opsEnvelope</a></li>
+          </ul></dd>
+<dt><a name="opsFreqMod" href="#opsFreqMod"><span>opsFreqMod:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsFreqMod" href="libtrackerboy/ir.html#opsFreqMod">OperationFlag.opsFreqMod</a></li>
+          </ul></dd>
+<dt><a name="opsHalt" href="#opsHalt"><span>opsHalt:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsHalt" href="libtrackerboy/ir.html#opsHalt">OperationFlag.opsHalt</a></li>
+          </ul></dd>
+<dt><a name="opsInstrument" href="#opsInstrument"><span>opsInstrument:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsInstrument" href="libtrackerboy/ir.html#opsInstrument">OperationFlag.opsInstrument</a></li>
+          </ul></dd>
+<dt><a name="opsNote" href="#opsNote"><span>opsNote:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsNote" href="libtrackerboy/ir.html#opsNote">OperationFlag.opsNote</a></li>
+          </ul></dd>
+<dt><a name="opsPanning" href="#opsPanning"><span>opsPanning:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsPanning" href="libtrackerboy/ir.html#opsPanning">OperationFlag.opsPanning</a></li>
+          </ul></dd>
+<dt><a name="opsPatternCommand" href="#opsPatternCommand"><span>opsPatternCommand:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsPatternCommand" href="libtrackerboy/ir.html#opsPatternCommand">OperationFlag.opsPatternCommand</a></li>
+          </ul></dd>
+<dt><a name="opsShouldLock" href="#opsShouldLock"><span>opsShouldLock:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsShouldLock" href="libtrackerboy/ir.html#opsShouldLock">OperationFlag.opsShouldLock</a></li>
+          </ul></dd>
+<dt><a name="opsSpeed" href="#opsSpeed"><span>opsSpeed:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsSpeed" href="libtrackerboy/ir.html#opsSpeed">OperationFlag.opsSpeed</a></li>
+          </ul></dd>
+<dt><a name="opsSweep" href="#opsSweep"><span>opsSweep:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsSweep" href="libtrackerboy/ir.html#opsSweep">OperationFlag.opsSweep</a></li>
+          </ul></dd>
+<dt><a name="opsTimbre" href="#opsTimbre"><span>opsTimbre:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsTimbre" href="libtrackerboy/ir.html#opsTimbre">OperationFlag.opsTimbre</a></li>
+          </ul></dd>
+<dt><a name="opsTune" href="#opsTune"><span>opsTune:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsTune" href="libtrackerboy/ir.html#opsTune">OperationFlag.opsTune</a></li>
+          </ul></dd>
+<dt><a name="opsVibrato" href="#opsVibrato"><span>opsVibrato:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsVibrato" href="libtrackerboy/ir.html#opsVibrato">OperationFlag.opsVibrato</a></li>
+          </ul></dd>
+<dt><a name="opsVibratoDelay" href="#opsVibratoDelay"><span>opsVibratoDelay:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsVibratoDelay" href="libtrackerboy/ir.html#opsVibratoDelay">OperationFlag.opsVibratoDelay</a></li>
+          </ul></dd>
+<dt><a name="opsVolume" href="#opsVolume"><span>opsVolume:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="OperationFlag.opsVolume" href="libtrackerboy/ir.html#opsVolume">OperationFlag.opsVolume</a></li>
           </ul></dd>
 <dt><a name="Order" href="#Order"><span>Order:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1187,7 +1293,7 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="PatternCommand" href="#PatternCommand"><span>PatternCommand:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: PatternCommand" href="libtrackerboy/private/enginestate.html#PatternCommand">enginestate: PatternCommand</a></li>
+          data-doc-search-tag="ir: PatternCommand" href="libtrackerboy/ir.html#PatternCommand">ir: PatternCommand</a></li>
           </ul></dd>
 <dt><a name="PatternCursor" href="#PatternCursor"><span>PatternCursor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1205,9 +1311,13 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="editing: PatternSelection" href="libtrackerboy/editing.html#PatternSelection">editing: PatternSelection</a></li>
           </ul></dd>
+<dt><a name="PatternVisit" href="#PatternVisit"><span>PatternVisit:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: PatternVisit" href="libtrackerboy/ir.html#PatternVisit">ir: PatternVisit</a></li>
+          </ul></dd>
 <dt><a name="pcJump" href="#pcJump"><span>pcJump:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="PatternCommand.pcJump" href="libtrackerboy/private/enginestate.html#pcJump">PatternCommand.pcJump</a></li>
+          data-doc-search-tag="PatternCommand.pcJump" href="libtrackerboy/ir.html#pcJump">PatternCommand.pcJump</a></li>
           </ul></dd>
 <dt><a name="Pcm" href="#Pcm"><span>Pcm:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1219,11 +1329,11 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="pcNext" href="#pcNext"><span>pcNext:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="PatternCommand.pcNext" href="libtrackerboy/private/enginestate.html#pcNext">PatternCommand.pcNext</a></li>
+          data-doc-search-tag="PatternCommand.pcNext" href="libtrackerboy/ir.html#pcNext">PatternCommand.pcNext</a></li>
           </ul></dd>
 <dt><a name="pcNone" href="#pcNone"><span>pcNone:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="PatternCommand.pcNone" href="libtrackerboy/private/enginestate.html#pcNone">PatternCommand.pcNone</a></li>
+          data-doc-search-tag="PatternCommand.pcNone" href="libtrackerboy/ir.html#pcNone">PatternCommand.pcNone</a></li>
           </ul></dd>
 <dt><a name="play" href="#play"><span>play:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1292,6 +1402,14 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="revisionMinor" href="#revisionMinor"><span>revisionMinor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: revisionMinor(m: Module): int" href="libtrackerboy/data.html#revisionMinor%2CModule">data: revisionMinor(m: Module): int</a></li>
+          </ul></dd>
+<dt><a name="rikOp" href="#rikOp"><span>rikOp:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="RowIrKind.rikOp" href="libtrackerboy/ir.html#rikOp">RowIrKind.rikOp</a></li>
+          </ul></dd>
+<dt><a name="rikRest" href="#rikRest"><span>rikRest:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="RowIrKind.rikRest" href="libtrackerboy/ir.html#rikRest">RowIrKind.rikRest</a></li>
           </ul></dd>
 <dt><a name="rNR10" href="#rNR10"><span>rNR10:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1376,6 +1494,14 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="rNR52" href="#rNR52"><span>rNR52:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="hardware: rNR52" href="libtrackerboy/private/hardware.html#rNR52">hardware: rNR52</a></li>
+          </ul></dd>
+<dt><a name="RowIr" href="#RowIr"><span>RowIr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: RowIr" href="libtrackerboy/ir.html#RowIr">ir: RowIr</a></li>
+          </ul></dd>
+<dt><a name="RowIrKind" href="#RowIrKind"><span>RowIrKind:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: RowIrKind" href="libtrackerboy/ir.html#RowIrKind">ir: RowIrKind</a></li>
           </ul></dd>
 <dt><a name="rows" href="#rows"><span>rows:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1483,6 +1609,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="apu: setFramerate(a: var Apu; framerate: float)" href="libtrackerboy/apu.html#setFramerate%2CApu%2Cfloat">apu: setFramerate(a: var Apu; framerate: float)</a></li>
           </ul></dd>
+<dt><a name="setFromIr" href="#setFromIr"><span>setFromIr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: setFromIr(track: var Track; ir: TrackIr)" href="libtrackerboy/ir.html#setFromIr%2CTrack%2CTrackIr">ir: setFromIr(track: var Track; ir: TrackIr)</a></li>
+          </ul></dd>
 <dt><a name="setInstrument" href="#setInstrument"><span>setInstrument:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: setInstrument(t: var Track; i: ByteIndex; instrument: TableId)" href="libtrackerboy/data.html#setInstrument%2CTrack%2CByteIndex%2CTableId">data: setInstrument(t: var Track; i: ByteIndex; instrument: TableId)</a></li>
@@ -1556,6 +1686,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="SongList" href="#SongList"><span>SongList:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: SongList" href="libtrackerboy/data.html#SongList">data: SongList</a></li>
+          </ul></dd>
+<dt><a name="SongPath" href="#SongPath"><span>SongPath:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: SongPath" href="libtrackerboy/ir.html#SongPath">ir: SongPath</a></li>
           </ul></dd>
 <dt><a name="Speed" href="#Speed"><span>Speed:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1645,6 +1779,14 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: toBlockId(str: string): BlockId" href="libtrackerboy/private/ioblocks.html#toBlockId%2Cstring">ioblocks: toBlockId(str: string): BlockId</a></li>
           </ul></dd>
+<dt><a name="toEffectType" href="#toEffectType"><span>toEffectType:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="data: toEffectType(x: uint8): EffectType" href="libtrackerboy/data.html#toEffectType%2Cuint8">data: toEffectType(x: uint8): EffectType</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="ir: toEffectType(x: FrequencyMod): EffectType" href="libtrackerboy/ir.html#toEffectType%2CFrequencyMod">ir: toEffectType(x: FrequencyMod): EffectType</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="ir: toEffectType(x: PatternCommand): EffectType" href="libtrackerboy/ir.html#toEffectType%2CPatternCommand">ir: toEffectType(x: PatternCommand): EffectType</a></li>
+          </ul></dd>
 <dt><a name="toEqRef" href="#toEqRef"><span>toEqRef:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="utils: toEqRef[T](val: ref T): EqRef[T]" href="libtrackerboy/private/utils.html#toEqRef.t%2Cref.T">utils: toEqRef[T](val: ref T): EqRef[T]</a></li>
@@ -1657,6 +1799,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="data: toInfoString(str: string): InfoString" href="libtrackerboy/data.html#toInfoString.c%2Cstring">data: toInfoString(str: string): InfoString</a></li>
           </ul></dd>
+<dt><a name="toIr" href="#toIr"><span>toIr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: toIr(t: TrackView): TrackIr" href="libtrackerboy/ir.html#toIr%2CTrackView">ir: toIr(t: TrackView): TrackIr</a></li>
+          </ul></dd>
 <dt><a name="toLE" href="#toLE"><span>toLE:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="endian: toLE[T: SomeWord](val: T): LittleEndian[T]" href="libtrackerboy/private/endian.html#toLE%2CT">endian: toLE[T: SomeWord](val: T): LittleEndian[T]</a></li>
@@ -1668,6 +1814,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="ToneNote" href="#ToneNote"><span>ToneNote:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="notes: ToneNote" href="libtrackerboy/notes.html#ToneNote">notes: ToneNote</a></li>
+          </ul></dd>
+<dt><a name="toOperation" href="#toOperation"><span>toOperation:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: toOperation(row: TrackRow): Operation" href="libtrackerboy/ir.html#toOperation%2CTrackRow">ir: toOperation(row: TrackRow): Operation</a></li>
           </ul></dd>
 <dt><a name="totalRows" href="#totalRows"><span>totalRows:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1698,6 +1848,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="trackIds" href="#trackIds"><span>trackIds:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: trackIds(s: Song; ch: ChannelId): ByteIndex" href="libtrackerboy/data.html#trackIds.i%2CSong%2CChannelId">data: trackIds(s: Song; ch: ChannelId): ByteIndex</a></li>
+          </ul></dd>
+<dt><a name="TrackIr" href="#TrackIr"><span>TrackIr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ir: TrackIr" href="libtrackerboy/ir.html#TrackIr">ir: TrackIr</a></li>
           </ul></dd>
 <dt><a name="TrackLen" href="#TrackLen"><span>TrackLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1820,7 +1974,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-28 01:19:06 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-02 16:52:46 UTC</small>
       </div>
     </div>
   </div>

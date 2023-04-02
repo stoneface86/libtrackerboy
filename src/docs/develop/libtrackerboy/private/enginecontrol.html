@@ -137,10 +137,6 @@ window.addEventListener('DOMContentLoaded', main);
   vibratoParam*: uint8">FrequencyControl</a></li>
   <li><a class="reference" href="#FrequencyLookupFunc"
     title="FrequencyLookupFunc = proc (note: Natural): uint16 {.nimcall, noSideEffect.}">FrequencyLookupFunc</a></li>
-  <li><a class="reference" href="#FrequencyMod"
-    title="FrequencyMod = enum
-  freqNone, freqPortamento, freqPitchUp, freqPitchDown, freqNoteUp,
-  freqNoteDown, freqArpeggio">FrequencyMod</a></li>
   <li><a class="reference" href="#InstrumentRuntime"
     title="InstrumentRuntime = object
   instrument*: Immutable[ref Instrument]
@@ -163,26 +159,6 @@ window.addEventListener('DOMContentLoaded', main);
   naSustain,                ## keep playing the note
   naTrigger,                ## trigger a new note
   naCut                      ## cut the note">NoteAction</a></li>
-  <li><a class="reference" href="#Operation"
-    title="Operation = object
-  patternCommand*: PatternCommand
-  patternCommandParam*: uint8
-  speed*: uint8
-  volume*: Option[uint8]
-  halt*: bool
-  note*: Option[uint8]
-  instrument*: Option[uint8]
-  delay*: uint8
-  duration*: Option[uint8]
-  envelope*: Option[uint8]
-  timbre*: Option[uint8]
-  panning*: Option[uint8]
-  sweep*: Option[uint8]
-  freqMod*: FrequencyMod
-  freqModParam*: uint8
-  vibrato*: Option[uint8]
-  vibratoDelay*: Option[uint8]
-  tune*: Option[uint8]">Operation</a></li>
   <li><a class="reference" href="#SequenceInput"
     title="SequenceInput = array[SequenceKind, Option[uint8]]">SequenceInput</a></li>
   <li><a class="reference" href="#Timer"
@@ -262,7 +238,7 @@ class="link-seesrc" target="_blank">Source</a>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="enginestate.html">enginestate</a>, <a class="reference external" href="../data.html">../data</a>, <a class="reference external" href="../notes.html">../notes</a>
+<a class="reference external" href="enginestate.html">enginestate</a>, <a class="reference external" href="../data.html">../data</a>, <a class="reference external" href="../notes.html">../notes</a>, <a class="reference external" href="../ir.html">../ir</a>
 </dl></div>
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -274,9 +250,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L24"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L15"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L24" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L15" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -290,9 +266,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L64"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L33"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L64" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L33" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -321,9 +297,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Handles frequency calculation for a channel
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L69"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L38"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L69" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L38" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -333,23 +309,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L62"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L31"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L62" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-</div>
-<div id="FrequencyMod">
-<dt><pre><a href="enginecontrol.html#FrequencyMod"><span class="Identifier">FrequencyMod</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">freqNone</span><span class="Other">,</span> <span class="Identifier">freqPortamento</span><span class="Other">,</span> <span class="Identifier">freqPitchUp</span><span class="Other">,</span> <span class="Identifier">freqPitchDown</span><span class="Other">,</span> <span class="Identifier">freqNoteUp</span><span class="Other">,</span>
-  <span class="Identifier">freqNoteDown</span><span class="Other">,</span> <span class="Identifier">freqArpeggio</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L15"
-class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L15" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L31" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -362,9 +324,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Enumerates all sequences in an instrument
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L57"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L26"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L57" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L26" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -385,9 +347,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L115"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L84"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L115" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L84" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -401,40 +363,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L93"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L62"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L93" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-</div>
-<div id="Operation">
-<dt><pre><a href="enginecontrol.html#Operation"><span class="Identifier">Operation</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">patternCommand</span><span class="Operator">*</span><span class="Other">:</span> <a href="enginestate.html#PatternCommand"><span class="Identifier">PatternCommand</span></a>
-  <span class="Identifier">patternCommandParam</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">speed</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">volume</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">halt</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
-  <span class="Identifier">note</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">instrument</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">delay</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">duration</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">envelope</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">timbre</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">panning</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">sweep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">freqMod</span><span class="Operator">*</span><span class="Other">:</span> <a href="enginecontrol.html#FrequencyMod"><span class="Identifier">FrequencyMod</span></a>
-  <span class="Identifier">freqModParam</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">vibrato</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">vibratoDelay</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-  <span class="Identifier">tune</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-</pre></dt>
-<dd>
-
-An Operation is the processed form of a TrackRow, that is ready to be perfomed by the TrackControl
-&nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L31"
-class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L31" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L62" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -444,9 +375,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Input data to pass to TrackControl and FrequencyControl from enumerated sequences
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L53"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L22"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L53" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L22" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -458,15 +389,15 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L112"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L81"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L112" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L81" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
 <div id="TrackControl">
 <dt><pre><a href="enginecontrol.html#TrackControl"><span class="Identifier">TrackControl</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">op</span><span class="Operator">*</span><span class="Other">:</span> <a href="enginecontrol.html#Operation"><span class="Identifier">Operation</span></a>
+  <span class="Identifier">op</span><span class="Operator">*</span><span class="Other">:</span> <a href="../ir.html#Operation"><span class="Identifier">Operation</span></a>
   <span class="Identifier">ir</span><span class="Operator">*</span><span class="Other">:</span> <a href="enginecontrol.html#InstrumentRuntime"><span class="Identifier">InstrumentRuntime</span></a>
   <span class="Identifier">fc</span><span class="Operator">*</span><span class="Other">:</span> <a href="enginecontrol.html#FrequencyControl"><span class="Identifier">FrequencyControl</span></a>
   <span class="Identifier">delayCounter</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Counter</span>
@@ -481,9 +412,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Modifies a ChannelState and GlobalState for a given TrackRow
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L99"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L68"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L99" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L68" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -498,9 +429,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L571"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L470"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L571" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L470" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -511,9 +442,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L541"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L440"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L541" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L440" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -523,9 +454,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L575"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L474"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L575" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L474" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -536,9 +467,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L579"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L478"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L579" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L478" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -549,9 +480,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L602"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L501"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L602" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L501" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -562,9 +493,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L588"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/enginecontrol.nim#L487"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L588" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/enginecontrol.nim#L487" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -578,7 +509,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-28 01:19:05 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-02 16:52:46 UTC</small>
       </div>
     </div>
   </div>
