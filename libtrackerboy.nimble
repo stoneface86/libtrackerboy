@@ -1,8 +1,8 @@
-from libtrackerboy/version as tbv import currentVersion, `$`
+from libtrackerboy/version as tbv import currentVersionString
 
 # Package
 
-version       = $currentVersion
+version       = currentVersionString
 author        = "stoneface"
 description   = "Trackerboy utility library"
 license       = "MIT"
