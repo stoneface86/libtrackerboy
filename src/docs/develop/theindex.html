@@ -76,16 +76,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: `$`(s: Sequence): string" href="libtrackerboy/data.html#%24%2CSequence">data: `$`(s: Sequence): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: `$`(wave: WaveData): string" href="libtrackerboy/data.html#%24%2CWaveData">data: `$`(wave: WaveData): string</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="version: `$`(v: Version): string" href="libtrackerboy/version.html#%24%2CVersion">version: `$`(v: Version): string</a></li>
-          </ul></dd>
-<dt><a name="%60%26lt%3B%3D%60" href="#%60%26lt%3B%3D%60"><span>`&lt;=`:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="version: `&lt;=`(lhs: Version; rhs: Version): bool" href="libtrackerboy/version.html#%3C%3D%2CVersion%2CVersion">version: `&lt;=`(lhs: Version; rhs: Version): bool</a></li>
-          </ul></dd>
-<dt><a name="%60%26lt%3B%60" href="#%60%26lt%3B%60"><span>`&lt;`:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="version: `&lt;`(lhs: Version; rhs: Version): bool" href="libtrackerboy/version.html#%3C%2CVersion%2CVersion">version: `&lt;`(lhs: Version; rhs: Version): bool</a></li>
           </ul></dd>
 <dt><a name="%60%3D%3D%60" href="#%60%3D%3D%60"><span>`==`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -443,6 +433,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="version: currentFileMinor" href="libtrackerboy/version.html#currentFileMinor">version: currentFileMinor</a></li>
           </ul></dd>
+<dt><a name="currentFileSerial" href="#currentFileSerial"><span>currentFileSerial:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="version: currentFileSerial" href="libtrackerboy/version.html#currentFileSerial">version: currentFileSerial</a></li>
+          </ul></dd>
 <dt><a name="currentFrame" href="#currentFrame"><span>currentFrame:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: currentFrame(e: Engine): EngineFrame" href="libtrackerboy/engine.html#currentFrame%2CEngine">engine: currentFrame(e: Engine): EngineFrame</a></li>
@@ -462,6 +456,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="currentVersion" href="#currentVersion"><span>currentVersion:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="version: currentVersion" href="libtrackerboy/version.html#currentVersion">version: currentVersion</a></li>
+          </ul></dd>
+<dt><a name="currentVersionString" href="#currentVersionString"><span>currentVersionString:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="version: currentVersionString" href="libtrackerboy/version.html#currentVersionString">version: currentVersionString</a></li>
           </ul></dd>
 <dt><a name="data" href="#data"><span>data:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -891,25 +889,25 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="apu: init(_: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu" href="libtrackerboy/apu.html#init%2Ctypedesc%5BApu%5D%2Cint%2Cfloat">apu: init(_: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Instrument]): Instrument" href="libtrackerboy/data.html#init%2Ctypedesc%5BInstrument%5D">data: init(_: typedesc[Instrument]): Instrument</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Instrument]): Instrument" href="libtrackerboy/data.html#init%2Ctypedesc%5BInstrument%5D">data: init(T: typedesc[Instrument]): Instrument</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Module]): Module" href="libtrackerboy/data.html#init%2Ctypedesc%5BModule%5D">data: init(_: typedesc[Module]): Module</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Module]): Module" href="libtrackerboy/data.html#init%2Ctypedesc%5BModule%5D">data: init(T: typedesc[Module]): Module</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Order]): Order" href="libtrackerboy/data.html#init%2Ctypedesc%5BOrder%5D">data: init(_: typedesc[Order]): Order</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Order]): Order" href="libtrackerboy/data.html#init%2Ctypedesc%5BOrder%5D">data: init(T: typedesc[Order]): Order</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[SomeTable]): _.typeOf" href="libtrackerboy/data.html#init%2Ctypedesc%5BSomeTable%5D">data: init(_: typedesc[SomeTable]): _.typeOf</a></li>
+          data-doc-search-tag="data: init(T: typedesc[SomeTable]): T.typeOf" href="libtrackerboy/data.html#init%2Ctypedesc%5BSomeTable%5D">data: init(T: typedesc[SomeTable]): T.typeOf</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Song]): Song" href="libtrackerboy/data.html#init%2Ctypedesc%5BSong%5D">data: init(_: typedesc[Song]): Song</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Song]): Song" href="libtrackerboy/data.html#init%2Ctypedesc%5BSong%5D">data: init(T: typedesc[Song]): Song</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[SongList]; len: PositiveByte = 1): SongList" href="libtrackerboy/data.html#init%2Ctypedesc%5BSongList%5D%2CPositiveByte">data: init(_: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
+          data-doc-search-tag="data: init(T: typedesc[SongList]; len: PositiveByte = 1): SongList" href="libtrackerboy/data.html#init%2Ctypedesc%5BSongList%5D%2CPositiveByte">data: init(T: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Track]; len: TrackLen): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackLen">data: init(_: typedesc[Track]; len: TrackLen): Track</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Track]; len: TrackLen): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackLen">data: init(T: typedesc[Track]; len: TrackLen): Track</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Track]; view: TrackView): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackView">data: init(_: typedesc[Track]; view: TrackView): Track</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Track]; view: TrackView): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackView">data: init(T: typedesc[Track]; view: TrackView): Track</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[TrackView]; track: sink Track): TrackView" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack">data: init(_: typedesc[TrackView]; track: sink Track): TrackView</a></li>
+          data-doc-search-tag="data: init(T: typedesc[TrackView]; track: sink Track): TrackView" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack">data: init(T: typedesc[TrackView]; track: sink Track): TrackView</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: init(_: typedesc[Waveform]): Waveform" href="libtrackerboy/data.html#init%2Ctypedesc%5BWaveform%5D">data: init(_: typedesc[Waveform]): Waveform</a></li>
+          data-doc-search-tag="data: init(T: typedesc[Waveform]): Waveform" href="libtrackerboy/data.html#init%2Ctypedesc%5BWaveform%5D">data: init(T: typedesc[Waveform]): Waveform</a></li>
           <li><a class="reference external"
           data-doc-search-tag="editing: init(T: typedesc[PatternCursor]; row: int; track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn">editing: init(T: typedesc[PatternCursor]; row: int; track: int; column: TrackColumn): PatternCursor</a></li>
           <li><a class="reference external"
@@ -1119,15 +1117,15 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="new" href="#new"><span>new:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: new(_: typedesc[Instrument]): ref Instrument" href="libtrackerboy/data.html#new%2Ctypedesc%5BInstrument%5D">data: new(_: typedesc[Instrument]): ref Instrument</a></li>
+          data-doc-search-tag="data: new(T: typedesc[Instrument]): ref Instrument" href="libtrackerboy/data.html#new%2Ctypedesc%5BInstrument%5D">data: new(T: typedesc[Instrument]): ref Instrument</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: new(_: typedesc[Module]): ref Module" href="libtrackerboy/data.html#new%2Ctypedesc%5BModule%5D">data: new(_: typedesc[Module]): ref Module</a></li>
+          data-doc-search-tag="data: new(T: typedesc[Module]): ref Module" href="libtrackerboy/data.html#new%2Ctypedesc%5BModule%5D">data: new(T: typedesc[Module]): ref Module</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: new(_: typedesc[Song]): ref Song" href="libtrackerboy/data.html#new%2Ctypedesc%5BSong%5D">data: new(_: typedesc[Song]): ref Song</a></li>
+          data-doc-search-tag="data: new(T: typedesc[Song]): ref Song" href="libtrackerboy/data.html#new%2Ctypedesc%5BSong%5D">data: new(T: typedesc[Song]): ref Song</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: new(_: typedesc[Song]; song: Song): ref Song" href="libtrackerboy/data.html#new%2Ctypedesc%5BSong%5D%2CSong">data: new(_: typedesc[Song]; song: Song): ref Song</a></li>
+          data-doc-search-tag="data: new(T: typedesc[Song]; song: Song): ref Song" href="libtrackerboy/data.html#new%2Ctypedesc%5BSong%5D%2CSong">data: new(T: typedesc[Song]; song: Song): ref Song</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: new(_: typedesc[Waveform]): ref Waveform" href="libtrackerboy/data.html#new%2Ctypedesc%5BWaveform%5D">data: new(_: typedesc[Waveform]): ref Waveform</a></li>
+          data-doc-search-tag="data: new(T: typedesc[Waveform]): ref Waveform" href="libtrackerboy/data.html#new%2Ctypedesc%5BWaveform%5D">data: new(T: typedesc[Waveform]): ref Waveform</a></li>
           </ul></dd>
 <dt><a name="next" href="#next"><span>next:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1915,10 +1913,6 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="enginestate: UpdateFlags" href="libtrackerboy/private/enginestate.html#UpdateFlags">enginestate: UpdateFlags</a></li>
           </ul></dd>
-<dt><a name="v" href="#v"><span>v:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="version: v(m = 0; n = 0; p = 0): Version" href="libtrackerboy/version.html#v.t%2Cint%2Cint%2Cint">version: v(m = 0; n = 0; p = 0): Version</a></li>
-          </ul></dd>
 <dt><a name="version" href="#version"><span>version:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: version(m: Module): Version" href="libtrackerboy/data.html#version%2CModule">data: version(m: Module): Version</a></li>
@@ -1974,7 +1968,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-02 16:52:46 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-04 05:02:25 UTC</small>
       </div>
     </div>
   </div>

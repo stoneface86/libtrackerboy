@@ -397,25 +397,25 @@ window.addEventListener('DOMContentLoaded', main);
   </ul>
   <ul class="simple nested-toc-section">init
       <li><a class="reference" href="#init%2Ctypedesc%5BInstrument%5D"
-    title="init(_: typedesc[Instrument]): Instrument">init(_: typedesc[Instrument]): Instrument</a></li>
+    title="init(T: typedesc[Instrument]): Instrument">init(T: typedesc[Instrument]): Instrument</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BModule%5D"
-    title="init(_: typedesc[Module]): Module">init(_: typedesc[Module]): Module</a></li>
+    title="init(T: typedesc[Module]): Module">init(T: typedesc[Module]): Module</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BOrder%5D"
-    title="init(_: typedesc[Order]): Order">init(_: typedesc[Order]): Order</a></li>
+    title="init(T: typedesc[Order]): Order">init(T: typedesc[Order]): Order</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BSomeTable%5D"
-    title="init(_: typedesc[SomeTable]): _.typeOf">init(_: typedesc[SomeTable]): _.typeOf</a></li>
+    title="init(T: typedesc[SomeTable]): T.typeOf">init(T: typedesc[SomeTable]): T.typeOf</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BSong%5D"
-    title="init(_: typedesc[Song]): Song">init(_: typedesc[Song]): Song</a></li>
+    title="init(T: typedesc[Song]): Song">init(T: typedesc[Song]): Song</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BSongList%5D%2CPositiveByte"
-    title="init(_: typedesc[SongList]; len: PositiveByte = 1): SongList">init(_: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
+    title="init(T: typedesc[SongList]; len: PositiveByte = 1): SongList">init(T: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BTrack%5D%2CTrackLen"
-    title="init(_: typedesc[Track]; len: TrackLen): Track">init(_: typedesc[Track]; len: TrackLen): Track</a></li>
+    title="init(T: typedesc[Track]; len: TrackLen): Track">init(T: typedesc[Track]; len: TrackLen): Track</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BTrack%5D%2CTrackView"
-    title="init(_: typedesc[Track]; view: TrackView): Track">init(_: typedesc[Track]; view: TrackView): Track</a></li>
+    title="init(T: typedesc[Track]; view: TrackView): Track">init(T: typedesc[Track]; view: TrackView): Track</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack"
-    title="init(_: typedesc[TrackView]; track: sink Track): TrackView">init(_: typedesc[TrackView]; track: sink Track): TrackView</a></li>
+    title="init(T: typedesc[TrackView]; track: sink Track): TrackView">init(T: typedesc[TrackView]; track: sink Track): TrackView</a></li>
   <li><a class="reference" href="#init%2Ctypedesc%5BWaveform%5D"
-    title="init(_: typedesc[Waveform]): Waveform">init(_: typedesc[Waveform]): Waveform</a></li>
+    title="init(T: typedesc[Waveform]): Waveform">init(T: typedesc[Waveform]): Waveform</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">insert
@@ -460,15 +460,15 @@ window.addEventListener('DOMContentLoaded', main);
   </ul>
   <ul class="simple nested-toc-section">new
       <li><a class="reference" href="#new%2Ctypedesc%5BInstrument%5D"
-    title="new(_: typedesc[Instrument]): ref Instrument">new(_: typedesc[Instrument]): ref Instrument</a></li>
+    title="new(T: typedesc[Instrument]): ref Instrument">new(T: typedesc[Instrument]): ref Instrument</a></li>
   <li><a class="reference" href="#new%2Ctypedesc%5BModule%5D"
-    title="new(_: typedesc[Module]): ref Module">new(_: typedesc[Module]): ref Module</a></li>
+    title="new(T: typedesc[Module]): ref Module">new(T: typedesc[Module]): ref Module</a></li>
   <li><a class="reference" href="#new%2Ctypedesc%5BSong%5D"
-    title="new(_: typedesc[Song]): ref Song">new(_: typedesc[Song]): ref Song</a></li>
+    title="new(T: typedesc[Song]): ref Song">new(T: typedesc[Song]): ref Song</a></li>
   <li><a class="reference" href="#new%2Ctypedesc%5BSong%5D%2CSong"
-    title="new(_: typedesc[Song]; song: Song): ref Song">new(_: typedesc[Song]; song: Song): ref Song</a></li>
+    title="new(T: typedesc[Song]; song: Song): ref Song">new(T: typedesc[Song]; song: Song): ref Song</a></li>
   <li><a class="reference" href="#new%2Ctypedesc%5BWaveform%5D"
-    title="new(_: typedesc[Waveform]): ref Waveform">new(_: typedesc[Waveform]): ref Waveform</a></li>
+    title="new(T: typedesc[Waveform]): ref Waveform">new(T: typedesc[Waveform]): ref Waveform</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">next
@@ -1750,7 +1750,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Instrument]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BInstrument%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Instrument"><span class="Identifier">Instrument</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Instrument"><span class="Identifier">Instrument</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BInstrument%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Instrument"><span class="Identifier">Instrument</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Instrument"><span class="Identifier">Instrument</span></a></pre></dt>
 <dd>
 
 Value constructor for an Instrument. Default initialization is used, so the instrument's channel is ch1, and all its sequences are empty.
@@ -1762,7 +1762,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Module]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BModule%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Module"><span class="Identifier">Module</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Module"><span class="Identifier">Module</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BModule%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Module"><span class="Identifier">Module</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Module"><span class="Identifier">Module</span></a></pre></dt>
 <dd>
 
 Value constructor for a new module. The returned module has:<ul class="simple"><li>1 empty song</li>
@@ -1780,7 +1780,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Order]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BOrder%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Order"><span class="Identifier">Order</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Order"><span class="Identifier">Order</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BOrder%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Order"><span class="Identifier">Order</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Order"><span class="Identifier">Order</span></a></pre></dt>
 <dd>
 
 Value constructor for an Order. The Order is initialized with a single row all having a track id of 0.
@@ -1792,7 +1792,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[SomeTable]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSomeTable%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#SomeTable"><span class="Identifier">SomeTable</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Operator">_</span><span class="Other">.</span><span class="Identifier">typeOf</span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSomeTable%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#SomeTable"><span class="Identifier">SomeTable</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">.</span><span class="Identifier">typeOf</span></pre></dt>
 <dd>
 
 Value constructor for a new table. The returned table is empty.
@@ -1804,7 +1804,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Song]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSong%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSong%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
 <dd>
 
 Value constructor for a new Song. The returned song is initialized with default settings.
@@ -1816,7 +1816,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[SongList],PositiveByte">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSongList%5D%2CPositiveByte"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSongList%5D%2CPositiveByte"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a></pre></dt>
 <dd>
 
 Value constructor for a new SongList. <tt class="docutils literal"><span class="pre"><span class="Identifier">len</span></span></tt> is the number of new songs to initialize the list with. 
@@ -1828,7 +1828,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Track],TrackLen">
-<dt><pre><span class="Keyword">proc</span> <a href="#init%2Ctypedesc%5BTrack%5D%2CTrackLen"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <a href="data.html#TrackLen"><span class="Identifier">TrackLen</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#init%2Ctypedesc%5BTrack%5D%2CTrackLen"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <a href="data.html#TrackLen"><span class="Identifier">TrackLen</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a></pre></dt>
 <dd>
 
 Value constructor for a Track with the given length. All rows in the returned Track are empty.
@@ -1840,7 +1840,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Track],TrackView">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BTrack%5D%2CTrackView"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">view</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BTrack%5D%2CTrackView"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">view</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a></pre></dt>
 <dd>
 
 Value constructor for a Track by deep copying the TrackView. The track returned has the same data as the view, but can now be mutated.
@@ -1852,7 +1852,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[TrackView],sinkTrack">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">track</span><span class="Other">:</span> <span class="Identifier">sink</span> <a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BTrackView%5D%2CsinkTrack"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">track</span><span class="Other">:</span> <span class="Identifier">sink</span> <a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a></pre></dt>
 <dd>
 
 Value constructor for a TrackView by shallow copying the given Track. While the returned TrackView is immutable, its data can be mutated if a Track still refers to this data.
@@ -1864,7 +1864,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="init,typedesc[Waveform]">
-<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BWaveform%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Waveform"><span class="Identifier">Waveform</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Waveform"><span class="Identifier">Waveform</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BWaveform%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Waveform"><span class="Identifier">Waveform</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Waveform"><span class="Identifier">Waveform</span></a></pre></dt>
 <dd>
 
 Value constructor for a Waveform. The returned Waveform's wave data is cleared.
@@ -2010,7 +2010,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="new,typedesc[Instrument]">
-<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BInstrument%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Instrument"><span class="Identifier">Instrument</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Instrument"><span class="Identifier">Instrument</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BInstrument%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Instrument"><span class="Identifier">Instrument</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Instrument"><span class="Identifier">Instrument</span></a></pre></dt>
 <dd>
 
 Ref constructor for an Instrument. Same behavior as <tt class="docutils literal"><span class="pre"><span class="Identifier">init</span></span></tt>.
@@ -2022,7 +2022,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="new,typedesc[Module]">
-<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BModule%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Module"><span class="Identifier">Module</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Module"><span class="Identifier">Module</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BModule%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Module"><span class="Identifier">Module</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Module"><span class="Identifier">Module</span></a></pre></dt>
 <dd>
 
 Ref constructor for a new module. Same behavior as <tt class="docutils literal"><span class="pre"><span class="Identifier">init</span></span></tt>. 
@@ -2034,7 +2034,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="new,typedesc[Song]">
-<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BSong%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BSong%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
 <dd>
 
 Ref constructor for a new Song. Same initialization logic as <tt class="docutils literal"><span class="pre"><span class="Identifier">init</span></span></tt>.
@@ -2046,7 +2046,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="new,typedesc[Song],Song">
-<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BSong%5D%2CSong"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">song</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BSong%5D%2CSong"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">song</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a></pre></dt>
 <dd>
 
 Ref constructor for a new song, copying the given <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt>.
@@ -2058,7 +2058,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="new,typedesc[Waveform]">
-<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BWaveform%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Operator">_</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Waveform"><span class="Identifier">Waveform</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Waveform"><span class="Identifier">Waveform</span></a></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#new%2Ctypedesc%5BWaveform%5D"><span class="Identifier">new</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="data.html#Waveform"><span class="Identifier">Waveform</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ref</span> <a href="data.html#Waveform"><span class="Identifier">Waveform</span></a></pre></dt>
 <dd>
 
 Ref contructor for a Waveform. Same behavior as <tt class="docutils literal"><span class="pre"><span class="Identifier">init</span></span></tt>
@@ -2642,7 +2642,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-02 16:52:46 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-04 05:02:24 UTC</small>
       </div>
     </div>
   </div>
