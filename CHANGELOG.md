@@ -1,5 +1,26 @@
 # Changelog
 
+## Unversioned
+
+### Added
+ - `ir` module for intermediate representation of pattern data. A utility module
+   for converting module data to other formats.
+ - `currentFileSerial` const to version module
+ - `currentVersionString` const to version module
+ - Implementation of the `L00` effect (lock/music priority).
+ - Support for Nim 2.0.0. As of 2023-04-04, the library compiles and passes
+   tests with Nim 2.0.0 Release Candidate 2.
+
+### Changed
+ - `Version` type is now a `tuple`
+
+### Removed
+ - `<=` and `<` procs in version module. The generic overload provided by
+   Nim's system module should be used instead.
+ - `$` overload for `Version`. Use `currentVersionString` instead of `$currentVersion`.
+ - `v` template in version module, use a tuple constructor instead.
+
+
 ## [0.7.1] - 2022-12-27
 
 ### Added
