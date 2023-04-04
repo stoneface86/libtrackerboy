@@ -11,7 +11,7 @@ bin         = @["tests", "endianTests"]
 # Dependencies
 
 requires "nim >= 1.6.0"
-requires "unittest2"
+requires "unittest2 >= 0.0.6"
 
 before install:
   raise newException(AssertionDefect, "cannot install this package!")

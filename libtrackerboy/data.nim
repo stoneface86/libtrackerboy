@@ -363,23 +363,23 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
 
 # Instrument
 
-func init*(_: typedesc[Instrument]): Instrument =
+func init*(T: typedesc[Instrument]): Instrument =
   ## Value constructor for an Instrument. Default initialization is used, so
   ## the instrument's channel is ch1, and all its sequences are empty.
   defaultInit()
 
-func new*(_: typedesc[Instrument]): ref Instrument =
+func new*(T: typedesc[Instrument]): ref Instrument =
   ## Ref constructor for an Instrument. Same behavior as `init`.
   new(result)
 
 # Waveform
 
-func init*(_: typedesc[Waveform]): Waveform =
+func init*(T: typedesc[Waveform]): Waveform =
   ## Value constructor for a Waveform. The returned Waveform's wave data is
   ## cleared.
   defaultInit()
 
-func new*(_: typedesc[Waveform]): ref Waveform =
+func new*(T: typedesc[Waveform]): ref Waveform =
   ## Ref contructor for a Waveform. Same behavior as `init`
   new(result)
 
@@ -412,7 +412,7 @@ func parseWave*(str: string): WaveData {.noInit.} =
 
 # Table
 
-func init*(_: typedesc[SomeTable]): _.typeOf =
+func init*(T: typedesc[SomeTable]): T.typeOf =
   ## Value constructor for a new table. The returned table is empty.
   defaultInit()
 
@@ -510,10 +510,10 @@ func wavedata*(t: WaveformTable, id: TableId): WaveData =
 
 # Order
 
-func init*(_: typedesc[Order]): Order =
+func init*(T: typedesc[Order]): Order =
   ## Value constructor for an Order. The Order is initialized with a single
   ## row all having a track id of 0.
-  _(
+  Order(
     data: @[[0u8, 0, 0, 0]]
   )
 
@@ -608,15 +608,15 @@ func `==`*(lhs, rhs: Track): bool =
 
 func `==`*(lhs, rhs: TrackView): bool {.borrow.}
 
-proc init*(_: typedesc[Track], len: TrackLen): Track =
+proc init*(T: typedesc[Track], len: TrackLen): Track =
   ## Value constructor for a Track with the given length. All rows in the
   ## returned Track are empty.
-  _(
+  Track(
     data: TrackData.new,
     len: len
   )
 
-func init*(_: typedesc[Track], view: TrackView): Track =
+func init*(T: typedesc[Track], view: TrackView): Track =
   ## Value constructor for a Track by deep copying the TrackView. The track
   ## returned has the same data as the view, but can now be mutated.
   if view.data != nil:
@@ -624,16 +624,16 @@ func init*(_: typedesc[Track], view: TrackView): Track =
     result.data[] = view.data[]
     result.len = view.len
 
-func init(_: typedesc[Track], data: ref TrackData, len: TrackLen): Track =
-  _(
+func init(T: typedesc[Track], data: ref TrackData, len: TrackLen): Track =
+  Track(
     data: data,
     len: if data == nil: TrackLen.low else: len
   )
 
-template init(_: typedesc[TrackView], data: ref TrackData, len: TrackLen): TrackView =
+template init(T: typedesc[TrackView], data: ref TrackData, len: TrackLen): TrackView =
   cast[TrackView](Track.init(data, len))
 
-func init*(_: typedesc[TrackView], track: sink Track): TrackView =
+func init*(T: typedesc[TrackView], track: sink Track): TrackView =
   ## Value constructor for a TrackView by shallow copying the given Track.
   ## While the returned TrackView is immutable, its data can be mutated if
   ## a Track still refers to this data.
@@ -731,8 +731,8 @@ func len(m: TrackMap): int =
 
 # Song
 
-template construct(_: typedesc[Song|ref Song]): untyped =
-  _(
+template construct(T: typedesc[Song|ref Song]): untyped =
+  T(
     name: "",
     rowsPerBeat: defaultRpb,
     rowsPerMeasure: defaultRpm,
@@ -743,16 +743,16 @@ template construct(_: typedesc[Song|ref Song]): untyped =
     tracks: default(Song.tracks.typeOf)
   )
 
-func init*(_: typedesc[Song]): Song =
+func init*(T: typedesc[Song]): Song =
   ## Value constructor for a new Song. The returned song is initialized with
   ## default settings.
   Song.construct
 
-func new*(_: typedesc[Song]): ref Song =
+func new*(T: typedesc[Song]): ref Song =
   ## Ref constructor for a new Song. Same initialization logic as `init`.
   (ref Song).construct
 
-func new*(_: typedesc[Song], song: Song): ref Song =
+func new*(T: typedesc[Song], song: Song): ref Song =
   ## Ref constructor for a new song, copying the given `song`.
   (ref Song)(
     name: song.name,
@@ -949,7 +949,7 @@ func patternLen*(s: Song, order: ByteIndex): Natural =
 
 # SongList
 
-func init*(_: typedesc[SongList], len: PositiveByte = 1): SongList =
+func init*(T: typedesc[SongList], len: PositiveByte = 1): SongList =
   ## Value constructor for a new SongList. `len` is the number of new songs
   ## to initialize the list with.
   ## 
@@ -1035,8 +1035,8 @@ proc len*(l: SongList): Natural =
 
 # Module
 
-template construct(_: typedesc[Module | ref Module]): untyped =
-  _(
+template construct(T: typedesc[Module | ref Module]): untyped =
+  T(
     songs: SongList.init,
     instruments: InstrumentTable.init,
     waveforms: WaveformTable.init,
@@ -1053,7 +1053,7 @@ template construct(_: typedesc[Module | ref Module]): untyped =
     )
   )
 
-func init*(_: typedesc[Module]): Module =
+func init*(T: typedesc[Module]): Module =
   ## Value constructor for a new module. The returned module has:
   ##  
   ## - 1 empty song
@@ -1064,7 +1064,7 @@ func init*(_: typedesc[Module]): Module =
   ## 
   Module.construct
 
-func new*(_: typedesc[Module]): ref Module =
+func new*(T: typedesc[Module]): ref Module =
   ## Ref constructor for a new module. Same behavior as `init`.
   ##
   (ref Module).construct
