@@ -1,6 +1,6 @@
 # Changelog
 
-## Unversioned
+## [0.7.2] - 2023-04-04
 
 ### Added
  - `ir` module for intermediate representation of pattern data. A utility module
@@ -19,7 +19,6 @@
    Nim's system module should be used instead.
  - `$` overload for `Version`. Use `currentVersionString` instead of `$currentVersion`.
  - `v` template in version module, use a tuple constructor instead.
-
 
 ## [0.7.1] - 2022-12-27
 
