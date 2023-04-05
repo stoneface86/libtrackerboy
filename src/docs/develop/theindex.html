@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Documents: <a href="module-file-format-spec.html">Module File Format</a>, <a href="piece-file-format-spec.html">Module Piece File Format</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
+    Documents: <a href="module-file-format-spec.html">Module File Format</a>, <a href="piece-file-format-spec.html">Module Piece File Format</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/exports/wav.html">libtrackerboy/exports/wav</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/player.html">libtrackerboy/private/player</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/private/wavwriter.html">libtrackerboy/private/wavwriter</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: `$`(s: Sequence): string" href="libtrackerboy/data.html#%24%2CSequence">data: `$`(s: Sequence): string</a></li>
@@ -94,6 +94,10 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="data: `==`(lhs, rhs: TrackView): bool" href="libtrackerboy/data.html#%3D%3D%2CTrackView%2CTrackView">data: `==`(lhs, rhs: TrackView): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="utils: `==`[T](lhs, rhs: EqRef[T]): bool" href="libtrackerboy/private/utils.html#%3D%3D.t%2CEqRef%5BT%5D%2CEqRef%5BT%5D">utils: `==`[T](lhs, rhs: EqRef[T]): bool</a></li>
+          </ul></dd>
+<dt><a name="%60%3Ddestroy%60" href="#%60%3Ddestroy%60"><span>`=destroy`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wavwriter: `=destroy`(w: var WavWriter)" href="libtrackerboy/private/wavwriter.html#%3Ddestroy%2CWavWriter">wavwriter: `=destroy`(w: var WavWriter)</a></li>
           </ul></dd>
 <dt><a name="%60%5B%5D%3D%60" href="#%60%5B%5D%3D%60"><span>`[]=`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -263,6 +267,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="apu: availableSamples(a: Apu): int" href="libtrackerboy/apu.html#availableSamples%2CApu">apu: availableSamples(a: Apu): int</a></li>
           </ul></dd>
+<dt><a name="batched" href="#batched"><span>batched:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: batched(config: WavConfig): seq[WavConfig]" href="libtrackerboy/exports/wav.html#batched%2CWavConfig">wav: batched(config: WavConfig): seq[WavConfig]</a></li>
+          </ul></dd>
 <dt><a name="begin" href="#begin"><span>begin:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: begin(b: var InputBlock): BlockId" href="libtrackerboy/private/ioblocks.html#begin%2CInputBlock">ioblocks: begin(b: var InputBlock): BlockId</a></li>
@@ -356,6 +364,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="clearChannel" href="#clearChannel"><span>clearChannel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="apucontrol: clearChannel(chno: ChannelId; writes: var ApuWriteList)" href="libtrackerboy/private/apucontrol.html#clearChannel%2CChannelId%2CApuWriteList">apucontrol: clearChannel(chno: ChannelId; writes: var ApuWriteList)</a></li>
+          </ul></dd>
+<dt><a name="close" href="#close"><span>close:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wavwriter: close(w: var WavWriter): void" href="libtrackerboy/private/wavwriter.html#close%2CWavWriter">wavwriter: close(w: var WavWriter): void</a></li>
           </ul></dd>
 <dt><a name="colEffectParamHi1" href="#colEffectParamHi1"><span>colEffectParamHi1:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -511,11 +523,27 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="io: deserialize(w: var Waveform; stream: Stream): FormatResult" href="libtrackerboy/io.html#deserialize%2CWaveform%2CStream">io: deserialize(w: var Waveform; stream: Stream): FormatResult</a></li>
           </ul></dd>
+<dt><a name="dkLoops" href="#dkLoops"><span>dkLoops:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="DurationKind.dkLoops" href="libtrackerboy/exports/wav.html#dkLoops">DurationKind.dkLoops</a></li>
+          </ul></dd>
+<dt><a name="dkSeconds" href="#dkSeconds"><span>dkSeconds:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="DurationKind.dkSeconds" href="libtrackerboy/exports/wav.html#dkSeconds">DurationKind.dkSeconds</a></li>
+          </ul></dd>
 <dt><a name="duplicate" href="#duplicate"><span>duplicate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: duplicate(l: var SongList; i: ByteIndex)" href="libtrackerboy/data.html#duplicate%2CSongList%2CByteIndex">data: duplicate(l: var SongList; i: ByteIndex)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: duplicate[T: SomeData](t: var Table[T]; id: TableId): TableId" href="libtrackerboy/data.html#duplicate%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: duplicate[T: SomeData](t: var Table[T]; id: TableId): TableId</a></li>
+          </ul></dd>
+<dt><a name="Duration" href="#Duration"><span>Duration:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: Duration" href="libtrackerboy/exports/wav.html#Duration">wav: Duration</a></li>
+          </ul></dd>
+<dt><a name="DurationKind" href="#DurationKind"><span>DurationKind:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: DurationKind" href="libtrackerboy/exports/wav.html#DurationKind">wav: DurationKind</a></li>
           </ul></dd>
 <dt><a name="editPattern" href="#editPattern"><span>editPattern:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -660,6 +688,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="etVibratoDelay" href="#etVibratoDelay"><span>etVibratoDelay:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="EffectType.etVibratoDelay" href="libtrackerboy/data.html#etVibratoDelay">EffectType.etVibratoDelay</a></li>
+          </ul></dd>
+<dt><a name="exportWav" href="#exportWav"><span>exportWav:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: exportWav(module: Module; config: WavConfig)" href="libtrackerboy/exports/wav.html#exportWav%2CModule%2CWavConfig">wav: exportWav(module: Module; config: WavConfig)</a></li>
           </ul></dd>
 <dt><a name="fcmArpeggio" href="#fcmArpeggio"><span>fcmArpeggio:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -877,6 +909,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="editing: hasData(c: PatternClip): bool" href="libtrackerboy/editing.html#hasData%2CPatternClip">editing: hasData(c: PatternClip): bool</a></li>
           </ul></dd>
+<dt><a name="hasWork" href="#hasWork"><span>hasWork:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: hasWork(ex: WavExporter): bool" href="libtrackerboy/exports/wav.html#hasWork%2CWavExporter">wav: hasWork(ex: WavExporter): bool</a></li>
+          </ul></dd>
 <dt><a name="Immutable" href="#Immutable"><span>Immutable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="common: Immutable" href="libtrackerboy/common.html#Immutable">common: Immutable</a></li>
@@ -915,6 +951,10 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="engine: init(_: typedesc[Engine]): Engine" href="libtrackerboy/engine.html#init%2Ctypedesc%5BEngine%5D">engine: init(_: typedesc[Engine]): Engine</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="wav: init(T: typedesc[WavConfig]): WavConfig" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavConfig%5D">wav: init(T: typedesc[WavConfig]): WavConfig</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="wav: init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavExporter%5D%2CModule%2CWavConfig">wav: init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="enginecontrol: init(T: typedesc[MusicRuntime]; song: sink Immutable[ref Song];
      orderNo, rowNo: int; patternRepeat: bool): MusicRuntime" href="libtrackerboy/private/enginecontrol.html#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bref.Song%5D%2Cint%2Cint%2Cbool">enginecontrol: init(T: typedesc[MusicRuntime]; song: sink Immutable[ref Song];
      orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
@@ -927,7 +967,15 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="ioblocks: init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock" href="libtrackerboy/private/ioblocks.html#init%2Ctypedesc%5BOutputBlock%5D%2CStream">ioblocks: init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="player: init(_: typedesc[Player]; framerate: float; seconds: Natural): Player" href="libtrackerboy/private/player.html#init%2Ctypedesc%5BPlayer%5D%2Cfloat%2CNatural">player: init(_: typedesc[Player]; framerate: float; seconds: Natural): Player</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: init(_: typedesc[Player]; song: Immutable[ref Song]; loops: Natural): Player" href="libtrackerboy/private/player.html#init%2Ctypedesc%5BPlayer%5D%2CImmutable%5Bref.Song%5D%2CNatural">player: init(_: typedesc[Player]; song: Immutable[ref Song]; loops: Natural): Player</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: init(_: typedesc[Player]; frames: Natural): Player" href="libtrackerboy/private/player.html#init%2Ctypedesc%5BPlayer%5D%2CNatural">player: init(_: typedesc[Player]; frames: Natural): Player</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="synth: init(T: typedesc[Synth]; samplerate = 44100; buffersize: Natural = 0): T.typeOf" href="libtrackerboy/private/synth.html#init%2Ctypedesc%5BSynth%5D%2Cint%2CNatural">synth: init(T: typedesc[Synth]; samplerate = 44100; buffersize: Natural = 0): T.typeOf</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="wavwriter: init(_: typedesc[WavWriter]; filename: sink string; channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: init(_: typedesc[WavWriter]; filename: sink string; channels, samplerate: int): WavWriter</a></li>
           </ul></dd>
 <dt><a name="InputBlock" href="#InputBlock"><span>InputBlock:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -978,6 +1026,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="isNoop" href="#isNoop"><span>isNoop:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ir: isNoop(op: Operation): bool" href="libtrackerboy/ir.html#isNoop%2COperation">ir: isNoop(op: Operation): bool</a></li>
+          </ul></dd>
+<dt><a name="isPlaying" href="#isPlaying"><span>isPlaying:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="player: isPlaying(p: Player): bool" href="libtrackerboy/private/player.html#isPlaying%2CPlayer">player: isPlaying(p: Player): bool</a></li>
           </ul></dd>
 <dt><a name="isValid" href="#isValid"><span>isValid:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1336,10 +1388,34 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="play" href="#play"><span>play:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: play(e: var Engine; song: sink Immutable[ref Song]; pattern, row: Natural = 0)" href="libtrackerboy/engine.html#play%2CEngine%2CsinkImmutable%5Bref.Song%5D%2CNatural%2CNatural">engine: play(e: var Engine; song: sink Immutable[ref Song]; pattern, row: Natural = 0)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: play(p: var Player; engine: var Engine; instruments: InstrumentTable;
+     body: untyped): untyped" href="libtrackerboy/private/player.html#play.t%2CPlayer%2CEngine%2CInstrumentTable%2Cuntyped">player: play(p: var Player; engine: var Engine; instruments: InstrumentTable;
+     body: untyped): untyped</a></li>
+          </ul></dd>
+<dt><a name="Player" href="#Player"><span>Player:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="player: Player" href="libtrackerboy/private/player.html#Player">player: Player</a></li>
           </ul></dd>
 <dt><a name="PositiveByte" href="#PositiveByte"><span>PositiveByte:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="common: PositiveByte" href="libtrackerboy/common.html#PositiveByte">common: PositiveByte</a></li>
+          </ul></dd>
+<dt><a name="process" href="#process"><span>process:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: process(ex: var WavExporter; module: Module)" href="libtrackerboy/exports/wav.html#process%2CWavExporter%2CModule">wav: process(ex: var WavExporter; module: Module)</a></li>
+          </ul></dd>
+<dt><a name="progress" href="#progress"><span>progress:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: progress(ex: WavExporter): int" href="libtrackerboy/exports/wav.html#progress%2CWavExporter">wav: progress(ex: WavExporter): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: progress(p: Player): int" href="libtrackerboy/private/player.html#progress%2CPlayer">player: progress(p: Player): int</a></li>
+          </ul></dd>
+<dt><a name="progressMax" href="#progressMax"><span>progressMax:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: progressMax(ex: WavExporter): int" href="libtrackerboy/exports/wav.html#progressMax%2CWavExporter">wav: progressMax(ex: WavExporter): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: progressMax(p: Player): int" href="libtrackerboy/private/player.html#progressMax%2CPlayer">player: progressMax(p: Player): int</a></li>
           </ul></dd>
 <dt><a name="ptrArith" href="#ptrArith"><span>ptrArith:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1708,6 +1784,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="enginecontrol: step(r: var MusicRuntime; itable: InstrumentTable; frame: var EngineFrame;
      op: var ApuOperation): bool" href="libtrackerboy/private/enginecontrol.html#step%2CMusicRuntime%2CInstrumentTable%2CEngineFrame%2CApuOperation">enginecontrol: step(r: var MusicRuntime; itable: InstrumentTable; frame: var EngineFrame;
      op: var ApuOperation): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="player: step(p: var Player; engine: var Engine; instruments: InstrumentTable): bool" href="libtrackerboy/private/player.html#step%2CPlayer%2CEngine%2CInstrumentTable">player: step(p: var Player; engine: var Engine; instruments: InstrumentTable): bool</a></li>
           </ul></dd>
 <dt><a name="stepAndApply" href="#stepAndApply"><span>stepAndApply:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1929,6 +2007,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="data: viewTrack(s: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped" href="libtrackerboy/data.html#viewTrack.t%2CSong%2CChannelId%2CByteIndex%2Cuntyped%2Cuntyped">data: viewTrack(s: Song; ch: ChannelId; trackId: ByteIndex; value, body: untyped): untyped</a></li>
           </ul></dd>
+<dt><a name="WavConfig" href="#WavConfig"><span>WavConfig:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: WavConfig" href="libtrackerboy/exports/wav.html#WavConfig">wav: WavConfig</a></li>
+          </ul></dd>
 <dt><a name="WaveData" href="#WaveData"><span>WaveData:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: WaveData" href="libtrackerboy/data.html#WaveData">data: WaveData</a></li>
@@ -1945,6 +2027,14 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="data: WaveformTable" href="libtrackerboy/data.html#WaveformTable">data: WaveformTable</a></li>
           </ul></dd>
+<dt><a name="WavExporter" href="#WavExporter"><span>WavExporter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: WavExporter" href="libtrackerboy/exports/wav.html#WavExporter">wav: WavExporter</a></li>
+          </ul></dd>
+<dt><a name="WavWriter" href="#WavWriter"><span>WavWriter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wavwriter: WavWriter" href="libtrackerboy/private/wavwriter.html#WavWriter">wavwriter: WavWriter</a></li>
+          </ul></dd>
 <dt><a name="willCorrect" href="#willCorrect"><span>willCorrect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="endian: willCorrect" href="libtrackerboy/private/endian.html#willCorrect">endian: willCorrect</a></li>
@@ -1954,6 +2044,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="ioblocks: write[T](b: var OutputBlock; data: openArray[T])" href="libtrackerboy/private/ioblocks.html#write%2COutputBlock%2CopenArray%5BT%5D">ioblocks: write[T](b: var OutputBlock; data: openArray[T])</a></li>
           <li><a class="reference external"
           data-doc-search-tag="ioblocks: write[T: not openArray](b: var OutputBlock; data: T)" href="libtrackerboy/private/ioblocks.html#write%2COutputBlock%2CT">ioblocks: write[T: not openArray](b: var OutputBlock; data: T)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="wavwriter: write(w: var WavWriter; data: openArray[PcmF32])" href="libtrackerboy/private/wavwriter.html#write%2CWavWriter%2CopenArray%5BPcmF32%5D">wavwriter: write(w: var WavWriter; data: openArray[PcmF32])</a></li>
           </ul></dd>
 <dt><a name="writeData" href="#writeData"><span>writeData:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1968,7 +2060,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-04 15:36:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-05 15:35:41 UTC</small>
       </div>
     </div>
   </div>

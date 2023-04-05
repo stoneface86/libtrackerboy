@@ -136,7 +136,8 @@ window.addEventListener('DOMContentLoaded', main);
   vibratoDelay*: uint8
   vibratoParam*: uint8">FrequencyControl</a></li>
   <li><a class="reference" href="#FrequencyLookupFunc"
-    title="FrequencyLookupFunc = proc (note: Natural): uint16 {.nimcall, noSideEffect.}">FrequencyLookupFunc</a></li>
+    title="FrequencyLookupFunc = proc (note: Natural): uint16 {.nimcall, gcSafe,
+    raises: [], noSideEffect.}">FrequencyLookupFunc</a></li>
   <li><a class="reference" href="#InstrumentRuntime"
     title="InstrumentRuntime = object
   instrument*: Immutable[ref Instrument]
@@ -304,7 +305,8 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 </div>
 <div id="FrequencyLookupFunc">
-<dt><pre><a href="enginecontrol.html#FrequencyLookupFunc"><span class="Identifier">FrequencyLookupFunc</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">note</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint16</span> {.<span class="Identifier">nimcall</span><span class="Other">,</span> <span class="Identifier">noSideEffect</span>.}</pre></dt>
+<dt><pre><a href="enginecontrol.html#FrequencyLookupFunc"><span class="Identifier">FrequencyLookupFunc</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">note</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint16</span> {.<span class="Identifier">nimcall</span><span class="Other">,</span> <span class="Identifier">gcSafe</span><span class="Other">,</span>
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> </span><span class="Identifier">noSideEffect</span>.}</pre></dt>
 <dd>
 
 
@@ -475,7 +477,7 @@ class="link-seesrc" target="_blank">Source</a>
 </div>
 <div id="step,MusicRuntime,InstrumentTable,EngineFrame,ApuOperation">
 <dt><pre><span class="Keyword">proc</span> <a href="#step%2CMusicRuntime%2CInstrumentTable%2CEngineFrame%2CApuOperation"><span class="Identifier">step</span></a><span class="Other">(</span><span class="Identifier">r</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="enginecontrol.html#MusicRuntime"><span class="Identifier">MusicRuntime</span></a><span class="Other">;</span> <span class="Identifier">itable</span><span class="Other">:</span> <a href="../data.html#InstrumentTable"><span class="Identifier">InstrumentTable</span></a><span class="Other">;</span> <span class="Identifier">frame</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a><span class="Other">;</span>
-          <span class="Identifier">op</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="enginestate.html#ApuOperation"><span class="Identifier">ApuOperation</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span>.}</pre></dt>
+          <span class="Identifier">op</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="enginestate.html#ApuOperation"><span class="Identifier">ApuOperation</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
 
@@ -509,7 +511,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-04 15:36:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-05 15:35:41 UTC</small>
       </div>
     </div>
   </div>
