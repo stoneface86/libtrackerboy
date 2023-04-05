@@ -120,6 +120,8 @@ type
     cyclesPerFrame: float
     cycleOffset: float
 
+{. push raises: [] .}
+
 # Timer =======================================================================
 
 proc initTimer(initPeriod: uint32): Timer =
@@ -1045,3 +1047,5 @@ func channelMix*(a: Apu, chno: ChannelId): MixMode =
     assert a.channelMix(ch3) == mixLeft
     assert a.channelMix(ch4) == mixMute
   result = a.mix[chno.ord]
+
+{. pop .}

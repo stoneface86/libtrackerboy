@@ -81,7 +81,7 @@ func progressMax*(p: Player): int =
   of pckLoops:
     p.context.loopAmount
 
-proc step*(p: var Player, engine: var Engine, instruments: InstrumentTable): bool =
+proc step*(p: var Player, engine: var Engine, instruments: InstrumentTable): bool {.raises: [].} =
   ## Steps the engine if the player is currently playing.
   if p.playing:
     engine.step(instruments)

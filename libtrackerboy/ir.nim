@@ -158,6 +158,8 @@ type
     srcLen*: int
     data*: seq[RowIr]
 
+{. push raises: [] .}
+
 # === Operation ===============================================================
 
 func toEffectType*(x: FrequencyMod): EffectType =
@@ -407,3 +409,5 @@ func fromIr*(ir: TrackIr): Track =
   ## Converts a TrackIr into a Track.
   result = Track.init(ir.srcLen)
   result.setFromIr(ir)
+
+{. pop .}

@@ -284,6 +284,8 @@ const
   defaultFramerate*: Framerate = 30
     ## Default `customFramerate` setting for new `Modules <#Module>`_.
 
+{. push raises: [] .}
+
 func effectTypeShortensPattern*(et: EffectType): bool =
   ## Determines if the given effect type will shorten the runtime length of
   ## a pattern by either halting the song or jumping to a new pattern.
@@ -301,7 +303,7 @@ func toEffectType*(x: uint8): EffectType =
 
 # Sequence
 
-proc `[]`*(s: Sequence, i: ByteIndex): uint8 =
+func `[]`*(s: Sequence, i: ByteIndex): uint8 =
   ## Gets the `i`th element in the sequence
   s.data[i]
 
@@ -353,7 +355,8 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
     else:
       var data: int
       
-      let parsed = str.parseInt(data, i)
+      let parsed = try: str.parseInt(data, i)
+                   except ValueError: 0
       if parsed == 0:
         # skip this character
         inc i
@@ -388,7 +391,7 @@ func `$`*(wave: WaveData): string =
   ## as a string of 32 uppercase hex characters, with the first character
   ## being the first sample in the wave data.
   const hextable = ['0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
   result = newString(32)
   var i = 0
   for samples in wave:
@@ -1113,3 +1116,5 @@ func `==`*(a, b: SomeTable): bool =
   ## Equality test for two tables. Uses deep equality checking.
   bind utils.`==`, deepEquals
   system.`==`(a, b)
+
+{. pop .}

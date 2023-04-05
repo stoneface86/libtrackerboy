@@ -108,6 +108,10 @@ task wavegen, "Generate demo synth waveforms":
   withTests:
     execNimble "c", "--outdir:../bin --run standalones/wavegen.nim"
 
+task wavexport, "Test the wav exporter":
+  withTests:
+    execNimble "c", "--outdir:../bin --run standalones/wavexport.nim"
+
 task docgen, "Generate documentation":
   let gitargs = block:
     let commit = block:

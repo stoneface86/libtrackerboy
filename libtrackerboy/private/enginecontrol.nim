@@ -28,7 +28,7 @@ type
     instrument*: Immutable[ref Instrument]
     sequenceCounters*: array[SequenceKind, int]
 
-  FrequencyLookupFunc* = proc(note: Natural): uint16 {.nimcall, noSideEffect.}
+  FrequencyLookupFunc* = proc(note: Natural): uint16 {.nimcall, gcSafe, raises: [], noSideEffect.}
 
   FrequencyBounds* = object
     maxFrequency*: uint16
@@ -150,7 +150,7 @@ proc step(t: var Timer): bool =
 func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyControl =
   result.bounds = bounds
 
-proc apply(fc: var FrequencyControl, op: Operation) =
+proc apply(fc: var FrequencyControl, op: Operation) {.raises: [].} =
   var updateChord = false
   op.forFlagPresent(opsNote):
     if fc.mode == fcmNoteSlide:
@@ -358,7 +358,7 @@ proc setRow(tc: var TrackControl, row: TrackRow) =
   # effect. If Gxx is not present or the parameter is 00, then the operation
   # is immediately applied on the next call to step()
 
-proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): (NoteAction, bool) =
+proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): (NoteAction, bool) {.raises: [].} =
   result[0] = naSustain
 
   if tc.delayCounter.step():
@@ -498,7 +498,7 @@ func difference(state, prev: ChannelState): UpdateFlags =
   check(ufPanning, panning)
   check(ufFrequency, frequency)
 
-proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame, op: var ApuOperation): bool =
+proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame, op: var ApuOperation): bool {.raises: [].} =
   if r.halted:
     return true
 

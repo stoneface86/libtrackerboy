@@ -41,6 +41,8 @@ type
     frame: EngineFrame
     apuOp: ApuOperation
 
+{. push raises: [] .}
+
 func init*(_: typedesc[Engine]): Engine =
   discard  # default init is sufficient
 
@@ -203,3 +205,5 @@ proc stepAndApply*(e: var Engine, itable: InstrumentTable, wtable: WaveformTable
   ## Convenience proc that calls `e.step` and `apu.apply` in one go.
   e.step(itable)
   apu.apply(e.takeOperation(), wtable)
+
+{. pop .}

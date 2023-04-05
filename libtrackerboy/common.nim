@@ -84,12 +84,16 @@ template `==`*[T](lhs: T, i: Immutable[T]): bool =
 template `==`*[T: ptr|ref](lhs: nil.typeof, rhs: Immutable[T]): bool =
   rhs == lhs
 
-func pansLeft*(mode: MixMode): bool {.inline.} =
+{. push inline, raises: [] .}
+
+func pansLeft*(mode: MixMode): bool =
   ## Determine whether the mode pans left, returns `true` when mode is
   ## `mixLeft` or `mixMiddle`
   testBit(ord(mode), 0)
 
-func pansRight*(mode: MixMode): bool {.inline.} =
+func pansRight*(mode: MixMode): bool =
   ## Determine whether the mode pans right, returns `true` when mode is
   ## `mixRight` or `mixMiddle`
   testBit(ord(mode), 1)
+
+{. pop .}

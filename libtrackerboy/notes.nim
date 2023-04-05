@@ -44,6 +44,8 @@ const
 template lookup(table: untyped, note: Natural): auto =
   table[clamp(note, low(table), high(table))]
 
+{. push raises: [] .}
+
 func lookupToneNote*(note: Natural): uint16 =
   lookup(toneNoteTable, note)
 
@@ -86,6 +88,8 @@ func note*(str: string): uint8 {.compileTime.} =
   let octave = (str[2].ord - '2'.ord)
   doAssert octave >= 0 and octave <= 6, "invalid octave"
   result += (octave * 12).uint8
+
+{. pop .}
 
 static:
   assert note("c-2") == 0

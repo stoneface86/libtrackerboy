@@ -56,11 +56,16 @@ proc close*(w: var WavWriter): void
 proc `=destroy`*(w: var WavWriter) =
   w.close()
 
-proc checkedWriteBuffer(f: File, buffer: pointer, buflen: int) =
+proc checkedWriteBuffer(f: File, buffer: pointer, buflen: int) {.raises: [IOError] .} =
   if f.writeBuffer(buffer, buflen) != buflen:
     raise newException(IOError, "could not write entire buffer")
 
-proc init*(_: typedesc[WavWriter], filename: sink string, channels, samplerate: int): WavWriter =
+proc init*(
+  _: typedesc[WavWriter],
+  filename: sink string,
+  channels, samplerate: int
+): WavWriter {.raises: [IOError] .} =
+  
   result = WavWriter(
     file: open(filename, fmWrite),
     channels: channels,
@@ -92,10 +97,10 @@ proc init*(_: typedesc[WavWriter], filename: sink string, channels, samplerate: 
 
   result.file.checkedWriteBuffer(header.unsafeAddr, header.sizeof)
 
-proc write[T: SomeWord](f: File, i: LittleEndian[T]) =
+proc write[T: SomeWord](f: File, i: LittleEndian[T]) {.raises: [IOError] .} =
   f.checkedWriteBuffer(i.unsafeAddr, T.sizeof)
 
-proc close(w: var WavWriter) =
+proc close*(w: var WavWriter) {.raises: [IOError] .} =
   if w.file != nil:
     let totalSamples = w.samplesWritten.uint32
     let dataChunkSize = totalSamples * w.channels.uint32 * sizeof(PcmF32).uint32
@@ -131,7 +136,7 @@ proc close(w: var WavWriter) =
 #
 # Writes the sampled data in the given array to the file
 #
-proc write*(w: var WavWriter, data: openArray[PcmF32]) =
+proc write*(w: var WavWriter, data: openArray[PcmF32]) {. raises: [IOError] .} =
   let samples = data.len div w.channels
   when cpuEndian == littleEndian:
     w.file.checkedWriteBuffer(data.unsafeAddr, PcmF32.sizeof * samples * w.channels)
@@ -139,3 +144,4 @@ proc write*(w: var WavWriter, data: openArray[PcmF32]) =
     for sample in data:
       w.file.write(toLE(cast[uint32](sample)))
   w.samplesWritten += samples
+

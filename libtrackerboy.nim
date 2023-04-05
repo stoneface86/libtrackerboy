@@ -22,8 +22,8 @@ import libtrackerboy                   # import everything
 import libtrackerboy/[data, io]        # import specific modules (Recommended)
 ```
 
-Available modules:
-------------------
+Available modules
+-----------------
 
 ======================================  ==============================================
 Module                                  Description
@@ -38,6 +38,18 @@ Module                                  Description
 `ir<libtrackerboy/ir.html>`_            Intermediate representation for import/export
 `notes<libtrackerboy/notes.html>`_      Note lookup procs, note values
 `version<libtrackerboy/version.html>`_  Version type and consts
+======================================  ==============================================
+
+Exporter modules
+----------------
+
+Modules that provide exporting to other formats are located in the exports
+subfolder, `libtrackerboy/exports`.
+
+======================================  ==============================================
+Module                                  Description
+======================================  ==============================================
+`wav<libtrackerboy/exports/wav.html>`_  Wav file exporter
 ======================================  ==============================================
 
 .. note:: Modules in the private folder (libtrackerboy/private) are private to
@@ -61,4 +73,8 @@ import libtrackerboy/[
   notes,
   version
 ]
+import libtrackerboy/exports/[
+  wav
+]
 export apu, common, data, editing, engine, io, notes, version
+export wav

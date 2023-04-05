@@ -64,6 +64,8 @@ type
     data: seq[byte]
     location: PatternSelection
 
+{. push raises: [] .}
+
 template first(p: PatternSelection|PatternIter): PatternAnchor =
   p.corners[0]
 
@@ -348,3 +350,4 @@ proc paste*(c: PatternClip, song: var Song, order: ByteIndex, pos: PatternCursor
 proc restore*(c: PatternClip, song: var Song, order: ByteIndex) =
   c.pasteImpl(song, order, none[PatternAnchor](), false)
 
+{. pop .}
