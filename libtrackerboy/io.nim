@@ -259,7 +259,9 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
     p.channel = format.channel.ChannelId
     p.initEnvelope = format.envelopeEnabled
     p.envelope = format.envelope
-    for sequence in p.sequences.mitems:
+    #for sequence in p.sequences.mitems:
+    for kind in skArp..skTimbre:
+      template sequence(): var Sequence = p.sequences[kind]
       var sequenceFormat: SequenceFormat
       invalidWhen ib.read(sequenceFormat)
       let seqlen = toNE(sequenceFormat.length).int
@@ -321,7 +323,9 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
       envelopeEnabled: p.initEnvelope,
       envelope: p.envelope
     ))
-    for sequence in p.sequences:
+    #for sequence in p.sequences:
+    for kind in skArp..skTimbre:
+      template sequence(): lent Sequence = p.sequences[kind]
       ob.write(SequenceFormat(
         length: toLE(sequence.data.len.uint16),
         loopEnabled: sequence.loopIndex.isSome(),

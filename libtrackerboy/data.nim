@@ -58,10 +58,11 @@ type
   SequenceKind* = enum
     ## Enumeration for the kinds of parameters a sequence can operate on.
     ## An `Instrument` has a `Sequence` for each one of these kinds.
-    skArp,
-    skPanning,
-    skPitch,
+    skArp
+    skPanning
+    skPitch
     skTimbre
+    skEnvelope
 
   Sequence* = object
     ## A sequence is a sequence of parameter changes with looping capability.

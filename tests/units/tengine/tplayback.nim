@@ -14,48 +14,53 @@ testclass "playback"
 # apu.
 
 dtest "empty pattern":
-  testsetup
-  engine.play(song.toImmutable)
+  var eh = EngineHarness.init()
+  eh.play()
   for i in 0..32:
-    engine.step(instruments)
-    check engine.takeOperation() == ApuOperation.default
-    check engine.currentFrame().time == i
+    eh.step()
+    check:
+      eh.engine.takeOperation() == ApuOperation.default
+      eh.currentFrame().time == i
 
 dtest "speed timing":
   proc speedtest(expected: openarray[bool], speed: Speed) =
     const testAmount = 5
-    var engine = Engine.init()
-    var instruments = InstrumentTable.init()
+    var eh = EngineHarness.init()
     checkpoint "speed = " & $speed
-    let song = Song.new()
-    song.speed = speed
-    engine.play(song.toImmutable)
+    eh.song.speed = speed
+    eh.play()
     for i in 0..<testAmount:
       for startedNewRow in expected:
-        engine.step(instruments)
-        let frame = engine.currentFrame()
-        check frame.speed == speed
-        check frame.startedNewRow == startedNewRow
+        eh.frameTest(f):
+          check:
+            f.speed == speed
+            f.startedNewRow == startedNewRow
 
   speedtest([true],  0x10)
   speedtest([true, false, false, true, false], 0x28)
   speedtest([true, false, false, false, false, false], 0x60)
 
 dtest "song looping":
-  testsetup
-  song.speed = unitSpeed
-  song.trackLen = 1
-  song.order.setLen(3)
-  engine.play(song.toImmutable)
-
-  engine.step(instruments)
-  check engine.currentFrame().order == 0
-  engine.step(instruments)
-  check engine.currentFrame().order == 1 and engine.currentFrame().startedNewPattern
-  engine.step(instruments)
-  check engine.currentFrame().order == 2 and engine.currentFrame().startedNewPattern
-  engine.step(instruments)
-  check engine.currentFrame().order == 0 and engine.currentFrame().startedNewPattern
+  var eh = EngineHarness.init()
+  eh.setupSong(s):
+    s.speed = unitSpeed
+    s.trackLen = 1
+    s.order.setLen(3)
+  eh.play()
+  eh.frameTest(f):
+    check f.order == 0
+  eh.frameTest(f):
+    check:
+      f.order == 1
+      f.startedNewPattern
+  eh.frameTest(f):
+    check:
+      f.order == 2
+      f.startedNewPattern
+  eh.frameTest(f):
+    check:
+      f.order == 0
+      f.startedNewPattern
 
 
   

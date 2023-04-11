@@ -8,5 +8,6 @@ import tengine/[
   tapucontrol,
   teffects,
   tEngine,
+  tinstruments,
   tplayback
 ]

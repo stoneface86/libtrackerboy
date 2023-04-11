@@ -387,7 +387,9 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
 
     template updateSetting(setting: OperationSetting, field: untyped): untyped =
       tc.op.forFlagPresent(setting):
-        tc.field = tc.op[setting]
+        let val = tc.op[setting]
+        tc.field = val
+        tc.state.field = val
 
     updateSetting(opsEnvelope, envelope)
     updateSetting(opsPanning, panning)
@@ -400,11 +402,10 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
     if opsNote in tc.op:
       tc.ir.reset()
       tc.playing = true
-      if tc.ir.instrument != nil and tc.ir.instrument[].initEnvelope:
-        tc.state.envelope = tc.ir.instrument[].envelope
-      else:
-        tc.state.envelope = tc.envelope
       result[0] = naTrigger
+      tc.state.envelope = tc.envelope
+      tc.state.panning = tc.panning
+      tc.state.timbre = tc.timbre
 
     tc.fc.apply(tc.op)
     tc.delayCounter = noCounter()
@@ -425,15 +426,21 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
 
     # Frequency calculation
     tc.state.frequency = tc.fc.step(inputs[skArp], inputs[skPitch])
-    
-    template readInput(dest: untyped, kind: SequenceKind): untyped =
-      if inputs[kind].isSome():
-        tc.state.dest = inputs[kind].get()
-      else:
-        tc.state.dest = tc.dest
-      
-    readInput(panning, skPanning)
-    readInput(timbre, skTimbre)
+
+    template readInput(dest: untyped, validRange: static[Slice[uint8]], kind: SequenceKind): untyped =
+      block:
+        let input = inputs[kind]
+        if input.isSome():
+          template clampInput(): uint8 =
+            when validRange == 0u8..255u8:
+              input.unsafeGet()
+            else:
+              clamp(input.unsafeGet, validRange.a, validRange.b)
+          tc.state.dest = clampInput()
+
+    readInput(panning, 0u8..3u8, skPanning)
+    readInput(timbre, 0u8..3u8, skTimbre)
+    readInput(envelope, 0u8..255u8, skEnvelope)
   else:
     result[0] = naOff
 
