@@ -112,25 +112,43 @@ task wavexport, "Test the wav exporter":
   withTests:
     execNimble "c", "--outdir:../bin --run standalones/wavexport.nim"
 
-task docgen, "Generate documentation":
-  let gitargs = block:
-    let commit = block:
-      if argTuple.taskargs.len == 1:
-        argTuple.taskargs[0]
-      else:
-        "develop"
-    &"--git.url:https://github.com/stoneface86/libtrackerboy --git.commit:{commit} --git.devel:develop"
+task docsSpecs, "Generate documentation for file format specifications":
+  for name in [
+    "tbm-spec-major-0",
+    "tbm-spec-major-1"
+  ]:
+    withDir "docs":
+      echo &"Generating HTML page for 'docs/{name}.adoc'"
+      exec &"bundle exec asciidoctor --failure-level ERROR --trace {name}.adoc -o ../htmldocs/{name}.html"
+      echo &"Generating PDF document for 'docs/{name}.adoc'"
+      exec &"bundle exec asciidoctor-pdf --failure-level ERROR --trace {name}.adoc -o ../htmldocs/{name}.pdf"
 
+proc getGitArgs(): string =
+  let commit = block:
+    if argTuple.taskargs.len == 1:
+      argTuple.taskargs[0]
+    else:
+      "develop"
+  result = &"--git.url:https://github.com/stoneface86/libtrackerboy --git.commit:{commit} --git.devel:develop"
 
-  const rstFiles = [
-    "docs/module-file-format-spec.rst",
-    "docs/piece-file-format-spec.rst"
-  ]
-  rmDir "htmldocs"
-  # Generate all rst documents
-  for filename in rstFiles:
+proc docsRstImpl(gitargs = "") =
+  for filename in [
+    "docs/module-file-format-spec.rst"
+  ]:
     echo &"Generating page for '{filename}'"
     exec &"nim rst2html --hints:off --index:on --outdir:htmldocs {gitargs} \"{filename}\""
+
+task docsRst, "Generate RST documents":
+  docsRstImpl(getGitArgs())
+
+task docs, "Generate documentation":
+  let gitargs = getGitArgs()
+
+  # remove previously generated documentation if exists
+  rmDir "htmldocs"
+  
+  # Generate all rst documents
+  docsRstImpl(gitargs)
 
   # generate project documentation via libtrackerboy.nim
   echo "Generating documentation for whole project..."

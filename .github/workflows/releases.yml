@@ -54,6 +54,8 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
     steps:
       - uses: actions/checkout@v3
 
@@ -65,8 +67,15 @@ jobs:
         with:
           python-version: '3.10' 
 
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
       - name: Generate documentation
-        run: ./nut docgen ${{ needs.draft-release.outputs.version }}
+        run: |
+          ./nut docs ${{ needs.draft-release.outputs.version }}
+          ./nut docsSpecs
       
       - name: Clone gh-pages
         uses: actions/checkout@v3

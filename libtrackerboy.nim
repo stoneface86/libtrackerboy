@@ -59,7 +59,6 @@ See also
 ========
 
 - `Module file format specification<module-file-format-spec.html>`_
-- `Module piece file format specification<piece-file-format-spec.html>`_
 
 ]##
 
