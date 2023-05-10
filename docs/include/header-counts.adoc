@@ -1,0 +1,10 @@
+=== icount, scount and wcount
+
+icount:: instrument count
+scount:: song count
+wcount:: waveform count
+
+These counter fields determine the number of INST, SONG and WAVE blocks present
+in the payload, respectively. `icount` and `wcount` can range from 0-64 and is
+unbiased. `scount` can range from 0-255 and is biased (a value of 0 means there
+is 1 SONG block).

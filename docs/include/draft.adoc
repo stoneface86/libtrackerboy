@@ -1,0 +1,4 @@
+ifdef::draft-target-version[]
+IMPORTANT: This document is currently a draft. Changes may occur at any time.
+           Specification will be finalized for the {draft-target-version} release.
+endif::[]

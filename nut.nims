@@ -115,7 +115,8 @@ task wavexport, "Test the wav exporter":
 task docsSpecs, "Generate documentation for file format specifications":
   for name in [
     "tbm-spec-major-0",
-    "tbm-spec-major-1"
+    "tbm-spec-major-1",
+    "tbm-spec-major-2"
   ]:
     withDir "docs":
       echo &"Generating HTML page for 'docs/{name}.adoc'"

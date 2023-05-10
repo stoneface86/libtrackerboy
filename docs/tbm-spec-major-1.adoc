@@ -27,19 +27,7 @@ for easy reuse and sharing.
 
 <<<
 
-== Definitions
-
-Module:: A container of songs, instruments and waveforms. Instruments and
-         waveforms are shared between all songs. A module can store up to 256
-         songs, 64 instruments and 64 waveforms.
-Module Piece:: An individual part of the module as a song, instrument or
-               waveform. This individual part can be stored as a separate file.
-Order:: Song order data, a list of OrderRows that determine each pattern in the
-        song.
-OrderRow:: A track id assignment for each channel. Determines the tracks
-           which make a pattern.
-Pattern:: A collection of Tracks, one for each channel.
-Track:: Song data for a single channel. A Track is a list of TrackRows.
+include::include/definitions-1.adoc[]
 
 include::include/file-extensions-1.adoc[]
 
@@ -51,35 +39,14 @@ Below are basic data types used throughout the format
 
 [cols="2,2,6"]
 |===
-| Type name | Size (bytes) | Description
-
-| Uint8
-| 1
-| Unsigned 8-bit integer (0-255)                                 
-
-| BiasedUint8
-| 1
-| Unsigned 8-bit integer, biased form (1-256)
-
-| Char
-| 1
-| 8-bit Character type                          
-
-| Bool
-| 1
-| Boolean as an uint8 (0 for false, nonzero for true)                  
-
-| Uint16
-| 2
-| Unsigned 16-bit integer, in little endian (0-65536)                  
-
-| Uint32
-| 4
-| Unsigned 32-bit integer, in little endian                            
-
-| LString
-| 2 + _length_
-| Length-prefixed UTF-8 string, string data prefixed by a Uint16 _length_
+| Type name   | Size (bytes) | Description
+| Uint8       | 1            | Unsigned 8-bit integer (0-255)                                 
+| BiasedUint8 | 1            | Unsigned 8-bit integer, biased form (1-256)
+| Char        | 1            | 8-bit Character type                          
+| Bool        | 1            | Boolean as an uint8 (0 for false, nonzero for true)                  
+| Uint16      | 2            | Unsigned 16-bit integer, in little endian (0-65536)                  
+| Uint32      | 4            | Unsigned 32-bit integer, in little endian                            
+| LString     | 2 + _length_ | Length-prefixed UTF-8 string, string data prefixed by a Uint16 _length_
 |===
 
 <<<
@@ -92,72 +59,23 @@ is given.
 
 [cols="2,1,5"]
 |===
-| Identifier | Code | Description
-
-| frNone
-| 0
-| No error, format is acceptable
-
-| frInvalidSignature
-| 1
-| File has an invalid signature
-
-| frInvalidRevision
-| 2
-| File has an unrecognize revision, possibly from a newer version of the format
-
-| frCannotUpgrade
-| 3
-| An older revision file could not be upgraded to the current revision
-
-| frInvalidSize
-| 4
-| A payload block was incorrectly sized
-
-| frInvalidCount
-| 5
-| The icount and/or wcount in the header was too big
-
-| frInvalidBlock
-| 6
-| An unknown identifier was used in a payload block
-
-| frInvalidChannel
-| 7
-| The format contains an invalid channel in a payload block
-
-| frInvalidSpeed
-| 8
-| The format contains an invalid speed in a SONG block
-
-| frInvalidRowCount
-| 9
-| A TrackFormat's rows field exceeds the Song's track size
-
-| frInvalidRowNumber
-| 10
-| A RowFormat's rowno field exceeds the Song's track size
-
-| frInvalidId
-| 11
-| An INST or WAVE block contains an invalid id
-
-| frDuplicatedId
-| 12
-| Two INST blocks or two WAVE blocks have the same id
-
-| frInvalidTerminator
-| 13
-| The file has an invalid terminator
-
-| frReadError
-| 14
-| An read error occurred during processing
-
-| frWriteError
-| 15
-| A write error occurred during processing
-
+| Identifier          | Code | Description
+| frNone              | 0    | No error, format is acceptable
+| frInvalidSignature  | 1    | File has an invalid signature
+| frInvalidRevision   | 2    | File has an unrecognize revision, possibly from a newer version of the format
+| frCannotUpgrade     | 3    | An older revision file could not be upgraded to the current revision
+| frInvalidSize       | 4    | A payload block was incorrectly sized
+| frInvalidCount      | 5    | The icount and/or wcount in the header was too big
+| frInvalidBlock      | 6    | An unknown identifier was used in a payload block
+| frInvalidChannel    | 7    | The format contains an invalid channel in a payload block
+| frInvalidSpeed      | 8    | The format contains an invalid speed in a SONG block
+| frInvalidRowCount   | 9    | A TrackFormat's rows field exceeds the Song's track size
+| frInvalidRowNumber  | 10   | A RowFormat's rowno field exceeds the Song's track size
+| frInvalidId         | 11   | An INST or WAVE block contains an invalid id
+| frDuplicatedId      | 12   | Two INST blocks or two WAVE blocks have the same id
+| frInvalidTerminator | 13   | The file has an invalid terminator
+| frReadError         | 14   | An read error occurred during processing
+| frWriteError        | 15   | A write error occurred during processing
 |===
 
 <<<
@@ -248,131 +166,36 @@ The current revision of the header is shown below.
 
 <<<
 
-[cols="1,1,1,5"]
+[cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 12
-| Char[12]
-| signature
-
-| +12
-| 4
-| Uint32
-| versionMajor
-
-| +16
-| 4
-| Uint32
-| versionMinor
-
-| +20
-| 4
-| Uint32
-| versionPatch
-
-| +24
-| 1
-| Uint8
-| m. rev
-
-| +25
-| 1
-| Uint8
-| n. rev
-
-| +26
-| 2
-| Char[2]
-| reserved
-
-| +28
-| 32
-| Char[32]
-| title
-
-| +60
-| 32
-| Char[32]
-| artist
-
-| +92
-| 32
-| Char[32]
-| copyright
-
-| +124
-| 1
-| Uint8
-| icount
-
-| +125
-| 1
-| BiasedUint8
-| scount
-
-| +126
-| 1
-| Uint8
-| wcount
-
-| +127
-| 1
-| Uint8
-| system
-
-| +128
-| 2
-| Uint16
-| customFramerate
-
-| +130
-| 30
-| Char[30]
-| reserved  
-
+| Offset | Size | Type        | Field name
+| +0     | 12   | Char[12]    | signature
+| +12    | 4    | Uint32      | versionMajor
+| +16    | 4    | Uint32      | versionMinor
+| +20    | 4    | Uint32      | versionPatch
+| +24    | 1    | Uint8       | m. rev
+| +25    | 1    | Uint8       | n. rev
+| +26    | 2    | Char[2]     | reserved
+| +28    | 32   | Char[32]    | title
+| +60    | 32   | Char[32]    | artist
+| +92    | 32   | Char[32]    | copyright
+| +124   | 1    | Uint8       | icount
+| +125   | 1    | BiasedUint8 | scount
+| +126   | 1    | Uint8       | wcount
+| +127   | 1    | Uint8       | system
+| +128   | 2    | Uint16      | customFramerate
+| +130   | 30   | Char[30]    | reserved  
 |===
 
 include::include/signature.adoc[]
 
 include::include/header-version.adoc[]
 
-=== Major revision (m. rev)
-
-This version number indicates a breaking change for the file format. Starts
-at 0 and is incremented whenever the layout of the header or payload changes.
-TrackerBoy will not attempt to read modules with a newer major version, but can
-attempt to read older versions (backwards-compatible).
-
-Examples of breaking changes:
-
-- Modifying the layout of the Header structure
-- Adding/removing blocks to the payload
-- Modifying the format of a payload block
-
-=== Minor revision (n. rev)
-
-This version number indicates a change in the format that is forward-compatible
-with older versions. Changes such as utilizing a reserved field in the header.
-
-NOTE: TrackerBoy can read any module file as long as its major revision is
-      less than or equal to the current revision. Saving always uses the
-      current revision, so saving an older major version is a one-way
-      upgrade.
+include::include/header-major-minor.adoc[]
 
 include::include/header-author-info.adoc[]
 
-=== icount, scount and wcount
-
-icount:: instrument count
-scount:: song count
-wcount:: waveform count
-
-These counter fields determine the number of INST, SONG and WAVE blocks present
-in the payload, respectively. `icount` and `wcount` can range from 0-64 and is
-unbiased. `scount` can range from 0-255 and is biased (a value of 0 means there
-is 1 SONG block). 
+include::include/header-counts.adoc[]
 
 include::include/header-system.adoc[]
 
@@ -385,84 +208,9 @@ include::include/header-reserved.adoc[]
 The payload is located right after the header (offset 160). It contains a
 variable number of "blocks" or tagged data with a size.
 
-=== Blocks
+include::include/payload-blocks.adoc[]
 
-A block in the payload contains three parts: the id, the length and the data.
-The format of the block is shown below:
-
-[cols="2,2,6"]
-|===
-| Offset | Size | Description
-
-| 0
-| 4
-| Identifier
-
-| 4
-| 4
-| Length
-
-| 8
-| _Length_
-| Data
-
-|===
-
-=== Block types
-
-Each block has an identifier, which determines the type of data present in the
-block. The table below lists all recognized identifiers in the payload.
-
-[cols="2,2,6"]
-|===
-| Identifier | Value (Uint32) | Description
-
-| "COMM"
-| 0x4D4D4F43
-| User set comment data for a module.
-
-| "SONG"
-| 0x474E4F53
-| Container for a single song.
-
-| "INST"
-| 0x54534E49
-| Container for a single instrument.
-
-| "WAVE"
-| 0x45564157
-| Container for a single waveform.
-
-|===
-
-=== Block ordering
-
-Blocks are stored categorically by type in the following order:
-
-[cols="2,2,6"]
-|===
-| Order | Identifier | Count
-
-| 1
-| COMM
-| 1
-
-| 2
-| SONG
-| 1-256
-
-| 3
-| INST
-| 0-64
-
-| 4
-| WAVE
-| 0-64
-
-|===
-
-A payload will always have exactly one COMM block, at least one SONG block,
-and 0 or more INST and WAVE blocks.
+include::include/payload-block-details-1.adoc[]
 
 <<<
 
@@ -493,43 +241,14 @@ Following the name is a `SongFormat` record:
 
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 1
-| BiasedUint8
-| rowsPerBeat            
-
-| +1
-| 1
-| BiasedUint8
-| rowsPerMeasure         
-
-| +2
-| 1
-| Uint8
-| speed                  
-
-| +3
-| 1
-| BiasedUint8
-| patternCount           
-
-| +4
-| 1
-| BiasedUint8
-| rowsPerTrack           
-
-| +5
-| 2
-| Uint16
-| numberOfTracks
-
-| +7
-| 1
-| Uint8
-| numberOfEffects
-
+| Offset | Size | Type        | Field name
+| +0     | 1    | BiasedUint8 | rowsPerBeat            
+| +1     | 1    | BiasedUint8 | rowsPerMeasure         
+| +2     | 1    | Uint8       | speed                  
+| +3     | 1    | BiasedUint8 | patternCount           
+| +4     | 1    | BiasedUint8 | rowsPerTrack           
+| +5     | 2    | Uint16      | numberOfTracks
+| +7     | 1    | Uint8       | numberOfEffects
 |===
 
 rowsPerBeat:: number of rows that make up a beat, used by the front end
@@ -565,23 +284,10 @@ The `TrackFormat` record:
 
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 1
-| Uint8
-| channel
-
-| +1
-| 1
-| Uint8
-| trackId
-
-| +2
-| 1
-| BiasedUint8
-| rows
-
+| Offset | Size | Type        | Field name
+| +0     | 1    | Uint8       | channel
+| +1     | 1    | Uint8       | trackId
+| +2     | 1    | BiasedUint8 | rows
 |===
 
 channel:: determines which channel the track is for. _Valid values 0-3_.
@@ -592,18 +298,9 @@ The `RowFormat` record:
 
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 1
-| Uint8
-| rowno
-
-| +1
-| 8
-| TrackRow
-| rowdata
-
+| Offset | Size | Type     | Field name
+| +0     | 1    | Uint8    | rowno
+| +1     | 8    | TrackRow | rowdata
 |===
 
 rowno:: the index in the track's row array to set
@@ -612,23 +309,10 @@ the data to set at this index, as a `TrackRow`:
 +
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 1
-| Uint8
-| note
-
-| +1
-| 1
-| Uint8
-| instrument
-
-| +2
-| 6
-| Uint8[2][3]
-| effects
-
+| Offset | Size | Type        | Field name
+| +0     | 1    | Uint8       | note
+| +1     | 1    | Uint8       | instrument
+| +2     | 6    | Uint8[2][3] | effects
 |===
 
 The last `RowFormat` record for the last track ends the `SONG` block.
@@ -660,23 +344,10 @@ The `InstrumentFormat` record defines settings for the instrument.
 
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 1
-| Uint8
-| channel
-
-| +1
-| 1
-| Bool
-| envelopeEnabled
-
-| +2
-| 1
-| Uint8
-| envelope
-
+| Offset | Size | Type  | Field name
+| +0     | 1    | Uint8 | channel
+| +1     | 1    | Bool  | envelopeEnabled
+| +2     | 1    | Uint8 | envelope
 |===
 
 channel:: determines which channel the instrument is for, 0 is channel 1, 3 is
@@ -695,42 +366,20 @@ order in the block:
 [cols="1,9"]
 |===
 | Order | SequenceKind
-
-| 0
-| skArp
-
-| 1
-| skPanning
-
-| 2
-| skPitch
-
-| 3
-| skTimbre
-
+| 0     | skArp
+| 1     | skPanning
+| 2     | skPitch
+| 3     | skTimbre
 |===
 
 The `SequenceFormat` record:
 
 [cols="1,1,2,6"]
 |===
-| Offset | Size | Type | Field name
-
-| +0
-| 2
-| Uint16
-| length
-
-| +2
-| 1
-| Bool
-| loopEnabled
-
-| +3
-| 1
-| Uint8
-| loopIndex
-
+| Offset | Size | Type   | Field name
+| +0     | 2    | Uint16 | length
+| +2     | 1    | Bool   | loopEnabled
+| +3     | 1    | Uint8  | loopIndex
 |===
 
 length:: The length of the sequence data. Following this record will be this

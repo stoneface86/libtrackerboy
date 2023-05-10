@@ -1,0 +1,29 @@
+=== Block types
+
+Each block has an identifier, which determines the type of data present in the
+block. The table below lists all recognized identifiers in the payload.
+
+[cols="2,2,6"]
+|===
+| Identifier | Value (Uint32) | Description
+| "COMM"     | 0x4D4D4F43     | User set comment data for a module.
+| "SONG"     | 0x474E4F53     | Container for a single song.
+| "INST"     | 0x54534E49     | Container for a single instrument.
+| "WAVE"     | 0x45564157     | Container for a single waveform.
+|===
+
+=== Block ordering
+
+Blocks are stored categorically by type in the following order:
+
+[cols="2,2,6"]
+|===
+| Order | Identifier | Count
+| 1     | COMM       | 1
+| 2     | SONG       | 1-256
+| 3     | INST       | 0-64
+| 4     | WAVE       | 0-64
+|===
+
+A payload will always have exactly one COMM block, at least one SONG block,
+and 0 or more INST and WAVE blocks.

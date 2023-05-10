@@ -1,0 +1,13 @@
+== Definitions
+
+Module:: A container of songs, instruments and waveforms. Instruments and
+         waveforms are shared between all songs. A module can store up to 256
+         songs, 64 instruments and 64 waveforms.
+Module Piece:: An individual part of the module as a song, instrument or
+               waveform. This individual part can be stored as a separate file.
+Order:: Song order data, a list of OrderRows that determine each pattern in the
+        song.
+OrderRow:: A track id assignment for each channel. Determines the tracks
+           which make a pattern.
+Pattern:: A collection of Tracks, one for each channel.
+Track:: Song data for a single channel. A Track is a list of TrackRows.

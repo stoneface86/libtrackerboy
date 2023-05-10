@@ -1,0 +1,22 @@
+=== Major revision (m. rev)
+
+This version number indicates a breaking change for the file format. Starts
+at 0 and is incremented whenever the layout of the header or payload changes.
+TrackerBoy will not attempt to read modules with a newer major version, but can
+attempt to read older versions (backwards-compatible).
+
+Examples of breaking changes:
+
+- Modifying the layout of the Header structure
+- Adding/removing blocks to the payload
+- Modifying the format of a payload block
+
+=== Minor revision (n. rev)
+
+This version number indicates a change in the format that is forward-compatible
+with older versions. Changes such as utilizing a reserved field in the header.
+
+NOTE: TrackerBoy can read any module file as long as its major revision is
+      less than or equal to the current revision. Saving always uses the
+      current revision, so saving an older major version is a one-way
+      upgrade.

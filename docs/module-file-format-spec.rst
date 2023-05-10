@@ -12,6 +12,11 @@ Specifications
 
 Current list of specifications, ordered from newest to oldest.
 
+Major 2
+-------
+* TBM File Format Specification - Major Revision 2 (`HTML<tbm-spec-major-2.html>`_ `PDF<tbm-spec-major-2.pdf>`_)
+  * **Revision D (2.0)**, will be introduced in libtrackerboy v0.8.0
+
 Major 1
 -------
 * TBM File Format Specification - Major Revision 1 (`HTML<tbm-spec-major-1.html>`_ `PDF<tbm-spec-major-1.pdf>`_)
@@ -32,6 +37,11 @@ the major or minor version results in the letter being advanced.
 
 .. note:: Revisions A, B and C use Trackerboy's versioning. Revisions D and
           later use libtrackerboy's versioning.
+
+Revision D (2.0)
+----------------
+
+**DRAFT:** To be introduced in libtrackerboy v0.8.0
 
 Revision C (1.1)
 ----------------

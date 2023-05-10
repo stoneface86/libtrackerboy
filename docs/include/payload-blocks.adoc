@@ -1,0 +1,12 @@
+=== Blocks
+
+A block in the payload contains three parts: the id, the length and the data.
+The format of the block is shown below:
+
+[cols="2,2,6"]
+|===
+| Offset | Size     | Description
+| 0      | 4        | Identifier
+| 4      | 4        | Length
+| 8      | _Length_ | Data
+|===

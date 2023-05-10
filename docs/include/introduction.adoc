@@ -2,7 +2,7 @@
 
 This document is a formal specification of the file format for TrackerBoy
 module files, or *.tbm files. This document is for
-[.underline]#major revision 0# of the file format.
+[.underline]#major revision {tbm-rev-major}# of the file format.
 
 A Module file is a serialized form of the https://stoneface86.github.io/libtrackerboy/docs/develop/libtrackerboy/data.html#Module[Module] object.
 

@@ -1,16 +1,34 @@
-:tbm-rev-major: 0
-
+:tbm-rev-major: 2
+:draft-target-version: libtrackerboy v0.8.0
 include::include/title.adoc[]
+
+include::include/draft.adoc[]
 
 <<<
 
 include::include/introduction.adoc[]
 
+== Changes
+
+Major 2 introduces the following changes to the format:
+
+* Added a `Float32` type to the specification.
+* Added `frInvalidFramerate` and `frInvalidSystem` errors to the specification.
+* The `customFramerate` field in the header is now a `Float32` instead of `Uint16`.
+* Added `systemOverride` and `customFramerateOverride` fields to the 
+  `SongFormat` record.
+* Replaced the initial envelope setting with a sequence in INST blocks
+** Added a new sequence to INST blocks, `skEnvelope`
+** Replaced the `InstrumentFormat` record with a single `Uint8` byte being the
+   channel setting
+
+This allows for two new features: per-song timing and envelope sequences.
+
 <<<
 
-include::include/definitions-0.adoc[]
+include::include/definitions-1.adoc[]
 
-include::include/file-extensions-0.adoc[]
+include::include/file-extensions-1.adoc[]
 
 <<<
 
@@ -27,7 +45,39 @@ Below are basic data types used throughout the format
 | Bool        | 1            | Boolean as an uint8 (0 for false, nonzero for true)                  
 | Uint16      | 2            | Unsigned 16-bit integer, in little endian (0-65536)                  
 | Uint32      | 4            | Unsigned 32-bit integer, in little endian                            
-| LString     | 1 + _length_ | Length-prefixed UTF-8 string, string data prefixed by a Uint8 _length_
+| LString     | 2 + _length_ | Length-prefixed UTF-8 string, string data prefixed by a Uint16 _length_
+| Float32     | 4            | IEEE 754 single-precision floating point number
+|===
+
+<<<
+
+== Error Codes [[error-codes]]
+
+Below is a list of error codes possible when deserialing/serializing a module
+file. After processing a file, one of these error codes, or Format Result (fr),
+is given.
+
+[cols="2,1,5"]
+|===
+| Identifier          | Code | Description
+| frNone              | 0    | No error, format is acceptable
+| frInvalidSignature  | 1    | File has an invalid signature
+| frInvalidRevision   | 2    | File has an unrecognize revision, possibly from a newer version of the format
+| frCannotUpgrade     | 3    | An older revision file could not be upgraded to the current revision
+| frInvalidSize       | 4    | A payload block was incorrectly sized
+| frInvalidCount      | 5    | The icount and/or wcount in the header was too big
+| frInvalidBlock      | 6    | An unknown identifier was used in a payload block
+| frInvalidChannel    | 7    | The format contains an invalid channel in a payload block
+| frInvalidSpeed      | 8    | The format contains an invalid speed in a SONG block
+| frInvalidRowCount   | 9    | A TrackFormat's rows field exceeds the Song's track size
+| frInvalidRowNumber  | 10   | A RowFormat's rowno field exceeds the Song's track size
+| frInvalidId         | 11   | An INST or WAVE block contains an invalid id
+| frDuplicatedId      | 12   | Two INST blocks or two WAVE blocks have the same id
+| frInvalidSystem     | 13   | An invalid system value was set in the `system` or `systemOverride` fields.
+| frInvalidFramerate  | 14   | A framerate setting in the header or a SONG block was not a positive number.
+| frInvalidTerminator | 15   | The file has an invalid terminator
+| frReadError         | 16   | An read error occurred during processing
+| frWriteError        | 17   | A write error occurred during processing
 |===
 
 <<<
@@ -37,12 +87,12 @@ Below are basic data types used throughout the format
 A TrackerBoy module consists of a Header and a Payload.
 
 ```
-   +----------------+------------------------------------------------------+
-   |                |                                                      |
-   | Header         | Payload                                              |
-   | 160 bytes      | size varies                                          |
-   |                |                                                      |
-   +----------------+------------------------------------------------------+
+   +----------------+-----------------------------------------+------------+
+   |                |                                         |            |
+   | Header         | Payload                                 | Terminator |
+   | 160 bytes      | size varies                             | 12 bytes   |
+   |                |                                         |            |
+   +----------------+-----------------------------------------+------------+
   +0              +160                                                      EOF
 ```
 
@@ -59,7 +109,6 @@ to zero, but this is not enforced.
 The layout of the header depends on the header revision, located in offset 24.
 The current revision of the header is shown below.
 
-
 ```
       +0         +1         +2        +3
   0   +-------------------------------------------+
@@ -73,7 +122,7 @@ The current revision of the header is shown below.
   20  +-------------------------------------------+
       | version patch                             |
   24  +----------+----------+---------------------+
-      | rev      | system   | customFramerate     |
+      | m. rev   | n. rev   | reserved            |
   28  +----------+----------+---------------------+
       |                                           |
       |                                           |
@@ -101,15 +150,15 @@ The current revision of the header is shown below.
       |                                           |
       |                                           |
       |                                           |
-  124 +---------------------+---------------------+
-      | numberOfInstruments | numberOfWaveforms   |
-  128 +---------------------+---------------------+
-      |                                           |
+  124 +-------------------------------------------+
+      | icount   | scount   | wcount   | system   |
+  128 +----------+----------+----------+----------+
+      | customFramerate                           |
+      +-------------------------------------------+
       |                                           |
       |                                           |
       |                                           |
       | reserved                                  |
-      |                                           |
       |                                           |
       |                                           |
       |                                           |
@@ -126,37 +175,31 @@ The current revision of the header is shown below.
 | +12    | 4    | Uint32      | versionMajor
 | +16    | 4    | Uint32      | versionMinor
 | +20    | 4    | Uint32      | versionPatch
-| +24    | 1    | Uint8       | rev
-| +25    | 1    | Uint8       | system
-| +26    | 2    | Uint16      | customFramerate
+| +24    | 1    | Uint8       | m. rev
+| +25    | 1    | Uint8       | n. rev
+| +26    | 2    | Char[2]     | reserved
 | +28    | 32   | Char[32]    | title
 | +60    | 32   | Char[32]    | artist
 | +92    | 32   | Char[32]    | copyright
-| +124   | 2    | Uint16      | numberOfInstruments
-| +126   | 2    | Uint16      | numberOfWaveforms
-| +128   | 32   | Char[32]    | reserved  
+| +124   | 1    | Uint8       | icount
+| +125   | 1    | BiasedUint8 | scount
+| +126   | 1    | Uint8       | wcount
+| +127   | 1    | Uint8       | system
+| +128   | 4    | Float32     | customFramerate
+| +132   | 28   | Char[28]    | reserved
 |===
 
 include::include/signature.adoc[]
 
 include::include/header-version.adoc[]
 
-=== Revision
-
-The `rev` field marks the file format revision. Starts at 0 and is incremented
-whenever there is a change to the format. TrackerBoy is backwards-compatible
-with files of this specification. In other words, TrackerBoy can understand any
-module whose `rev` field is the same or less than the current revision.
-
-include::include/header-system.adoc[]
+include::include/header-major-minor.adoc[]
 
 include::include/header-author-info.adoc[]
 
-=== Instrument and Waveform counts
+include::include/header-counts.adoc[]
 
-The `numberOfInstruments` and `numberOfWaveforms` fields determine how many
-instruments and waveforms are stored in the payload, respectively. Both of
-these fields should be a number in range of 0 to 64.
+include::include/header-system.adoc[]
 
 include::include/header-reserved.adoc[]
 
@@ -165,39 +208,11 @@ include::include/header-reserved.adoc[]
 == Payload
 
 The payload is located right after the header (offset 160). It contains a
-fixed number of "blocks" or tagged data with a size.
+variable number of "blocks" or tagged data with a size.
 
 include::include/payload-blocks.adoc[]
 
-=== Block types
-
-Each block has an identifier, which determines the type of data present in the
-block. The table below lists all recognized identifiers in the payload.
-
-[cols="2,2,6"]
-|===
-| Identifier | Value (Uint32) | Description
-| "INDX"     | 0x58444E49     | Index block, contains ids and names for instruments and waveforms.
-| "COMM"     | 0x4D4D4F43     | User set comment data for a module
-| "SONG"     | 0x474E4F53     | Container for the module's song.
-| "INST"     | 0x54534E49     | Container for all instruments in the module
-| "WAVE"     | 0x45564157     | Container for all waveforms in the module
-|===
-
-Thus there are 5 blocks total in the payload, in the following order: INDX,
-COMM, SONG, INST, WAVE.
-
-<<<
-
-=== INDX block format
-
-The INDX block contains the ID and name data for all instruments and waveforms
-in the module. This block is composed as an array of `Index` records, which is
-a pair of a `Uint8` ID and an `LString` name. The total number of records in
-this block is the sum of the `numberOfInstruments` and `numberOfWaveforms`
-fields from the Header.
-
-Instrument index records are stored first, followed by waveform index records.
+include::include/payload-block-details-1.adoc[]
 
 <<<
 
@@ -207,7 +222,9 @@ include::include/payload-comm.adoc[]
 
 === SONG block format
 
-The SONG block contains the data for module's song.
+A SONG block contains the data for a single song in the module. Songs are
+stored in the same order as they were in the module's song list. The first
+song block is song #0 and so on.
 
 Song data is composed of the following, in this order:
 
@@ -233,17 +250,41 @@ Following the name is a `SongFormat` record:
 | +3     | 1    | BiasedUint8 | patternCount           
 | +4     | 1    | BiasedUint8 | rowsPerTrack           
 | +5     | 2    | Uint16      | numberOfTracks
+| +7     | 1    | Uint8       | numberOfEffects
+| +8     | 1    | Uint8       | systemOverride
+| +9     | 4    | Float32     | customFramerateOverride
 |===
 
 rowsPerBeat:: number of rows that make up a beat, used by the front end
-              for highlighting and tempo calculation.
+for highlighting and tempo calculation.
 rowsPerMeasure:: number of rows that make up a measure, used by the front
-                 end for highlighting.
+end for highlighting.
 speed:: Initial speed setting for the song in Q4.4 format
 [#SongFormat-patternCount]
 patternCount:: number of patterns for the song
 rowsPerTrack:: the size, in rows, of a track (all tracks have the same size).
 numberOfTracks:: number of tracks stored in this song block.
+numberOfEffects:: 
+  this byte contains the number of effect columns visible for each channel.
+  Each count ranges from 1-3 and is stored as a 2 bit number in this byte. Bits
+  0-1 are the count for CH1, bits 2-3 are the count for CH2 and so on. 
++
+NOTE: This value is for UI purposes only and has no effect on playback!
+
+systemOverride::
+This byte determines if the song should use a different tick rate than the one
+specified in the module. The following table shows all possible values:
++
+[cols="1,2,7"]
+|===
+| Value | System       | Description
+| 0     | N/A          | Use the module's system setting (default)
+| 1     | systemDmg    | Force DMG system
+| 2     | systemSgb    | Force SGB system
+| 3     | systemCustom | Force custom framerate using `customFramerateOverride` field.
+|===
+customFramerateOverride:: The custom framerate to use if `systemOverride` was
+                          set to `3`. This value must be a positive number.
 
 ==== Song Order
 
@@ -282,8 +323,8 @@ The `RowFormat` record:
 |===
 
 rowno:: the index in the track's row array to set
-rowdata::
-the data to set at this index
+rowdata:: 
+the data to set at this index, as a `TrackRow`:
 +
 [cols="1,1,2,6"]
 |===
@@ -299,34 +340,30 @@ The last `RowFormat` record for the last track ends the `SONG` block.
 
 === INST block format
 
-The INST block contains instrument data for every instrument in the module.
-The data is stored in the same order as the instrument `Index` records in the
-INDX block. Thus the number of instruments contained in this block is the value
-of the `numberOfInstruments` field in the Header.
+An INST block contains the data for a single instrument. The data is
+structured in this order:
 
-A single instrument's data is structured as followed:
-
-. An `InstrumentFormat` record
-. 4 sequences each composed of:
+. The instrument's id, `Uint8`
+. The instrument's name, `LString`
+. The instrument's channel, `Uint8`
+. 5 sequences each composed of:
 .. A `SequenceFormat` record
 .. The sequence's data
 
-==== InstrumentFormat
+==== Id and Name
 
-The `InstrumentFormat` record defines settings for the instrument.
+The `INST` block data begins with a 1 byte id (0-63), followed by an `LString`
+name.
 
-[cols="1,1,2,6"]
-|===
-| Offset | Size | Type  | Field name
-| +0     | 1    | Uint8 | channel
-| +1     | 1    | Bool  | envelopeEnabled
-| +2     | 1    | Uint8 | envelope
-|===
+NOTE: `WAVE` blocks also begin with an id and name in the same format.
 
-channel:: determines which channel the instrument is for, 0 is channel 1, 3 is
-          channel 4, etc. _Valid values 0-3_.
-envelopeEnabled:: set to true if the instrument has an initial envelope setting.
-envelope:: the initial envelope setting that is used if `envelopeEnabled` was true.
+==== Channel
+
+Next is a single byte representing the instrument's channel setting. This byte
+must be either 0, 1, 2 or 3 for CH1, CH2, CH3, CH4, respectively.
+
+NOTE: Instruments can be used on any channel, this setting is only used for
+      previewing on the set channel, as well as organizational purposes.
 
 ==== Sequence data
 
@@ -343,6 +380,7 @@ order in the block:
 | 1     | skPanning
 | 2     | skPitch
 | 3     | skTimbre
+| 4     | skEnvelope
 |===
 
 The `SequenceFormat` record:
@@ -363,18 +401,28 @@ loopIndex:: The index of the loop point.
 
 <<<
 
-=== WAVE block format
-
-The WAVE block contains waveform data for every waveform in the module.
-Like the INST block, the data is stored in the same order as the waveform
-`Index` records in the INDX block. Thus the number of waveforms contained in
-this block is the value of the `numberOfWaveforms` field in the Header.
-
-A single waveform just contains the 32-bit PCM sample array as an array of
-16 `Uint8`.
+include::include/payload-wave-1.adoc[]
 
 <<<
 
-== EOF
+include::include/terminator-eof.adoc[]
 
-The module file should be at end of file (EOF) after the WAVE block.
+<<<
+
+include::include/module-piece-format.adoc[]
+
+<<<
+
+== Upgrading
+
+When upgrading a major 1 module to major 2, use the following guidelines:
+
+* The header's customFramerate field can be safely casted to a Float32 if
+  set.
+* Existing SONG blocks should assume values of `0` for `systemOverride` and
+  `0.0f` for `customFramerateOverride` fields in the `SongFormat` record.
+* The initial envelope setting in INST blocks can easily be converted to an
+  envelope sequence via:
+** an empty sequence when `initEnvelope` was `0`
+** a sequence with 1 value when `initEnvelope` was `1`, with that value being 
+  `envelope`.
