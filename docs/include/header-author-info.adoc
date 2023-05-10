@@ -1,0 +1,9 @@
+=== Author information (title, artist, copyright)
+
+These fields in the header are fixed 32 byte strings. Assume ASCII encoding.
+Any unused characters in the string should be set to 0 or `\0`. Since these
+strings are fixed, null-termination is not needed.
+
+NOTE: The size and naming of these strings are identical to the ones in *.gbs
+      file format. This is intentional, as exporting to gbs is a planned
+      feature.

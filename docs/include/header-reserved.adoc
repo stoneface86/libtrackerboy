@@ -1,0 +1,7 @@
+=== Reserved
+
+The remainder of the header is the `reserved` field(s). This is an unused section
+that may be utilized in future versions of the format if needed.
+
+This field **should** be zeroed but the specification does not require it. The
+field can be safely ignored when processing module files.

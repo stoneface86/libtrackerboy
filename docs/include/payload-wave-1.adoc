@@ -1,0 +1,22 @@
+=== WAVE block format
+
+A WAVE block contains the data for a single waveform. The data
+is structured in this order:
+
+1. The waveform's id, `Uint8`
+2. The waveform's name, `LString`
+3. The waveform's data, a 16 byte array of packed 4-bit PCM samples
+
+==== id and name
+
+Same as `INST` blocks, the `WAVE` block's data begins with the waveform's id
+and name.
+
+==== Waveform data
+
+Next is the waveform's data, a 16 byte array of 32 4-bit PCM samples, with the
+same layout as the Game Boy's CH3 Wave RAM. The first sample in the waveform is
+the upper nibble of the first byte in the array, whereas the last sample is the
+lower nibble of the last byte in the array.
+
+The waveform data ends the `WAVE` block.

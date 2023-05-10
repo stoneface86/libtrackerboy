@@ -1,0 +1,4 @@
+include::file-extensions-0.adoc[]
+*.tbi:: [.underline]##T##racker[.underline]##B##oy [.underline]##I##nstrument file
+*.tbs:: [.underline]##T##racker[.underline]##B##oy [.underline]##S##ong file
+*.tbw:: [.underline]##T##racker[.underline]##B##oy [.underline]##W##aveform file

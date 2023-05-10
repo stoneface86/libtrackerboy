@@ -1,0 +1,6 @@
+== File extensions
+
+It is recommended that the following file extensions are used for files
+adhering to this specification:
+
+*.tbm:: [.underline]##T##racker[.underline]##B##oy [.underline]##M##odule file

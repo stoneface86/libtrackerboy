@@ -1,0 +1,8 @@
+=== Version (major, minor, patch)
+
+Version information is stored as three 4-byte words. This information
+determines which version of trackerboy that created the file. Versioning is
+maintained by keeping a major and minor version, followed by a patch number.
+For example, if the trackerboy version is v1.0.2, then the header's version
+fields will contain `0x1` `0x0` and `0x2` for major, minor and patch,
+respectively.

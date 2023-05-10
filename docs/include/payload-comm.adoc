@@ -1,0 +1,6 @@
+=== COMM block format
+
+The COMM block just contains a UTF-8 string that is the user's comment data. The
+string is not null-terminated since the length of the string is the length of
+the block. If the user has no comment set, then this block is empty
+(length = 0).

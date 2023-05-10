@@ -1,20 +1,9 @@
-= TBM File Format Specification: Major Revision 1
 :tbm-rev-major: 1
-:toc:
+include::include/title.adoc[]
 
-== Introduction
+<<<
 
-This document is a formal specification of the file format for TrackerBoy
-module files, or *.tbm files. This document is for
-[.underline]#major revision 1# of the file format.
-
-A Module file is a serialized form of the https://stoneface86.github.io/libtrackerboy/docs/develop/libtrackerboy/data.html#Module[Module] object.
-
-The libtrackerboy library provides a reference implementation for serializing
-and deserialing module files with this format. See the https://stoneface86.github.io/libtrackerboy/docs/develop/libtrackerboy/io.html[io module] for more documentation.
-
-NOTE: All multi-byte fields in this specification are stored in little-endian
-      byte order.
+include::include/introduction.adoc[]
 
 == Changes
 
@@ -36,6 +25,8 @@ Additionally, a <<module-piece-format,specification>> for module piece files
 has been introduced. This allows for parts of a module to be stored separately,
 for easy reuse and sharing.
 
+<<<
+
 == Definitions
 
 Module:: A container of songs, instruments and waveforms. Instruments and
@@ -50,21 +41,15 @@ OrderRow:: A track id assignment for each channel. Determines the tracks
 Pattern:: A collection of Tracks, one for each channel.
 Track:: Song data for a single channel. A Track is a list of TrackRows.
 
-== File extensions
+include::include/file-extensions-1.adoc[]
 
-It is recommended that the following file extensions are used for files
-adhering to this specification:
-
-*.tbm:: [.underline]##T##racker[.underline]##B##oy [.underline]##M##odule file
-*.tbi:: [.underline]##T##racker[.underline]##B##oy [.underline]##I##nstrument file
-*.tbs:: [.underline]##T##racker[.underline]##B##oy [.underline]##S##ong file
-*.tbw:: [.underline]##T##racker[.underline]##B##oy [.underline]##W##aveform file
+<<<
 
 == Basic Types
 
 Below are basic data types used throughout the format
 
-[cols="1,1,5"]
+[cols="2,2,6"]
 |===
 | Type name | Size (bytes) | Description
 
@@ -93,9 +78,11 @@ Below are basic data types used throughout the format
 | Unsigned 32-bit integer, in little endian                            
 
 | LString
-| varies
-| Length-prefixed UTF-8 string, string data prefixed by a Uint16 length
+| 2 + _length_
+| Length-prefixed UTF-8 string, string data prefixed by a Uint16 _length_
 |===
+
+<<<
 
 == Error Codes [[error-codes]]
 
@@ -103,7 +90,7 @@ Below is a list of error codes possible when deserialing/serializing a module
 file. After processing a file, one of these error codes, or Format Result (fr),
 is given.
 
-[cols="1,1,10"]
+[cols="2,1,5"]
 |===
 | Identifier | Code | Description
 
@@ -173,6 +160,8 @@ is given.
 
 |===
 
+<<<
+
 == Structure
 
 A TrackerBoy module consists of a Header and a Payload.
@@ -187,6 +176,8 @@ A TrackerBoy module consists of a Header and a Payload.
   +0              +160                                                      EOF
 ```
 
+<<<
+
 == Header
 
 The figure below defines the Header structure used in all file types. All
@@ -197,7 +188,6 @@ to zero, but this is not enforced.
 
 The layout of the header depends on the header revision, located in offset 24.
 The current revision of the header is shown below.
-
 
 ```
       +0         +1         +2        +3
@@ -255,6 +245,8 @@ The current revision of the header is shown below.
       |                                           |
   160 +-------------------------------------------+
 ```
+
+<<<
 
 [cols="1,1,1,5"]
 |===
@@ -342,39 +334,9 @@ The current revision of the header is shown below.
 
 |===
 
-=== Signature
+include::include/signature.adoc[]
 
-Every trackerboy file begins with this signature:
-
-[cols="1,1,1,1,1,1,1,1,1,1,1,1"]
-|===
-| +0 | +1 | +2 | +3 | +4 | +5 | +6 | +7 | +8 | +9 | +10 | +11
-
-| `'\0'`
-| `'T'`
-| `'R'`
-| `'A'`
-| `'C'`
-| `'K'`
-| `'E'`
-| `'R'`
-| `'B'`
-| `'O'`
-| `'Y'`
-| `'\0'`
-
-|===
-
-in order to identify the file as a trackerboy file.
-
-=== Version (major, minor, patch)
-
-Version information is stored as three 4-byte words. This information
-determines which version of trackerboy that created the file. Versioning is
-maintained by keeping a major and minor version, followed by a patch number.
-For example, if the trackerboy version is v1.0.2, then the header's version
-fields will contain `0x1` `0x0` and `0x2` for major, minor and patch,
-respectively.
+include::include/header-version.adoc[]
 
 === Major revision (m. rev)
 
@@ -399,15 +361,7 @@ NOTE: TrackerBoy can read any module file as long as its major revision is
       current revision, so saving an older major version is a one-way
       upgrade.
 
-=== Author information (title, artist, copyright)
-
-These fields in the header are fixed 32 byte strings. Assume ASCII encoding.
-Any unused characters in the string should be set to 0 or `\0`. Since these
-strings are fixed, null-termination is not needed.
-
-NOTE: The size and naming of these strings are identical to the ones in *.gbs
-      file format. This is intentional, as exporting to gbs is a planned
-      feature.
+include::include/header-author-info.adoc[]
 
 === icount, scount and wcount
 
@@ -420,47 +374,11 @@ in the payload, respectively. `icount` and `wcount` can range from 0-64 and is
 unbiased. `scount` can range from 0-255 and is biased (a value of 0 means there
 is 1 SONG block). 
 
-=== System
+include::include/header-system.adoc[]
 
-The system field determines which Game Boy model this module is for. Since the
-driver is typically updated every vblank, the system field determines the
-framerate, tick rate or vblank interval for the driver. The available choices
-are listed in the following table:
+include::include/header-reserved.adoc[]
 
-:cols[1,1,1,1]:
-|===
-| Identifier | Value | System name | Tick rate
-
-| systemDmg
-| 0
-| DMG
-| 59.7 Hz
-
-| systemSgb
-| 1
-| SGB
-| 61.1 Hz
-
-| systemCustom
-| 2
-| N/A
-| varies
-
-|===
-
-If the system is `systemCustom`, then a custom tick rate is used instead of the
-system's vblank. The custom tick rate is stored in the `customFramerate` field
-of the header.
-
-By default the DMG system, `systemDmg`, is selected.
-
-=== Reserved
-
-The remainder of the header is the `reserved` field. This is an unused section
-that may be utilized in future versions of the format if needed.
-
-This field **should** be zeroed but the specification does not require it. The
-field can be safely ignored when processing module files.
+<<<
 
 == Payload
 
@@ -472,7 +390,7 @@ variable number of "blocks" or tagged data with a size.
 A block in the payload contains three parts: the id, the length and the data.
 The format of the block is shown below:
 
-[cols="1,1,4"]
+[cols="2,2,6"]
 |===
 | Offset | Size | Description
 
@@ -495,7 +413,7 @@ The format of the block is shown below:
 Each block has an identifier, which determines the type of data present in the
 block. The table below lists all recognized identifiers in the payload.
 
-[cols="1,1,4"]
+[cols="2,2,6"]
 |===
 | Identifier | Value (Uint32) | Description
 
@@ -521,7 +439,7 @@ block. The table below lists all recognized identifiers in the payload.
 
 Blocks are stored categorically by type in the following order:
 
-[cols="1,1,1"]
+[cols="2,2,6"]
 |===
 | Order | Identifier | Count
 
@@ -546,12 +464,11 @@ Blocks are stored categorically by type in the following order:
 A payload will always have exactly one COMM block, at least one SONG block,
 and 0 or more INST and WAVE blocks.
 
-=== COMM block format
+<<<
 
-The COMM block just contains a UTF-8 string that is the user's comment data. The
-string is not null-terminated since the length of the string is the length of
-the block. If the user has no comment set, then this block is empty
-(length = 0).
+include::include/payload-comm.adoc[]
+
+<<<
 
 === SONG block format
 
@@ -574,7 +491,7 @@ The first part of a SONG block is the song's name, as an `LString`.
 
 Following the name is a `SongFormat` record:
 
-[cols="1,1,1,10"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -624,11 +541,12 @@ speed:: Initial speed setting for the song in Q4.4 format
 patternCount:: number of patterns for the song
 rowsPerTrack:: the size, in rows, of a track (all tracks have the same size).
 numberOfTracks:: number of tracks stored in this song block.
-numberOfEffects:: this byte contains the number of effect columns visible
-                  for each channel. Each count ranges from 1-3 and is stored as
-                  a 2 bit number in this byte. Bits 0-1 are the count for CH1,
-                  bits 2-3 are the count for CH2 and so on. **NOTE**: This
-                  value is for UI purposes only and has no effect on playback!
+numberOfEffects:: 
+  this byte contains the number of effect columns visible for each channel.
+  Each count ranges from 1-3 and is stored as a 2 bit number in this byte. Bits
+  0-1 are the count for CH1, bits 2-3 are the count for CH2 and so on. 
++
+NOTE: This value is for UI purposes only and has no effect on playback!
 
 ==== Song Order
 
@@ -645,7 +563,7 @@ records.
 
 The `TrackFormat` record:
 
-[cols="1,1,1,10"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -672,7 +590,7 @@ rows:: the number of RowFormat records that follow this structure
 
 The `RowFormat` record:
 
-[cols="1,1,1,10"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -692,7 +610,7 @@ rowno:: the index in the track's row array to set
 rowdata:: 
 the data to set at this index, as a `TrackRow`:
 +
-[cols="1,1,2,2"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -714,6 +632,8 @@ the data to set at this index, as a `TrackRow`:
 |===
 
 The last `RowFormat` record for the last track ends the `SONG` block.
+
+<<<
 
 === INST block format
 
@@ -738,7 +658,7 @@ NOTE: `WAVE` blocks also begin with an id and name in the same format.
 
 The `InstrumentFormat` record defines settings for the instrument.
 
-[cols="1,1,1,10"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -772,7 +692,7 @@ record followed by the sequence data. There are four kinds of sequences for
 every instrument. The kind of sequence the data is for is determined by its
 order in the block:
 
-[cols="1,10"]
+[cols="1,9"]
 |===
 | Order | SequenceKind
 
@@ -792,7 +712,7 @@ order in the block:
 
 The `SequenceFormat` record:
 
-[cols="1,1,1,10"]
+[cols="1,1,2,6"]
 |===
 | Offset | Size | Type | Field name
 
@@ -819,98 +739,14 @@ length:: The length of the sequence data. Following this record will be this
 loopEnabled:: Determines if this sequence has a loop index.
 loopIndex:: The index of the loop point.
 
-=== WAVE block format
+<<<
 
-A WAVE block contains the data for a single waveform. The data
-is structured in this order:
+include::include/payload-wave-1.adoc[]
 
-1. The waveform's id, `Uint8`
-2. The waveform's name, `LString`
-3. The waveform's data, a 16 byte array of packed 4-bit PCM samples
+<<<
 
-==== id and name
+include::include/terminator-eof.adoc[]
 
-Same as `INST` blocks, the `WAVE` block's data begins with the waveform's id
-and name.
+<<<
 
-==== Waveform data
-
-Next is the waveform's data, a 16 byte array of 32 4-bit PCM samples, with the
-same layout as the Game Boy's CH3 Wave RAM. The first sample in the waveform is
-the upper nibble of the first byte in the array, whereas the last sample is the
-lower nibble of the last byte in the array.
-
-The waveform data ends the `WAVE` block.
-
-== Terminator
-
-A terminator follows the payload, it is the signature, reversed.
-
-[cols="1,1,1,1,1,1,1,1,1,1,1,1"]
-|===
-| +0 | +1 | +2 | +3 | +4 | +5 | +6 | +7 | +8 | +9 | +10 | +11
-
-| `'\0'`
-| `'Y'`
-| `'O'`
-| `'B'`
-| `'R'`
-| `'E'`
-| `'K'`
-| `'C'`
-| `'A'`
-| `'R'`
-| `'T'`
-| `'\0'`
-
-|===
-
-== EOF
-
-The module file should be at end of file (EOF) after the terminator.
-
-== Module Piece Format [[module-piece-format]]
-
-Module piece files contain a single part of a module, for easy reuse and
-sharing. A piece file can contain either a song ($$*$$.tbs), an instrument
-($$*$$.tbi) or a waveform ($$*$$.tbw).
-
-=== Structure
-
-A piece file consists of a header followed by a payload. The payload is a
-single INST, SONG or WAVE block. A terminator is not used since there is only
-one block present in the payload.
-
-=== Header
-
-The figure below defines the Header structure for all piece files. These files
-use a reduced version of the header used in the module file format. The fields
-are exactly the same as the module format, see that specification for more info.
-
-```
-     +0         +1         +2        +3
- 0   +-------------------------------------------+
-     |                                           |
-     | signature ( TRACKERBOY )                  |
-     |                                           |
- 12  +-------------------------------------------+
-     | version major                             |
- 16  +-------------------------------------------+
-     | version minor                             |
- 20  +-------------------------------------------+
-     | version patch                             |
- 24  +----------+----------+---------------------+
-     | m. rev   | n. rev   |
- 28  +----------+----------+
-```
-
-=== Payload
-
-The payload is a single INST block for $$*$$.tbi files, a single SONG block for
-$$*$$.tbs files or a single WAVE block for $$*$$.tbw files.
-
-The format of these blocks are the same as the ones used in the module file
-format except for one key detail: the id is omitted for INST and WAVE blocks.
-
-NOTE: INST and WAVE blocks will be 1 byte less than their module counterpart,
-      since the Id is omitted.
+include::include/module-piece-format.adoc[]
