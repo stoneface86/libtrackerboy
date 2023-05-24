@@ -20,11 +20,17 @@ const
 
   # current file format revision: 1.1 (Rev C)
 
-  currentFileMajor* = 1
+  currentFileMajor* = 2
     ## The current major revision of the file format
-  currentFileMinor* = 1
+  currentFileMinor* = 0
     ## The current minor revision of the file format
 
-  currentFileSerial* = 2
+  currentFileSerial* = 3
     ## The current serial number of the file format. It is incremented for each
     ## bump to the major or minor version.
+    ## 
+    ## History:
+    ## * 0: Revision A (0.0)
+    ## * 1: Revision B (1.0)
+    ## * 2: Revision C (1.1)
+    ## * 3: Revision D (2.0)

@@ -5,6 +5,7 @@ driver is typically updated every vblank, the system field determines the
 framerate, tick rate or vblank interval for the driver. The available choices
 are listed in the following table:
 
+.Valid system values
 [cols="3,1,3,3"]
 |===
 | Identifier   | Value | System name | Tick rate
@@ -15,6 +16,9 @@ are listed in the following table:
 
 If the system is `systemCustom`, then a custom tick rate is used instead of the
 system's vblank. The custom tick rate is stored in the `customFramerate` field
-of the header.
+of the header. This custom tick rate must be a positive number and nonzero. The
+implementation should default to 30 fps when the custom tick rate does not meet
+this criteria.
 
-By default the DMG system, `systemDmg`, is selected.
+If the system does not match any of these values, then the implementation
+should treat the system as the default, `systemDmg`.

@@ -8,20 +8,6 @@ const moduleBinary = slurp("data/sample.tbm")
 
 testclass "modules"
 
-func makeModule(): Module =
-  result = Module.init
-  result.title = "sample"
-  result.artist = "stoneface86"
-  result.copyright = "2022 - stoneface86"
-  result.comments = "sample module for unit testing"
-  result.songs[0][] = get(sampleSongTest)
-  for sample in InstrumentSamples:
-    let id = result.instruments.add()
-    result.instruments[id][] = get(sample)
-  for sample in WaveformSamples:
-    let id = result.waveforms.add()
-    result.waveforms[id][] = get(sample)
-
 proc checkModule(m1, m2: Module) =
   check:
     m1.songs == m2.songs
@@ -31,8 +17,7 @@ proc checkModule(m1, m2: Module) =
     m1.artist == m2.artist
     m1.copyright == m2.copyright
     m1.comments == m2.comments
-    m1.system == m2.system
-    m1.customFramerate == m2.customFramerate
+    m1.tickrate == m2.tickrate
 
 
 testgroup:
@@ -73,9 +58,7 @@ testgroup:
     var moduleIn = Module.init
     # if the system field in the header is not a valid System value, it will default to systemDmg
     check moduleIn.deserialize(strm) == frNone
-    check moduleIn.system == systemDmg
-    # ensure that the customFramerate was also reset to default
-    check moduleIn.customFramerate == defaultFramerate
+    check moduleIn.tickrate == defaultTickrate
 
   dtest "deserialize - invalid table count":
     strm.write(moduleBinary)

@@ -20,6 +20,7 @@ Major 1 introduces the following changes to the format:
  - Added a terminator that follows the payload
  - Added a table of <<error-codes,error codes>> to the specification
  - Added a field, `numberOfEffects`, to `SongFormat` record in SONG blocks.
+ - *(Revision 1.1)* New effect, `Jxy`, for setting the global volume scale.
 
 Additionally, a <<module-piece-format,specification>> for module piece files
 has been introduced. This allows for parts of a module to be stored separately,
@@ -51,121 +52,19 @@ Below are basic data types used throughout the format
 
 <<<
 
-== Error Codes [[error-codes]]
-
-Below is a list of error codes possible when deserialing/serializing a module
-file. After processing a file, one of these error codes, or Format Result (fr),
-is given.
-
-[cols="2,1,5"]
-|===
-| Identifier          | Code | Description
-| frNone              | 0    | No error, format is acceptable
-| frInvalidSignature  | 1    | File has an invalid signature
-| frInvalidRevision   | 2    | File has an unrecognize revision, possibly from a newer version of the format
-| frCannotUpgrade     | 3    | An older revision file could not be upgraded to the current revision
-| frInvalidSize       | 4    | A payload block was incorrectly sized
-| frInvalidCount      | 5    | The icount and/or wcount in the header was too big
-| frInvalidBlock      | 6    | An unknown identifier was used in a payload block
-| frInvalidChannel    | 7    | The format contains an invalid channel in a payload block
-| frInvalidSpeed      | 8    | The format contains an invalid speed in a SONG block
-| frInvalidRowCount   | 9    | A TrackFormat's rows field exceeds the Song's track size
-| frInvalidRowNumber  | 10   | A RowFormat's rowno field exceeds the Song's track size
-| frInvalidId         | 11   | An INST or WAVE block contains an invalid id
-| frDuplicatedId      | 12   | Two INST blocks or two WAVE blocks have the same id
-| frInvalidTerminator | 13   | The file has an invalid terminator
-| frReadError         | 14   | An read error occurred during processing
-| frWriteError        | 15   | A write error occurred during processing
-|===
+include::include/error-codes-1.adoc[]
 
 <<<
 
-== Structure
-
-A TrackerBoy module consists of a Header and a Payload.
-
-```
-   +----------------+-----------------------------------------+------------+
-   |                |                                         |            |
-   | Header         | Payload                                 | Terminator |
-   | 160 bytes      | size varies                             | 12 bytes   |
-   |                |                                         |            |
-   +----------------+-----------------------------------------+------------+
-  +0              +160                                                      EOF
-```
+include::include/structure-1.adoc[]
 
 <<<
 
-== Header
-
-The figure below defines the Header structure used in all file types. All
-multi-byte fields are stored in little-endian. The size of the header is a
-fixed 160 bytes, with any unused space marked as reserved. Reserved fields can
-be utilized for future revisions of the format. Reserved fields should be set
-to zero, but this is not enforced.
-
-The layout of the header depends on the header revision, located in offset 24.
-The current revision of the header is shown below.
-
-```
-      +0         +1         +2        +3
-  0   +-------------------------------------------+
-      |                                           |
-      | signature ( TRACKERBOY )                  |
-      |                                           |
-  12  +-------------------------------------------+
-      | version major                             |
-  16  +-------------------------------------------+
-      | version minor                             |
-  20  +-------------------------------------------+
-      | version patch                             |
-  24  +----------+----------+---------------------+
-      | m. rev   | n. rev   | reserved            |
-  28  +----------+----------+---------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | title                                     |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  60  +-------------------------------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | artist                                    |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  92  +-------------------------------------------|
-      |                                           |
-      |                                           |
-      |                                           |
-      | copyright                                 |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  124 +-------------------------------------------+
-      | icount   | scount   | wcount   | system   |
-  128 +---------------------+----------+----------+
-      | customFramerate     |                     |
-      +---------------------+                     |
-      |                                           |
-      |                                           |
-      |                                           |
-      | reserved                                  |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  160 +-------------------------------------------+
-```
+include::include/header-0.adoc[]
 
 <<<
 
+.TBM Header structure
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
@@ -305,14 +204,53 @@ The `RowFormat` record:
 
 rowno:: the index in the track's row array to set
 rowdata:: 
-the data to set at this index, as a `TrackRow`:
+the data to set at this index, where the `TrackRow` type is:
 +
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
 | +0     | 1    | Uint8       | note
 | +1     | 1    | Uint8       | instrument
-| +2     | 6    | Uint8[2][3] | effects
+| +2     | 6    | Effect[3]   | effects
+|===
++
+with `Effect` being:
++
+[cols="1,1,2,6"]
+|===
+| Offset | Size | Type        | Field name
+| +0     | 1    | Uint8       | effectType
+| +1     | 1    | Uint8       | effectParam
+|===
++
+and `effectType` should be any of the following:
++
+[cols="1,2,7"]
+|===
+| Value | Effect Syntax | Identifier       
+| 0     | ---           | etNoEffect       
+| 1     | Bxx           | etPatternGoto    
+| 2     | C00           | etPatternHalt    
+| 3     | Dxx           | etPatternSkip    
+| 4     | Fxy           | etSetTempo       
+| 5     | Txx           | etSfx            
+| 6     | Exx           | etSetEnvelope    
+| 7     | V0x           | etSetTimbre      
+| 8     | I0x           | etSetPanning     
+| 9     | Hxx           | etSetSweep       
+| 10    | Sxx           | etDelayedCut     
+| 11    | Gxx           | etDelayedNote    
+| 12    | L00           | etLock           
+| 13    | 0xy           | etArpeggio       
+| 14    | 1xx           | etPitchUp        
+| 15    | 2xx           | etPitchDown      
+| 16    | 3xx           | etAutoPortamento 
+| 17    | 4xy           | etVibrato        
+| 18    | 5xx           | etVibratoDelay   
+| 19    | Pxx           | etTuning         
+| 20    | Qxy           | etNoteSlideUp    
+| 21    | Rxy           | etNoteSlideDown  
+| 22    | Jxy           | etSetGlobalVolume
 |===
 
 The last `RowFormat` record for the last track ends the `SONG` block.

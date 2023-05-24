@@ -1,0 +1,6 @@
+== Structure
+
+A TrackerBoy module consists of a Header and a Payload.
+
+.TBM File structure
+image::res/fig-structure-0.svg["File structure"]

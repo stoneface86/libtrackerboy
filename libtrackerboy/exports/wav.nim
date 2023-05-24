@@ -117,19 +117,20 @@ proc init*(
   ## 
   ## An `IOError` will be raised if the output file could not be written to.
   ## 
-  proc init(T: typedesc[Player], module: Module, config: WavConfig): Player =
+  proc init(T: typedesc[Player], module: Module, tickrate: float, config: WavConfig): Player =
     case config.duration.kind:
     of dkSeconds:
-      Player.init(module.framerate, config.duration.amount)
+      Player.init(tickrate, config.duration.amount)
     of dkLoops:
       Player.init(module.songs[config.song], config.duration.amount)
   
+  let tickrateHz = module.getTickrate(config.song).hertz()
   let wavChannels = if config.isMono: 1 else: 2
   result = WavExporter(
-    apu: Apu.init(config.samplerate, module.framerate),
+    apu: Apu.init(config.samplerate, tickrateHz),
     engine: Engine.init(),
     writer: WavWriter.init(config.filename, wavChannels, config.samplerate),
-    player: Player.init(module, config),
+    player: Player.init(module, tickrateHz, config),
     buf: newSeq[Pcm](),
     isMono: config.isMono
   )
@@ -186,7 +187,7 @@ func progressMax*(ex: WavExporter): int {. raises: [] .} =
 proc batched*(config: WavConfig): seq[WavConfig] {. raises: [] .} =
   ## Creates a sequence of WavConfigs where each channel in `config` gets its
   ## own output file. The filename in each of these configs gets a suffix added
-  ## to the filename, ie `$name.ch$channel>.$ext`.
+  ## to the filename, ie `$name.ch$channel.$ext`.
   ## 
   ## Use this when exporting each channel separately is desired.
   ## 

@@ -95,17 +95,12 @@ when willCorrect:
 # LittleEndian[T] allows us to use the type system to enforce correctness, but
 # could be cumbersome to use.
 
-# intxx types are omitted from SomeWord in case nim does overflow/underflow
-# checks. libtrackerboy doesn't use signed integers for serialization at all so
-# this feature isn't necessary for us.
-
 # toLE and toNE are annotated with inline since these functions just call the
 # bswap function or just the return the value given.
 
 type
-  # intxx are omitted due to overflow/underflow checks
-  SomeWord* = uint16|uint32|uint64
-    # Type class for a multi-byte integer
+  SomeWord* = int16|uint16|int32|uint32|int64|uint64|float32|float64
+    # Type class for a multi-byte data type
   LittleEndian*[T: SomeWord] {.packed.} = object
     # Type containing a word in little-endian byte order
     data: T
@@ -113,14 +108,20 @@ type
   # not using distinct T since nim has some issue with that
   # we could provide BigEndian[T] as well but it wouldn't be used by this library
 
+template castToUnsigned[T: SomeWord](val: T): auto =
+  when T is int16: cast[uint16](val)
+  elif T is int32|float32: cast[uint32](val)
+  elif T is int64|float64: cast[uint64](val)
+  else: val
+
 template correct[T: SomeWord](val: T): T =
   when willCorrect:
     # native endian is big endian, return the byte swapped val
     when nimvm:
       # allows for compile-time evalulation
-      bswapReference(val)
+      cast[T](bswapReference(castToUnsigned(val)))
     else:
-      bswapBuiltin(val)
+      cast[T](bswapBuiltin(castToUnsigned(val)))
   else:
     # native endian is little endian, no need to byte swap
     val
@@ -134,5 +135,6 @@ func toLE*[T: SomeWord](val: T): LittleEndian[T] {.inline.} =
 func toNE*[T: SomeWord](val: LittleEndian[T]): T {.inline.} =
   # Convert the word, in little endian representation, to native endian (NE).
   correct(val.data)
+
 
 {.pop.}

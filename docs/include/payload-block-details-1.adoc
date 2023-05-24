@@ -3,6 +3,7 @@
 Each block has an identifier, which determines the type of data present in the
 block. The table below lists all recognized identifiers in the payload.
 
+.Block types used in TBM files
 [cols="2,2,6"]
 |===
 | Identifier | Value (Uint32) | Description
@@ -16,6 +17,7 @@ block. The table below lists all recognized identifiers in the payload.
 
 Blocks are stored categorically by type in the following order:
 
+.Order and total number of blocks in the payload
 [cols="2,2,6"]
 |===
 | Order | Identifier | Count

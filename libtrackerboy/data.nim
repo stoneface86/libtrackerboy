@@ -33,9 +33,6 @@ type
   
   OrderId* = uint8
     ## Integer ID type for an OrderRow in an Order.
-  
-  Framerate* = range[1..high(uint16).int]
-    ## Range of a Module's custom framerate setting.
 
   Speed* = range[unitSpeed.uint8..(high(uint8)+1-unitSpeed).uint8]
     ## Range of a Song's speed setting. Note that speed is in units of
@@ -82,10 +79,6 @@ type
     channel*: ChannelId
       ## Channel this instrument is to be previewed on. Note that instruments
       ## can be used on any channel, so this field is purely informational.
-    initEnvelope*: bool
-      ## If true, the envelope setting will be written on note trigger
-    envelope*: uint8
-      ## Channel envelope to set if initEnvelope is true
     sequences*: array[SequenceKind, Sequence]
       ## Sequence data for this instrument
 
@@ -203,6 +196,21 @@ type
 
   TrackMap = object
     data: array[ChannelId, tables.Table[ByteIndex, EqRef[TrackData]]]
+  
+  System* = enum
+    ## Enumeration for types of systems the module is for. The system
+    ## determines the vblank interval, or tick rate, of the engine.
+    systemDmg       ## DMG/CGB system, 59.7 Hz
+    systemSgb       ## SGB system, 61.1 Hz
+    systemCustom    ## Custom tick rate
+
+  Tickrate* = object
+    ## Defines the tickrate, or interval in which a single tick or step of a
+    ## song when playing back.
+    system*: System
+      ## Use a predefined system's tick rate
+    customFramerate*: float32
+      ## Custom tick rate when system = systemCustom
 
   # Song
 
@@ -226,6 +234,9 @@ type
       ## The song's Order
     trackLen*: TrackLen
     tracks: TrackMap
+    tickrate*: Option[Tickrate]
+      ## Tickrate override for this song. If set to none, the module's tickrate
+      ## should be used instead.
 
   SongList* {.requiresInit.} = object
     ## Container for songs. Songs stored in this container are references,
@@ -235,13 +246,6 @@ type
 
   InfoString* = array[32, char]
     ## Fixed-length string of 32 characters, used for artist information.
-
-  System* = enum
-    ## Enumeration for types of systems the module is for. The system
-    ## determines the vblank interval, or tick rate, of the engine.
-    systemDmg       ## DMG/CGB system, 59.7 Hz
-    systemSgb       ## SGB system, 61.1 Hz
-    systemCustom    ## Custom tick rate
 
   ModulePiece* = Instrument|Song|Waveform
     ## Type class for an individual component of a module.
@@ -264,10 +268,8 @@ type
 
     comments*: string
       ## Optional comment information about the module
-    system*: System
-      ## System framerate setting
-    customFramerate*: Framerate
-      ## The custom framerate used when system == systemCustom
+    tickrate*: Tickrate
+      ## Tickrate used by all songs in the module.
 
     private*: ModulePrivate
       ## Internal details only accessible to the library, do not use!
@@ -282,14 +284,29 @@ const
     ## default is 6.0 frames/row or approximately 160 BPM.
   defaultTrackSize*: TrackLen = 64
     ## Default length of a Track for new `Songs <#Song>`_.
-  defaultFramerate*: Framerate = 30
-    ## Default `customFramerate` setting for new `Modules <#Module>`_.
+  defaultTickrate* = Tickrate(
+    system: systemDmg,
+    customFramerate: 30
+  )
+    ## Default tickrate setting for new Modules.
 
 {. push raises: [] .}
+
+func hertz*(t: Tickrate): float =
+  ## Converts the given tickrate to a rate in hertz.
+  ## 
+  case t.system
+  of systemDmg:
+    result = 59.7
+  of systemSgb:
+    result = 61.1
+  of systemCustom:
+    result = t.customFramerate
 
 func effectTypeShortensPattern*(et: EffectType): bool =
   ## Determines if the given effect type will shorten the runtime length of
   ## a pattern by either halting the song or jumping to a new pattern.
+  ## 
   result = et == etPatternHalt or
        et == etPatternSkip or
        et == etPatternGoto
@@ -297,6 +314,7 @@ func effectTypeShortensPattern*(et: EffectType): bool =
 func toEffectType*(x: uint8): EffectType =
   ## Converts a uint8 to an EffectType enum safely. etNoEffect is returned if
   ## x is not in the range of EffectType.
+  ## 
   if x.int in EffectType.low.ord..EffectType.high.ord:
     x.EffectType
   else:
@@ -306,18 +324,22 @@ func toEffectType*(x: uint8): EffectType =
 
 func `[]`*(s: Sequence, i: ByteIndex): uint8 =
   ## Gets the `i`th element in the sequence
+  ## 
   s.data[i]
 
 proc `[]=`*(s: var Sequence, i: ByteIndex, val: uint8) =
   ## Sets the `i`th element in the sequence to the given `val`
+  ## 
   s.data[i] = val
 
 proc setLen*(s: var Sequence, len: SequenceSize) =
   ## Sets the length of the Sequence `s` to the given `len`.
+  ## 
   s.data.setLen(len)
 
 func len*(s: Sequence): int =
   ## Gets the length of the sequence
+  ## 
   s.data.len
 
 func data*(s: Sequence): lent seq[uint8] =
@@ -333,6 +355,7 @@ proc `data=`*(s: var Sequence, data: sink seq[uint8]) =
 func `$`*(s: Sequence): string =
   ## Stringify operator for Sequences. The string returned can be passed to
   ## `parseSequence` to get the original sequence.
+  ## 
   let loopIndex = if s.loopIndex.isSome(): s.loopIndex.get().int else: -1
   for i, item in s.data.pairs:
     if i == loopIndex:
@@ -345,6 +368,7 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
   ## Convert a string to a Sequence. The string should have its sequence data
   ## separated by whitespace, with the loop index using a '|' char before the
   ## data to loop to. Any invalid element is ignored.
+  ## 
   var i = 0
   while true:
     i += str.skipWhitespace(i)
@@ -370,10 +394,12 @@ func parseSequence*(str: string, minVal = int8.low, maxVal = int8.high): Sequenc
 func init*(T: typedesc[Instrument]): Instrument =
   ## Value constructor for an Instrument. Default initialization is used, so
   ## the instrument's channel is ch1, and all its sequences are empty.
+  ## 
   defaultInit()
 
 func new*(T: typedesc[Instrument]): ref Instrument =
   ## Ref constructor for an Instrument. Same behavior as `init`.
+  ## 
   new(result)
 
 # Waveform
@@ -381,16 +407,19 @@ func new*(T: typedesc[Instrument]): ref Instrument =
 func init*(T: typedesc[Waveform]): Waveform =
   ## Value constructor for a Waveform. The returned Waveform's wave data is
   ## cleared.
+  ## 
   defaultInit()
 
 func new*(T: typedesc[Waveform]): ref Waveform =
   ## Ref contructor for a Waveform. Same behavior as `init`
+  ## 
   new(result)
 
 func `$`*(wave: WaveData): string =
   ## Stringify operator for `WaveData <#WaveData>`_. The data is represented
   ## as a string of 32 uppercase hex characters, with the first character
   ## being the first sample in the wave data.
+  ## 
   const hextable = ['0', '1', '2', '3', '4', '5', '6', '7',
                     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
   result = newString(32)
@@ -404,6 +433,7 @@ func `$`*(wave: WaveData): string =
 func parseWave*(str: string): WaveData {.noInit.} =
   ## Parses the string as a WaveData string. The given string should be exactly
   ## 32 characters, and each character should be a hexadecimal digit.
+  ## 
   var start = 0
   for dest in result.mitems:
     let parsed = parseHex(str, dest, start, 2)
@@ -418,10 +448,12 @@ func parseWave*(str: string): WaveData {.noInit.} =
 
 func init*(T: typedesc[SomeTable]): T.typeOf =
   ## Value constructor for a new table. The returned table is empty.
+  ## 
   defaultInit()
 
 func contains*[T: SomeData](t: Table[T], id: TableId): bool =
   ## Determines if the table contains an item with the `id`
+  ## 
   t.data[id].src != nil
 
 proc updateNextId[T: SomeData](t: var Table[T]) =
@@ -432,20 +464,24 @@ proc updateNextId[T: SomeData](t: var Table[T]) =
 
 proc capacity*[T: SomeData](t: Table[T]): static[int] =
   ## Maximum number of items that can be stored in a Table.
+  ## 
   high(TableId).int + 1
 
 proc `[]`*[T: SomeData](t: var Table[T], id: TableId): ref T =
   ## Gets a ref of the item with the given id or `nil` if there is no item
   ## with that id.
+  ## 
   t.data[id].src
 
 func `[]`*[T: SomeData](t: Table[T], id: TableId): Immutable[ref T] =
   ## Gets an immutable ref of the item with the given id or `nil` if there
   ## is no item with that id.
+  ## 
   t.data[id].src.toImmutable
 
 iterator items*[T: SomeData](t: Table[T]): TableId {.noSideEffect.} =
   ## Iterates all items in the table, via their id, in ascending order.
+  ## 
   for id in low(TableId)..high(TableId):
     if id in t:
       yield id
@@ -457,6 +493,7 @@ proc insert[T: SomeData](t: var Table[T], id: TableId) =
 proc add*[T: SomeData](t: var Table[T]): TableId =
   ## Adds a new item to the table using the next available id. If the table
   ## is at capacity, an `AssertionDefect` will be raised.
+  ## 
   doAssert t.len < t.capacity, "cannot add: table is full"
   t.insert(t.nextId)
   result = t.nextId
@@ -465,6 +502,7 @@ proc add*[T: SomeData](t: var Table[T]): TableId =
 proc add*[T: SomeData](t: var Table[T], id: TableId) =
   ## Adds a new item using the given id. An `AssertionDefect` will be raised
   ## if the table is at capacity, or if the id is already in use.
+  ## 
   doAssert t.len < t.capacity and id notin t, "cannot add: table is full or slot is taken"
   t.insert(id)
   if t.nextId == id:
@@ -474,6 +512,7 @@ proc duplicate*[T: SomeData](t: var Table[T], id: TableId): TableId =
   ## Adds a copy of the item with the given id, using the next available id.
   ## An `AssertionDefect` is raised if the item to copy does not exist, or if
   ## the table is at capacity.
+  ## 
   doAssert id in t, "cannot duplicate: item does not exist"
   result = t.add()
   # duplicate the newly added item
@@ -744,7 +783,8 @@ template construct(T: typedesc[Song|ref Song]): untyped =
     effectCounts: [2.EffectColumns, 2, 2, 2],
     order: Order.init,
     trackLen: defaultTrackSize,
-    tracks: default(Song.tracks.typeOf)
+    tracks: default(Song.tracks.typeOf),
+    tickrate: none(Tickrate)
   )
 
 func init*(T: typedesc[Song]): Song =
@@ -766,7 +806,8 @@ func new*(T: typedesc[Song], song: Song): ref Song =
     effectCounts: song.effectCounts,
     order: song.order,
     trackLen: song.trackLen,
-    tracks: song.tracks
+    tracks: song.tracks,
+    tickrate: song.tickrate
   )
 
 proc removeAllTracks*(s: var Song) =
@@ -1048,8 +1089,7 @@ template construct(T: typedesc[Module | ref Module]): untyped =
     artist: default(InfoString),
     copyright: default(InfoString),
     comments: "",
-    system: systemDmg,
-    customFramerate: defaultFramerate,
+    tickrate: defaultTickrate,
     private: ModulePrivate(
       version: currentVersion,
       revisionMajor: currentFileMajor,
@@ -1063,7 +1103,7 @@ func init*(T: typedesc[Module]): Module =
   ## - 1 empty song
   ## - an empty instrument and waveform table
   ## - empty comments and artist information
-  ## - system set to `systemDmg`
+  ## - tickrate set to defaultTickrate (59.7 Hz)
   ## - version information with the current application version and file revision
   ## 
   Module.construct
@@ -1091,16 +1131,16 @@ func revisionMinor*(m: Module): int =
   ## 
   m.private.revisionMinor
 
-func framerate*(m: Module): float =
-  ## Gets the framerate, in hertz, as a floating point.
-  ##
-  case m.system:
-  of systemDmg:
-    result = 59.7f
-  of systemSgb:
-    result = 61.1f
-  of systemCustom:
-    result = m.customFramerate.float
+func getTickrate*(m: Module, song: ByteIndex): Tickrate =
+  ## Gets the tickrate for the given song id. The tickrate returned will be the
+  ## song's tickrate override if set, otherwise it will be the module's
+  ## tickrate.
+  ## 
+  if song < m.songs.len:
+    let s = m.songs[song]
+    if s[].tickrate.isSome():
+      return s[].tickrate.unsafeGet()
+  result = m.tickrate
 
 converter toInfoString*(str: string): InfoString =
   ## Implicit conversion of a `string` to an `InfoString`. Only the first

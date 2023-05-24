@@ -1,0 +1,26 @@
+== Error Codes [[error-codes]]
+
+Below is a list of error codes possible when deserialing/serializing a module
+file. After processing a file, one of these error codes, or Format Result (fr),
+is given.
+
+[cols="2,1,5"]
+|===
+| Identifier          | Code | Description
+| frNone              | 0    | No error, format is acceptable
+| frInvalidSignature  | 1    | File has an invalid signature
+| frInvalidRevision   | 2    | File has an unrecognize revision, possibly from a newer version of the format
+| frCannotUpgrade     | 3    | An older revision file could not be upgraded to the current revision
+| frInvalidSize       | 4    | A payload block was incorrectly sized
+| frInvalidCount      | 5    | The icount and/or wcount in the header was too big
+| frInvalidBlock      | 6    | An unknown identifier was used in a payload block
+| frInvalidChannel    | 7    | The format contains an invalid channel in a payload block
+| frInvalidSpeed      | 8    | The format contains an invalid speed in a SONG block
+| frInvalidRowCount   | 9    | A TrackFormat's rows field exceeds the Song's track size
+| frInvalidRowNumber  | 10   | A RowFormat's rowno field exceeds the Song's track size
+| frInvalidId         | 11   | An INST or WAVE block contains an invalid id
+| frDuplicatedId      | 12   | Two INST blocks or two WAVE blocks have the same id
+| frInvalidTerminator | 13   | The file has an invalid terminator
+| frReadError         | 14   | An read error occurred during processing
+| frWriteError        | 15   | A write error occurred during processing
+|===

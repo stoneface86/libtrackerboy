@@ -1,0 +1,12 @@
+== Header
+
+The header structure provides valuable information about the data stored in
+the payload, as well as versioning information.
+
+The table below defines the layout of the Header structure. Reminder that all
+multi-byte fields are stored in little-endian. The size of the header is a
+fixed 160 bytes, with any unused space marked as reserved. Reserved fields can
+be utilized for future revisions of the format.
+
+The layout of the header depends on the header revision, located in offset 24.
+The following table is for the current revision of the specification.

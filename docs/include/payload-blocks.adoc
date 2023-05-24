@@ -3,6 +3,7 @@
 A block in the payload contains three parts: the id, the length and the data.
 The format of the block is shown below:
 
+.Format of a payload block.
 [cols="2,2,6"]
 |===
 | Offset | Size     | Description

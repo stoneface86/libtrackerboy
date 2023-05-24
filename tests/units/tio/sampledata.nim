@@ -30,8 +30,7 @@ const
       # file path: data/sample.tbi
       var i = Instrument.init
       i.name = "main 1"
-      i.initEnvelope = true
-      i.envelope = 0x57
+      i.sequences[skEnvelope] = "87".parseSequence
       i.sequences[skTimbre] = "1".parseSequence
       i
   ]
@@ -82,3 +81,17 @@ func get*(sample: SongSamples): Song =
       track.setNote(8, 0x1F)
     result.editTrack(ch3, 2, track):
       track.setNote(4, 0x1F)
+
+func makeModule*(): Module =
+  result = Module.init
+  result.title = "sample"
+  result.artist = "stoneface86"
+  result.copyright = "2022 - stoneface86"
+  result.comments = "sample module for unit testing"
+  result.songs[0][] = get(sampleSongTest)
+  for sample in InstrumentSamples:
+    let id = result.instruments.add()
+    result.instruments[id][] = get(sample)
+  for sample in WaveformSamples:
+    let id = result.waveforms.add()
+    result.waveforms[id][] = get(sample)

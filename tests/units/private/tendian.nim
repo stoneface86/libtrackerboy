@@ -11,26 +11,41 @@ testclass ""
 
 const testData = (
   [0x1234'u16,             0x3412'u16],
+  [-1'i16,                 -1'i16],
   [0x12345678'u32,         0x78563412'u32],
-  [0xDEADCAFEBABEBEEF'u64, 0xEFBEBEBAFECAADDE'u64]
+  [-2126381057'i32,        -48767'i32],
+  [0xDEADCAFEBABEBEEF'u64, 0xEFBEBEBAFECAADDE'u64],
+  [1.25e1'f32,             2.591982e-41'f32]
 )
+
+func involutionTest[T: SomeWord](val: T): bool =
+  val.toLE.toNE == val
+
+func sameSize(T: typedesc[SomeWord]): bool =
+  LittleEndian[T].sizeof == T.sizeof
 
 static:
   # test that toLE and toNE can be called statically
   for val in testData.fields:
-    assert val[0].toLE.toNE == val[0]
+    assert involutionTest(val[0])
 
   # not using distinct T, ensure that the sizes are equivalent to the wrapped type
-  assert LittleEndian[uint16].sizeof == uint16.sizeof
-  assert LittleEndian[uint32].sizeof == uint32.sizeof
-  assert LittleEndian[uint64].sizeof == uint64.sizeof
+  assert sameSize(int16)
+  assert sameSize(uint16)
+  assert sameSize(int32)
+  assert sameSize(uint32)
+  assert sameSize(int64)
+  assert sameSize(uint64)
+  assert sameSize(float32)
+  assert sameSize(float64)
+
 
 dtest "involution":
   # endian conversion has an involutory property
   # converting a value to LE, then converting that to NE should result
   # in the original value.
   for val in testData.fields:
-    check val[0].toLE.toNE == val[0]
+    check involutionTest(val[0])
 
 dtest "toLE/toNE":
   for val in testData.fields:

@@ -32,93 +32,15 @@ Below are basic data types used throughout the format
 
 <<<
 
-== Structure
-
-A TrackerBoy module consists of a Header and a Payload.
-
-```
-   +----------------+------------------------------------------------------+
-   |                |                                                      |
-   | Header         | Payload                                              |
-   | 160 bytes      | size varies                                          |
-   |                |                                                      |
-   +----------------+------------------------------------------------------+
-  +0              +160                                                      EOF
-```
+include::include/structure-0.adoc[]
 
 <<<
 
-== Header
-
-The figure below defines the Header structure used in all file types. All
-multi-byte fields are stored in little-endian. The size of the header is a
-fixed 160 bytes, with any unused space marked as reserved. Reserved fields can
-be utilized for future revisions of the format. Reserved fields should be set
-to zero, but this is not enforced.
-
-The layout of the header depends on the header revision, located in offset 24.
-The current revision of the header is shown below.
-
-
-```
-      +0         +1         +2        +3
-  0   +-------------------------------------------+
-      |                                           |
-      | signature ( TRACKERBOY )                  |
-      |                                           |
-  12  +-------------------------------------------+
-      | version major                             |
-  16  +-------------------------------------------+
-      | version minor                             |
-  20  +-------------------------------------------+
-      | version patch                             |
-  24  +----------+----------+---------------------+
-      | rev      | system   | customFramerate     |
-  28  +----------+----------+---------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | title                                     |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  60  +-------------------------------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | artist                                    |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  92  +-------------------------------------------|
-      |                                           |
-      |                                           |
-      |                                           |
-      | copyright                                 |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  124 +---------------------+---------------------+
-      | numberOfInstruments | numberOfWaveforms   |
-  128 +---------------------+---------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-      | reserved                                  |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  160 +-------------------------------------------+
-```
+include::include/header-0.adoc[]
 
 <<<
 
+.TBM Header Structure
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
@@ -174,6 +96,7 @@ include::include/payload-blocks.adoc[]
 Each block has an identifier, which determines the type of data present in the
 block. The table below lists all recognized identifiers in the payload.
 
+.Block types used in TBM files
 [cols="2,2,6"]
 |===
 | Identifier | Value (Uint32) | Description
@@ -224,6 +147,7 @@ The first part of a SONG block is the song's name, as an `LString`.
 
 Following the name is a `SongFormat` record:
 
+.The SongFormat record
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
@@ -258,8 +182,7 @@ Finally, the rest of the block contains the pattern data for every track in the
 song. Each track gets its own `TrackFormat` record and an array of `RowFormat`
 records.
 
-The `TrackFormat` record:
-
+.The TrackFormat record
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
@@ -269,11 +192,10 @@ The `TrackFormat` record:
 |===
 
 channel:: determines which channel the track is for. _Valid values 0-3_.
-trackId:: determines the track id to use for this track
-rows:: the number of RowFormat records that follow this structure
+trackId:: determines the track id to use for this track.
+rows:: the number of RowFormat records that follow this structure.
 
-The `RowFormat` record:
-
+.The RowFormat record
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type     | Field name
@@ -283,14 +205,55 @@ The `RowFormat` record:
 
 rowno:: the index in the track's row array to set
 rowdata::
-the data to set at this index
+the data to set at this index, where the `TrackRow` type is:
 +
+.The TrackRow structure
 [cols="1,1,2,6"]
 |===
 | Offset | Size | Type        | Field name
 | +0     | 1    | Uint8       | note
 | +1     | 1    | Uint8       | instrument
-| +2     | 6    | Uint8[2][3] | effects
+| +2     | 6    | Effect[3]   | effects
+|===
++
+with `Effect` being:
++
+.The Effect structure
+[cols="1,1,2,6"]
+|===
+| Offset | Size | Type        | Field name
+| +0     | 1    | Uint8       | effectType
+| +1     | 1    | Uint8       | effectParam
+|===
++
+and `effectType` should be any of the following:
++
+.List of valid effect types
+[cols="1,2,7"]
+|===
+| Value | Effect Syntax | Identifier       
+| 0     | ---           | etNoEffect       
+| 1     | Bxx           | etPatternGoto    
+| 2     | C00           | etPatternHalt    
+| 3     | Dxx           | etPatternSkip    
+| 4     | Fxy           | etSetTempo       
+| 5     | Txx           | etSfx            
+| 6     | Exx           | etSetEnvelope    
+| 7     | V0x           | etSetTimbre      
+| 8     | I0x           | etSetPanning     
+| 9     | Hxx           | etSetSweep       
+| 10    | Sxx           | etDelayedCut     
+| 11    | Gxx           | etDelayedNote    
+| 12    | L00           | etLock           
+| 13    | 0xy           | etArpeggio       
+| 14    | 1xx           | etPitchUp        
+| 15    | 2xx           | etPitchDown      
+| 16    | 3xx           | etAutoPortamento 
+| 17    | 4xy           | etVibrato        
+| 18    | 5xx           | etVibratoDelay   
+| 19    | Pxx           | etTuning         
+| 20    | Qxy           | etNoteSlideUp    
+| 21    | Rxy           | etNoteSlideDown
 |===
 
 The last `RowFormat` record for the last track ends the `SONG` block.

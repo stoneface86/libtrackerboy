@@ -16,6 +16,7 @@ proc corruptSignature*(strm: Stream) =
   data = not data
   strm.setPosition(0)
   strm.write(data)
+  strm.setPosition(0)
 
 proc overwriteRevMajor*(strm: Stream, major: uint8) =
   strm.setPosition(24) # seek to revMajor

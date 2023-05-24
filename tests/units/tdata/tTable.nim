@@ -42,8 +42,7 @@ testgroup:
     src[].name = testName
 
     when src[] is Instrument:
-      src.envelope = 0x03
-      src.initEnvelope = true
+      src.sequences[skEnvelope].data = @[3u8]
       src.sequences[skPanning].data = @[1u8, 1, 2, 2, 3]
     else:
       src.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
