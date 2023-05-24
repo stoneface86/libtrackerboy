@@ -17,7 +17,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module File Format</title>
+<title>Module File Format Specifications</title>
 <link rel="stylesheet" type="text/css" href="nimdoc.out.css">
 
 <script type="text/javascript" src="dochack.js"></script>
@@ -69,7 +69,7 @@ window.addEventListener('DOMContentLoaded', main);
 <body>
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module File Format</h1>
+    <h1 class="title">Module File Format Specifications</h1>
     <div class="row">
   <div class="three columns">
   <div class="theme-switch-wrapper">
@@ -98,39 +98,13 @@ window.addEventListener('DOMContentLoaded', main);
     </select>
   </div>
   <ul class="simple simple-toc" id="toc-list">
-<li><a class="reference" id="introduction_toc" href="#introduction">Introduction</a></li>
-<li><a class="reference" id="definitions_toc" href="#definitions">Definitions</a></li>
-<ul class="simple"><li><a class="reference" id="definitions-basic-types_toc" href="#definitions-basic-types">Basic Types</a></li>
-<li><a class="reference" id="definitions-error-codes_toc" href="#definitions-error-codes">Error codes</a></li>
-</ul><li><a class="reference" id="structure_toc" href="#structure">Structure</a></li>
-<li><a class="reference" id="header_toc" href="#header">Header</a></li>
-<ul class="simple"><li><a class="reference" id="header-signature_toc" href="#header-signature">Signature</a></li>
-<li><a class="reference" id="header-version-major-minor-patch_toc" href="#header-version-major-minor-patch">Version (major, minor, patch)</a></li>
-<li><a class="reference" id="header-major-revision-mdot-rev_toc" href="#header-major-revision-mdot-rev">Major revision (m. rev)</a></li>
-<li><a class="reference" id="header-minor-revision-ndot-rev_toc" href="#header-minor-revision-ndot-rev">Minor revision (n. rev)</a></li>
-<li><a class="reference" id="header-author-information-title-artist-copyright_toc" href="#header-author-information-title-artist-copyright">Author information (title, artist, copyright)</a></li>
-<li><a class="reference" id="header-icount-scount-and-wcount_toc" href="#header-icount-scount-and-wcount">icount, scount and wcount</a></li>
-<li><a class="reference" id="header-system_toc" href="#header-system">System</a></li>
-</ul><li><a class="reference" id="payload_toc" href="#payload">Payload</a></li>
-<ul class="simple"><li><a class="reference" id="payload-blocks_toc" href="#payload-blocks">Blocks</a></li>
-<li><a class="reference" id="payload-block-types_toc" href="#payload-block-types">Block types</a></li>
-<li><a class="reference" id="payload-block-ordering_toc" href="#payload-block-ordering">Block ordering</a></li>
-<li><a class="reference" id="payload-comm-block-format_toc" href="#payload-comm-block-format">COMM block format</a></li>
-<li><a class="reference" id="payload-song-block-format_toc" href="#payload-song-block-format">SONG block format</a></li>
-<ul class="simple"><li><a class="reference" id="song-block-format-song-name_toc" href="#song-block-format-song-name">Song name</a></li>
-<li><a class="reference" id="song-block-format-songformat_toc" href="#song-block-format-songformat">SongFormat</a></li>
-<li><a class="reference" id="song-block-format-song-order_toc" href="#song-block-format-song-order">Song Order</a></li>
-<li><a class="reference" id="song-block-format-track-data_toc" href="#song-block-format-track-data">Track data</a></li>
-</ul><li><a class="reference" id="payload-inst-block-format_toc" href="#payload-inst-block-format">INST block format</a></li>
-<ul class="simple"><li><a class="reference" id="inst-block-format-id-and-name_toc" href="#inst-block-format-id-and-name">Id and name</a></li>
-<li><a class="reference" id="inst-block-format-instrumentformat_toc" href="#inst-block-format-instrumentformat">InstrumentFormat</a></li>
-<li><a class="reference" id="inst-block-format-sequence-data_toc" href="#inst-block-format-sequence-data">Sequence data</a></li>
-</ul><li><a class="reference" id="payload-wave-block-format_toc" href="#payload-wave-block-format">WAVE block format</a></li>
-<ul class="simple"><li><a class="reference" id="wave-block-format-id-and-name_toc" href="#wave-block-format-id-and-name">id and name</a></li>
-<li><a class="reference" id="wave-block-format-waveform-data_toc" href="#wave-block-format-waveform-data">Waveform data</a></li>
-</ul></ul><li><a class="reference" id="terminator_toc" href="#terminator">Terminator</a></li>
-<li><a class="reference" id="revision-history_toc" href="#revision-history">Revision history</a></li>
-<ul class="simple"><li><a class="reference" id="revision-history-revision-c-1dot1_toc" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></li>
+<li><a class="reference" id="specifications_toc" href="#specifications">Specifications</a></li>
+<ul class="simple"><li><a class="reference" id="specifications-major-2_toc" href="#specifications-major-2">Major 2</a></li>
+<li><a class="reference" id="specifications-major-1_toc" href="#specifications-major-1">Major 1</a></li>
+<li><a class="reference" id="specifications-major-0_toc" href="#specifications-major-0">Major 0</a></li>
+</ul><li><a class="reference" id="revision-history_toc" href="#revision-history">Revision history</a></li>
+<ul class="simple"><li><a class="reference" id="revision-history-revision-d-2dot0_toc" href="#revision-history-revision-d-2dot0">Revision D (2.0)</a></li>
+<li><a class="reference" id="revision-history-revision-c-1dot1_toc" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></li>
 <li><a class="reference" id="revision-history-revision-b-1dot0_toc" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></li>
 <li><a class="reference" id="revision-history-revision-a-0dot0_toc" href="#revision-history-revision-a-0dot0">Revision A (0.0)</a></li>
 </ul>
@@ -145,301 +119,39 @@ class="link-seesrc" target="_blank">Source</a>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc">
-<h1><a class="toc-backref" id="introduction" href="#introduction">Introduction</a></h1><p>This document is a formal specification of the file format for Trackerboy module files, or *.tbm files. This document is for the current revision, or revision 1.1. See the revision history for previous revisions.</p>
-<p>A Module file is a serialized form of the <a class="reference external" href="libtrackerboy/data.html#Module">Module</a> object.</p>
-<p>For the piece file format see <a class="reference external" href="piece-file-format-spec.html">here</a>.</p>
-<p>The libtrackerboy library provides a reference implementation for serializing and deserialing module files with this format. See the <a class="reference external" href="libtrackerboy/io.html">io module</a> for more documentation.</p>
-<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
-All multi-byte fields in this specification are stored in little-endian byte order.</div>
+  <p class="module-desc"><p>This page contains links to the file format specifications for TrackerBoy Module files, or .tbm files.</p>
 
-<h1><a class="toc-backref" id="definitions" href="#definitions">Definitions</a></h1><ul class="simple"><li><dl class="docutils"><dt><strong>Order</strong> - Song order data, a list of OrderRows that determine each pattern</dt>
-<dd>in the song.</dd>
-</dl>
+<h1><a class="toc-backref" id="specifications" href="#specifications">Specifications</a></h1><p>Current list of specifications, ordered from newest to oldest.</p>
+
+<h2><a class="toc-backref" id="specifications-major-2" href="#specifications-major-2">Major 2</a></h2><ul class="simple"><li>TBM File Format Specification - Major Revision 2 (<a class="reference external" href="tbm-spec-major-2.html">HTML</a> <a class="reference external" href="tbm-spec-major-2.pdf">PDF</a>)<ul class="simple"><li><strong>Revision D (2.0)</strong>, will be introduced in libtrackerboy v0.8.0</li>
+</ul>
 </li>
-<li><dl class="docutils"><dt><strong>OrderRow</strong> - A track id assignment for each channel. Determines the tracks</dt>
-<dd>which make a pattern.</dd>
-</dl>
+</ul>
+
+<h2><a class="toc-backref" id="specifications-major-1" href="#specifications-major-1">Major 1</a></h2><ul class="simple"><li>TBM File Format Specification - Major Revision 1 (<a class="reference external" href="tbm-spec-major-1.html">HTML</a> <a class="reference external" href="tbm-spec-major-1.pdf">PDF</a>)<ul class="simple"><li><strong>Revision C (1.1)</strong>, introduced in Trackerboy v0.6.0</li>
+<li><strong>Revision B (1.0)</strong>, introduced in Trackerboy v0.5.0</li>
+</ul>
 </li>
-<li><strong>Pattern</strong> - A collection of Tracks, one for each channel.</li>
-<li><strong>Track</strong> - Song data for a single channel. A Track is a list of TrackRows.</li>
 </ul>
 
-<h2><a class="toc-backref" id="definitions-basic-types" href="#definitions-basic-types">Basic Types</a></h2><p>Below are basic data types used throughout the format</p>
-<table border="1" class="docutils"><tr><th>Type name</th><th>Size (bytes)</th><th>Description</th></tr>
-<tr><td>Uint8</td><td>1</td><td>Unsigned 8-bit integer (0-255)</td></tr>
-<tr><td>BiasedUint8</td><td>1</td><td>Unsigned 8-bit integer, biased form (1-256)</td></tr>
-<tr><td>Bool</td><td>1</td><td>Boolean as an uint8 (0 for false, nonzero for true)</td></tr>
-<tr><td>Uint16</td><td>2</td><td>Unsigned 16-bit integer, in little endian (0-65536)</td></tr>
-<tr><td>Uint32</td><td>4</td><td>Unsigned 32-bit integer, in little endian</td></tr>
-<tr><td>LString</td><td>varies</td><td>Length-prefixed UTF-8 string, string data prefixed by a Uint16 length</td></tr>
-</table>
-<h2><a class="toc-backref" id="definitions-error-codes" href="#definitions-error-codes">Error codes</a></h2><p>Below is a list of error codes possible when deserialing/serializing a module file. After processing a file, one of these error codes, or Format Result (fr), is given.</p>
-<table border="1" class="docutils"><tr><th>Identifier</th><th>Code</th><th>Description</th></tr>
-<tr><td>frNone</td><td>0</td><td>No error, format is acceptable</td></tr>
-<tr><td>frInvalidSignature</td><td>1</td><td>File has an invalid signature</td></tr>
-<tr><td>frInvalidRevision</td><td>2</td><td>File has an unrecognize revision, possibly from a newer version of the format</td></tr>
-<tr><td>frCannotUpgrade</td><td>3</td><td>An older revision file could not be upgraded to the current revision</td></tr>
-<tr><td>frInvalidSize</td><td>4</td><td>A payload block was incorrectly sized</td></tr>
-<tr><td>frInvalidCount</td><td>5</td><td>The icount and/or wcount in the header was too big</td></tr>
-<tr><td>frInvalidBlock</td><td>6</td><td>An unknown identifier was used in a payload block</td></tr>
-<tr><td>frInvalidChannel</td><td>7</td><td>The format contains an invalid channel in a payload block</td></tr>
-<tr><td>frInvalidSpeed</td><td>8</td><td>The format contains an invalid speed in a SONG block</td></tr>
-<tr><td>frInvalidRowCount</td><td>9</td><td>A TrackFormat's rows field exceeds the Song's track size</td></tr>
-<tr><td>frInvalidRowNumber</td><td>10</td><td>A RowFormat's rowno field exceeds the Song's track size</td></tr>
-<tr><td>frInvalidId</td><td>11</td><td>An INST or WAVE block contains an invalid id</td></tr>
-<tr><td>frDuplicatedId</td><td>12</td><td>Two INST blocks or two WAVE blocks have the same id</td></tr>
-<tr><td>frInvalidTerminator</td><td>13</td><td>The file has an invalid terminator</td></tr>
-<tr><td>frReadError</td><td>14</td><td>An read error occurred during processing</td></tr>
-<tr><td>frWriteError</td><td>15</td><td>A write error occurred during processing</td></tr>
-</table>
-<h1><a class="toc-backref" id="structure" href="#structure">Structure</a></h1><p>A Trackerboy module consists of a Header, a Payload and a Terminator.</p>
-<p><pre class="listing">
-   +----------------+-----------------------------------------+------------+
-   |                |                                         |            |
-   | Header         | Payload                                 | Terminator |
-   | 160 bytes      | size varies                             | 12 bytes   |
-   |                |                                         |            |
-   +----------------+-----------------------------------------+------------+
-  +0              +160                                                      EOF
-</pre></p>
-
-<h1><a class="toc-backref" id="header" href="#header">Header</a></h1><p>The figure below defines the Header structure used in all file types. All multi-byte fields are stored in little-endian. The size of the header is a fixed 160 bytes, with any unused space marked as reserved. Reserved fields can be utilized for future revisions of the format. Reserved fields should be set to zero, but this is not enforced.</p>
-<p>The layout of the header depends on the header revision, located in offset 24. The current revision of the header is shown below.</p>
-<p><pre class="listing">
-      +0         +1         +2        +3
-  0   +-------------------------------------------+
-      |                                           |
-      | signature ( TRACKERBOY )                  |
-      |                                           |
-  12  +-------------------------------------------+
-      | version major                             |
-  16  +-------------------------------------------+
-      | version minor                             |
-  20  +-------------------------------------------+
-      | version patch                             |
-  24  +----------+----------+---------------------+
-      | m. rev   | n. rev   | reserved            |
-  28  +----------+----------+---------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | title                                     |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  60  +-------------------------------------------+
-      |                                           |
-      |                                           |
-      |                                           |
-      | artist                                    |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  92  +-------------------------------------------|
-      |                                           |
-      |                                           |
-      |                                           |
-      | copyright                                 |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  124 +-------------------------------------------+
-      | icount   | scount   | wcount   | system   |
-  128 +---------------------+----------+----------+
-      | customFramerate     |                     |
-      +---------------------+                     |
-      |                                           |
-      |                                           |
-      |                                           |
-      | reserved                                  |
-      |                                           |
-      |                                           |
-      |                                           |
-      |                                           |
-  160 +-------------------------------------------+
-</pre></p>
-
-<h2><a class="toc-backref" id="header-signature" href="#header-signature">Signature</a></h2><p>Every trackerboy file begins with this signature:</p>
-<p><tt class="docutils literal"><span class="pre">\0TRACKERBOY\0</span></tt></p>
-<p>in order to identify the file as a trackerboy file.</p>
-
-<h2><a class="toc-backref" id="header-version-major-minor-patch" href="#header-version-major-minor-patch">Version (major, minor, patch)</a></h2><p>Version information is stored as three 4-byte words. This information determines which version of trackerboy that created the file. Versioning is maintained by keeping a major and minor version, followed by a patch number. For example, if the trackerboy version is v1.0.2, then the header's version fields will contain <tt class="docutils literal"><span class="pre">0x1</span></tt> <tt class="docutils literal"><span class="pre">0x0</span></tt> and <tt class="docutils literal"><span class="pre">0x2</span></tt> for major, minor and patch, respectively.</p>
-
-<h2><a class="toc-backref" id="header-major-revision-mdot-rev" href="#header-major-revision-mdot-rev">Major revision (m. rev)</a></h2><p>This version number indicates a breaking change for the file format. Starts at 0 and is incremented whenever the layout of the header or payload changes. Trackerboy will not attempt to read modules with a newer major version, but can attempt to read older versions (backwards-compatible).</p>
-<p>Examples of breaking changes:</p>
-<ul class="simple"><li>Modifying the layout of the Header structure</li>
-<li>Adding/removing blocks to the payload</li>
-<li>Modifying the format of a payload block</li>
+<h2><a class="toc-backref" id="specifications-major-0" href="#specifications-major-0">Major 0</a></h2><ul class="simple"><li>TBM File Format Specification - Major Revision 0 (<a class="reference external" href="tbm-spec-major-0.html">HTML</a> <a class="reference external" href="tbm-spec-major-0.pdf">PDF</a>)<ul class="simple"><li><strong>Revision A (0.0)</strong>, introduced in Trackerboy v0.2.0</li>
 </ul>
-
-<h2><a class="toc-backref" id="header-minor-revision-ndot-rev" href="#header-minor-revision-ndot-rev">Minor revision (n. rev)</a></h2><p>This version number indicates a change in the format that is forward-compatible with older versions. Changes such as utilizing a reserved field in the header.</p>
-<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
-Trackerboy can read any module file as long as its major revision is less than or equal to the current revision. Saving always uses the current revision, so saving an older major version is a one-way upgrade.</div>
-
-<h2><a class="toc-backref" id="header-author-information-title-artist-copyright" href="#header-author-information-title-artist-copyright">Author information (title, artist, copyright)</a></h2><p>These fields in the header are fixed 32 byte strings. Assume ASCII encoding. Any unused characters in the string should be set to 0 or <tt class="docutils literal"><span class="pre">\0</span></tt>. Since these strings are fixed, null-termination is not needed.</p>
-<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
-The size and naming of these strings are identical to the ones in *.gbs file format. This is intentional, as exporting to gbs is a planned feature.</div>
-
-<h2><a class="toc-backref" id="header-icount-scount-and-wcount" href="#header-icount-scount-and-wcount">icount, scount and wcount</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">icount</span></tt> - instrument count</li>
-<li><tt class="docutils literal"><span class="pre">scount</span></tt> - song count</li>
-<li><tt class="docutils literal"><span class="pre">wcount</span></tt> - waveform count</li>
-</ul>
-<p>These counter fields determine the number of INST, SONG and WAVE blocks present in the payload, respectively. <tt class="docutils literal"><span class="pre">icount</span></tt> and <tt class="docutils literal"><span class="pre">wcount</span></tt> can range from 0-64 and is unbiased. <tt class="docutils literal"><span class="pre">scount</span></tt> can range from 0-255 and is biased (a value of 0 means there is 1 SONG block).</p>
-
-<h2><a class="toc-backref" id="header-system" href="#header-system">System</a></h2><p>The system field determines which Game Boy model this module is for. Since the driver is typically updated every vblank, the system field determines the framerate, tick rate or vblank interval for the driver. The available choices are listed in the following table:</p>
-<table border="1" class="docutils"><tr><th>Identifier</th><th>Value</th><th>System name</th><th>Tick rate</th></tr>
-<tr><td>systemDmg</td><td>0</td><td>DMG</td><td>59.7 Hz</td></tr>
-<tr><td>systemSgb</td><td>1</td><td>SGB</td><td>61.1 Hz</td></tr>
-<tr><td>systemCustom</td><td>2</td><td>N/A</td><td>varies</td></tr>
-</table><p>If the system is <tt class="docutils literal"><span class="pre">systemCustom</span></tt>, then a custom tick rate is used instead of the system's vblank. The custom tick rate is stored in the <tt class="docutils literal"><span class="pre">customFramerate</span></tt> field of the header.</p>
-<p>By default the DMG system, <tt class="docutils literal"><span class="pre">systemDmg</span></tt>, is selected.</p>
-
-<h1><a class="toc-backref" id="payload" href="#payload">Payload</a></h1><p>The payload is located right after the header (offset 160). It is a variable number of &quot;blocks&quot; or tagged data with a size.</p>
-
-<h2><a class="toc-backref" id="payload-blocks" href="#payload-blocks">Blocks</a></h2><p>A block in the payload contains three parts: the id, the length and the data. The format of the block is shown below:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Description</th></tr>
-<tr><td>0</td><td>4</td><td>Id</td></tr>
-<tr><td>4</td><td>4</td><td>Length</td></tr>
-<tr><td>8</td><td>Length</td><td>Data</td></tr>
-</table>
-<h2><a class="toc-backref" id="payload-block-types" href="#payload-block-types">Block types</a></h2><p>Each block has an identifier, which determines the type of data present in the block. The table below lists all recognized identifiers in the payload.</p>
-<table border="1" class="docutils"><tr><th>Identifier</th><th>Uint32</th><th>Description</th></tr>
-<tr><td>&quot;COMM&quot;</td><td>0x4D4D4F43</td><td>User set comment data for a module</td></tr>
-<tr><td>&quot;SONG&quot;</td><td>0x474E4F53</td><td>Contains a single song</td></tr>
-<tr><td>&quot;INST&quot;</td><td>0x54534E49</td><td>Contains a single instrument</td></tr>
-<tr><td>&quot;WAVE&quot;</td><td>0x45564157</td><td>Contains a single waveform</td></tr>
-</table>
-<h2><a class="toc-backref" id="payload-block-ordering" href="#payload-block-ordering">Block ordering</a></h2><p>Blocks are stored categorically by type in the following order:</p>
-<table border="1" class="docutils"><tr><th>Order</th><th>Identifier</th><th>Count</th></tr>
-<tr><td>1</td><td>COMM</td><td>1</td></tr>
-<tr><td>2</td><td>SONG</td><td>1-256</td></tr>
-<tr><td>3</td><td>INST</td><td>0-64</td></tr>
-<tr><td>4</td><td>WAVE</td><td>0-64</td></tr>
-</table>
-<h2><a class="toc-backref" id="payload-comm-block-format" href="#payload-comm-block-format">COMM block format</a></h2><p>The COMM block just contains a UTF-8 string that is the user's comment data. The string is not null-terminated since the length of the string is the length of the block. If the user has no comment set, then this block is empty (length = 0).</p>
-
-<h2><a class="toc-backref" id="payload-song-block-format" href="#payload-song-block-format">SONG block format</a></h2><p>The SONG block contains the data for a single song. Songs are stored in the same order as they were in the module's song list. The first song block is song #0 and so on.</p>
-<p>Song data is composed of the following, in this order:</p>
-<ol class="simple"><li>Song name</li>
-<li>A <tt class="docutils literal"><span class="pre">SongFormat</span></tt> record</li>
-<li>The song order, as an array of <tt class="docutils literal"><span class="pre">OrderRow</span></tt></li>
-<li>The track data, as a sequence of <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> and <tt class="docutils literal"><span class="pre">RowFormat</span></tt> records</li>
-</ol>
-
-<h3><a class="toc-backref" id="song-block-format-song-name" href="#song-block-format-song-name">Song name</a></h3><p>The first part of a SONG block is the song's name, as an <tt class="docutils literal"><span class="pre">LString</span></tt></p>
-
-<h3><a class="toc-backref" id="song-block-format-songformat" href="#song-block-format-songformat">SongFormat</a></h3><p>Following the name is a <tt class="docutils literal"><span class="pre">SongFormat</span></tt> record:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
-<tr><td>+0</td><td>1</td><td>BiasedUint8</td><td>rowsPerBeat</td></tr>
-<tr><td>+1</td><td>1</td><td>BiasedUint8</td><td>rowsPerMeasure</td></tr>
-<tr><td>+2</td><td>1</td><td>Uint8</td><td>speed</td></tr>
-<tr><td>+3</td><td>1</td><td>BiasedUint8</td><td>patternCount</td></tr>
-<tr><td>+4</td><td>1</td><td>BiasedUint8</td><td>rowsPerTrack</td></tr>
-<tr><td>+5</td><td>2</td><td>Uint16</td><td>numberOfTracks</td></tr>
-</table><ul class="simple"><li><strong>rowsPerBeat</strong>: number of rows that make up a beat, used by the front end for highlighting and tempo calculation.</li>
-<li><strong>rowsPerMeasure</strong>: number of rows that make up a measure, used by the front end for highlighting.</li>
-<li><strong>speed</strong>: Initial speed setting for the song in Q4.4 format</li>
-<li><strong>patternCount</strong>: number of patterns for the song</li>
-<li><strong>rowsPerTrack</strong>: the size, in rows, of a track (all tracks have the same size).</li>
-<li><strong>numberOfTracks</strong>: number of tracks stored in this song block.</li>
-</ul>
-
-<h3><a class="toc-backref" id="song-block-format-song-order" href="#song-block-format-song-order">Song Order</a></h3><p>Next is the song order, an array of <tt class="docutils literal"><span class="pre">OrderRow</span></tt> records with the dimension being the <tt class="docutils literal"><span class="pre">patternCount</span></tt> field from the song format record. An <tt class="docutils literal"><span class="pre">OrderRow</span></tt> record is a set of 4 <tt class="docutils literal"><span class="pre">Uint8</span></tt> track ids, with the first being the track id for channel 1 and the last being the id for channel 4.</p>
-
-<h3><a class="toc-backref" id="song-block-format-track-data" href="#song-block-format-track-data">Track data</a></h3><p>Finally, the rest of the block contains the pattern data for every track in the song. Each track gets its own <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> record and an array of <tt class="docutils literal"><span class="pre">RowFormat</span></tt> records.</p>
-<p>The <tt class="docutils literal"><span class="pre">TrackFormat</span></tt> record:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
-<tr><td>+0</td><td>1</td><td>Uint8</td><td>channel</td></tr>
-<tr><td>+1</td><td>1</td><td>Uint8</td><td>trackId</td></tr>
-<tr><td>+2</td><td>1</td><td>BiasedUint8</td><td>rows</td></tr>
-</table><ul class="simple"><li><strong>channel</strong> (0-3): determines which channel the track is for</li>
-<li><strong>trackId</strong> (0-255): determines the track id to use for this track</li>
-<li><strong>rows</strong>: the number of RowFormat records that follow this structure</li>
-</ul>
-<p>The <tt class="docutils literal"><span class="pre">RowFormat</span></tt> record:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
-<tr><td>+0</td><td>1</td><td>Uint8</td><td>rowno</td></tr>
-<tr><td>+1</td><td>8</td><td>TrackRow</td><td>rowdata</td></tr>
-</table><ul class="simple"><li><strong>rowno</strong>: the index in the track's row array to set</li>
-<li><strong>rowdata</strong>: the data to set at this index</li>
-</ul>
-<p>The last <tt class="docutils literal"><span class="pre">RowFormat</span></tt> record for the last track ends the <tt class="docutils literal"><span class="pre">SONG</span></tt> block.</p>
-
-<h2><a class="toc-backref" id="payload-inst-block-format" href="#payload-inst-block-format">INST block format</a></h2><p>The <tt class="docutils literal"><span class="pre">INST</span></tt> block contains the data for a single instrument. The data is structured in this order:</p>
-<ol class="simple"><li>The instrument's id, <tt class="docutils literal"><span class="pre">Uint8</span></tt></li>
-<li>The instrument's name, <tt class="docutils literal"><span class="pre">LString</span></tt></li>
-<li>An <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record</li>
-<li><ol class="simple" start="4"><li><tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> records</li>
-</ol>
 </li>
-</ol>
-
-<h3><a class="toc-backref" id="inst-block-format-id-and-name" href="#inst-block-format-id-and-name">Id and name</a></h3><p>The <tt class="docutils literal"><span class="pre">INST</span></tt> block data begins with a 1 byte id (0-63), followed by an <tt class="docutils literal"><span class="pre">LString</span></tt> name.</p>
-<div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
-<tt class="docutils literal"><span class="pre">WAVE</span></tt> blocks also begin with an id and name in the same format.</div>
-
-<h3><a class="toc-backref" id="inst-block-format-instrumentformat" href="#inst-block-format-instrumentformat">InstrumentFormat</a></h3><p>After the instrument's name is an <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
-<tr><td>+0</td><td>1</td><td>Uint8</td><td>channel</td></tr>
-<tr><td>+1</td><td>1</td><td>Bool</td><td>envelopeEnabled</td></tr>
-<tr><td>+2</td><td>1</td><td>Uint8</td><td>envelope</td></tr>
-</table><ul class="simple"><li><strong>channel</strong> (0-3): determines which channel the instrument is for</li>
-<li><strong>envelopeEnabled</strong> (0-1): the instrument's envelope enable setting</li>
-<li><strong>envelope</strong>: the instruments envelope setting</li>
 </ul>
-
-<h3><a class="toc-backref" id="inst-block-format-sequence-data" href="#inst-block-format-sequence-data">Sequence data</a></h3><p>The sequence data follows the <tt class="docutils literal"><span class="pre">InstrumentFormat</span></tt> record. Data for a sequence is structured as a <tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> record followed by the sequence data. There are 4 sequences for every instrument. The kind of sequence the data is for is determined by its order in the block:</p>
-<table border="1" class="docutils"><tr><th>Order</th><th>SequenceKind</th></tr>
-<tr><td>0</td><td>skArp</td></tr>
-<tr><td>1</td><td>skPanning</td></tr>
-<tr><td>2</td><td>skPitch</td></tr>
-<tr><td>3</td><td>skTimbre</td></tr>
-</table><p>The <tt class="docutils literal"><span class="pre">SequenceFormat</span></tt> record:</p>
-<table border="1" class="docutils"><tr><th>Offset</th><th>Size</th><th>Type</th><th>Field name</th></tr>
-<tr><td>+0</td><td>2</td><td>Uint16</td><td>length</td></tr>
-<tr><td>+2</td><td>1</td><td>Bool</td><td>loopEnabled</td></tr>
-<tr><td>+3</td><td>1</td><td>Uint8</td><td>loopIndex</td></tr>
-</table><ul class="simple"><li><strong>length</strong> (0-256): the length of the sequence</li>
-<li><strong>loopEnabled</strong> (0-1): determines whether there is a loop index</li>
-<li><strong>loopIndex</strong>: the index of the loop point (0 when loopEnabled = 0)</li>
-</ul>
-<p>The sequence data follows the record and is an array of bytes with dimension being the <tt class="docutils literal"><span class="pre">length</span></tt> field in the record.</p>
-<p>The last sequence (SequenceFormat + data) ends the <tt class="docutils literal"><span class="pre">INST</span></tt> block.</p>
-
-<h2><a class="toc-backref" id="payload-wave-block-format" href="#payload-wave-block-format">WAVE block format</a></h2><p>The <tt class="docutils literal"><span class="pre">WAVE</span></tt> block contains the data for a single waveform. The data is structured in this order:</p>
-<ol class="simple"><li>The waveform's id, <tt class="docutils literal"><span class="pre">Uint8</span></tt></li>
-<li>The waveform's name, <tt class="docutils literal"><span class="pre">LString</span></tt></li>
-<li>The waveform's data, a 16 byte array of packed 4-bit PCM samples</li>
-</ol>
-
-<h3><a class="toc-backref" id="wave-block-format-id-and-name" href="#wave-block-format-id-and-name">id and name</a></h3><p>Same as <tt class="docutils literal"><span class="pre">INST</span></tt> blocks, the <tt class="docutils literal"><span class="pre">WAVE</span></tt> block's data begins with the waveform's id and name.</p>
-
-<h3><a class="toc-backref" id="wave-block-format-waveform-data" href="#wave-block-format-waveform-data">Waveform data</a></h3><p>Next is the waveform's data, a 16 byte array of 32 4-bit PCM samples, with the same layout as the Game Boy's CH3 Wave RAM. The first sample in the waveform is the upper nibble of the first byte in the array, whereas the last sample is the lower nibble of the last byte in the array.</p>
-<p>The waveform data ends the <tt class="docutils literal"><span class="pre">WAVE</span></tt> block.</p>
-
-<h1><a class="toc-backref" id="terminator" href="#terminator">Terminator</a></h1><p>Following the payload is the terminator, which signifies the end of the file. The terminator is the signature, reversed:</p>
-<p><pre class="listing">
-&quot;\0YOBREKCART\0&quot;
-</pre></p>
-<p>There should be no data after this terminator. Any data after the terminator will be ignored.</p>
 
 <h1><a class="toc-backref" id="revision-history" href="#revision-history">Revision history</a></h1><p>Changes to the file format are listed here, ordered from new to last. Revision names use alphabet letters ie A, B, C, .., Z, AA, AB, .. onwards. Any change in the major or minor version results in the letter being advanced.</p>
 <div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
 Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libtrackerboy's versioning.</div>
 
-<h2><a class="toc-backref" id="revision-history-revision-c-1dot1" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></h2><dl class="docutils"><dt>Introduced in Trackerboy v0.6.0.</dt>
-<dd><ul class="simple"><li>adds a new effect, Jxy, for setting the global volume</li>
+<h2><a class="toc-backref" id="revision-history-revision-d-2dot0" href="#revision-history-revision-d-2dot0">Revision D (2.0)</a></h2><p><strong>DRAFT:</strong> To be introduced in libtrackerboy v0.8.0</p>
+
+<h2><a class="toc-backref" id="revision-history-revision-c-1dot1" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></h2><p>Introduced in Trackerboy v0.6.0.</p>
+<ul class="simple"><li>adds a new effect, Jxy, for setting the global volume</li>
 <li>added specification for instrument/waveform files (*.tbi/*.tbw)</li>
 </ul>
-</dd>
-</dl>
 
-<h2><a class="toc-backref" id="revision-history-revision-b-1dot0" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></h2><dl class="docutils"><dt>Introduced in Trackerboy v0.5.0, adds multiple song support.</dt>
-<dd><ul class="simple"><li>file revision is now a major/minor set of numbers</li>
+<h2><a class="toc-backref" id="revision-history-revision-b-1dot0" href="#revision-history-revision-b-1dot0">Revision B (1.0)</a></h2><p>Introduced in Trackerboy v0.5.0, adds multiple song support.</p>
+<ul class="simple"><li>file revision is now a major/minor set of numbers</li>
 <li>SONG, INST, and WAVE blocks each store a single song, instrument and waveform, respectively.</li>
 <li>The payload can now contain up to 256 songs</li>
 <li>Removed the INDX block</li>
@@ -449,8 +161,6 @@ Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libt
 <li><tt class="docutils literal"><span class="pre">LString</span></tt> now uses a 2-byte length instead of 1-byte</li>
 <li>Added a terminator to the format</li>
 </ul>
-</dd>
-</dl>
 
 <h2><a class="toc-backref" id="revision-history-revision-a-0dot0" href="#revision-history-revision-a-0dot0">Revision A (0.0)</a></h2><p>First initial version, introduced in Trackerboy v0.2.0. </p>
 </p>
@@ -462,7 +172,7 @@ Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-11 16:18:20 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-05-24 03:07:22 UTC</small>
       </div>
     </div>
   </div>

@@ -299,13 +299,13 @@ class="link-seesrc" target="_blank">Source</a>
 <dt><pre><span class="Keyword">proc</span> <a href="#batched%2CWavConfig"><span class="Identifier">batched</span></a><span class="Other">(</span><span class="Identifier">config</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-<p>Creates a sequence of WavConfigs where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">&gt;.$</span><span class="Identifier">ext</span></span></tt>.</p>
+<p>Creates a sequence of WavConfigs where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">.$</span><span class="Identifier">ext</span></span></tt>.</p>
 <p>Use this when exporting each channel separately is desired. </p>
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L186"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L187"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L186" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L187" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -318,9 +318,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if the output WAV file could not be written to. </p>
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L206"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L207"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L206" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L207" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -330,9 +330,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> if the exporter still has work to do, <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt> otherwise. 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L145"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L146"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L145" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L146" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -373,9 +373,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if any error occurred during writing to the output WAV file. </p>
 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L150"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L151"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L150" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L151" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -385,9 +385,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Gets a number representing the total overall progress made towards the export. The number returned will be in the range <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="Identifier">ex</span><span class="Operator">.</span><span class="Identifier">progressMax</span></span></tt>. 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L174"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L175"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L174" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L175" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -397,9 +397,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Gets a number representing the maximum of the values returned by <a class="reference external" href="#progress,WavExporter">progress</a>. 
 &nbsp;&nbsp;<a
-href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L180"
+href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L181"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L180" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L181" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -413,7 +413,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-11 16:18:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-05-24 03:07:26 UTC</small>
       </div>
     </div>
   </div>
