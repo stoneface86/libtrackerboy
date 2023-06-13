@@ -1,5 +1,21 @@
 # Changelog
 
+## Unversioned
+
+### Added
+ - `Tickrate` type which contains a system and customFramerate.
+ - `hertz`, `getTickrate` procs to data module.
+
+### Changed
+ - Added `skEnvelope` to `SequenceKind` enum.
+ - `Instrument` type no longer contains the `initEnvelope` and `envelope` fields.
+ - `Instrument` now contains a sequence of type `skEnvelope`
+ - `Song` now has a `tickrate` field, for an optional tickrate override.
+ - File revision is now at 2.0, rev D.
+
+## Removed
+ - `framerate` proc in data module. Use `getTickrate` proc or `Module.tickrate`.
+
 ## [0.7.2] - 2023-04-04
 
 ### Added
