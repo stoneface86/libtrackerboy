@@ -1004,6 +1004,14 @@ func init*(T: typedesc[SongList], len: PositiveByte = 1): SongList =
   for songref in result.data.mitems:
     songref.src = Song.new
 
+iterator items*(l: SongList): Immutable[ref Song] =
+  for s in l.data:
+    yield s.src.toImmutable
+
+iterator mitems*(l: var SongList): ref Song =
+  for s in l.data:
+    yield s.src
+
 proc `[]`*(l: var SongList, i: ByteIndex): ref Song =
   ## Gets a mutable reference to the song at the `i`th index in the list.
   ## 

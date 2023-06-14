@@ -5,6 +5,7 @@
 ### Added
  - `Tickrate` type which contains a system and customFramerate.
  - `hertz`, `getTickrate` procs to data module.
+ - `items` and `mitems` iterators for `SongList`
 
 ### Changed
  - Added `skEnvelope` to `SequenceKind` enum.
