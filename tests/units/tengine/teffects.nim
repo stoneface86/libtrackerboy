@@ -297,8 +297,78 @@ dtest "L00":  # lock channel (music priority)
   eh.step()
   check eh.engine.getLocked() == { ch1..ch4 }
 
-# dtest "Pxx":  # fine tuning
-#     discard
+dtest "Pxx (tone)":  # fine tuning
+  const
+    testNote1 = "C-4".note
+    testNote2 = "D-6".note
+    testNote1Freq = lookupToneNote(testNote1)
+    testNote2Freq = lookupToneNote(testNote2)
+
+  var eh = EngineHarness.init()
+  # 00 C-4 .. ... ; freq = testNote1Freq
+  # 01 ... .. P80 ; freq = testNote1Freq
+  # 02 ... .. P7F ; freq = testNote1Freq - 1
+  # 03 ... .. P81 ; freq = testNote1Freq + 1
+  # 04 D-6 .. ... ; freq = testNote2Freq + 1
+  # 05 C-4 .. P80 ; freq = testNote1Freq
+  # 06 ... .. P00 ; freq = testNote1Freq - 128
+  # 07 ... .. PFF ; freq = testNote1Freq + 127
+  # 08 B-8 .. ... ; freq = 2047 (clamped)
+  # 09 C-2 .. P00 ; freq = 0 (clamped)
+  eh.setupSong(s):
+    s.speed = unitSpeed
+    s.editTrack(ch1, 0, track):
+      with track:
+        setNote(0, testNote1)
+        setEffect(1, 0, etTuning, 0x80)
+        setEffect(2, 0, etTuning, 0x7F)
+        setEffect(3, 0, etTuning, 0x81)
+        setNote(4, testNote2)
+        setNote(5, testNote1)
+        setEffect(5, 0, etTuning, 0x80)
+        setEffect(6, 0, etTuning, 0x00)
+        setEffect(7, 0, etTuning, 0xFF)
+        setNote(8, ToneNote.high.uint8)
+        setNote(9, ToneNote.low.uint8)
+        setEffect(9, 0, etTuning, 0x00)
+
+  eh.play()
+  check:
+    eh.frequencyTest(ch1) == testNote1Freq
+    eh.frequencyTest(ch1) == testNote1Freq
+    eh.frequencyTest(ch1) == testNote1Freq - 1
+    eh.frequencyTest(ch1) == testNote1Freq + 1
+    eh.frequencyTest(ch1) == testNote2Freq + 1
+    eh.frequencyTest(ch1) == testNote1Freq
+    eh.frequencyTest(ch1) == testNote1Freq - 128
+    eh.frequencyTest(ch1) == testNote1Freq + 127
+    eh.frequencyTest(ch1) == 2047
+    eh.frequencyTest(ch1) == 0
+
+dtest "Pxx (noise)":
+  const
+    testNote = "C-4".note
+
+  var eh = EngineHarness.init()
+  eh.setupSong(s):
+    s.speed = unitSpeed
+    s.editTrack(ch4, 0, track):
+      with track:
+        setNote(0, testNote)
+        setEffect(1, 0, etTuning, 0x80)
+        setEffect(2, 0, etTuning, 0x81)
+        setEffect(3, 0, etTuning, 0x7F)
+        setEffect(4, 0, etTuning, 0xFF)
+        setEffect(5, 0, etTuning, 0x00)
+  
+  eh.play()
+  check:
+    eh.frequencyTest(ch4) == testNote
+    eh.frequencyTest(ch4) == testNote
+    eh.frequencyTest(ch4) == testNote + 1
+    eh.frequencyTest(ch4) == testNote - 1
+    eh.frequencyTest(ch4) == NoiseNote.high.uint16
+    eh.frequencyTest(ch4) == NoiseNote.low.uint16
 
 # dtest "Qxy":  # note slide up
 #     discard

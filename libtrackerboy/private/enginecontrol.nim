@@ -228,7 +228,7 @@ proc apply(fc: var FrequencyControl, op: Operation) {.raises: [].} =
     # tune values have a bias of 0x80, so 0x80 is 0, is in tune
     # 0x81 is +1, frequency is pitch adjusted by 1
     # 0x7F is -1, frequency is pitch adjusted by -1
-    fc.tune = (op[opsTune] - 0x80).int8
+    fc.tune = (op[opsTune].int - 0x80).int8
 
   op.forFlagPresent(opsNote):
     let freq = fc.bounds.lookupFn(op[opsNote])
