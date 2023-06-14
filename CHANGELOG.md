@@ -1,6 +1,6 @@
 # Changelog
 
-## Unversioned
+## [0.8.0] - 2023-06-14
 
 ### Added
  - `Tickrate` type which contains a system and customFramerate.

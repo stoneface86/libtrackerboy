@@ -1005,10 +1005,14 @@ func init*(T: typedesc[SongList], len: PositiveByte = 1): SongList =
     songref.src = Song.new
 
 iterator items*(l: SongList): Immutable[ref Song] =
+  ## Iterates all songs in the SongList
+  ## 
   for s in l.data:
     yield s.src.toImmutable
 
 iterator mitems*(l: var SongList): ref Song =
+  ## Iterators all songs in the SongList, allowing for mutations.
+  ## 
   for s in l.data:
     yield s.src
 
