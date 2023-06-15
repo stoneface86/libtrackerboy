@@ -1,5 +1,5 @@
 {
   "version": "v0.8.0",
   "date": "2023-06-14",
-  "changes": "### Added\n - `Tickrate` type which contains a system and customFramerate.\n - `hertz`, `getTickrate` procs to data module.\n - `items` and `mitems` iterators for `SongList`\n\n### Changed\n - Added `skEnvelope` to `SequenceKind` enum.\n - `Instrument` type no longer contains the `initEnvelope` and `envelope` fields.\n - `Instrument` now contains a sequence of type `skEnvelope`\n - `Song` now has a `tickrate` field, for an optional tickrate override.\n - File revision is now at 2.0, rev D."
+  "changes": "### Added\n - `Tickrate` type which contains a system and customFramerate.\n - `hertz`, `getTickrate` procs to data module.\n - `items` and `mitems` iterators for `SongList`\n\n### Changed\n - Added `skEnvelope` to `SequenceKind` enum.\n - `Instrument` type no longer contains the `initEnvelope` and `envelope` fields.\n - `Instrument` now contains a sequence of type `skEnvelope`\n - `Song` now has a `tickrate` field, for an optional tickrate override.\n - File revision is now at 2.0, rev D.\n\n### Removed\n  - `framerate` proc in data module. Use `getTickrate` proc or `Module.tickrate`."
 }
