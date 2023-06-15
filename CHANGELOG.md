@@ -1,5 +1,7 @@
 # Changelog
 
+## Unversioned
+
 ## [0.8.0] - 2023-06-14
 
 ### Added
@@ -14,7 +16,7 @@
  - `Song` now has a `tickrate` field, for an optional tickrate override.
  - File revision is now at 2.0, rev D.
 
-## Removed
+### Removed
  - `framerate` proc in data module. Use `getTickrate` proc or `Module.tickrate`.
 
 ## [0.7.2] - 2023-04-04
