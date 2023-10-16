@@ -2,6 +2,10 @@
 
 ## Unversioned
 
+### Fixed
+ - Wav exporter never finishing for some songs when using a loop duration.
+ - Default timbre for CH4 is now 0, was incorrectly set to 3
+
 ## [0.8.0] - 2023-06-14
 
 ### Added

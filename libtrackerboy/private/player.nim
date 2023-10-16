@@ -22,7 +22,6 @@ type
       framesToPlay: int
     of pckLoops:
       visits: seq[int]
-      lastVisit: int
       loopAmount: int
       progress: int
   Player* = object
@@ -38,8 +37,6 @@ func init*(_: typedesc[Player], song: Immutable[ref Song], loops: Natural): Play
       visits: newSeq[int](song[].order.len),
       loopAmount: loops
     )
-    #result.context.visits[0] = 1 # visit the first pattern
-    result.context.lastVisit = -1
     result.playing = true
 
 func init*(_: typedesc[Player], frames: Natural): Player =
@@ -93,14 +90,13 @@ proc step*(p: var Player, engine: var Engine, instruments: InstrumentTable): boo
       if p.context.frameCounter >= p.context.framesToPlay:
         p.playing = false
     of pckLoops:
-      if p.context.lastVisit != postframe.order:
+      if postframe.startedNewPattern:
         let pos = p.context.visits[postframe.order].addr
         p.context.progress = pos[]
         if pos[] == p.context.loopAmount:
           p.playing = false
         else:
           inc pos[] # update visit count for this pattern
-        p.context.lastVisit = postframe.order
     if postframe.halted:
       p.playing = false
   result = p.playing

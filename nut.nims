@@ -112,6 +112,10 @@ task wavexport, "Test the wav exporter":
   withTests:
     execNimble "c", "--outdir:../bin --run standalones/wavexport.nim"
 
+task playertest, "Player test utility":
+  withTests:
+    execNimble "c", "--outdir:../bin standalones/playertest.nim"
+
 task docsSpecs, "Generate documentation for file format specifications":
   for name in [
     "tbm-spec-major-0",
