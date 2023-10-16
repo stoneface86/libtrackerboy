@@ -342,7 +342,7 @@ func init(T: typedesc[TrackControl], ch: ChannelId): TrackControl =
     op: default(Operation),
     fc: FrequencyControl.init(if ch == ch4: noiseFrequencyBounds else: toneFrequencyBounds),
     envelope: if ch == ch3: 0 else: 0xF0,
-    timbre: 3,
+    timbre: if ch == ch4: 0 else: 3,
     panning: 3
   )
 

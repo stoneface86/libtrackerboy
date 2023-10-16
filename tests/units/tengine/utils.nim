@@ -40,7 +40,9 @@ template mkUpdate*(s = ChannelState(), f: UpdateFlags = {}, t = false): ChannelU
     trigger: t
   )
 
-template mkUpdates*(up1, up2, up3, up4 = ChannelUpdate()): array[ChannelId, ChannelUpdate] =
+template mkUpdates*(up1 = ChannelUpdate(); up2 = ChannelUpdate();
+                    up3 = ChannelUpdate(); up4 = ChannelUpdate()
+                   ): array[ChannelId, ChannelUpdate] =
   [up1, up2, up3, up4]
 
 template mkOperation*(u: array[ChannelId, ChannelUpdate], s = none(uint8), v = none(uint8)): ApuOperation =
@@ -72,7 +74,7 @@ func init*(T: typedesc[EngineHarness]): EngineHarness =
 
 
 
-proc play*(e: var EngineHarness, order, row = 0) =
+proc play*(e: var EngineHarness; order = 0; row = 0) =
   e.engine.play(e.song.toImmutable, order, row)
 
 func currentState*(e: EngineHarness, chno: ChannelId): ChannelState =
