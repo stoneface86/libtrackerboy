@@ -4,7 +4,7 @@
 
 ]##
 
-import ../common, endian
+import ../common, endian, destroy2
 export PcmF32
 
 import std/[with]
@@ -51,10 +51,13 @@ type
     # extra padding byte if dataChunkSize is odd [C]
 
 
-proc close*(w: var WavWriter): void
+proc closeImpl*(w: WavWriter): void {. raises: [IOError] .}
 
-proc `=destroy`*(w: var WavWriter) =
-  w.close()
+proc `=destroy`*(w: WavWriter) {.destroy2.} =
+  try:
+    w.closeImpl()
+  except IOError:
+    discard
 
 proc checkedWriteBuffer(f: File; buffer: pointer; buflen: int
                        ) {.raises: [IOError] .} =
@@ -98,7 +101,7 @@ proc init*(_: typedesc[WavWriter]; filename: sink string;
 proc write[T: SomeWord](f: File; i: LittleEndian[T]) {.raises: [IOError] .} =
   f.checkedWriteBuffer(i.unsafeAddr, T.sizeof)
 
-proc close*(w: var WavWriter) {.raises: [IOError] .} =
+proc closeImpl(w: WavWriter) {.raises: [IOError] .} =
   if w.file != nil:
     let totalSamples = w.samplesWritten.uint32
     let dataChunkSize = totalSamples * w.channels.uint32 * sizeof(PcmF32).uint32
@@ -129,7 +132,9 @@ proc close*(w: var WavWriter) {.raises: [IOError] .} =
       setFilePos(offsetOf(WavHeader, dataChunkSize))
       write(dataChunkSize.toLE)
 
-    w.file = nil
+proc close*(w: var WavWriter) {.raises: [IOError] .} =
+  w.closeImpl()
+  w.file = nil
 
 #
 # Writes the sampled data in the given array to the file
