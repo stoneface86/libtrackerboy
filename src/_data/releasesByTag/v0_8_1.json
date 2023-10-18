@@ -1,0 +1,5 @@
+{
+  "version": "v0.8.1",
+  "date": "2023-10-18",
+  "changes": "### Fixed\n - Wav exporter never finishing for some songs when using a loop duration.\n - Default timbre for CH4 is now 0, was incorrectly set to 3"
+}
