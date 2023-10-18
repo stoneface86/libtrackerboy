@@ -70,7 +70,7 @@
 
 <h1><a class="toc-backref" id="specifications" href="#specifications">Specifications</a></h1><p>Current list of specifications, ordered from newest to oldest.</p>
 
-<h2><a class="toc-backref" id="specifications-major-2" href="#specifications-major-2">Major 2</a></h2><ul class="simple"><li>TBM File Format Specification - Major Revision 2 (<a class="reference external" href="tbm-spec-major-2.html">HTML</a> <a class="reference external" href="tbm-spec-major-2.pdf">PDF</a>)<ul class="simple"><li><strong>Revision D (2.0)</strong>, will be introduced in libtrackerboy v0.8.0</li>
+<h2><a class="toc-backref" id="specifications-major-2" href="#specifications-major-2">Major 2</a></h2><ul class="simple"><li>TBM File Format Specification - Major Revision 2 (<a class="reference external" href="tbm-spec-major-2.html">HTML</a> <a class="reference external" href="tbm-spec-major-2.pdf">PDF</a>)<ul class="simple"><li><strong>Revision D (2.0)</strong>, introduced in libtrackerboy v0.8.0</li>
 </ul>
 </li>
 </ul>
@@ -90,7 +90,12 @@
 <div class="admonition admonition-info"><span class="admonition-info-text"><b>Note:</b></span>
 Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libtrackerboy's versioning.</div>
 
-<h2><a class="toc-backref" id="revision-history-revision-d-2dot0" href="#revision-history-revision-d-2dot0">Revision D (2.0)</a></h2><p><strong>DRAFT:</strong> To be introduced in libtrackerboy v0.8.0</p>
+<h2><a class="toc-backref" id="revision-history-revision-d-2dot0" href="#revision-history-revision-d-2dot0">Revision D (2.0)</a></h2><p>Introduced in libtrackerboy v0.8.0</p>
+<ul class="simple"><li>Custom framerates are stored using floating point</li>
+<li>Per-song framerate setting that overrides the module setting.</li>
+<li>Add support for envelope sequences</li>
+<li>Remove initial envelope setting (use a 1-value envelope sequence instead)</li>
+</ul>
 
 <h2><a class="toc-backref" id="revision-history-revision-c-1dot1" href="#revision-history-revision-c-1dot1">Revision C (1.1)</a></h2><p>Introduced in Trackerboy v0.6.0.</p>
 <ul class="simple"><li>adds a new effect, Jxy, for setting the global volume</li>
@@ -118,7 +123,7 @@ Revisions A, B and C use Trackerboy's versioning. Revisions D and later use libt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-18 02:43:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-18 14:52:24 UTC</small>
       </div>
     </div>
   </div>
