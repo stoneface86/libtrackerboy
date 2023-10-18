@@ -4,8 +4,6 @@ include::include/title.adoc[]
 
 <<<
 
-include::include/draft.adoc[]
-
 include::include/introduction.adoc[]
 
 == Changes

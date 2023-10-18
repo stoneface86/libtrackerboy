@@ -1,6 +1,6 @@
 # Changelog
 
-## Unversioned
+## [0.8.1] - 2023-10-18
 
 ### Fixed
  - Wav exporter never finishing for some songs when using a loop duration.

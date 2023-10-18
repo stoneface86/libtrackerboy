@@ -15,7 +15,7 @@ Current list of specifications, ordered from newest to oldest.
 Major 2
 -------
 * TBM File Format Specification - Major Revision 2 (`HTML<tbm-spec-major-2.html>`_ `PDF<tbm-spec-major-2.pdf>`_)
-  * **Revision D (2.0)**, will be introduced in libtrackerboy v0.8.0
+  * **Revision D (2.0)**, introduced in libtrackerboy v0.8.0
 
 Major 1
 -------
@@ -41,7 +41,12 @@ the major or minor version results in the letter being advanced.
 Revision D (2.0)
 ----------------
 
-**DRAFT:** To be introduced in libtrackerboy v0.8.0
+Introduced in libtrackerboy v0.8.0
+
+* Custom framerates are stored using floating point
+* Per-song framerate setting that overrides the module setting.
+* Add support for envelope sequences
+* Remove initial envelope setting (use a 1-value envelope sequence instead)
 
 Revision C (1.1)
 ----------------
