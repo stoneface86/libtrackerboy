@@ -65,14 +65,20 @@
 <li><a class="reference" href="#WavConfig" title="WavConfig = object
   song*: Natural ## Index of the song in the module to export. Default is 0, or the first
                  ## song.
-  duration*: Duration        ## The duration to export. Default is 1 minute (60 dkSeconds).
+                 ## 
+  duration*: Duration ## The duration to export. Default is 1 minute (60 dkSeconds).
+                      ## 
   filename*: string          ## Destination filename of the output WAV file.
+                             ## 
   samplerate*: Natural ## Output samplerate, in Hertz, of the output WAV file. Must not be 0.
                        ## Default is 44100 Hz.
-  channels*: set[ChannelId]  ## Set of channels to export. Default is all channels.
+                       ## 
+  channels*: set[ChannelId] ## Set of channels to export. Default is all channels.
+                            ## 
   isMono*: bool ## If set to true, the output file will be in mono sound (1 sound channel).
                 ## stereo otherwise. Mono sound conversion is done by averaging the left
-                ## and right channels. Default is false, or stereo sound.">WavConfig</a></li>
+                ## and right channels. Default is false, or stereo sound.
+                ##">WavConfig</a></li>
 <li><a class="reference" href="#WavExporter" title="WavExporter = object">WavExporter</a></li>
 
     </ul>
@@ -158,8 +164,8 @@
   <dd>
     
     A duration is a unit and an amount that determines the length of time the exported song will have. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L58" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L58" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L57" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L57" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -169,7 +175,7 @@
   <span class="Identifier">dkLoops</span>                    <span class="Comment">## The unit is a count of times the song has looped.</span></pre></dt>
   <dd>
     
-    Possible duration units
+    Possible duration units 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L51" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L51" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -179,20 +185,26 @@
   <dt><pre><a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">song</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Natural</span> <span class="Comment">## Index of the song in the module to export. Default is 0, or the first</span>
                  <span class="Comment">## song.</span>
-  <span class="Identifier">duration</span><span class="Operator">*</span><span class="Other">:</span> <a href="wav.html#Duration"><span class="Identifier">Duration</span></a>        <span class="Comment">## The duration to export. Default is 1 minute (60 dkSeconds).</span>
+                 <span class="Comment">## </span>
+  <span class="Identifier">duration</span><span class="Operator">*</span><span class="Other">:</span> <a href="wav.html#Duration"><span class="Identifier">Duration</span></a> <span class="Comment">## The duration to export. Default is 1 minute (60 dkSeconds).</span>
+                      <span class="Comment">## </span>
   <span class="Identifier">filename</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>          <span class="Comment">## Destination filename of the output WAV file.</span>
+                             <span class="Comment">## </span>
   <span class="Identifier">samplerate</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Natural</span> <span class="Comment">## Output samplerate, in Hertz, of the output WAV file. Must not be 0.</span>
                        <span class="Comment">## Default is 44100 Hz.</span>
-  <span class="Identifier">channels</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="../common.html#ChannelId"><span class="Identifier">ChannelId</span></a><span class="Other">]</span>  <span class="Comment">## Set of channels to export. Default is all channels.</span>
+                       <span class="Comment">## </span>
+  <span class="Identifier">channels</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="../common.html#ChannelId"><span class="Identifier">ChannelId</span></a><span class="Other">]</span> <span class="Comment">## Set of channels to export. Default is all channels.</span>
+                            <span class="Comment">## </span>
   <span class="Identifier">isMono</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Comment">## If set to true, the output file will be in mono sound (1 sound channel).</span>
                 <span class="Comment">## stereo otherwise. Mono sound conversion is done by averaging the left</span>
                 <span class="Comment">## and right channels. Default is false, or stereo sound.</span>
+                <span class="Comment">## </span>
   </pre></dt>
   <dd>
     
     Configuration of the WAV file to create. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L67" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L67" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L64" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L64" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -202,8 +214,8 @@
   <dd>
     
     WavExporter object for iterative mode. An exporter can be created via the <a class="reference external" href="#init,typedesc[WavExporter],Module,WavConfig">init</a> proc. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L87" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L87" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L90" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L90" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -222,8 +234,8 @@
     <p>Creates a sequence of WavConfigs where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">.$</span><span class="Identifier">ext</span></span></tt>.</p>
 <p>Use this when exporting each channel separately is desired. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L187" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L187" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L188" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L188" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -238,8 +250,8 @@
     <p>Exports a song in module to WAV using the given config.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if the output WAV file could not be written to. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L207" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L207" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L208" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L208" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -251,8 +263,8 @@
   <dd>
     
     Returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> if the exporter still has work to do, <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt> otherwise. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L146" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L146" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L147" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L147" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -264,8 +276,8 @@
   <dd>
     
     Initializes a WavConfig with default settings. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L98" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L98" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L101" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L101" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -278,8 +290,8 @@
 <p>The export can continue by calling <a class="reference external" href="#process,WavExporter,Module">process</a> repeatedly until <a class="reference external" href="#hasWork,WavExporter">hasWork</a> returns <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt>.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> will be raised if the output file could not be written to. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L107" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L107" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L110" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L110" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -294,8 +306,8 @@
     <p>Processes a single frame and writes it to the destination WAV file. If the exporter is finished this proc does nothing. Use <a class="reference external" href="#hasWork,WavExporter">hasWork</a> to check before calling this proc.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if any error occurred during writing to the output WAV file. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L151" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L151" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L152" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L152" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -307,8 +319,8 @@
   <dd>
     
     Gets a number representing the total overall progress made towards the export. The number returned will be in the range <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="Identifier">ex</span><span class="Operator">.</span><span class="Identifier">progressMax</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L175" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L175" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L176" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L176" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -320,8 +332,8 @@
   <dd>
     
     Gets a number representing the maximum of the values returned by <a class="reference external" href="#progress,WavExporter">progress</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L181" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L181" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L182" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L182" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -337,7 +349,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-16 18:28:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-18 02:43:34 UTC</small>
       </div>
     </div>
   </div>

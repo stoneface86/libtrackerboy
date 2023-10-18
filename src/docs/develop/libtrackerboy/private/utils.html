@@ -52,7 +52,8 @@
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#EqRef" title="EqRef[T] = object
-  src*: ref T                ## The source reference of the wrapper">EqRef</a></li>
+  src*: ref T                ## The source reference of the wrapper
+                             ##">EqRef</a></li>
 
     </ul>
   </details>
@@ -110,11 +111,12 @@
     <div id="EqRef">
   <dt><pre><a href="utils.html#EqRef"><span class="Identifier">EqRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">src</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">T</span>                <span class="Comment">## The source reference of the wrapper</span>
+                             <span class="Comment">## </span>
   </pre></dt>
   <dd>
     
     <p>EqRef: Deep equality ref</p>
-<p>Ref wrapper type that changes the equality operator by testing for deep equality.</p>
+<p>Ref wrapper type that changes the equality operator by testing for deep equality. </p>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L10" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L10" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
@@ -148,8 +150,8 @@
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">deepEquals</span><span class="Punctuation">(</span><span class="Identifier">b</span><span class="Punctuation">)</span>      <span class="Comment"># both are not nil and the referenced data are the same</span>
 <span class="Identifier">b</span> <span class="Operator">=</span> <span class="Keyword">nil</span>
 <span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">deepEquals</span><span class="Punctuation">(</span><span class="Identifier">b</span><span class="Punctuation">)</span>  <span class="Comment"># one of the refs is nil</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L18" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L18" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L20" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L20" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -166,12 +168,12 @@
   <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2CEqRef%5BT%5D%2CEqRef%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">lhs</span><span class="Other">,</span> <span class="Identifier">rhs</span><span class="Other">:</span> <a href="utils.html#EqRef"><span class="Identifier">EqRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Equality test using deepEquals
+    Equality test using deepEquals 
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span><span class="Punctuation">,</span> <span class="Identifier">b</span><span class="Punctuation">:</span> <span class="Identifier">EqRef</span><span class="Punctuation">[</span><span class="Identifier">int</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span> <span class="Operator">==</span> <span class="Identifier">b</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L49" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L49" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -182,9 +184,9 @@
   <dt><pre><span class="Keyword">template</span> <a href="#defaultInit.t"><span class="Identifier">defaultInit</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
-    Alias for <tt class="docutils literal"><span class="pre"><span class="Keyword">discard</span></span></tt>, to indicate that default initialization is intended.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L56" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L56" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Alias for <tt class="docutils literal"><span class="pre"><span class="Keyword">discard</span></span></tt>, to indicate that default initialization is intended. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L61" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L61" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -195,9 +197,9 @@
   <dt><pre><span class="Keyword">template</span> <a href="#toEqRef.t%2Cref.T"><span class="Identifier">toEqRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="utils.html#EqRef"><span class="Identifier">EqRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
-    Converts a ref to an EqRef
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L45" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L45" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Converts a ref to an EqRef 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/utils.nim#L48" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/utils.nim#L48" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -213,7 +215,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-16 18:28:02 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-18 02:43:33 UTC</small>
       </div>
     </div>
   </div>

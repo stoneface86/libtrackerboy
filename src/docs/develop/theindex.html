@@ -21,7 +21,7 @@
   <div class="document" id="documentId">
     <div class="container">
       <h1 class="title">Index</h1>
-      Documents: <a href="module-file-format-spec.html">Module File Format Specifications</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/exports/wav.html">libtrackerboy/exports/wav</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/player.html">libtrackerboy/private/player</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/private/wavwriter.html">libtrackerboy/private/wavwriter</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
+      Documents: <a href="module-file-format-spec.html">Module File Format Specifications</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/exports/wav.html">libtrackerboy/exports/wav</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/destroy2.html">libtrackerboy/private/destroy2</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/player.html">libtrackerboy/private/player</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/private/wavwriter.html">libtrackerboy/private/wavwriter</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc `$`(s: Sequence): string" href="libtrackerboy/data.html#%24%2CSequence">data: proc `$`(s: Sequence): string</a></li>
@@ -48,7 +48,7 @@
           </ul></dd>
 <dt><a name="%60%3Ddestroy%60" href="#%60%3Ddestroy%60"><span>`=destroy`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="wavwriter: proc `=destroy`(w: var WavWriter)" href="libtrackerboy/private/wavwriter.html#%3Ddestroy%2CWavWriter">wavwriter: proc `=destroy`(w: var WavWriter)</a></li>
+          data-doc-search-tag="wavwriter: proc `=destroy`(w: WavWriter)" href="libtrackerboy/private/wavwriter.html#%3Ddestroy%2CWavWriter">wavwriter: proc `=destroy`(w: WavWriter)</a></li>
           </ul></dd>
 <dt><a name="%60%5B%5D%3D%60" href="#%60%5B%5D%3D%60"><span>`[]=`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -318,7 +318,11 @@
           </ul></dd>
 <dt><a name="close" href="#close"><span>close:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="wavwriter: proc close(w: var WavWriter): void" href="libtrackerboy/private/wavwriter.html#close%2CWavWriter">wavwriter: proc close(w: var WavWriter): void</a></li>
+          data-doc-search-tag="wavwriter: proc close(w: var WavWriter)" href="libtrackerboy/private/wavwriter.html#close%2CWavWriter">wavwriter: proc close(w: var WavWriter)</a></li>
+          </ul></dd>
+<dt><a name="closeImpl" href="#closeImpl"><span>closeImpl:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wavwriter: proc closeImpl(w: WavWriter): void" href="libtrackerboy/private/wavwriter.html#closeImpl%2CWavWriter">wavwriter: proc closeImpl(w: WavWriter): void</a></li>
           </ul></dd>
 <dt><a name="colEffectParamHi1" href="#colEffectParamHi1"><span>colEffectParamHi1:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -473,6 +477,14 @@
           data-doc-search-tag="io: proc deserialize(s: var Song; stream: Stream): FormatResult" href="libtrackerboy/io.html#deserialize%2CSong%2CStream">io: proc deserialize(s: var Song; stream: Stream): FormatResult</a></li>
           <li><a class="reference external"
           data-doc-search-tag="io: proc deserialize(w: var Waveform; stream: Stream): FormatResult" href="libtrackerboy/io.html#deserialize%2CWaveform%2CStream">io: proc deserialize(w: var Waveform; stream: Stream): FormatResult</a></li>
+          </ul></dd>
+<dt><a name="destroy2" href="#destroy2"><span>destroy2:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="destroy2: macro destroy2(fn)" href="libtrackerboy/private/destroy2.html#destroy2.m">destroy2: macro destroy2(fn)</a></li>
+          </ul></dd>
+<dt><a name="destroyTakesVarT" href="#destroyTakesVarT"><span>destroyTakesVarT:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="destroy2: const destroyTakesVarT" href="libtrackerboy/private/destroy2.html#destroyTakesVarT">destroy2: const destroyTakesVarT</a></li>
           </ul></dd>
 <dt><a name="dkLoops" href="#dkLoops"><span>dkLoops:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -886,7 +898,7 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc init(T: typedesc[Song]): Song" href="libtrackerboy/data.html#init%2Ctypedesc%5BSong%5D">data: proc init(T: typedesc[Song]): Song</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: proc init(T: typedesc[SongList]; len: PositiveByte = 1): SongList" href="libtrackerboy/data.html#init%2Ctypedesc%5BSongList%5D%2CPositiveByte">data: proc init(T: typedesc[SongList]; len: PositiveByte = 1): SongList</a></li>
+          data-doc-search-tag="data: proc init(T: typedesc[SongList]; len = PositiveByte(1)): SongList" href="libtrackerboy/data.html#init%2Ctypedesc%5BSongList%5D">data: proc init(T: typedesc[SongList]; len = PositiveByte(1)): SongList</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc init(T: typedesc[Track]; len: TrackLen): Track" href="libtrackerboy/data.html#init%2Ctypedesc%5BTrack%5D%2CTrackLen">data: proc init(T: typedesc[Track]; len: TrackLen): Track</a></li>
           <li><a class="reference external"
@@ -896,7 +908,7 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc init(T: typedesc[Waveform]): Waveform" href="libtrackerboy/data.html#init%2Ctypedesc%5BWaveform%5D">data: proc init(T: typedesc[Waveform]): Waveform</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="editing: proc init(T: typedesc[PatternCursor]; row: int; track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn">editing: proc init(T: typedesc[PatternCursor]; row: int; track: int; column: TrackColumn): PatternCursor</a></li>
+          data-doc-search-tag="editing: proc init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn">editing: proc init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor</a></li>
           <li><a class="reference external"
           data-doc-search-tag="editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternSelection%5D%2CPatternAnchor">editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection</a></li>
           <li><a class="reference external"
@@ -924,10 +936,10 @@
           <li><a class="reference external"
           data-doc-search-tag="player: proc init(__1862271003: typedesc[Player]; frames: Natural): Player" href="libtrackerboy/private/player.html#init%2Ctypedesc%5BPlayer%5D%2CNatural">player: proc init(__1862271003: typedesc[Player]; frames: Natural): Player</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="synth: proc init(T: typedesc[Synth]; samplerate = 44100; buffersize: Natural = 0): T.typeOf" href="libtrackerboy/private/synth.html#init%2Ctypedesc%5BSynth%5D%2Cint%2CNatural">synth: proc init(T: typedesc[Synth]; samplerate = 44100; buffersize: Natural = 0): T.typeOf</a></li>
+          data-doc-search-tag="synth: proc init(__1308623558: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth" href="libtrackerboy/private/synth.html#init%2Ctypedesc%5BSynth%5D%2Cint">synth: proc init(__1308623558: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="wavwriter: proc init(__1879048233: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: proc init(__1879048233: typedesc[WavWriter]; filename: sink string;
+          data-doc-search-tag="wavwriter: proc init(__1879048234: typedesc[WavWriter]; filename: sink string;
+     channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: proc init(__1879048234: typedesc[WavWriter]; filename: sink string;
      channels, samplerate: int): WavWriter</a></li>
           </ul></dd>
 <dt><a name="InputBlock" href="#InputBlock"><span>InputBlock:</span></a></dt><dd><ul class="simple">
@@ -938,7 +950,7 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc insert(o: var Order; data: openArray[OrderRow]; before: ByteIndex)" href="libtrackerboy/data.html#insert%2COrder%2CopenArray%5BOrderRow%5D%2CByteIndex">data: proc insert(o: var Order; data: openArray[OrderRow]; before: ByteIndex)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: proc insert(o: var Order; row: OrderRow; before: ByteIndex = 0)" href="libtrackerboy/data.html#insert%2COrder%2COrderRow%2CByteIndex">data: proc insert(o: var Order; row: OrderRow; before: ByteIndex = 0)</a></li>
+          data-doc-search-tag="data: proc insert(o: var Order; row: OrderRow; before = ByteIndex(0))" href="libtrackerboy/data.html#insert%2COrder%2COrderRow">data: proc insert(o: var Order; row: OrderRow; before = ByteIndex(0))</a></li>
           </ul></dd>
 <dt><a name="Instrument" href="#Instrument"><span>Instrument:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1138,7 +1150,7 @@
           </ul></dd>
 <dt><a name="next" href="#next"><span>next:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: proc next[T: SomeData](t: Table[T]; start: TableId = 0): Option[TableId]" href="libtrackerboy/data.html#next%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: proc next[T: SomeData](t: Table[T]; start: TableId = 0): Option[TableId]</a></li>
+          data-doc-search-tag="data: proc next[T: SomeData](t: Table[T]; start = TableId(0)): Option[TableId]" href="libtrackerboy/data.html#next%2CTable%5BT%3A%20SomeData%5D">data: proc next[T: SomeData](t: Table[T]; start = TableId(0)): Option[TableId]</a></li>
           </ul></dd>
 <dt><a name="nextAvailableId" href="#nextAvailableId"><span>nextAvailableId:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1344,7 +1356,9 @@
           </ul></dd>
 <dt><a name="play" href="#play"><span>play:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="engine: proc play(e: var Engine; song: sink Immutable[ref Song]; pattern, row: Natural = 0)" href="libtrackerboy/engine.html#play%2CEngine%2CsinkImmutable%5Bref.Song%5D%2CNatural%2CNatural">engine: proc play(e: var Engine; song: sink Immutable[ref Song]; pattern, row: Natural = 0)</a></li>
+          data-doc-search-tag="engine: proc play(e: var Engine; song: sink Immutable[ref Song]; pattern = Natural(0);
+     row = Natural(0))" href="libtrackerboy/engine.html#play%2CEngine%2CsinkImmutable%5Bref.Song%5D">engine: proc play(e: var Engine; song: sink Immutable[ref Song]; pattern = Natural(0);
+     row = Natural(0))</a></li>
           <li><a class="reference external"
           data-doc-search-tag="player: template play(p: var Player; engine: var Engine; instruments: InstrumentTable;
      body: untyped): untyped" href="libtrackerboy/private/player.html#play.t%2CPlayer%2CEngine%2CInstrumentTable%2Cuntyped">player: template play(p: var Player; engine: var Engine; instruments: InstrumentTable;
@@ -1402,7 +1416,7 @@
           </ul></dd>
 <dt><a name="remove" href="#remove"><span>remove:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: proc remove(o: var Order; index: ByteIndex; count: OrderSize = 1)" href="libtrackerboy/data.html#remove%2COrder%2CByteIndex%2COrderSize">data: proc remove(o: var Order; index: ByteIndex; count: OrderSize = 1)</a></li>
+          data-doc-search-tag="data: proc remove(o: var Order; index: ByteIndex; count = OrderSize(1))" href="libtrackerboy/data.html#remove%2COrder%2CByteIndex">data: proc remove(o: var Order; index: ByteIndex; count = OrderSize(1))</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc remove(l: var SongList; i: ByteIndex)" href="libtrackerboy/data.html#remove%2CSongList%2CByteIndex">data: proc remove(l: var SongList; i: ByteIndex)</a></li>
           <li><a class="reference external"
@@ -2024,7 +2038,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-16 18:28:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-18 02:43:34 UTC</small>
       </div>
     </div>
   </div>
