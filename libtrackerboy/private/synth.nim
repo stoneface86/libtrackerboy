@@ -73,7 +73,7 @@ const
     [ 0.000000000f,  0.001312256f, -0.003509521f,  0.010681152f, -0.014892578f,  0.034667969f, -0.027893066f,  0.178863525f,  0.641540527f,  0.178863525f, -0.027893066f,  0.034667969f, -0.014892578f,  0.010681152f, -0.003509521f,  0.001312256f ]
   ]
 
-template assertTime(s: Synth, t: int): untyped =
+template assertTime(s: Synth; t: int): untyped =
   assert t < s.buffer.len, "attempted to mix past the buffer"
 
 template frameIndex(t: Natural): int = t * 2
@@ -81,15 +81,16 @@ template frameIndex(t: Natural): int = t * 2
 func init(T: typedesc[Accumulator]): T.typeOf =
   discard  # default is sufficient
 
-proc process(a: var Accumulator, input: float32, highpassRate: float32): float32 =
+proc process(a: var Accumulator; input, highpassRate: float32;): float32 =
   a.sum += input
   result = a.sum - a.highpass
   a.highpass = a.sum - (result * highpassRate)
 
-func sampletime*(s: Synth, cycletime: uint32): float32 =
+func sampletime*(s: Synth; cycletime: uint32): float32 =
   (cycletime.float32 * s.factor) + s.sampleOffset
 
-func getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeFract: float32] =
+func getMixParam(s: Synth; cycletime: uint32
+                ): tuple[step, timeIndex: int; timeFract: float32] =
   let time = s.sampletime(cycletime)
   let phase = (time - trunc(time)) * stepPhases.float32
 
@@ -99,12 +100,13 @@ func getMixParam(s: Synth, cycletime: uint32): tuple[step, timeIndex: int, timeF
     timeFract: phase - trunc(phase)
   )
 
-func deltaScale(delta, scale, interp: float32): tuple[first, second: float32] =
+func deltaScale(delta, scale, interp: float32;
+               ): tuple[first, second: float32;] =
   let first = delta * scale
   let second = first * interp
   (first - second, second)
 
-iterator iterateStep(s: int): tuple[s0, s1: float32] =
+iterator iterateStep(s: int): tuple[s0, s1: float32;] =
   # unsafeAddr because the stepTable is a const
   var stepset = stepTable[s][0].unsafeAddr
   var nextset = stepTable[s + 1][0].unsafeAddr
@@ -115,7 +117,7 @@ iterator iterateStep(s: int): tuple[s0, s1: float32] =
       inc nextset
   yield (stepset[], nextset[])
 
-proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
+proc mix*(s: var Synth; mode: static MixMode; delta: int8; cycletime: uint32) =
   static: assert mode != mixMute, "cannot mix a muted mode!"
 
   let params = s.getMixParam(cycletime)
@@ -151,7 +153,7 @@ proc mix*(s: var Synth, mode: static MixMode, delta: int8, cycletime: uint32) =
         advanceBuf
 
 
-proc mix*(s: var Synth, mode: MixMode, delta: int8, cycletime: uint32) =
+proc mix*(s: var Synth; mode: MixMode; delta: int8; cycletime: uint32) =
   case mode
   of mixLeft:
     s.mix(mixLeft, delta, cycletime)
@@ -163,7 +165,7 @@ proc mix*(s: var Synth, mode: MixMode, delta: int8, cycletime: uint32) =
     # do nothing for muted mode
     discard
 
-proc mixDc*(s: var Synth, dcLeft, dcRight: PcmF32, cycletime: uint32) =
+proc mixDc*(s: var Synth; dcLeft, dcRight: PcmF32; cycletime: uint32) =
   let time = frameIndex(s.sampletime(cycletime).int)
   assertTime(s, time)
   s.buffer[time] += dcLeft
@@ -177,19 +179,20 @@ proc clear*(s: var Synth) =
 func samplerate*(s: Synth): int =
   s.samplerate
 
-proc `samplerate=`*(s: var Synth, samplerate: int) =
+proc `samplerate=`*(s: var Synth; samplerate: int) =
   if s.samplerate != samplerate:
     s.samplerate = samplerate
     s.factor = samplerate.float32 / gbClockRate.float32
     # sameboy's HPF
     s.highpass = pow(0.999958f, 1.0f / s.factor)
 
-proc setBufferSize*(s: var Synth, samples: Natural) =
+proc setBufferSize*(s: var Synth; samples: Natural) =
   s.buffer.setLen(frameIndex(samples + stepWidth))
   s.clear()
 
-func init*(T: typedesc[Synth], samplerate = 44100, buffersize: Natural = 0): T.typeOf =
-  result = T(
+func init*(_: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)
+          ): Synth =
+  result = Synth(
     volumeStepLeft: 0.0f,
     volumeStepRight: 0.0f,
     samplerate: 0,
@@ -205,14 +208,14 @@ func init*(T: typedesc[Synth], samplerate = 44100, buffersize: Natural = 0): T.t
   result.`samplerate=`(samplerate)
   result.setBufferSize(buffersize)
 
-proc endFrame(s: var Synth, cycletime: uint32): int =
+proc endFrame(s: var Synth; cycletime: uint32): int =
   # end the frame, discarding all mixed samples
   let split = splitDecimal(s.sampletime(cycletime))
   s.sampleOffset = split.floatpart
   assert split.intpart.int <= s.buffer.len, "end of frame exceeds buffer"
   split.intpart.int
 
-proc takeSamples*(s: var Synth, endtime: uint32, buf: ptr seq[Pcm]) =
+proc takeSamples*(s: var Synth; endtime: uint32; buf: ptr seq[Pcm]) =
   # takes samples out of the synth's buffer and puts it into buf. If buf is
   # nil, the samples are discarded.
   let samplesToTake = s.endframe(endtime)

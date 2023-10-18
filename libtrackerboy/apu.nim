@@ -130,7 +130,7 @@ proc initTimer(initPeriod: uint32): Timer =
     period: initPeriod
   )
 
-proc run(t: var Timer, cycles: uint32): bool =
+proc run(t: var Timer; cycles: uint32): bool =
   # if this assertion fails, we have missed a clock!
   assert t.counter >= cycles
   t.counter -= cycles
@@ -139,7 +139,7 @@ proc run(t: var Timer, cycles: uint32): bool =
     # reload counter with period
     t.counter = t.period
 
-proc fastforward(t: var Timer, cycles: uint32): uint32 =
+proc fastforward(t: var Timer; cycles: uint32): uint32 =
   if cycles < t.counter:
     t.counter -= cycles
     0u32
@@ -164,7 +164,7 @@ proc initChannel(): Channel =
 proc disable(ch: var Channel) =
   ch.enabled = false
 
-proc setDacEnable(ch: var Channel, enable: bool) =
+proc setDacEnable(ch: var Channel; enable: bool) =
   ch.dacEnable = enable
   if not enable:
     ch.disable()
@@ -185,7 +185,7 @@ proc initEnvelope(): Envelope =
     volume: 0
   )
 
-proc writeRegister(e: var Envelope, ch: var Channel, val: uint8) =
+proc writeRegister(e: var Envelope; ch: var Channel; val: uint8) =
   e.register = val
   ch.setDacEnable((val and 0xF8).bool)
 
@@ -216,7 +216,7 @@ proc initLengthCounter(max: int): LengthCounter =
     counterMax: max
   )
 
-proc clock(l: var LengthCounter, ch: var Channel) =
+proc clock(l: var LengthCounter; ch: var Channel) =
   if l.enabled:
     if l.counter == 0:
       ch.disable()
@@ -234,7 +234,7 @@ proc restart(l: var LengthCounter) =
 #   0: return 0
 #   1: return vol
 #
-template getOutput(val: uint8, vol: uint8): uint8 =
+template getOutput(val, vol: uint8;): uint8 =
   ( ( not (val and 1) ) + 1 ) and vol
 
 const
@@ -253,7 +253,7 @@ proc initNoiseChannel(): NoiseChannel =
     lfsr: lfsrInit
   )
 
-proc setNoise(n: var NoiseChannel, val: uint8) =
+proc setNoise(n: var NoiseChannel; val: uint8) =
   n.register = val
   # drf = dividing ratio frequency (divisor)
   var drf = (val and 0x7).uint32
@@ -290,7 +290,7 @@ proc clock(n: var NoiseChannel) =
     n.clockLfsr()
     n.updateOutput()
 
-proc fastforward(n: var NoiseChannel, cycles: uint32) =
+proc fastforward(n: var NoiseChannel; cycles: uint32) =
   var clocks = n.timer.fastforward(cycles)
   if n.validScf:
     while clocks > 0:
@@ -339,11 +339,11 @@ proc initPulseChannel(): PulseChannel =
     dutyCounter: 0
   )
 
-proc writeFrequency(p: var PulseChannel, freq: uint16) =
+proc writeFrequency(p: var PulseChannel; freq: uint16) =
   p.frequency = freq
   p.timer.period = (2048 - freq).uint32 * pulseMultiplier
 
-proc setDuty(p: var PulseChannel, duty: Duty) =
+proc setDuty(p: var PulseChannel; duty: Duty) =
   p.duty = duty
   p.dutyWaveform = dutyWaveforms[duty]
 
@@ -354,7 +354,7 @@ proc clock(p: var PulseChannel) =
   p.dutyCounter = (p.dutyCounter + 1) and 7
   p.updateOutput()
 
-proc fastforward(p: var PulseChannel, cycles: uint32) =
+proc fastforward(p: var PulseChannel; cycles: uint32) =
   let clocks = p.timer.fastforward(cycles)
   p.dutyCounter = ((p.dutyCounter + clocks) and 7).uint8
   p.updateOutput()
@@ -393,12 +393,12 @@ proc initWaveChannel(): WaveChannel =
 proc updateOutput(w: var WaveChannel) =
   w.channel.output = w.sampleBuffer shr w.volumeShift
 
-proc setVolume(w: var WaveChannel, vol: WaveVolume) =
+proc setVolume(w: var WaveChannel; vol: WaveVolume) =
   w.volume = vol
   w.volumeShift = waveVolumeShifts[vol]
   w.updateOutput()
 
-proc writeFrequency(w: var WaveChannel, freq: uint16) =
+proc writeFrequency(w: var WaveChannel; freq: uint16) =
   w.frequency = freq
   w.timer.period = (2048 - freq).uint32 * waveMultiplier
 
@@ -416,7 +416,7 @@ proc clock(w: var WaveChannel) =
   w.waveIndex = (w.waveIndex + 1) and 0x1F
   w.updateSampleBuffer()
 
-proc fastforward(w: var WaveChannel, cycles: uint32) =
+proc fastforward(w: var WaveChannel; cycles: uint32) =
   let clocks = w.timer.fastforward(cycles)
   w.waveIndex = ((w.waveIndex + clocks) and 0x1F).uint8
   w.updateSampleBuffer()
@@ -442,10 +442,10 @@ proc initSweep(): Sweep =
 proc readRegister(s: Sweep): uint8 =
   s.register and 0x7F
 
-proc writeRegister(s: var Sweep, val: uint8) =
+proc writeRegister(s: var Sweep; val: uint8) =
   s.register = val and 0x7F
 
-proc clock(s: var Sweep, pul: var PulseChannel) =
+proc clock(s: var Sweep; pul: var PulseChannel) =
   if s.time > 0:
     inc s.counter
     if s.counter >= s.time:
@@ -466,7 +466,7 @@ proc clock(s: var Sweep, pul: var PulseChannel) =
         pul.writeFrequency(freq)
         s.shadow = freq
 
-proc restart(s: var Sweep, pul: var PulseChannel) =
+proc restart(s: var Sweep; pul: var PulseChannel) =
   s.counter = 0
   s.shift = (s.register and 0x7).int
   s.subtraction = testBit(s.register, 3)
@@ -496,7 +496,7 @@ proc initSequencer(): Sequencer =
     triggerIndex: 0
   )
 
-proc run(s: var Sequencer, apu: var Apu, cycles: uint32) =
+proc run(s: var Sequencer; apu: var Apu; cycles: uint32) =
   if (s.timer.run(cycles)):
     let trigger = triggerSequence[s.triggerIndex]
     proc triggerLc(apu: var Apu) =
@@ -527,10 +527,11 @@ proc updateVolume(a: var Apu) =
   a.synth.volumeStepLeft = a.leftVolume.float32 * a.volumeStep
   a.synth.volumeStepRight = a.rightVolume.float32 * a.volumeStep
 
-proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
+proc setVolume*(a: var Apu; gain: range[0.0f32..1.0f32]) =
   ## Sets the volume level of `a` to the given linear gain value. The gain
   ## should range from 0.0f to 1.0f. The default volume level is a linear
   ## value of 0.625f or about -4 dB
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     a.setVolume(0.5f)
@@ -543,21 +544,23 @@ proc setVolume*(a: var Apu, gain: range[0.0f32..1.0f32]) =
   a.volumeStep = gain / 480.0f
   a.updateVolume()
 
-proc setFramerate*(a: var Apu, framerate: float) =
+proc setFramerate*(a: var Apu; framerate: float) =
   ## Changes the size of frame to the given framerate. The APU must be reset
   ## when changing the framerate.
+  ##
   a.framerate = framerate
   a.cyclesPerFrame = gbClockrate.float / framerate
   a.cycleOffset = 0.0
   a.synth.setBufferSize((a.synth.samplerate.float / framerate).ceil.int + 1)
 
-func init*(_: typedesc[Apu], samplerate: int, framerate = 59.7): Apu =
+func init*(_: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu =
   ## Initializes an Apu with the given samplerate and internal buffer size
   ## that contains a single frame with the given framerate.
   ## `samplerate` and `framerate` are in Hz and must be greater than 0.
   ## 
   ## The returned `Apu` is in its default, or hardware reset, state. The
   ## volume step is set to a default of 0.625f.
+  ##
   runnableExamples:
     var a = Apu.init(24000, 60.0) # 24000 Hz samplerate with a 60 Hz framerate
   result = Apu(
@@ -587,6 +590,7 @@ func init*(_: typedesc[Apu], samplerate: int, framerate = 59.7): Apu =
 proc reset*(a: var Apu) =
   ## Resets the apu to its initial state. Should behave similarly to a
   ## hardware reset. The internal sample buffer is also cleared.
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     a.writeRegister(0x26, 0x80)
@@ -611,13 +615,13 @@ proc reset*(a: var Apu) =
   a.rightVolume = 1
   a.cycleOffset = 0.0
 
-proc silence(a: var Apu, ch: int, time: uint32) =
+proc silence(a: var Apu; ch: int; time: uint32) =
   let output = a.lastOutputs[ch]
   if output > 0:
     a.synth.mix(a.mix[ch], -(output.int8), time)
     a.lastOutputs[ch] = 0
 
-proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
+proc preRunChannel(a: var Apu; chno: int; ch: Channel; time: uint32): MixMode =
   if ch.dacEnable and ch.enabled:
     result = a.mix[chno]
   else:
@@ -627,12 +631,14 @@ proc preRunChannel(a: var Apu, chno: int, ch: Channel, time: uint32): MixMode =
 # type class for all of the Channel objects
 type SomeChannel = PulseChannel|WaveChannel|NoiseChannel
 
-proc mixChannel(a: var Apu, mix: static MixMode, ch: Channel, last: var uint8, time: uint32) =
+proc mixChannel(a: var Apu; mix: static MixMode; ch: Channel; last: var uint8;
+                time: uint32) =
   if ch.output != last:
     a.synth.mix(mix, ch.output.int8 - last.int8, time)
     last = ch.output
 
-proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: uint32) =
+proc runChannel[T: SomeChannel](a: var Apu; chno: int; ch: var T; 
+                                time, cycles: uint32;) =
   
   template runImpl(mix: static MixMode) =
     var last = a.lastOutputs[chno]
@@ -660,11 +666,12 @@ proc runChannel[T: SomeChannel](a: var Apu, chno: int, ch: var T, time, cycles: 
     runImpl(mixMiddle)
 
 
-proc run*(a: var Apu, cycles: uint32) =
+proc run*(a: var Apu; cycles: uint32) =
   ## Runs the apu `a` for a given number of cycles. The internal sample
   ## buffer is updated with new samples from the run. Use
   ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ afterwards to collect them for
   ## processing, or `removeSamples<#removeSamples,Apu>`_ to discard them.
+  ##
 
   runnableExamples:
     var a = Apu.init(44100, 1.0)
@@ -693,6 +700,7 @@ proc runToFrame*(a: var Apu) =
   ## Runs the apu `a` for the required number of cycles to complete a frame.
   ## The amount of cycles that is run is determined by `a`'s current time and
   ## the framerate setting.
+  ##
   runnableExamples:
     var a = Apu.init(48000, 60.0)
     a.runToFrame()
@@ -707,10 +715,10 @@ proc runToFrame*(a: var Apu) =
     a.run(split.intpart.uint32)
     a.cycleOffset = split.floatpart
 
-template cannotAccessRegister(a: Apu, reg: uint8): bool =
+template cannotAccessRegister(a: Apu; reg: uint8): bool =
   not a.enabled and reg < rNR52
 
-func readRegister*(a: var Apu, reg: uint8): uint8 =
+func readRegister*(a: var Apu; reg: uint8): uint8 =
   ##
   ## Reads the register at address `reg`. This proc emulates the behavior of
   ## reading the memory-mapped registers on an actual Game Boy. Since some
@@ -798,12 +806,13 @@ func readRegister*(a: var Apu, reg: uint8): uint8 =
   else:
     result = 0xFF
 
-proc writeRegister*(a: var Apu, reg, value: uint8) =
+proc writeRegister*(a: var Apu; reg, value: uint8;) =
   ## Writes `value` to the apu's register at `reg` address. Like
   ## `readRegister<#readRegister,Apu,uint8>`_, this proc emulates writing to
   ## the Game Boy's memory-mapped APU registers. Writes to any unknown
   ## address are ignored. Writes to read-only portions of registers are also
   ## ignored. Like readRegister, the write occurs at the apu's current `time`.
+  ##
   
   runnableExamples:
     var a = Apu.init(44100)
@@ -819,17 +828,17 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
   if a.cannotAccessRegister(reg):
     return
 
-  template writeDutyLc(ch: PulseChannel, value: uint8) =
+  template writeDutyLc(ch: PulseChannel; value: uint8) =
     ch.setDuty(dutyFromRegister(value))
     ch.lc.counter = (value and 0x3F).int
 
-  template writeFrequencyLsb(ch: SomeChannel, value: uint8) =
+  template writeFrequencyLsb(ch: SomeChannel; value: uint8) =
     when ch is NoiseChannel:
       ch.setNoise(value)
     else:
       ch.writeFrequency((ch.frequency and 0xFF00) or value.uint16)
   
-  template writeFrequencyMsb(ch: SomeChannel, value: uint8, body: untyped) =
+  template writeFrequencyMsb(ch: SomeChannel; value: uint8; body: untyped) =
     when ch isnot NoiseChannel:
       ch.writeFrequency((ch.frequency and 0x00FF) or ((value.uint16 and 7) shl 8))
     ch.lc.enabled = value.testBit(6)
@@ -946,6 +955,7 @@ proc writeRegister*(a: var Apu, reg, value: uint8) =
 func time*(a: Apu): uint32 =
   ## Gets the apu's current time, in cycles. Calling `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
   ## resets the time to 0.
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     assert a.time == 0
@@ -961,9 +971,10 @@ proc availableSamples*(a: Apu): int =
   ## Gets the amount of samples available in the buffer.
   ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ will take this exact amount
   ## of samples when called
+  ##
   a.synth.sampletime(a.time).int
 
-proc takeOrRemove(a: var Apu, buf: ptr seq[Pcm]) =
+proc takeOrRemove(a: var Apu; buf: ptr seq[Pcm]) =
   a.synth.takeSamples(a.time, buf)
   a.time = 0
 
@@ -971,29 +982,34 @@ proc takeSamples*(a: var Apu, buf: var seq[Pcm]) =
   ## Takes out the entire sample buffer and puts it into the given buf. The
   ## buf's len will be set to `a.availableSamples * 2` and will have the
   ## contents of the apu's sample buffer.
+  ##
   a.takeOrRemove(buf.addr)
 
 proc removeSamples*(a: var Apu) =
   ## Removes all samples in the sample buffer.
+  ##
   a.takeOrRemove(nil)
 
-proc setSamplerate*(a: var Apu, samplerate: int) =
+proc setSamplerate*(a: var Apu; samplerate: int) =
   ## Sets the samplerate of the generated audio. The internal sample buffer
   ## is left untouched, so it is recommended you call `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
   ## beforehand.
+  ##
   a.synth.samplerate = samplerate
 
-proc setBufferSize*(a: var Apu, samples: int) =
+proc setBufferSize*(a: var Apu; samples: int) =
   ## Sets the apu's internal buffer to the given number of samples. This will
   ## destroy the contents of the buffer so it is recommended you call
   ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ first.
+  ##
   a.synth.setBufferSize(samples)
   a.time = 0
 
-func channelFrequency*(a: Apu, chno: ChannelId): int =
+func channelFrequency*(a: Apu; chno: ChannelId): int =
   ## Gets the current frequency setting for the channel, for diagnostic
   ## purposes. Channels 1-3 will result in a value from 0 to 2047. Channel
   ## 4 will result in the contents of its NR43 register.
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     assert a.channelFrequency(ch2) == 0
@@ -1003,11 +1019,12 @@ func channelFrequency*(a: Apu, chno: ChannelId): int =
   of ch3: result = a.ch3.frequency.int
   of ch4: result = a.ch4.register.int
 
-func channelVolume*(a: Apu, chno: ChannelId): int =
+func channelVolume*(a: Apu; chno: ChannelId): int =
   ## Returns a number from 0 to 15 resprenting the current volume level of
   ## the channel. For channels with an enevelope, this level is the current
   ## volume of the envelope. For the Wave channel, this value is the maximum
   ## possible determined by the wave volume setting (NR32).
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     assert a.channelVolume(ch1) == 0
@@ -1035,9 +1052,10 @@ func channelVolume*(a: Apu, chno: ChannelId): int =
   of ch3: result = impl(a.ch3)
   of ch4: result = impl(a.ch4)
 
-func channelMix*(a: Apu, chno: ChannelId): MixMode =
+func channelMix*(a: Apu; chno: ChannelId): MixMode =
   ## Gets the current mix mode for the given channel. Provided as an alternative
   ## to reading ar51.
+  ##
   runnableExamples:
     var a = Apu.init(44100)
     a.writeRegister(0x26, 0x80)         # NR52 <- 0x80

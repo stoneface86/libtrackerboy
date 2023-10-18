@@ -22,9 +22,11 @@ type
   SequenceInput* = array[SequenceKind, Option[uint8]]
     ## Input data to pass to TrackControl and FrequencyControl from
     ## enumerated sequences
+    ##
 
   InstrumentRuntime* = object
     ## Enumerates all sequences in an instrument
+    ##
     instrument*: Immutable[ref Instrument]
     sequenceCounters*: array[SequenceKind, int]
 
@@ -37,6 +39,7 @@ type
 
   FrequencyControl* = object
     ## Handles frequency calculation for a channel
+    ##
     bounds*: FrequencyBounds
     mode*: FcMode
     note*: uint8
@@ -67,6 +70,7 @@ type
 
   TrackControl* = object
     ## Modifies a ChannelState and GlobalState for a given TrackRow
+    ##
     op*: Operation
     ir*: InstrumentRuntime
     fc*: FrequencyControl
@@ -123,7 +127,7 @@ proc setBit[T: SomeInteger](v: var T; bit: BitsRange[T]; val: bool) {.inline.} =
 
 # === Timer ===================================================================
 
-func init(T: typedesc[Timer], speed: Speed): Timer =
+func init(T: typedesc[Timer]; speed: Speed): Timer =
   result = Timer(
     period: speed.int,
     counter: 0
@@ -132,7 +136,7 @@ func init(T: typedesc[Timer], speed: Speed): Timer =
 func active(t: Timer): bool =
   t.counter < unitSpeed
 
-proc setPeriod(t: var Timer, speed: Speed) =
+proc setPeriod(t: var Timer; speed: Speed) =
   t.period = clamp(speed, low(Speed), high(Speed)).int
   # if the counter exceeds the new period, clamp it to 1 unit less
   # this way, the timer will overflow on the next call to step
@@ -147,10 +151,11 @@ proc step(t: var Timer): bool =
 
 # === FrequencyControl ========================================================
 
-func init(T: typedesc[FrequencyControl], bounds: FrequencyBounds): FrequencyControl =
+func init(T: typedesc[FrequencyControl]; bounds: FrequencyBounds
+         ): FrequencyControl =
   result.bounds = bounds
 
-proc apply(fc: var FrequencyControl, op: Operation) {.raises: [].} =
+proc apply(fc: var FrequencyControl; op: Operation) {.raises: [].} =
   var updateChord = false
   op.forFlagPresent(opsNote):
     if fc.mode == fcmNoteSlide:
@@ -261,7 +266,7 @@ proc finishSlide(fc: var FrequencyControl) =
     # stop sliding once target note is reached
     fc.mode = fcmNone
 
-proc step(fc: var FrequencyControl, arpIn, pitchIn: Option[uint8]): uint16 =
+proc step(fc: var FrequencyControl; arpIn, pitchIn: Option[uint8];): uint16 =
   if fc.vibratoEnabled:
     if fc.vibratoDelayCounter > 0:
       dec fc.vibratoDelayCounter
@@ -313,7 +318,8 @@ proc step(fc: var FrequencyControl, arpIn, pitchIn: Option[uint8]): uint16 =
 proc reset(r: var InstrumentRuntime) =
   r.sequenceCounters = default(r.sequenceCounters.type)
 
-proc setInstrument(r: var InstrumentRuntime, i: sink Immutable[ref Instrument]) =
+proc setInstrument(r: var InstrumentRuntime; i: sink Immutable[ref Instrument]
+                  ) =
   r.instrument = i
   r.reset()
 
@@ -337,7 +343,7 @@ proc step(r: var InstrumentRuntime): SequenceInput =
 
 # === TrackControl ============================================================
 
-func init(T: typedesc[TrackControl], ch: ChannelId): TrackControl =
+func init(T: typedesc[TrackControl]; ch: ChannelId): TrackControl =
   result = TrackControl(
     op: default(Operation),
     fc: FrequencyControl.init(if ch == ch4: noiseFrequencyBounds else: toneFrequencyBounds),
@@ -358,7 +364,9 @@ proc setRow(tc: var TrackControl, row: TrackRow) =
   # effect. If Gxx is not present or the parameter is 00, then the operation
   # is immediately applied on the next call to step()
 
-proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState): (NoteAction, bool) {.raises: [].} =
+proc step(tc: var TrackControl; itable: InstrumentTable;
+          global: var GlobalState
+         ): (NoteAction, bool) {.raises: [].} =
   result[0] = naSustain
 
   if tc.delayCounter.step():
@@ -427,7 +435,8 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
     # Frequency calculation
     tc.state.frequency = tc.fc.step(inputs[skArp], inputs[skPitch])
 
-    template readInput(dest: untyped, validRange: static[Slice[uint8]], kind: SequenceKind): untyped =
+    template readInput(dest: untyped; validRange: static[Slice[uint8]]; 
+                       kind: SequenceKind): untyped =
       block:
         let input = inputs[kind]
         if input.isSome():
@@ -444,7 +453,8 @@ proc step(tc: var TrackControl, itable: InstrumentTable, global: var GlobalState
   else:
     result[0] = naOff
 
-func init*(T: typedesc[MusicRuntime], song: sink Immutable[ref Song], orderNo, rowNo: int, patternRepeat: bool): MusicRuntime =
+func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ref Song];
+           orderNo, rowNo: int; patternRepeat: bool): MusicRuntime =
   result = MusicRuntime(
     song: song,
     halted: false,
@@ -468,21 +478,21 @@ func init*(T: typedesc[MusicRuntime], song: sink Immutable[ref Song], orderNo, r
     ]
   )
 
-proc haltAll(r: var MusicRuntime, op: var ApuOperation) =
+proc haltAll(r: var MusicRuntime; op: var ApuOperation) =
   for ch in ChannelId:
     if ch notin r.unlocked:
       op.updates[ch] = ChannelUpdate(action: caShutdown)
       r.states[ch] = ChannelState.default
 
-proc halt*(r: var MusicRuntime, op: var ApuOperation) =
+proc halt*(r: var MusicRuntime; op: var ApuOperation) =
   r.halted = true
   r.haltAll(op)
 
-proc jump*(r: var MusicRuntime, pattern: Natural) =
+proc jump*(r: var MusicRuntime; pattern: Natural) =
   r.orderCounter = pattern
   r.rowCounter = 0
 
-proc lock*(r: var MusicRuntime, chno: ChannelId, op: var ApuOperation) =
+proc lock*(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation) =
   if chno in r.unlocked:
     r.unlocked.excl(chno)
     op.updates[chno] = ChannelUpdate(
@@ -491,13 +501,13 @@ proc lock*(r: var MusicRuntime, chno: ChannelId, op: var ApuOperation) =
       state: r.states[chno]
     )
 
-proc unlock*(r: var MusicRuntime, chno: ChannelId, op: var ApuOperation) =
+proc unlock*(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation) =
   if chno notin r.unlocked:
     r.unlocked.incl(chno)
     op.updates[chno] = ChannelUpdate(action: caShutdown)
 
-func difference(state, prev: ChannelState): UpdateFlags =
-  template check(flag: UpdateFlag, param: untyped): untyped =
+func difference(state, prev: ChannelState;): UpdateFlags =
+  template check(flag: UpdateFlag; param: untyped): untyped =
     if state.param != prev.param:
       result.incl(flag)
   check(ufEnvelope, envelope)
@@ -505,7 +515,9 @@ func difference(state, prev: ChannelState): UpdateFlags =
   check(ufPanning, panning)
   check(ufFrequency, frequency)
 
-proc step*(r: var MusicRuntime, itable: InstrumentTable, frame: var EngineFrame, op: var ApuOperation): bool {.raises: [].} =
+proc step*(r: var MusicRuntime; itable: InstrumentTable;
+           frame: var EngineFrame; op: var ApuOperation
+          ): bool {.raises: [].} =
   if r.halted:
     return true
 

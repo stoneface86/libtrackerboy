@@ -181,15 +181,16 @@ func toEffectType*(x: PatternCommand): EffectType =
   of pcJump: etPatternGoto
   of pcNext: etPatternSkip
 
-proc setSetting(op: var Operation, flag: OperationFlag, val: uint8) =
+proc setSetting(op: var Operation; flag: OperationFlag; val: uint8) =
   op.flags.incl(flag)
   op.settings[flag] = val
 
-proc setPatternCommand(op: var Operation, cmd: range[pcNext..pcJump], val: uint8) =
+proc setPatternCommand(op: var Operation; cmd: range[pcNext..pcJump];
+                       val: uint8) =
   op.setSetting(opsPatternCommand, val)
   op.patternCommand = cmd
 
-proc setFrequencyMod(op: var Operation, fm: FrequencyMod, val: uint8) =
+proc setFrequencyMod(op: var Operation; fm: FrequencyMod; val: uint8) =
   op.setSetting(opsFreqMod, val)
   op.freqMod = fm
 
@@ -266,21 +267,22 @@ func toOperation*(row: TrackRow): Operation =
       if (effect.param and 0x88) == 0:
         result.setSetting(opsVolume, effect.param)
 
-template contains*(op: Operation, flag: OperationFlag): bool =
+template contains*(op: Operation; flag: OperationFlag): bool =
   ## Shortcut for `flag in op.flags`
   flag in op.flags
 
-template forflagPresent*(op: Operation, flag: OperationFlag, body: untyped): untyped =
+template forflagPresent*(op: Operation; flag: OperationFlag; body: untyped
+                        ): untyped =
   ## Template that executes body if `flag` is present in `op`
   if flag in op:
     body
 
-template getSetting*(op: Operation, flag: OperationSetting): uint8 =
+template getSetting*(op: Operation; flag: OperationSetting): uint8 =
   ## Gets the `uint8` setting associated with the given `flag`. If `flag` is
   ## not present in `op`, `0` is returned.
   op.settings[flag]
 
-template `[]`*(op: Operation, flag: OperationSetting): uint8 =
+template `[]`*(op: Operation; flag: OperationSetting): uint8 =
   ## Shortcut for `op.getSetting(flag)`
   op.getSetting(flag)
 
@@ -297,7 +299,7 @@ func len*(ir: TrackIr): int =
     of rikOp:
       inc result
 
-iterator ops*(ir: TrackIr): tuple[rowno: int, op: Operation] =
+iterator ops*(ir: TrackIr): tuple[rowno: int; op: Operation] =
   ## Iterate all Operations for the given TrackIr. The row number the operation
   ## occurs, along with the operation is yielded per iteration.
   var i = 0
@@ -338,20 +340,21 @@ type
     len: int
     data: array[3, tuple[et: EffectType, ep: uint8]]
 
-proc push(e: var EffectStack, et: EffectType, ep = 0u8) =
+proc push(e: var EffectStack; et: EffectType; ep = 0u8) =
   if e.len < e.data.len:
     e.data[e.len] = (et, ep)
     inc e.len
 
-proc pushIfSet(e: var EffectStack, op: Operation, setting: OperationSetting, et: EffectType) =
+proc pushIfSet(e: var EffectStack; op: Operation; setting: OperationSetting;
+               et: EffectType) =
   if setting in op:
     e.push(et, op[setting])
 
-proc apply(e: EffectStack, track: var Track, rowNo: ByteIndex) =
+proc apply(e: EffectStack; track: var Track; rowNo: ByteIndex) =
   for i in 0..<e.len:
     track.setEffect(rowNo, i, e.data[i].et, e.data[i].ep)
 
-proc setFromIr*(track: var Track, ir: TrackIr) =
+proc setFromIr*(track: var Track; ir: TrackIr) =
   ## Sets the given track's row data using the given ir data. This proc does
   ## not clear the track beforehand for optimization purposes, ensure that
   ## `track` is an empty one first before calling this function.

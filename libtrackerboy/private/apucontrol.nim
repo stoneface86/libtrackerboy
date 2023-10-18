@@ -26,7 +26,7 @@ type
     retrigger: bool
     frequency: uint16
 
-proc add*(l: var ApuWriteList, regaddr, value: uint8) =
+proc add*(l: var ApuWriteList; regaddr, value: uint8;) =
   l.data[l.len] = (regaddr, value)
   inc l.len
 
@@ -43,7 +43,8 @@ func render(b: RetriggerByte): uint8 =
     result = 0x80
   result = result or ((b.frequency shr 8).uint8 and 0x7)
 
-proc accumulate(accum: var PanningAccum, panning: uint8, chno: static ChannelId) =
+proc accumulate(accum: var PanningAccum; panning: uint8;
+                chno: static ChannelId) =
   func makePanningTable(): auto =
     result = [0x00u8, 0x10, 0x01, 0x11]
     for item in result.mitems:
@@ -53,10 +54,10 @@ proc accumulate(accum: var PanningAccum, panning: uint8, chno: static ChannelId)
   accum.val = accum.val or panningTable[panning]
   accum.mask = accum.mask or (0x11u8 shl chno.ord)
 
-func update(accum: PanningAccum, nr51: uint8): uint8 =
+func update(accum: PanningAccum; nr51: uint8): uint8 =
   (nr51 and (not accum.mask)) or accum.val
 
-proc clearChannel*(chno: ChannelId, writes: var ApuWriteList) =
+proc clearChannel*(chno: ChannelId; writes: var ApuWriteList) =
   let regstart = rNR10 + (chno.ord * 5).uint8
   for regaddr in regstart..regstart+4:
     writes.add(regaddr, 0x00)
@@ -77,7 +78,9 @@ const waveVolumes = [
   0b00100000      # V03 - 100% volume (default)
 ]
 
-proc getChannelWrites(chno: static ChannelId, wt: WaveformTable, update: ChannelUpdate, panningAccum: var PanningAccum, list: var ApuWriteList) =
+proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
+                      update: ChannelUpdate; panningAccum: var PanningAccum;
+                      list: var ApuWriteList) =
   case update.action:
   of caNone:
     discard
@@ -130,7 +133,8 @@ proc getChannelWrites(chno: static ChannelId, wt: WaveformTable, update: Channel
     panningAccum.accumulate(0, chno)
     clearChannel(chno, list)
 
-func getWrites*(op: ApuOperation, wt: WaveformTable, nr51: uint8): ApuWriteList =
+func getWrites*(op: ApuOperation, wt: WaveformTable, nr51: uint8
+               ): ApuWriteList =
   var panningAccum: PanningAccum
 
   if op.sweep.isSome():

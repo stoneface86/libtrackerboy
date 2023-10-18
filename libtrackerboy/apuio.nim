@@ -42,12 +42,14 @@ type
 
   ApuIo* = concept var a
     ## Concept for a generic Apu emulator that provides I/O access procs.
+    ##
     readRegister(a, uint8) is uint8
     writeRegister(a, uint8, uint8)
 
 template toAddress*(reg: ApuRegister): uint8 = reg.ord.uint8
   ## Convert the register to its address. This just converts the result of
   ## ord to an uint8.
+  ##
 
 # These don't work with the ApuIo concept, "too nested for type matching"
 

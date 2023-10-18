@@ -41,7 +41,7 @@ const
     ## Special note index for a note cut. When used the channel will be
     ## silenced by disabling the DAC.
 
-template lookup(table: untyped, note: Natural): auto =
+template lookup(table: untyped; note: Natural): auto =
   table[clamp(note, low(table), high(table))]
 
 {. push raises: [] .}

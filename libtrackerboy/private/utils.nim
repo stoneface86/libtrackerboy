@@ -12,13 +12,16 @@ type
     ## 
     ## Ref wrapper type that changes the equality operator by testing for
     ## deep equality.
+    ##
     src*: ref T
       ## The source reference of the wrapper
+      ##
 
-func deepEquals*[T](a, b: ref T): bool =
+func deepEquals*[T](a, b: ref T;): bool =
   ## Deep equality test for two refs. Returns true if either:
   ## - they are both nil
   ## - they are not both nil and their referenced data is equivalent
+  ##
   runnableExamples:
     var a, b: ref int
     assert a.deepEquals(b)      # both are nil
@@ -44,10 +47,12 @@ func deepEquals*[T](a, b: ref T): bool =
 
 template toEqRef*[T](val: ref T): EqRef[T] =
   ## Converts a ref to an EqRef
+  ##
   EqRef[T](src: val)
 
-template `==`*[T](lhs, rhs: EqRef[T]): bool =
+template `==`*[T](lhs, rhs: EqRef[T];): bool =
   ## Equality test using deepEquals
+  ##
   runnableExamples:
     var a, b: EqRef[int]
     assert a == b
@@ -55,3 +60,4 @@ template `==`*[T](lhs, rhs: EqRef[T]): bool =
 
 template defaultInit*(): untyped = discard
   ## Alias for `discard`, to indicate that default initialization is intended.
+  ##

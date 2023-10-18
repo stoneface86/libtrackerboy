@@ -12,6 +12,7 @@ type
   ChannelId* = enum
     ## Channel identifier. Used to specify a hardware channel of the game
     ## boy APU
+    ##
     ch1
     ch2
     ch3
@@ -19,19 +20,24 @@ type
 
   PcmF32* = float32
     ## 32-bit floating point PCM sample
+    ##
 
   Pcm* = PcmF32
     ## Type alias for the PCM type used in this library
+    ##
 
   ByteIndex* = range[low(uint8).int..high(uint8).int]
     ## Index type using the range of a uint8 (0-255)
+    ## 
   
   PositiveByte* = range[1..high(uint8).int+1]
     ## Positive type using the range of a uint8 (1-256)
+    ##
 
   MixMode* = enum
     ## Enum of possible mix operations: mute, left-only, right-only or
     ## middle (both).
+    ##
     mixMute     = 0
     mixLeft     = 1
     mixRight    = 2
@@ -42,10 +48,12 @@ type
     ## types. Accessing the source is done through the [] overload proc.
     ## Both value and ref semantics can be used. When the source is a `ref`
     ## or `ptr`, accessing the source will dereference the ref/ptr.
+    ##
 
 template toImmutable*[T](s: T): Immutable[T] =
   ## Converts a value to an Immutable. Note that a copy of the value might
   ## be made.
+  ##
   Immutable[T](s)
 
 template getType[T](_: Immutable[T]): untyped = T
@@ -53,6 +61,7 @@ template getType[T](_: Immutable[T]): untyped = T
 template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
   ## Access the Immutable's ref/ptr source. The source is dereferenced and
   ## is returned.
+  ##
   runnableExamples:
     let myref = new(int)
     myref[] = 2
@@ -63,6 +72,7 @@ template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
 
 template `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
   ## Access the Immutable's value source.
+  ##
   runnableExamples:
     let myval = 2
     let immutableVal = myval.toImmutable
@@ -72,16 +82,18 @@ template `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
 
 template isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
   ## Test if the Immutable source is nil.
+  ##
   cast[getType(i)](i).isNil
 
-template `==`*[T](i: Immutable[T], rhs: T): bool =
+template `==`*[T](i: Immutable[T]; rhs: T): bool =
   ## Test if the Immutable's source is equivalent to the given value
+  ##
   cast[T](i) == rhs
 
-template `==`*[T](lhs: T, i: Immutable[T]): bool =
+template `==`*[T](lhs: T; i: Immutable[T]): bool =
   i == lhs
 
-template `==`*[T: ptr|ref](lhs: nil.typeof, rhs: Immutable[T]): bool =
+template `==`*[T: ptr|ref](lhs: nil.typeof; rhs: Immutable[T]): bool =
   rhs == lhs
 
 {. push inline, raises: [] .}

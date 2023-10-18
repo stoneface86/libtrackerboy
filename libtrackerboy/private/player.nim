@@ -28,9 +28,11 @@ type
     playing: bool
     context: PlayerContext
 
-func init*(_: typedesc[Player], song: Immutable[ref Song], loops: Natural): Player =
+func init*(_: typedesc[Player]; song: Immutable[ref Song]; loops: Natural
+          ): Player =
   ## Creates a player to loop the given song a given number of times.
   ## If `song` is `nil` or `loops` is `0`, the resulting player will not play.
+  ##
   if loops > 0 and song != nil:
     result.context = PlayerContext(
       kind: pckLoops,
@@ -39,8 +41,9 @@ func init*(_: typedesc[Player], song: Immutable[ref Song], loops: Natural): Play
     )
     result.playing = true
 
-func init*(_: typedesc[Player], frames: Natural): Player =
+func init*(_: typedesc[Player]; frames: Natural): Player =
   ## Creates a new player that will play for a given number of frames.
+  ##
   result.context = PlayerContext(
     kind: pckFrames,
     frameCounter: 0,
@@ -48,21 +51,24 @@ func init*(_: typedesc[Player], frames: Natural): Player =
   )
   result.playing = frames > 0
 
-func init*(_: typedesc[Player], framerate: float, seconds: Natural): Player =
+func init*(_: typedesc[Player]; framerate: float; seconds: Natural): Player =
   ## Creates a new player that will play for a given number of seconds. The
   ## number of frames that are played is determined by the given framerate in
   ## units of frames per second (Hz).
+  ##
   Player.init((seconds.float * framerate).Natural)
 
 func isPlaying*(p: Player): bool =
   ## The player's playing status. The player is finished playing when the
   ## status is `false`.
+  ##
   p.playing
 
 func progress*(p: Player): int =
   ## Current progress until the player finishes. A number from 0 to `progressMax`
   ## will be returned. This value can be used to indicate progress to the
   ## user. The unit of this value depends on how the Player was initialized.
+  ##
   case p.context.kind:
   of pckFrames:
     p.context.frameCounter
@@ -72,14 +78,17 @@ func progress*(p: Player): int =
 
 func progressMax*(p: Player): int =
   ## Maximum value of the player's progress.
+  ##
   case p.context.kind:
   of pckFrames:
     p.context.framesToPlay
   of pckLoops:
     p.context.loopAmount
 
-proc step*(p: var Player, engine: var Engine, instruments: InstrumentTable): bool {.raises: [].} =
+proc step*(p: var Player; engine: var Engine; instruments: InstrumentTable
+          ): bool {.raises: [].} =
   ## Steps the engine if the player is currently playing.
+  ##
   if p.playing:
     engine.step(instruments)
     let postframe = engine.currentFrame()
@@ -101,9 +110,11 @@ proc step*(p: var Player, engine: var Engine, instruments: InstrumentTable): boo
       p.playing = false
   result = p.playing
 
-template play*(p: var Player, engine: var Engine, instruments: InstrumentTable, body: untyped): untyped =
+template play*(p: var Player; engine: var Engine; instruments: InstrumentTable;
+               body: untyped): untyped =
   ## Calls `p.step` until the player finishes playing, executing `body` for
   ## each step.
+  ##
   while p.step(engine, instruments):
     body
 

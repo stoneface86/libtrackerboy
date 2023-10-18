@@ -56,7 +56,7 @@ proc begin*(b: var InputBlock): BlockId =
 func isFinished*(b: InputBlock): bool =
   b.avail == 0
 
-func init*(T: typedesc[InputBlock], stream: Stream): InputBlock =
+func init*(T: typedesc[InputBlock]; stream: Stream): InputBlock =
   InputBlock(
     stream: stream,
     avail: 0,
@@ -66,7 +66,7 @@ func init*(T: typedesc[InputBlock], stream: Stream): InputBlock =
 func size*(ib: InputBlock): int =
   ib.size
 
-proc readData*(b: var InputBlock, data: pointer, size: Natural): bool =
+proc readData*(b: var InputBlock; data: pointer; size: Natural): bool =
   if size > b.avail:
     return true
   let amountRead = b.stream.readData(data, size)
@@ -75,23 +75,23 @@ proc readData*(b: var InputBlock, data: pointer, size: Natural): bool =
     return true
   b.avail -= size
 
-proc read*[T: not openarray](b: var InputBlock, val: var T): bool =
+proc read*[T: not openarray](b: var InputBlock; val: var T): bool =
   b.readData(val.addr, T.sizeof)
 
-proc read*[T](b: var InputBlock, buf: var openarray[T]): bool =
+proc read*[T](b: var InputBlock; buf: var openarray[T]): bool =
   if buf.len > 0:
     b.readData(buf[0].addr, buf.len * T.sizeof)
   else:
     false
 
-func init*(T: typedesc[OutputBlock], stream: Stream): OutputBlock =
+func init*(T: typedesc[OutputBlock]; stream: Stream): OutputBlock =
   OutputBlock(
     stream: stream,
     lengthPos: 0,
     size: 0
   )
 
-proc begin*(b: var OutputBlock, blockId: BlockId) =
+proc begin*(b: var OutputBlock; blockId: BlockId) =
   b.stream.write(blockId.toLE)
 
   b.lengthPos = b.stream.getPosition()
@@ -108,14 +108,14 @@ proc finish*(b: var OutputBlock) =
     b.stream.write(size)
     b.stream.setPosition(oldpos)
 
-proc writeData*(b: var OutputBlock, data: pointer, size: Natural) =
+proc writeData*(b: var OutputBlock; data: pointer; size: Natural) =
   b.stream.writeData(data, size)
   b.size += size
 
-proc write*[T: not openarray](b: var OutputBlock, data: T) =
+proc write*[T: not openarray](b: var OutputBlock; data: T) =
   b.stream.write(data)
   b.size += data.sizeof
 
-proc write*[T](b: var OutputBlock, data: openarray[T]) =
+proc write*[T](b: var OutputBlock; data: openarray[T]) =
   if data.len > 0:
     b.writeData(data[0].unsafeAddr, data.len * T.sizeof)

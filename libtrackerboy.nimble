@@ -1,4 +1,4 @@
-from libtrackerboy/version as tbv import currentVersionString
+from ./libtrackerboy/version as tbv import currentVersionString
 
 # Package
 

@@ -210,7 +210,7 @@ template errorCheck(body: untyped): untyped =
     if error != frNone:
       return error
 
-template invalidWhen(cond: bool, res = frInvalidSize): untyped =
+template invalidWhen(cond: bool; res = frInvalidSize): untyped =
   ## template to return res when cond is true
   if cond:
     return res
@@ -269,7 +269,7 @@ proc upgradeHeader1to2(h: var HeaderBuf) =
   # store it back as a little endian uint32
   h2.customFramerate = customFramerateFloat.toLE
 
-proc deserialize(str: var string, ib: var InputBlock): FormatResult =
+proc deserialize(str: var string; ib: var InputBlock): FormatResult =
   str.setLen(block:
     # get the 2-byte length prefix
     var len: LittleEndian[uint16]
@@ -279,7 +279,7 @@ proc deserialize(str: var string, ib: var InputBlock): FormatResult =
   invalidWhen ib.read(str)
   frNone
 
-proc deserialize(s: var Sequence, ib: var InputBlock): FormatResult =
+proc deserialize(s: var Sequence; ib: var InputBlock): FormatResult =
   var format: SequenceFormat
   invalidWhen ib.read(format)
   let seqlen = format.length.toNE.int
@@ -295,7 +295,8 @@ proc deserialize(s: var Sequence, ib: var InputBlock): FormatResult =
   s.data = seqdata
   result = frNone
 
-proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): FormatResult =
+proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
+                                ): FormatResult =
   # all pieces start with a name for major > 0
   if major > 0:
     var name: string
@@ -381,11 +382,11 @@ proc deserialize[T: ModulePiece](p: var T, ib: var InputBlock, major: int): Form
     invalidWhen ib.read(p.data)
   frNone
 
-proc serialize(str: string, ob: var OutputBlock) =
+proc serialize(str: string; ob: var OutputBlock) =
   ob.write(toLE(str.len.uint16))
   ob.write(str)
 
-proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
+proc serialize[T: ModulePiece](p: T; ob: var OutputBlock) =
   serialize(p.name, ob)
   when T is Instrument:
     ob.write(p.channel.uint8)
@@ -442,10 +443,11 @@ proc serialize[T: ModulePiece](p: T, ob: var OutputBlock) =
 # Payload processing
 # A payload is composed of blocks
 
-proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): FormatResult =
+proc processIndx(m: var Module; ib: var InputBlock; icount, wcount: int;
+                ): FormatResult =
   # Index block, only present in legacy modules
 
-  proc legacyDeserialize(str: var string, ib: var InputBlock): bool =
+  proc legacyDeserialize(str: var string; ib: var InputBlock): bool =
     # legacy string deserializer, uses a 1-byte length prefix
     var len: uint8
     if ib.read(len):
@@ -455,7 +457,7 @@ proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): Format
 
   invalidWhen legacyDeserialize(m.songs[0].name, ib)
   
-  template readListIndex(count: int, table: untyped): untyped =
+  template readListIndex(count: int; table: untyped): untyped =
     for i in 0..<count:
       var id: uint8
       invalidWhen ib.read(id)
@@ -467,16 +469,16 @@ proc processIndx(m: var Module, ib: var InputBlock, icount, wcount: int): Format
   readListIndex(icount, m.instruments)
   readListIndex(wcount, m.waveforms)
 
-template readBlock(id: BlockId, stream: Stream, body: untyped): untyped =
+template readBlock(id: BlockId; stream: Stream; body: untyped): untyped =
   block:
     var ib {.inject.} = InputBlock.init(stream)
     invalidWhen ib.begin() != id, frInvalidBlock
     body
     invalidWhen not ib.isFinished()
 
-proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(m: var Module; stream: Stream): FormatResult {.raises: [].} =
   
-  proc readHeader(stream: Stream, header: var Header): FormatResult =
+  proc readHeader(stream: Stream; header: var Header): FormatResult =
     var headerBuf: HeaderBuf
     stream.read(headerBuf)
     let rev = headerBuf[revOffset]
@@ -494,7 +496,7 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
     header = cast[Header](headerBuf)
     result = frNone
 
-  proc processComm(m: var Module, ib: var InputBlock): FormatResult =
+  proc processComm(m: var Module; ib: var InputBlock): FormatResult =
     var comments: string
     if ib.size > 0:
       comments.setLen(ib.size)
@@ -548,7 +550,7 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
       readBlock blockIdSong, stream:
         errorCheck: deserialize(m.songs[0][], ib, major)
 
-      template processTableBlock(table: var SomeTable, blockId: BlockId) =
+      template processTableBlock(table: var SomeTable; blockId: BlockId) =
         readBlock blockId, stream:
           for id in table:
             errorCheck: deserialize(table[id][], ib, major)
@@ -564,7 +566,8 @@ proc deserialize*(m: var Module, stream: Stream): FormatResult {.raises: [].} =
         readBlock blockIdSong, stream:
           errorCheck: deserialize(m.songs[i][], ib, major)
 
-      template processTableBlock(table: var SomeTable, count: int, blockId: BlockId) =
+      template processTableBlock(table: var SomeTable; count: int;
+                                 blockId: BlockId) =
         for i in 0..<count:
           readBlock blockId, stream:
             var id: TableId
@@ -595,7 +598,8 @@ template blockIdOfType(T: typedesc[ModulePiece]): BlockId =
   else:   # Waveform
     blockIdWave
 
-template deserializeImpl[T: ModulePiece](p: var T, stream: Stream): FormatResult =
+template deserializeImpl[T: ModulePiece](p: var T; stream: Stream
+                                        ): FormatResult =
   try:
     var header: BasicHeader
     stream.read(header)
@@ -612,23 +616,24 @@ template deserializeImpl[T: ModulePiece](p: var T, stream: Stream): FormatResult
     return frReadError
   frNone
 
-proc deserialize*(i: var Instrument, stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(i: var Instrument; stream: Stream
+                 ): FormatResult {.raises: [].} =
   deserializeImpl(i, stream)
 
-proc deserialize*(s: var Song, stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(s: var Song; stream: Stream): FormatResult {.raises: [].} =
   deserializeImpl(s, stream)
 
-proc deserialize*(w: var Waveform, stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(w: var Waveform; stream: Stream): FormatResult {.raises: [].} =
   deserializeImpl(w, stream)
 
-template writeBlock(id: BlockId, stream: Stream, body: untyped): untyped =
+template writeBlock(id: BlockId; stream: Stream; body: untyped): untyped =
   block:
     var ob {.inject.} = OutputBlock.init(stream)
     ob.begin(id)
     body
     ob.finish()
 
-proc serialize*(m: Module, stream: Stream): FormatResult {.raises: [].} =
+proc serialize*(m: Module; stream: Stream): FormatResult {.raises: [].} =
   # header
   try:
     block:
@@ -654,7 +659,7 @@ proc serialize*(m: Module, stream: Stream): FormatResult {.raises: [].} =
       writeBlock blockIdSong, stream:
         serialize(m.songs[i][], ob)
 
-    template processTableBlock(table: SomeTable, blockId: BlockId) =
+    template processTableBlock(table: SomeTable; blockId: BlockId) =
       for id in table:
         writeBlock blockId, stream:
           ob.write(id)
@@ -668,7 +673,7 @@ proc serialize*(m: Module, stream: Stream): FormatResult {.raises: [].} =
   except IOError, OSError:
     return frWriteError
 
-template serializeImpl[T: ModulePiece](p: T, stream: Stream): FormatResult =
+template serializeImpl[T: ModulePiece](p: T; stream: Stream): FormatResult =
   try:
     stream.write(currentVersionHeader())
     writeBlock blockIdOfType(T.type), stream:
@@ -677,11 +682,11 @@ template serializeImpl[T: ModulePiece](p: T, stream: Stream): FormatResult =
     return frWriteError
   frNone
 
-proc serialize*(i: Instrument, stream: Stream): FormatResult {.raises: [].} =
+proc serialize*(i: Instrument; stream: Stream): FormatResult {.raises: [].} =
   serializeImpl(i, stream)
 
-proc serialize*(s: Song, stream: Stream): FormatResult {.raises: [].} =
+proc serialize*(s: Song; stream: Stream): FormatResult {.raises: [].} =
   serializeImpl(s, stream)
 
-proc serialize*(w: Waveform, stream: Stream): FormatResult {.raises: [].} =
+proc serialize*(w: Waveform; stream: Stream): FormatResult {.raises: [].} =
   serializeImpl(w, stream)

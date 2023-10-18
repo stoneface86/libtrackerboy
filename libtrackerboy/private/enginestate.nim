@@ -38,6 +38,7 @@ type
 
   ChannelState* = object
     ## State of a channel
+    ##
     envelope*: uint16
     timbre*: uint8
     panning*: uint8
@@ -64,6 +65,7 @@ type
 
   GlobalState* = object
     ## State of the music runtime that is accessible by all tracks
+    ##
     patternCommand*: PatternCommand
     patternCommandParam*: uint8
     panning*: array[ChannelId, uint8]
@@ -75,6 +77,7 @@ type
   ApuOperation* = object
     ## An operation or modification to be made to an ApuIo object
     ## Stepping the Engine results in an ApuOperation
+    ##
     updates*: array[ChannelId, ChannelUpdate]
     sweep*: Option[uint8]
     volume*: Option[uint8]

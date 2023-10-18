@@ -50,19 +50,16 @@ type
 
   DurationKind* = enum
     ## Possible duration units
-    dkSeconds
-      ## The unit is a second.
-    dkLoops
-      ## The unit is a count of times the song has looped.
-  
+    ##
+    dkSeconds ## The unit is a second.
+    dkLoops   ## The unit is a count of times the song has looped.
+      
   Duration* = object
     ## A duration is a unit and an amount that determines the length of time
     ## the exported song will have.
     ## 
-    kind*: DurationKind
-      ## The unit
-    amount*: Natural
-      ## The amount
+    kind*: DurationKind   ## The unit
+    amount*: Natural      ## The amount
 
   WavConfig* = object
     ## Configuration of the WAV file to create.
@@ -70,19 +67,25 @@ type
     song*: Natural
       ## Index of the song in the module to export. Default is 0, or the first
       ## song.
+      ##
     duration*: Duration
       ## The duration to export. Default is 1 minute (60 dkSeconds).
+      ##
     filename*: string
       ## Destination filename of the output WAV file.
+      ##
     samplerate*: Natural
       ## Output samplerate, in Hertz, of the output WAV file. Must not be 0.
       ## Default is 44100 Hz.
+      ##
     channels*: set[ChannelId]
       ## Set of channels to export. Default is all channels.
+      ##
     isMono*: bool
       ## If set to true, the output file will be in mono sound (1 sound channel).
       ## stereo otherwise. Mono sound conversion is done by averaging the left
       ## and right channels. Default is false, or stereo sound.
+      ##
 
   WavExporter* = object
     ## WavExporter object for iterative mode. An exporter can be created via
@@ -104,11 +107,8 @@ func init*(T: typedesc[WavConfig]): WavConfig =
     duration: Duration(kind: dkSeconds, amount: 60)
   )
 
-proc init*(
-  T: typedesc[WavExporter],
-  module: Module,
-  config: WavConfig
-): WavExporter {. raises: [IOError] .} =
+proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
+          ): WavExporter {. raises: [IOError] .} =
   ## Initializes a WavExporter for a given module and config. The output WAV
   ## file specified in `config` is created and ready to be filled with samples.
   ## 
@@ -117,7 +117,8 @@ proc init*(
   ## 
   ## An `IOError` will be raised if the output file could not be written to.
   ## 
-  proc init(T: typedesc[Player], module: Module, tickrate: float, config: WavConfig): Player =
+  proc init(T: typedesc[Player]; module: Module; tickrate: float; 
+            config: WavConfig): Player =
     case config.duration.kind:
     of dkSeconds:
       Player.init(tickrate, config.duration.amount)
@@ -148,7 +149,7 @@ func hasWork*(ex: WavExporter): bool {. raises: [] .} =
   ## 
   ex.player.isPlaying
 
-proc process*(ex: var WavExporter, module: Module) {. raises: [IOError] .} =
+proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
   ## Processes a single frame and writes it to the destination WAV file. If the
   ## exporter is finished this proc does nothing. Use
   ## `hasWork <#hasWork,WavExporter>`_ to check before calling this proc.
@@ -204,7 +205,7 @@ proc batched*(config: WavConfig): seq[WavConfig] {. raises: [] .} =
       dir / res
     result.add(batch)
 
-proc exportWav*(module: Module, config: WavConfig) {. raises: [IOError] .} =
+proc exportWav*(module: Module; config: WavConfig) {. raises: [IOError] .} =
   ## Exports a song in module to WAV using the given config.
   ## 
   ## An `IOError` may be raised if the output WAV file could not be written to.
