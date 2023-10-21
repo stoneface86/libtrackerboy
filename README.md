@@ -1,8 +1,8 @@
 
 # libtrackerboy
 
-Support library for [Trackerboy](https://github.com/stoneface86/trackerboy).
-Also known as the back end of Trackerboy.
+Support library for [TrackerBoy](https://github.com/stoneface86/trackerboy).
+Also known as the back end of TrackerBoy.
 
 This library handles:
  * Reading/Writing trackerboy module files
@@ -11,33 +11,30 @@ This library handles:
  * Module playback
  * (Coming soon) export to [tbengine](https://github.com/stoneface86/tbengine) format.
 
-## `./nut`
+## Install
 
-The [nut](nut) script is a shortcut for executing the [nut.nims](nut.nims) nimscript via
-the nim compiler. This script contains utility tasks like nimble tasks, but
-can properly forward compiler flags and can easily handle task arguments. Use
-this script instead of nimble for tasks.
+Install via nimble or atlas
 
 ```sh
-# usage:
-./nut [compiler-flags...] task [task-arguments...]
-# for available tasks:
-./nut help
+# nimble
+nimble install https://github.com/stoneface86/libtrackerboy/
+# atlas
+atlas use https://github.com/stoneface86/libtrackerboy/
 ```
 
-### Example
+## Build tasks
 
-```sh
-# builds and runs bin/apugen in release mode with ARC memory management
-./nut --mm:arc -d:release apugen
-```
+Tasks for building tests, documentation, etc, are located in
+[build.nims](build.nims). This nimscript is included by config.nims and
+libtrackerboy.nimble, so they are available via `nim` when using atlas and
+`nimble` when using nimble.
 
 ## Testing
 
-The unit tester can be run using the `test` task via `./nut`
+The unit tester can be run using the `test` task
 ```sh
 # build and run the unit tester with optional test name matchers
-./nut test [matchers...]
+nim test [matchers...]
 ```
 
 When launching the tester you can supply any number of matcher arguments that
@@ -58,11 +55,11 @@ modulename[.classname].testname
 
 ```sh
 # Runs everything
-./nut test
+nim test
 # Runs all tests for the common and io modules
-./nut test common.\* io.\*
+nim test common.\* io.\*
 # Runs all tests for the Immutable type defined in the common module
-./nut test common.Immutable.\*
+nim test common.Immutable.\*
 ```
 
 ### unittest2
@@ -79,16 +76,16 @@ suites provide, use `testgroup` instead, which is provided by the
 There are some extra programs for testing that are not automated. The source
 for these programs are located in [tests/standalones](tests/standalones).
 These programs generate audio files to be verified by ear. To run, use the
-apugen and wavegen `./nut` tasks.
+apugen and wavegen tasks.
 
 ```sh
 # apugen, generates sample audio by testing the APU emulator
 # generated audio files are located in ./bin/apugen.d/
-./nut apugen
+nim apugen
 
 # wavegen, tests the bandlimited synthesis module by generating simple square tones
 # generated audio files are located in ./bin/wavegen.d/
-./nut wavegen
+nim wavegen
 ```
 
 ## Migration from Trackerboy

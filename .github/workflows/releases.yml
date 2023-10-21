@@ -74,8 +74,8 @@ jobs:
 
       - name: Generate documentation
         run: |
-          ./nut docs ${{ needs.draft-release.outputs.version }}
-          ./nut docsSpecs
+          nimble -d:gitRef:${{ needs.draft-release.outputs.version }} docs
+          nimble docsSpecs
       
       - name: Clone gh-pages
         uses: actions/checkout@v3

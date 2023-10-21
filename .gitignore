@@ -2,7 +2,4 @@
 .vscode/
 bin/
 htmldocs/
-nimcache/
-testresults/
-outputExpected.txt
-outputGotten.txt
+nim.cfg

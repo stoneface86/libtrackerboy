@@ -35,8 +35,8 @@ jobs:
 
       - name: Generate documentation
         run: |
-          ./nut docs
-          ./nut docsSpecs
+          nimble docs
+          nimble docsSpecs
 
       - name: Clone gh-pages
         uses: actions/checkout@v3
