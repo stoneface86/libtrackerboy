@@ -1,25 +1,22 @@
 
-import testing
+import unittest2
 import libtrackerboy/common
-
-testunit "common"
-testclass "Immutable"
 
 type T = int
 
-dtest "default Immutable[ref T] == nil":
+test "default Immutable[ref T] == nil":
   var iref: Immutable[ref T]
   check:
     iref.isNil
     iref == nil
     nil == iref
 
-dtest "default Immutable[T] == default(T)":
+test "default Immutable[T] == default(T)":
   var ival: Immutable[T]
   check:
     ival[] == default(T)
 
-dtest "Immutable[ref T] access":
+test "Immutable[ref T] access":
   
   var ref1: ref T
   new(ref1)
@@ -30,9 +27,7 @@ dtest "Immutable[ref T] access":
     iref == ref1
     ref1 == iref
 
-testclass "MixMode"
-
-dtest "pan tests":
+test "pan tests":
   check:
     not mixMute.pansLeft
     not mixMute.pansRight

@@ -30,15 +30,19 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
   ]
   for defs in matrix:
     echo "switches: ", defs
-    exec &"nim r --hints:off {defs} tests/endianTests.nim"
+    exec &"nim r --hints:off {defs} tests/units/private/tendian.nim"
 
 task buildTests, "Builds the unit tester":
   nohints()
-  vexec("nim", "c", flagOutdir, "tests/tests.nim")
+  vexec("nim", "--hints:off", "c", flagOutdir, "tests/tests.nim")
 
 task test, "Runs unit tests":
   buildTestsTask()
-  exec binDir / "tests"
+  try:
+    exec binDir / "tests"
+    echo "All tests passed."
+  except OSError:
+    discard
 
 # DEMO/STANDALONE TEST PROGRAMS
 

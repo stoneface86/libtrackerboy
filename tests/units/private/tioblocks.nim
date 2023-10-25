@@ -1,13 +1,13 @@
 
 import libtrackerboy/private/ioblocks
-import ../testing
+
+import unittest2
+
 import std/streams
 
-testunit "private/ioblocks"
-testclass ""
-
-const testBlockId = "TEST".toBlockId
-const testBlockData = ['e', 'x', 'a', 'm', 'p', 'l', 'e']
+const 
+  testBlockId = "TEST".toBlockId
+  testBlockData = ['e', 'x', 'a', 'm', 'p', 'l', 'e']
 
 proc writeTestBlock(stream: Stream) =
   var ob = OutputBlock.init(stream)
@@ -15,12 +15,12 @@ proc writeTestBlock(stream: Stream) =
   ob.write(testBlockData)
   ob.finish()
 
-testgroup:
+suite "ioblocks":
 
   setup:
     var stream = newStringStream()
 
-  dtest "persistance":
+  test "persistance":
 
     type SampleObject = object
       a: int
@@ -69,7 +69,7 @@ testgroup:
       testRead(fifthVal)
       check ib.isFinished()
 
-  dtest "InputBlock returns true when reading past the block":
+  test "InputBlock returns true when reading past the block":
     writeTestBlock(stream)
 
     stream.setPosition(0)
@@ -102,7 +102,7 @@ testgroup:
       check stream.getPosition() == pos
 
 
-  dtest "OutputBlock data format":
+  test "OutputBlock data format":
     writeTestBlock(stream)
 
     stream.setPosition(0)

@@ -39,6 +39,7 @@ func init*(_: typedesc[Player]; song: Immutable[ref Song]; loops: Natural
       visits: newSeq[int](song[].order.len),
       loopAmount: loops
     )
+    result.context.visits[0] = 1
     result.playing = true
 
 func init*(_: typedesc[Player]; frames: Natural): Player =
@@ -74,7 +75,6 @@ func progress*(p: Player): int =
     p.context.frameCounter
   of pckLoops:
     p.context.progress
-    #p.context.visits[p.context.currentPattern]
 
 func progressMax*(p: Player): int =
   ## Maximum value of the player's progress.

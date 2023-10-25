@@ -1,10 +1,10 @@
 
 import libtrackerboy/private/[hardware, synth]
 import libtrackerboy/common
-import ../testing
 
-testunit "private/synth"
-testclass "Synth"
+import unittest2
+
+#import ../testing
 
 iterator iterateChannel(buf: openArray[Pcm], channel: int): Pcm =
   var time = channel
@@ -21,7 +21,7 @@ proc isZero(buf: openArray[Pcm], channel: int): bool =
 
 const samplerate = 44100
 
-dtest "highpass":
+test "highpass":
   # test the highpass filter
   # an impulse is mixed at time 0 and the signal generated should
   # decay to 0. Only the decay is tested, not the performance of the filter itself
@@ -50,7 +50,7 @@ dtest "highpass":
     result = true
   check checkDecay()
 
-dtest "resampling":
+test "resampling":
   const samplerates = [11025, 22050, 44100, 88200]
 
   var synth = Synth.init()
@@ -70,7 +70,7 @@ dtest "resampling":
     check buf[rate * 2] > 0.0f
 
 
-dtest "mixing":
+test "mixing":
   proc equals(buf1, buf2: openarray[Pcm], channel: int): bool =
     if buf1.len == buf2.len:
       var time = channel

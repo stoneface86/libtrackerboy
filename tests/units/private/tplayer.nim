@@ -1,9 +1,6 @@
 
 import libtrackerboy/private/player as playerModule
-import ../testing
-
-testunit "private/player"
-testclass "Player"
+import unittest2
 
 type
   PlayerState = (bool, int, int)
@@ -12,6 +9,29 @@ const haltRow = 5
 
 converter toPlayerState(p: Player): PlayerState =
   (p.isPlaying, p.progress, p.progressMax)
+
+func stepTest(p: var Player; e: var Engine; it: InstrumentTable): PlayerState =
+  discard p.step(e, it)
+  p.toPlayerState()
+
+func getSampleSongNoJump(): ref Song =
+  result = Song.new()
+  result.speed = unitSpeed
+  result.trackLen = 1
+  result[].order.setLen(3)
+
+func getSampleSong2(): ref Song =
+  result = Song.new()
+  result.speed = unitSpeed
+  result.trackLen = 1
+  # 0 0 0 0
+  # 1 1 1 1
+  # 2 2 2 2
+  result[].order.setLen(3)
+  result[].order[1] = [1u8, 1, 1, 1]
+  result[].order[2] = [2u8, 2, 2, 2]
+  result[].editTrack(ch3, 2, track):
+    track.setEffect(0, 0, etPatternGoto, 1)
 
 
 func getSampleSong(): ref Song =
@@ -33,15 +53,54 @@ func getHaltingSong(): ref Song =
   result[].editTrack(ch2, 0, track):
     track.setEffect(haltRow, 0, etPatternHalt, 0)
 
+suite "Player":
+  setup:
+    var
+      p = default(Player)
+      e = Engine.init()
+      it = InstrumentTable.init()
+  
+  test "looping with B01":
+    let song = toImmutable(getSampleSong2())
+    p = Player.init(song, 2)
+    e.play(song)
+    check:
+      p.stepTest(e, it) == (true, 0, 2) # pattern 0, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 0, 2) # pattern 1, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 0, 2) # pattern 2, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 1, 2) # pattern 1, row 0 (loop 1)
+      p.stepTest(e, it) == (true, 1, 2) # pattern 2, row 0 (loop 1)
+      p.stepTest(e, it) == (false, 2, 2) # pattern 1, row 0 (loop 2)
+      p.stepTest(e, it) == (false, 2, 2) # pattern 2, row 0 (loop 2)
+  
+  test "looping with no jumps":
+    let song = toImmutable(getSampleSongNoJump())
+    p = Player.init(song, 2)
+    e.play(song)
+    check:
+      p.stepTest(e, it) == (true, 0, 2) # pattern 0, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 0, 2) # pattern 1, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 0, 2) # pattern 2, row 0 (loop 0)
+      p.stepTest(e, it) == (true, 1, 2) # pattern 0, row 0 (loop 1)
+      p.stepTest(e, it) == (true, 1, 2) # pattern 1, row 0 (loop 1)
+      p.stepTest(e, it) == (true, 1, 2) # pattern 2, row 0 (loop 1)
+      p.stepTest(e, it) == (false, 2, 2) # pattern 0, row 0 (loop 2)
+      p.stepTest(e, it) == (false, 2, 2) # pattern 1, row 0 (loop 2)
 
-dtest "default(Player) doesn't play":
-  var player = Player.default
-  var e = Engine.init()
-  var it = InstrumentTable.init()
-  checkout:
-    player.toPlayerState == (false, 0, 0)
-    not player.step(e, it)
-    player.toPlayerState == (false, 0, 0)
+  test "default(Player) doesn't play":
+    check:
+      p.toPlayerState == (false, 0, 0)
+      p.stepTest(e, it) == (false, 0, 0)
+  
+  test "frames":
+    const testFrameCount = 10
+    let song = toImmutable(getSampleSong())
+    p = Player.init(testFrameCount)
+    e.play(song)
+    for i in 1..<testFrameCount:
+      check p.stepTest(e, it) == (true, i, testFrameCount)
+    check p.stepTest(e, it) == (false, testFrameCount, testFrameCount)
+
 
 proc loopTestImpl(loops, runs: Natural): seq[PlayerState] =
   let song = getSampleSong()
@@ -54,7 +113,7 @@ proc loopTestImpl(loops, runs: Natural): seq[PlayerState] =
     result.add(player.toPlayerState)
 
 template loopTest(loops: Natural, expected: openArray[PlayerState]): untyped {.dirty.} =
-  dtest "loops-" & $loops:
+  test "loops-" & $loops:
     const expectedData = expected
     let results = loopTestImpl(loops, expectedData.len)
     check results == expectedData
@@ -86,35 +145,18 @@ loopTest(2, [
   (false, 2, 2)
 ])
 
-dtest "halts":
-  let song = getHaltingSong()
-  var players = [
-    Player.init(song.toImmutable, 3),
-    Player.init(100)
-  ]
-  var engine = Engine.init()
-  var itable = InstrumentTable.init()
-  for player in players.mitems:
-    engine.play(song.toImmutable)
+test "halts":
+  let song = toImmutable(getHaltingSong())
+  var 
+    players = [
+      Player.init(song, 3),
+      Player.init(100)
+    ]
+    e = Engine.init()
+    it = InstrumentTable.init()
+  for p in players.mitems:
+    e.play(song)
     for i in 0..haltRow+1:
-      discard player.step(engine, itable)
-    check not player.isPlaying
+      discard p.step(e, it)
+    check not p.isPlaying
 
-
-dtest "frames":
-  const testFrameCount = 10
-  let song = getSampleSong()
-  var player = Player.init(testFrameCount)  # olay 10 frames
-  var engine = Engine.init()
-  var itable = InstrumentTable.init()
-  engine.play(song.toImmutable)
-
-  checkout player.progressMax == testFrameCount
-  for i in 0..<testFrameCount:
-    checkout:
-      player.isPlaying
-      player.progress == i
-    discard player.step(engine, itable)
-  checkout:
-    not player.isPlaying
-    player.progress == player.progressMax

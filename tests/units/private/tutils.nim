@@ -1,56 +1,49 @@
 
-import ../testing
+#import ../testing
 import libtrackerboy/private/utils
 
-testunit "private/utils"
-testclass "deepEquals"
+import unittest2
 
 type T = int
 
+suite "deepEquals":
+  setup:
+    var a, b: ref T
+    template checkEqual(): untyped {.used.} =
+      check:
+        deepEquals(a, b)
+        deepEquals(b, a)
+    template checkNotEqual(): untyped {.used.} =
+      check:
+        not deepEquals(a, b)
+        not deepEquals(b, a)
+  
+  test "equal when a, b are nil":
+    checkEqual
 
-template setup(): untyped {.dirty.} =
-  var a, b: ref T
-  template checkEqual(): untyped {.used.} =
-    check:
-      deepEquals(a, b)
-      deepEquals(b, a)
-  template checkNotEqual(): untyped {.used.} =
-    check:
-      not deepEquals(a, b)
-      not deepEquals(b, a)
+  test "equal when a, b are the same reference":
+    new(a)
+    b = a
+    checkEqual
 
-dtest "equal when a, b are nil":
-  setup
-  checkEqual
+  test "not equal when a is nil, b is not nil":
+    new(a)
+    checkNotEqual
 
-dtest "equal when a, b are the same reference":
-  setup
-  new(a)
-  b = a
-  checkEqual
+  test "not equal when a is not nil, b is nil":
+    new(b)
+    checkNotEqual
 
-dtest "not equal when a is nil, b is not nil":
-  setup
-  new(a)
-  checkNotEqual
+  test "not equal when a[] is 2, b[] is 3":
+    new(a)
+    new(b)
+    a[] = 2
+    b[] = 3
+    checkNotEqual
 
-dtest "not equal when a is not nil, b is nil":
-  setup
-  new(b)
-  checkNotEqual
-
-dtest "not equal when a[] is 2, b[] is 3":
-  setup
-  new(a)
-  new(b)
-  a[] = 2
-  b[] = 3
-  checkNotEqual
-
-dtest "equal when a[] and b[] are 2":
-  setup
-  new(a)
-  new(b)
-  a[] = 2
-  b[] = 2
-  checkEqual
+  test "equal when a[] and b[] are 2":
+    new(a)
+    new(b)
+    a[] = 2
+    b[] = 2
+    checkEqual

@@ -4,10 +4,8 @@
 
 
 import libtrackerboy/private/endian
-import ../testing
 
-testunit "private/endian"
-testclass ""
+import unittest2
 
 const testData = (
   [0x1234'u16,             0x3412'u16],
@@ -40,14 +38,14 @@ static:
   assert sameSize(float64)
 
 
-dtest "involution":
+test "involution":
   # endian conversion has an involutory property
   # converting a value to LE, then converting that to NE should result
   # in the original value.
   for val in testData.fields:
     check involutionTest(val[0])
 
-dtest "toLE/toNE":
+test "toLE/toNE":
   for val in testData.fields:
     when willCorrect:
       let input = val[0]
