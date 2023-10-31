@@ -5,8 +5,12 @@ ModulePiece types.
 
 ]##
 
-import data, private/[endian, ioblocks], version
-import private/data as dataPrivate
+import
+  ./data,
+  ./version,
+  ./private/endian,
+  ./private/ioblocks
+import ./private/data as dataPrivate
 
 import std/[options]
 

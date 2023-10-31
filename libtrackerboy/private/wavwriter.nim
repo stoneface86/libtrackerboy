@@ -4,10 +4,14 @@
 
 ]##
 
-import ../common, endian, destroy2
-export PcmF32
+import
+  ./endian,
+  ./destroy2,
+  ../common
 
 import std/[with]
+
+export PcmF32
 
 type
 

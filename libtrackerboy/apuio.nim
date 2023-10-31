@@ -5,7 +5,8 @@ registers.
 
 ]##
 
-import private/hardware
+import
+  ./private/hardware
 
 type
   ApuRegister* = enum

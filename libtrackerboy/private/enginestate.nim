@@ -5,7 +5,9 @@
 ]##
 
 
-import ../common, ../ir
+import
+  ../common,
+  ../ir
 
 import std/options
 

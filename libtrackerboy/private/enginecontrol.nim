@@ -4,8 +4,11 @@
 
 ]##
 
-import enginestate
-import ../data, ../notes, ../ir
+import
+  ./enginestate,
+  ../data,
+  ../notes,
+  ../ir
 
 import std/[bitops, options, with]
 

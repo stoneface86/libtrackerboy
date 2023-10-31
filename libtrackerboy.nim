@@ -62,18 +62,16 @@ See also
 
 ]##
 
-import libtrackerboy/[
-  apu,
-  common,
-  data,
-  editing,
-  engine,
-  io,
-  notes,
-  version
-]
-import libtrackerboy/exports/[
-  wav
-]
-export apu, common, data, editing, engine, io, notes, version
-export wav
+import
+  ./libtrackerboy/apu,
+  ./libtrackerboy/common,
+  ./libtrackerboy/data,
+  ./libtrackerboy/editing,
+  ./libtrackerboy/engine,
+  ./libtrackerboy/io,
+  ./libtrackerboy/notes,
+  ./libtrackerboy/version,
+  ./libtrackerboy/exports/wav
+
+
+export apu, common, data, editing, engine, io, notes, version, wav

@@ -4,11 +4,15 @@ Module for the data model. This module contains data types used in the library.
 
 ]##
 
-import common, private/[data, utils], version 
-export common
+import
+  ./common,
+  ./version,
+  ./private/data,
+  ./private/utils
 
 import std/[math, options, parseutils, sequtils, tables]
-export options
+
+export common, options
 
 const
   speedFractionBits = 4

@@ -4,10 +4,11 @@
 
 ]##
 
-import ../engine
-import ../data
+import
+  ../data,
+  ../engine
 
-export engine, data
+export data, engine
 
 type
 

@@ -4,10 +4,13 @@ Module for editing pattern data.
 
 ]##
 
-import common, data
-export common
+import 
+  ./common,
+  ./data
 
 import std/options
+
+export common
 
 #
 # Iterating selections:

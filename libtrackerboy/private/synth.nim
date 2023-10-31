@@ -4,10 +4,14 @@
 
 ]##
 
-import ../common, hardware, ptrarith
-export Pcm
+import
+  ./hardware,
+  ./ptrarith,
+  ../common
 
 import std/[algorithm, math]
+
+export Pcm
 
 const
   stepWidth = 16

@@ -12,15 +12,21 @@ are updated in order to play music.
 ## mr - music runtime
 ## chno - channel number
 
-import ./[apuio, common, data]
-export common
+import
+  ./apuio,
+  ./common,
+  ./data,
 
-# enginecontrol and apucontrol are technically part of this module
-# they are split into two modules for unit testing
-import ./private/[apucontrol, enginecontrol, enginestate, hardware]
+  # enginecontrol and apucontrol are technically part of this module
+  # they are split into two modules for unit testing
+  ./private/apucontrol,
+  ./private/enginecontrol,
+  ./private/enginestate,
+  ./private/hardware
 
 import std/[options, times, with]
 
+export common, times
 export Module, Song, ApuIo, EngineFrame
 
 template withSome[T](opt: var Option[T]; body: untyped): untyped =

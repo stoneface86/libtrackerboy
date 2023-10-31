@@ -2,7 +2,8 @@
 .. include:: warning.rst
 ]##
 
-import ../version
+import
+  ../version
 
 type
   ModulePrivate* = object

@@ -22,8 +22,11 @@
 ## Creating IR can be done by using the getIr procs, or created manually.
 ##
 
-import std/options
-import data, notes
+import
+  ./data,
+  ./notes
+
+import std/[options]
 
 type
   PatternCommand* = enum

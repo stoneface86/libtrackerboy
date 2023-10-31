@@ -42,7 +42,11 @@ Example:
 ]##
 
 
-import ../apu, ../engine, ../private/[player, wavwriter]
+import 
+  ../apu,
+  ../engine,
+  ../private/player,
+  ../private/wavwriter
 
 import std/os
 

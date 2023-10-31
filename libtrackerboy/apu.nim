@@ -14,10 +14,14 @@ the hardware being emulated.
 
 ]##
 
-import common, private/[hardware, synth]
-export common
+import 
+  ./common,
+  ./private/hardware,
+  ./private/synth
 
 import std/[bitops, algorithm, math]
+
+export common
 
 const
   dcOffset: float32 = 7.5f

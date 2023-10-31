@@ -4,8 +4,12 @@
 
 ]##
 
-import enginestate, hardware
-import ../common, ../data, ../notes
+import 
+  ./enginestate,
+  ./hardware,
+  ../common,
+  ../data,
+  ../notes
 
 import std/[bitops, options]
 
