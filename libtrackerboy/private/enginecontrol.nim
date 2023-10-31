@@ -86,7 +86,7 @@ type
     period*, counter*: int
 
   MusicRuntime* = object
-    song*: Immutable[ref Song]
+    song*: Immutable[ptr Song]
     halted*: bool
     orderCounter*: int
     rowCounter*: int
@@ -453,7 +453,7 @@ proc step(tc: var TrackControl; itable: InstrumentTable;
   else:
     result[0] = naOff
 
-func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ref Song];
+func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
            orderNo, rowNo: int; patternRepeat: bool): MusicRuntime =
   result = MusicRuntime(
     song: song,

@@ -12,14 +12,14 @@ are updated in order to play music.
 ## mr - music runtime
 ## chno - channel number
 
-import apuio, common, data
+import ./[apuio, common, data]
 export common
 
 # enginecontrol and apucontrol are technically part of this module
 # they are split into two modules for unit testing
-import private/[apucontrol, enginecontrol, enginestate, hardware]
+import ./private/[apucontrol, enginecontrol, enginestate, hardware]
 
-import std/[options, with]
+import std/[options, times, with]
 
 export Module, Song, ApuIo, EngineFrame
 
@@ -35,6 +35,7 @@ type
     ## an ApuIo object directly, in order to reduce coupling and code
     ## duplication.
     ## 
+    song: Immutable[ref Song]
     musicRuntime: Option[MusicRuntime]
     #sfxRuntime...
     time: int
@@ -82,6 +83,7 @@ proc halt*(e: var Engine) =
 proc reset*(e: var Engine) =
   ## Resets the engine to default state.
   ##
+  e.song.reset()
   e.musicRuntime = none(MusicRuntime)
   e.time = 0
   e.apuOp = ApuOperation.default
@@ -103,7 +105,8 @@ proc play*(e: var Engine; song: sink Immutable[ref Song]; pattern = Natural(0);
   if row >= song[].trackLen:
     raise newException(IndexDefect, "invalid row index")
 
-  e.musicRuntime = some(MusicRuntime.init(song, pattern, row, e.patternRepeat))
+  e.song = song
+  e.musicRuntime = some(MusicRuntime.init(cast[Immutable[ptr Song]](song), pattern, row, e.patternRepeat))
   e.frame = EngineFrame(startedNewPattern: true)
   e.time = 0
 
@@ -132,8 +135,7 @@ func currentSong*(e: Engine): Immutable[ref Song] =
   ## Gets the current song that is playing, `nil` is returned if there is
   ## no song playing.
   ## 
-  if e.musicRuntime.isSome():
-    result = e.musicRuntime.get().song
+  e.song
 
 proc takeOperation*(e: var Engine): ApuOperation =
   ## Takes out the operation to be applied to an ApuIo. Should be called after
@@ -226,5 +228,63 @@ proc stepAndApply*(e: var Engine; itable: InstrumentTable;
   ##
   e.step(itable)
   apu.apply(e.takeOperation(), wtable)
+
+# Runtime calculation =========================================================
+
+func runtime*(song: Song; loopFor = Positive(1);
+              pattern = ByteIndex(0); row = ByteIndex(0)): int =
+  ## Gets the runtime in frames when playing a song.
+  ## * `loopFor` is the number of times to loop
+  ## * `pattern` is the starting pattern
+  ## * `row` is the starting row
+  ##
+  ## The minimum runtime of a song is 1 frame, since 1 frame is required to be
+  ## stepped in order for a song to halt.
+  ##
+  ## A runtime of 0 will be returned if `pattern` is greater than or equal to
+  ## the song's order count or if `row` is greater than or equal to the song's
+  ## track length. This means that the song cannot be played with these
+  ## arguments and therefore has a runtime of 0 frames.
+  ##
+  if pattern >= song.order.len or row >= song.trackLen:
+    # we cannot start at this position so the song has no runtime
+    return 0
+  
+  var
+    # this seq keeps track of how many times each pattern has been visited.
+    # when a pattern has been visited more than loopFor, we are done playing.
+    visits = newSeq[int](song.order.len)
+    mr = MusicRuntime.init(toImmutable(song.unsafeAddr), pattern, row, false)
+    itable = InstrumentTable.init()
+    postStepOp: ApuOperation
+    postStepFrame: EngineFrame
+
+  # loop until we have reached a cycle `loopFor` times
+  while visits[mr.orderCounter] < loopFor:
+    inc visits[mr.orderCounter]
+    # loop until we start a new pattern (or halt)
+    while true:
+      inc result
+      if mr.step(itable, postStepFrame, postStepOp):
+        # halted, stop here
+        return result
+      let done = postStepFrame.startedNewPattern
+      postStepFrame.reset()
+      postStepOp.reset() # discard the op
+      if done:
+        break
+  dec result # cycle detection results in an extra frame being stepped
+    
+func runtime*(duration: Duration; framerate: float): int =
+  ## Gets the runtime in frames when playing a song for a given time duration.
+  ## 
+  int(float(inSeconds(duration)) * framerate)
+
+func runtime*(duration: Duration): int =
+  ## Gets the runtime in frames when playing a song for a given time duration.
+  ## The default framerate (DMG, 59.7 Hz) is used.
+  ##
+  const rate = defaultTickrate.hertz
+  runtime(duration, rate)
 
 {. pop .}

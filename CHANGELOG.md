@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+ - runtime calculation procs in engine module `engine.runtime`. These calculate
+   the time of a song, in frames.
+
 ## [0.8.1] - 2023-10-18
 
 ### Fixed

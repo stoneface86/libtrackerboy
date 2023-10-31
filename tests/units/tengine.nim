@@ -4,7 +4,7 @@ import libtrackerboy/[data, engine, notes]
 
 import unittest2
 
-import std/[strformat, with]
+import std/[strformat, times, with]
 
 func getSampleTable(): WaveformTable =
   result = WaveformTable.init
@@ -987,4 +987,65 @@ block: # ============================================================= playback
         check:
           f.order == 0
           f.startedNewPattern
-  
+
+block: # ============================================================== runtime
+
+  const minute = initDuration(minutes = 1)
+
+  suite "engine.runtime":
+
+    test "1 minute, default tickrate":
+      check runtime(minute) == 3582
+    
+    test "1 minute, 60 Hz":
+      check runtime(minute, 60.0) == 3600
+
+    test "song 1":
+      var song = Song.init()
+      song.speed = unitSpeed
+      song.trackLen = 1
+      song.order.setLen(3)
+
+      check:
+        runtime(song, 1) == 3
+        runtime(song, 2) == 6
+        runtime(song, 3) == 9
+    
+    test "song 2":
+      let song = Song.init()
+      # 6.0 FPR * 64 rows per pattern = 384 frames per pattern
+      check:
+        runtime(song, 1) == 384
+        runtime(song, 2) == 768
+        runtime(song, 3) == 1152
+    
+    test "song 3":
+      var song = Song.init()
+      # 0 -> 1 -> 2 -> 3
+      #      ^         |
+      #      \---------/
+      song.speed = unitSpeed
+      song.trackLen = 4
+      song.order.setLen(4)
+      song.order[3] = [0u8, 0, 0, 1]
+      song.editTrack(ch4, 1, track):
+        track.setEffect(3, 0, etPatternGoto, 1)
+      
+      check:
+        runtime(song) == 16     # 4 + 4 + 4 + 4
+        runtime(song, 2) == 28  # 16 + 4 + 4 + 4
+        runtime(song, 3) == 40  # 28 + 4 + 4 + 4
+
+    test "no runtime for pattern >= song order len":
+      let song = Song.init()
+      check:
+        runtime(song, 1, 1) == 0
+        runtime(song, 1, 32) == 0
+
+    test "no runtime for row >= song.trackLen":
+      var song = Song.init()
+      song.trackLen = 10
+      check:
+        runtime(song, row = 10) == 0
+        runtime(song, row = 63) == 0
+    
