@@ -16,7 +16,7 @@ when isMainModule:
   strm.close()
 
   var config = WavConfig.init()
-  config.duration = Duration(kind: dkLoops, amount: 1)
+  config.duration = songDuration(1)
   config.filename = outDir / "bloop-stereo.wav"
   bloopMod.exportWav(config)
   config.isMono = true

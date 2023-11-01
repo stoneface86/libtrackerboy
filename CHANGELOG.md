@@ -6,6 +6,12 @@
  - runtime calculation procs in engine module `engine.runtime`. These calculate
    the time of a song, in frames.
 
+## Changed
+ - `Duration` type in exports/wav renamed to `SongDuration`, it now contains
+   a number of loops or a time amount using `Duration` from `std/times`
+ - WavExporter's progress and progressMax procs are now always in units of
+   frames.
+
 ## [0.8.1] - 2023-10-18
 
 ### Fixed

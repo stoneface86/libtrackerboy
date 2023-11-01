@@ -59,8 +59,8 @@ task wavegen, "Generate demo synth waveforms":
 task wavexport, "Test the wav exporter":
   standalone("wavexport.nim")
 
-task playertest, "Player test utility":
-  standalone("playertest.nim")
+task wavutil, "Exports a song from a module to wav":
+  standalone("wavutil.nim")
 
 # DOCUMENTATION
 

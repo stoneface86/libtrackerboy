@@ -44,26 +44,30 @@ Example:
 
 import 
   ../apu,
+  ../data,
   ../engine,
-  ../private/player,
   ../private/wavwriter
 
 import std/os
 
 type
 
-  DurationKind* = enum
-    ## Possible duration units
+  SongDuration* = object
+    ## Duration of the song to export. The amount can either be specified in
+    ## number of loops, or a `Duration` from `std/times`.
     ##
-    dkSeconds ## The unit is a second.
-    dkLoops   ## The unit is a count of times the song has looped.
-      
-  Duration* = object
-    ## A duration is a unit and an amount that determines the length of time
-    ## the exported song will have.
-    ## 
-    kind*: DurationKind   ## The unit
-    amount*: Natural      ## The amount
+    case unitInLoops*: bool
+      ## If `true`, then this duration will loop the song a given number of
+      ## times. If `false, then this duration will use a time duration.
+      ##
+    of true:
+      loopAmount*: Positive
+        ## Number of times to loop the song
+        ##
+    of false:
+      timeAmount*: Duration
+        ## Amount of time to play the song for.
+        ##
 
   WavConfig* = object
     ## Configuration of the WAV file to create.
@@ -72,8 +76,8 @@ type
       ## Index of the song in the module to export. Default is 0, or the first
       ## song.
       ##
-    duration*: Duration
-      ## The duration to export. Default is 1 minute (60 dkSeconds).
+    duration*: SongDuration
+      ## The duration to export. Default is a time unit of 1 minute.
       ##
     filename*: string
       ## Destination filename of the output WAV file.
@@ -98,9 +102,20 @@ type
     apu: Apu
     engine: Engine
     writer: WavWriter
-    player: Player
+    framesRendered: int
+    framesToRender: int
     buf: seq[Pcm]
     isMono: bool
+
+func songDuration*(loops: Positive): SongDuration =
+  ## Initializes a song duration with the given number of loops.
+  ##
+  SongDuration(unitInLoops: true, loopAmount: loops)
+
+func songDuration*(time: Duration): SongDuration =
+  ## Initializes a song duration with the given time amount
+  ##
+  SongDuration(unitInLoops: false, timeAmount: time)
 
 func init*(T: typedesc[WavConfig]): WavConfig =
   ## Initializes a WavConfig with default settings.
@@ -108,7 +123,7 @@ func init*(T: typedesc[WavConfig]): WavConfig =
   WavConfig(
     samplerate: 44100,
     channels: {ch1..ch4},
-    duration: Duration(kind: dkSeconds, amount: 60)
+    duration: songDuration(initDuration(minutes = 1))
   )
 
 proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
@@ -120,26 +135,28 @@ proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
   ## `hasWork <#hasWork,WavExporter>`_ returns `false`.
   ## 
   ## An `IOError` will be raised if the output file could not be written to.
-  ## 
-  proc init(T: typedesc[Player]; module: Module; tickrate: float; 
-            config: WavConfig): Player =
-    case config.duration.kind:
-    of dkSeconds:
-      Player.init(tickrate, config.duration.amount)
-    of dkLoops:
-      Player.init(module.songs[config.song], config.duration.amount)
+  ##
   
-  let tickrateHz = module.getTickrate(config.song).hertz()
-  let wavChannels = if config.isMono: 1 else: 2
+  let 
+    tickrateHz = module.getTickrate(config.song).hertz()
+    wavChannels = if config.isMono: 1 else: 2
+    song = module.songs[config.song]
+    runtime = block:
+      if config.duration.unitInLoops:
+        runtime(song[], config.duration.loopAmount)
+      else:
+        runtime(config.duration.timeAmount, tickrateHz)
+
   result = WavExporter(
     apu: Apu.init(config.samplerate, tickrateHz),
     engine: Engine.init(),
     writer: WavWriter.init(config.filename, wavChannels, config.samplerate),
-    player: Player.init(module, tickrateHz, config),
+    framesRendered: 0,
+    framesToRender: runtime,
     buf: newSeq[Pcm](),
     isMono: config.isMono
   )
-  result.engine.play(module.songs[config.song])
+  result.engine.play(song)
   result.apu.setup()
   for ch in ChannelId:
     if ch in config.channels:
@@ -151,7 +168,7 @@ proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
 func hasWork*(ex: WavExporter): bool {. raises: [] .} =
   ## Returns `true` if the exporter still has work to do, `false` otherwise.
   ## 
-  ex.player.isPlaying
+  ex.framesRendered < ex.framesToRender
 
 proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
   ## Processes a single frame and writes it to the destination WAV file. If the
@@ -161,9 +178,8 @@ proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
   ## An `IOError` may be raised if any error occurred during writing to the
   ## output WAV file.
   ## 
-  if ex.player.isPlaying:
-    discard ex.player.step(ex.engine, module.instruments)
-    ex.apu.apply(ex.engine.takeOperation(), module.waveforms)
+  if ex.hasWork():
+    ex.engine.stepAndApply(module.instruments, module.waveforms, ex.apu)
     ex.apu.runToFrame()
     ex.apu.takeSamples(ex.buf)
     if ex.isMono:
@@ -176,18 +192,19 @@ proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
         frameIndex += 2
       ex.buf.setLen(samples)
     ex.writer.write(ex.buf)
+    inc ex.framesRendered
 
 func progress*(ex: WavExporter): int {. raises: [] .} =
   ## Gets a number representing the total overall progress made towards the
   ## export. The number returned will be in the range `0..ex.progressMax`.
   ## 
-  ex.player.progress
+  ex.framesRendered
 
 func progressMax*(ex: WavExporter): int {. raises: [] .} =
   ## Gets a number representing the maximum of the values returned by
   ## `progress <#progress,WavExporter>`_.
   ## 
-  ex.player.progressMax
+  ex.framesToRender
 
 proc batched*(config: WavConfig): seq[WavConfig] {. raises: [] .} =
   ## Creates a sequence of WavConfigs where each channel in `config` gets its
