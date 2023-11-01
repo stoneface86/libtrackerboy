@@ -4,8 +4,8 @@
 
 import std/[os, streams]
 
-import ../../../../libtrackerboy/version
-import ../../../../libtrackerboy/private/endian
+import ../../libtrackerboy/version
+import ../../libtrackerboy/private/endian
 
 const filesToPatch = [
   "sample.tbi",

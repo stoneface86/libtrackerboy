@@ -8,7 +8,7 @@ type
   Version* = tuple[major, minor, patch: int]
 
 const
-  currentVersion* = (major: 0, minor: 8, patch: 1)
+  currentVersion* = (major: 0, minor: 8, patch: 2)
     ## libtrackerboy version tuple
   
   currentVersionString* = (
