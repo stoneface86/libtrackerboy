@@ -1,0 +1,5 @@
+{
+  "version": "v0.8.2",
+  "date": "2023-11-01",
+  "changes": "### Added\n - runtime calculation procs in engine module `engine.runtime`. These calculate\n   the time of a song, in frames.\n\n### Changed\n - `Duration` type in exports/wav renamed to `SongDuration`, it now contains\n   a number of loops or a time amount using `Duration` from `std/times`\n - WavExporter's progress and progressMax procs are now always in units of\n   frames.\n\n### Fixed\n - Bug with arpeggio sequences treating -1, -2, etc as 255, 254, etc. The\n   was added as an unsigned byte instead of a signed one. This caused songs\n   with negative values in arp sequences to have the highest note play\n   (resulting in high pitched chirping)."
+}
