@@ -12,7 +12,7 @@ installDirs   = @["libtrackerboy"]
 
 # Dependencies
 
-requires "nim >= 1.6.0"
-requires "unittest2 ~= 0.1.0"
+requires "nim >= 1.4.0"
+requires "unittest2 == 0.1.0"
 
 include "build.nims"

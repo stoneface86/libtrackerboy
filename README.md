@@ -33,43 +33,15 @@ libtrackerboy.nimble, so they are available via `nim` when using atlas and
 
 The unit tester can be run using the `test` task
 ```sh
-# build and run the unit tester with optional test name matchers
-nim test [matchers...]
-```
-
-When launching the tester you can supply any number of matcher arguments that
-when specified will only run the tests that match the names given. Use wildcard
-character(s), `*`, as a glob to match 0 or more characters in the name. If
-no matchers are given, all tests will run.
-
-The names of each test in the tester use the following syntax:
-```
-modulename[.classname].testname
- 
- - modulename: The name of the module in the library being tested
- - classname: An optional category, typically the name of the type being tested
- - testname: The name of the test, or a description of what's being tested
-```
-
-### Examples
-
-```sh
-# Runs everything
+# runs all unit tests
 nim test
-# Runs all tests for the common and io modules
-nim test common.\* io.\*
-# Runs all tests for the Immutable type defined in the common module
-nim test common.Immutable.\*
 ```
 
 ### unittest2
 
-[unittest2][unittest2-link] is used as the unit testing framework, as it
-provides parallel test execution unlike std/unittest. For performance reasons,
-test suites are not used, as they impose a barrier before and after each suite
-during execution. If you require `setup` and `teardown` functionality that
-suites provide, use `testgroup` instead, which is provided by the
-[testing module](tests/units/testing.nim).
+[unittest2][unittest2-link] is used as the unit testing framework, and is
+listed as a dependency in the nimble file. The library itself does not depend
+on it.
 
 ### Miscellaneous test programs
 
@@ -86,6 +58,15 @@ nim apugen
 # wavegen, tests the bandlimited synthesis module by generating simple square tones
 # generated audio files are located in ./bin/wavegen.d/
 nim wavegen
+
+# Exports bloop.tbm to wav in both stereo and mono.
+# generated audio files are located in ./bin/wavexport.d/
+nim wavexport
+
+# Exports a song from a module to wav, looping it twice.
+# Usage: ./bin/wavutil <module> <songIndex>
+# generated audio files are located in ./bin/wavutil.d/
+nim wavutil
 ```
 
 ## Migration from Trackerboy

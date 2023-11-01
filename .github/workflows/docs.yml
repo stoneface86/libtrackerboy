@@ -35,6 +35,7 @@ jobs:
 
       - name: Generate documentation
         run: |
+          nimble install -y --depsOnly
           nimble docs
           nimble docsSpecs
 

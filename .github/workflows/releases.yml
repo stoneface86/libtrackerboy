@@ -74,6 +74,7 @@ jobs:
 
       - name: Generate documentation
         run: |
+          nimble install -y --depsOnly
           nimble -d:gitRef:${{ needs.draft-release.outputs.version }} docs
           nimble docsSpecs
       
