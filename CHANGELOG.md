@@ -12,6 +12,12 @@
  - WavExporter's progress and progressMax procs are now always in units of
    frames.
 
+## Fixed
+ - Bug with arpeggio sequences treating -1, -2, etc as 255, 254, etc. The
+   was added as an unsigned byte instead of a signed one. This caused songs
+   with negative values in arp sequences to have the highest note play
+   (resulting in high pitched chirping).
+
 ## [0.8.1] - 2023-10-18
 
 ### Fixed

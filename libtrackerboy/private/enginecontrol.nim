@@ -100,6 +100,9 @@ type
     states*: array[ChannelId, ChannelState]
     trackControls*: array[ChannelId, TrackControl]
 
+template getInt8(val: Option[uint8]): int8 =
+  cast[int8](val.get())
+
 func noCounter(): Counter = discard
 func counter(v: int): Counter = (v + 1).Counter
 
@@ -283,10 +286,11 @@ proc step(fc: var FrequencyControl; arpIn, pitchIn: Option[uint8];): uint16 =
   if pitchIn.isSome():
     # a simple cast should always work since 2s complement is a safe assumption
     # might need to refactor with a proc that guarantees this
-    fc.instrumentPitch += cast[int8](pitchIn.get())
+    fc.instrumentPitch += pitchIn.getInt8()
 
   if arpIn.isSome():
-    fc.frequency = fc.bounds.lookupFn(clamp(fc.note.int + arpIn.get().int, 0, fc.bounds.maxNote.int).uint8)
+    fc.frequency = fc.bounds.lookupFn(clamp(fc.note.int + arpIn.getInt8(), 
+                                            0, fc.bounds.maxNote.int).uint8)
   else:
     # frequency modulation
     case fc.mode:

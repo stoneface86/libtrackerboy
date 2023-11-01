@@ -862,10 +862,11 @@ block: # ========================================================== instruments
           lookupToneNote(testNote),
           lookupToneNote(testNote + 1),
           lookupToneNote(testNote + 2),
-          lookupToneNote(testNote + 3)
+          lookupToneNote(testNote + 3),
+          lookupToneNote(testNote - 1)
         ]
       
-      instrument[].sequences[skArp] = parseSequence("0 1 2 3")
+      instrument[].sequences[skArp] = parseSequence("0 1 2 3 -1")
 
       eh.play()
       check:
@@ -873,9 +874,10 @@ block: # ========================================================== instruments
         eh.frequencyTest(ch1) == expected[1]
         eh.frequencyTest(ch1) == expected[2]
         eh.frequencyTest(ch1) == expected[3]
+        eh.frequencyTest(ch1) == expected[4]
         # non-looping sequence ends, ensure that state is the last value in the sequence
-        eh.frequencyTest(ch1) == expected[3]
-        eh.frequencyTest(ch1) == expected[3]
+        eh.frequencyTest(ch1) == expected[4]
+        eh.frequencyTest(ch1) == expected[4]
     
     test "pitch":
       const

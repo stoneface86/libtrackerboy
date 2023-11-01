@@ -13,7 +13,6 @@ import units/[
 import units/private/[
   tendian,
   tioblocks,
-  tplayer,
   tsynth,
   tutils
 ]
