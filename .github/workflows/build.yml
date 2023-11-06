@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup workspace
         run: |
-          ln -s $(choosenim show path)/bin/atlas $HOME/.nimble/bin/atlas
+          nimble install "https://github.com/nim-lang/atlas@0.6.2"
           mkdir workspace
           cd workspace
           atlas init
