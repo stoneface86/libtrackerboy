@@ -10,6 +10,7 @@ on:
       - 'tests/**'
       - 'libtrackerboy.nim'
       - 'libtrackerboy.nimble'
+      - '.github/workflows/build.yml'
       
 
 jobs:
@@ -27,6 +28,7 @@ jobs:
 
       - name: Setup workspace
         run: |
+          ln -s $(choosenim show path)/bin/atlas $HOME/.nimble/bin/atlas
           mkdir workspace
           cd workspace
           atlas init
