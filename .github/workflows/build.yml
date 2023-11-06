@@ -35,19 +35,22 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          path: "workspace/libtrackerboy"
+          path: workspace/libtrackerboy
 
       - name: Dependencies
+        working-directory: workspace/libtrackerboy
         run: |
-          cd workspace/libtrackerboy
           atlas install libtrackerboy.nimble
           nim setup
 
       - name: check package
+        working-directory: workspace/libtrackerboy
         run: nimble check
       
       - name: test
+        working-directory: workspace/libtrackerboy
         run: nim test
 
       - name: endian tests
+        working-directory: workspace/libtrackerboy
         run: nim endianTests
