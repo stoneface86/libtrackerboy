@@ -20,21 +20,32 @@ jobs:
       matrix:
         nim-version: ['stable', 'devel']
     steps:
-
-      - uses: actions/checkout@v3
       
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim-version }}
 
-      - name: dependencies
-        run: nimble install -y --depsOnly
+      - name: Setup workspace
+        run: |
+          mkdir workspace
+          cd workspace
+          atlas init
 
-      - name: check
+      - uses: actions/checkout@v4
+        with:
+          path: "workspace/libtrackerboy"
+
+      - name: Dependencies
+        run: |
+          cd workspace/libtrackerboy
+          atlas install libtrackerboy.nimble
+          nim setup
+
+      - name: check package
         run: nimble check
-
+      
       - name: test
-        run: nimble test
+        run: nim test
 
       - name: endian tests
-        run: nimble endianTests
+        run: nim endianTests

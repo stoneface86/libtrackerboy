@@ -36,8 +36,8 @@ jobs:
       - name: Generate documentation
         run: |
           nimble install -y --depsOnly
-          nimble docs
-          nimble docsSpecs
+          nim docs
+          nim docsSpecs
 
       - name: Clone gh-pages
         uses: actions/checkout@v3

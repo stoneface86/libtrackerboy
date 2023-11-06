@@ -22,26 +22,29 @@ nimble install https://github.com/stoneface86/libtrackerboy/
 atlas use https://github.com/stoneface86/libtrackerboy/
 ```
 
-## Build tasks
+## Development
+
+Atlas is required for development.
+
+### Setup
+
+```sh
+cd <your-nim-workspace>
+atlas clone https://github.com/stoneface86/libtrackerboy/
+cd libtrackerboy
+nim setup # installs developer dependencies
+```
 
 Tasks for building tests, documentation, etc, are located in
-[build.nims](build.nims). This nimscript is included by config.nims and
-libtrackerboy.nimble, so they are available via `nim` when using atlas and
-`nimble` when using nimble.
+[config.nims](config.nims), use `nim <task>` to execute them. 
 
-## Testing
+### Testing
 
 The unit tester can be run using the `test` task
 ```sh
 # runs all unit tests
 nim test
 ```
-
-### unittest2
-
-[unittest2][unittest2-link] is used as the unit testing framework, and is
-listed as a dependency in the nimble file. The library itself does not depend
-on it.
 
 ### Miscellaneous test programs
 
