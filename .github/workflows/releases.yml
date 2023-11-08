@@ -11,8 +11,27 @@ on:
         type: string
 
 jobs:
+  test-release:
+    name: Test the release by building a sample application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: 'stable'
+      
+      - name: "Install package"
+        run: "nimble install -y"
+      
+      - name: "Build and run sample application"
+        run:
+          cd tests/sampleapp
+          nimble run
+
   draft-release:
     name: Draft github release
+    needs: test-release
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get-version.outputs.version }}

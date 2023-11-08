@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+ - Error with nimble package: `cannot open file: build.nims`
+
 ## [0.8.2] - 2023-11-01
 
 ### Added
