@@ -27,7 +27,7 @@ jobs:
       - name: "Build and run sample application"
         run: |
           cd tests/sampleapp
-          nimble run
+          nimble -y run
 
   draft-release:
     name: Draft github release
