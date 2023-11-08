@@ -25,7 +25,7 @@ jobs:
         run: "nimble install -y"
       
       - name: "Build and run sample application"
-        run:
+        run: |
           cd tests/sampleapp
           nimble run
 
