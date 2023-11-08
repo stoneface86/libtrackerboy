@@ -13,3 +13,7 @@ installDirs   = @["libtrackerboy"]
 # Dependencies
 
 requires "nim >= 1.4.0"
+
+# dev dependencies
+when fileExists(".dev"):
+  requires "unittest2 == 0.1.0"

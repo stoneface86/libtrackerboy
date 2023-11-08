@@ -16,9 +16,9 @@ template nohints() = --hints:off
 
 # SETUP
 
-task setup, "Installs developer dependencies (atlas required)":
-  nohints
-  exec "atlas install devdeps.nims"
+task setDev, "Sets this project to develop mode (dev dependencies enabled)":
+  nohints()
+  writeFile(".dev", "")
 
 # TESTING
 
@@ -128,3 +128,8 @@ task clean, "Clears the bin and htmldocs folders":
   nohints()
   rmDir "bin"
   rmDir "htmldocs"
+
+# begin Nimble config (version 2)
+when withDir(thisDir(), system.fileExists("nimble.paths")):
+  include "nimble.paths"
+# end Nimble config

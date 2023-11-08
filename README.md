@@ -24,15 +24,13 @@ atlas use https://github.com/stoneface86/libtrackerboy/
 
 ## Development
 
-Atlas is required for development.
-
-### Setup
+unittest2 is needed for testing, but it is not listed in the nimble file as it
+is a developer dependency. Follow these steps to set that up:
 
 ```sh
-cd <your-nim-workspace>
-atlas clone https://github.com/stoneface86/libtrackerboy/
-cd libtrackerboy
-nim setup # installs developer dependencies
+# clone repo to your workspace, then cd to it
+nim setDev      # enables developer dependencies
+nimble setup    # now you can build tests via `nim test`
 ```
 
 Tasks for building tests, documentation, etc, are located in

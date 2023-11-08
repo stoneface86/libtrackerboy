@@ -3,3 +3,6 @@
 bin/
 htmldocs/
 nim.cfg
+.dev
+nimble.develop
+nimble.paths

@@ -21,36 +21,31 @@ jobs:
       matrix:
         nim-version: ['stable', 'devel']
     steps:
+      - uses: actions/checkout@v4
       
+      - name: Cache nimble
+        uses: actions/cache@v3
+        with:
+          path: ~/.nimble
+          key: ${{ runner.os }}-nimble-${{ hashFiles('libtrackerboy.nimble') }}
+          restore-keys: |
+            ${{ runner.os }}-nimble-
+
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim-version }}
 
-      - name: Setup workspace
-        run: |
-          nimble install "https://github.com/nim-lang/atlas@0.6.2"
-          mkdir workspace
-          cd workspace
-          atlas init
-
-      - uses: actions/checkout@v4
-        with:
-          path: workspace/libtrackerboy
-
-      - name: Dependencies
-        working-directory: workspace/libtrackerboy
-        run: |
-          atlas install libtrackerboy.nimble
-          nim setup
-
       - name: check package
-        working-directory: workspace/libtrackerboy
         run: nimble check
+
+      - name: setup
+        run: |
+          nim setDev
+          nimble install -d -y
+          nimble setup
       
       - name: test
-        working-directory: workspace/libtrackerboy
         run: nim test
 
       - name: endian tests
-        working-directory: workspace/libtrackerboy
         run: nim endianTests
