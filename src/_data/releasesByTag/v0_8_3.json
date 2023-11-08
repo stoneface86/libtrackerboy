@@ -1,0 +1,5 @@
+{
+  "version": "v0.8.3",
+  "date": "2023-11-08",
+  "changes": "### Fixed\n - Error with nimble package: `cannot open file: build.nims`"
+}
