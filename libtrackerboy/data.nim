@@ -226,11 +226,12 @@ type
     else:
       len*: TrackLen
 
-  TrackView* {.borrow: `.`.} = distinct Track
+  TrackView* = object
     ## Same as track, but only provides immutable access to the track data.
     ## Mutable access can be acquired by converting the view to a Track via
     ## the Track.init overload, while making a deep copy of the data.
     ##
+    track: Track
 
   SomeTrack* = Track | TrackView
     ## Type class for all Track types.
@@ -717,36 +718,65 @@ proc swap*(o: var Order; i1, i2: ByteIndex;) =
   ##
   swap(o.data[i1], o.data[i2])
 
-# TrackRow
+# TrackRow ====================================================================
+
+# note and instrument columns are biased by 1 when set
+
+template bias(val: uint8): uint8 = val + 1
+template unbias(val: uint8): uint8 = val - 1
+
+template clearNote*(row: var TrackRow) =
+  ## Clears the note column for this row.
+  ##
+  row.note = 0
+
+template clearInstrument*(row: var TrackRow) =
+  ## Clears the instrument column for this row.
+  ##
+  row.instrument = 0
+
+template hasNote*(row: TrackRow): bool =
+  row.note != 0
+
+template hasInstrument*(row: TrackRow): bool =
+  row.instrument != 0
+
+proc setNote*(row: var TrackRow; note: uint8) =
+  ## Sets the note column to the given note value.
+  ##
+  row.note = bias(note)
+
+proc setInstrument*(row: var TrackRow; instrument: TableId) =
+  ## Sets the instrument column to the given instrument id.
+  ##
+  row.instrument = bias(instrument)
+
+func queryColumn(col: uint8): Option[uint8] =
+  if col > 0:
+    some(unbias(col))
+  else:
+    none(uint8)
 
 func queryNote*(row: TrackRow): Option[uint8] =
   ## Gets the note index of the row if set, otherwise `none` is returned.
   ##
-  if row.note > 0:
-    return some(row.note - 1)
-  else:
-    return none(uint8)
+  queryColumn(row.note)
 
 func queryInstrument*(row: TrackRow): Option[uint8] =
   ## Gets the instrument index of the row if set, otherwise `none` is returned.
   ##
-  if row.instrument > 0:
-    return some(row.instrument - 1)
-  else:
-    return none(uint8)
+  queryColumn(row.instrument)
 
 func isEmpty*(row: TrackRow): bool =
   ## Determine if the row is empty, or has all columns unset.
   ##
-  #cast[uint64](row) == 0u64
-  row == default(TrackRow)
+  static: assert sizeof(uint64) == sizeof(TrackRow)
+  cast[uint64](row) == 0u64
 
-# Track
+# Track =======================================================================
 
 func `==`*(lhs, rhs: Track): bool =
   lhs.len == rhs.len and deepEquals(lhs.data, rhs.data)
-
-func `==`*(lhs, rhs: TrackView): bool {.borrow.}
 
 proc init*(T: typedesc[Track]; len: TrackLen): Track =
   ## Value constructor for a Track with the given length. All rows in the
@@ -772,18 +802,6 @@ func init(T: typedesc[Track]; data: ref TrackData; len: TrackLen): Track =
     len: if data == nil: TrackLen.low else: len
   )
 
-template init(T: typedesc[TrackView]; data: ref TrackData; len: TrackLen
-             ): TrackView =
-  cast[TrackView](Track.init(data, len))
-
-func init*(T: typedesc[TrackView]; track: sink Track): TrackView =
-  ## Value constructor for a TrackView by shallow copying the given Track.
-  ## While the returned TrackView is immutable, its data can be mutated if
-  ## a Track still refers to this data.
-  ##
-  result.data = track.data
-  result.len = track.len
-
 template get(t: Track | var Track; i: ByteIndex): untyped =
   t.data[][i]
 
@@ -791,8 +809,6 @@ func `[]`*(t: Track; i: ByteIndex): TrackRow =
   ## Gets the `i`th row in the track.
   ##
   t.get(i)
-
-func `[]`*(t: TrackView; i: ByteIndex): TrackRow {.borrow.}
 
 proc `[]`*(t: var Track; i: ByteIndex): var TrackRow =
   ## Gets the `i`th row in the track, allowing mutations.
@@ -810,8 +826,6 @@ func isValid*(t: Track): bool =
   ##
   t.data != nil
 
-func isValid*(t: TrackView): bool {.borrow.}
-
 template itemsImpl(t: Track | var Track): untyped =
   for i in 0..<t.len:
     yield t.get(i)
@@ -820,8 +834,6 @@ iterator items*(t: Track): TrackRow =
   ## Convenience iterator for iterating every row in the track.
   ##
   itemsImpl(t)
-
-iterator items*(t: TrackView): TrackRow {.borrow.}
 
 iterator mitems*(t: var Track): var TrackRow =
   ## Convenience iterator for iterating every row in the track,
@@ -864,9 +876,54 @@ func totalRows*(t: Track): int =
     if not row.isEmpty():
       inc result
 
-func totalRows*(t: TrackView): int {.borrow.}
+# TrackView ===================================================================
 
-# TrackMap
+converter toView*(t: sink Track): TrackView =
+  ## Convert a Track to a TrackView. This is a converter so that you can pass
+  ## `Track` objects to any proc taking a `TrackView`.
+  ##
+  result.track = t
+
+template init*(T: typedesc[TrackView]; track: sink Track): TrackView =
+  ## Value constructor for a TrackView by shallow copying the given Track.
+  ## While the returned TrackView is immutable, its data can be mutated if
+  ## a Track still refers to this data.
+  ##
+  toView(track)
+
+template `==`*(lhs, rhs: TrackView): bool =
+  ## Equality operator for two track views. The two views are equal if their
+  ## source tracks are equivalent (see `==` for Tracks)
+  ##
+  lhs.track == rhs.track
+
+template `[]`*(t: TrackView; i: ByteIndex): TrackRow =
+  ## Gets the `i`th row in the view's track.
+  ##
+  t.track[i]
+
+iterator items*(t: TrackView): TrackRow =
+  ## Iterates all rows in the view's track.
+  ##
+  for i in t.track:
+    yield i
+
+template isValid*(t: TrackView): bool =
+  ## Checks if this view's track is valid.
+  ##
+  t.track.isValid()
+
+template len*(t: TrackView): int =
+  ## Get the len, or number of rows, for this view's track.
+  ##
+  t.track.len
+
+template totalRows*(t: TrackView): int =
+  ## Counts the total number of rows that are non-empty for this view's track.
+  ##
+  t.track.totalRows()
+
+# TrackMap ====================================================================
 
 proc clear(m: var TrackMap) =
   for table in m.data.mitems:
@@ -965,8 +1022,7 @@ func getTrackView*(s: Song; ch: ChannelId; order: ByteIndex): TrackView =
   ## no track for this address, an invalid Track is returned. Note that this
   ## proc returns a copy! For non-copying access use the viewTrack template.
   ##
-  result.data = s.tracks.get(ch, order)
-  result.len = s.trackLen
+  TrackView(track: Track.init(s.tracks.get(ch, order), s.trackLen))
 
 func getTrack*(s: var Song; ch: ChannelId; order: ByteIndex): Track =
   Track.init(s.tracks.getAlways(ch, order), s.trackLen)

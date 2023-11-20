@@ -1,13 +1,15 @@
 ##
 ## Intermediate Represention (ir) of pattern data to be compiled.
 ## 
-## Using IR format allows us to easily convert between formats where the process
-## for converting a given input to a given output follows:
+## Using IR format allows us to easily convert between formats where the
+## process for converting a given input to a given output follows:
 ##
-##    <input> -> IR -> <output>
+## ```
+## <input> -> IR -> <output>
+## ```
 ## 
-## Where input is typically a TBM, or another module format like FTM or MPT, and
-## output can be ASM, GBS, TBM, etc.
+## Where input is typically a TBM, or another module format like FTM or MPT,
+## and output can be ASM, GBS, TBM, etc.
 ## 
 ## Example uses:
 ## 
@@ -31,31 +33,16 @@ import std/[options]
 type
   PatternCommand* = enum
     ## Enum for commands that change the current pattern.
+    ##
     pcNone
       ## No pattern command, do not change pattern
+      ##
     pcNext
       ## Skip to the next pattern in the order, starting at a given row.
+      ##
     pcJump
       ## Jump to the given pattern in the order.
-
-  PatternVisit* = object
-    ## A visit to a pattern contains its pattern index and the number of
-    ## rows encountered before reaching the end or a pattern command occurred.
-    pattern*: int
-      ## The index in the song's order of the pattern being visited
-    rows*: int
-      ## The number of rows that were visited.
-    startRow*: int
-      ## The starting row of the visit, 0 in most cases. When a visit's starting
-      ## row is nonzero, this means that the Dxx effect (pattern skip) with a
-      ## nonzero parameter was encountered in the previous pattern visit.
-
-  SongPath* = object
-    ## A path of patterns in the order that they will be played out for a song,
-    ## with an optional loop index. If `loopIndex.isNone()` then the song will
-    ## halt at the last pattern visited.
-    visits*: seq[PatternVisit]
-    loopIndex*: Option[int]
+      ##
 
   FrequencyMod* = enum
     ## Enum for a frequency modulation effect. 
@@ -140,7 +127,7 @@ type
       ## some kind of action.
 
   RowIr* = object
-    ## Row intermediate representation. A `RowIR` is an intermediate representation
+    ## Row intermediate representation. A `RowIr` is an intermediate representation
     ## of a single non-empty `TrackRow` (operation), or 1 or more empty `TrackRows`
     ## (rest).
     case kind*: RowIrKind
@@ -152,8 +139,8 @@ type
         ## The operation to perform
 
   TrackIr* = object
-    ## Track intermediate representation. A `TrackIR` is an intermediate representation
-    ## of a `Track`. It is simply a container of `RowIR` for each processed
+    ## Track intermediate representation. A `TrackIr` is an intermediate representation
+    ## of a `Track`. It is simply a container of `RowIr` for each processed
     ## `TrackRow` in the `Track`.
     ## 
     ## TrackIr can be created manually, or via the `toIr` proc.
@@ -302,6 +289,18 @@ func len*(ir: TrackIr): int =
     of rikOp:
       inc result
 
+func runtime*(op: Operation): int =
+  ## Gets the runtime, in frames, of the operation, assuming it can be
+  ## determined. A runtime can be determined from an operation alone if its
+  ## duration setting was set (note cut or delayed note cut effect). The
+  ## determined runtime is returned, or -1 if it cannot be determined which
+  ## means the operation can run indefinitely.
+  ##
+  if opsDuration in op.flags:
+    result = op.settings[opsDelay].int + op.settings[opsDuration].int
+  else:
+    result = -1
+
 iterator ops*(ir: TrackIr): tuple[rowno: int; op: Operation] =
   ## Iterate all Operations for the given TrackIr. The row number the operation
   ## occurs, along with the operation is yielded per iteration.
@@ -314,17 +313,31 @@ iterator ops*(ir: TrackIr): tuple[rowno: int; op: Operation] =
       yield (i, rowIr.op)
       inc i
 
-func restRowIr(restRows: Positive): RowIr =
+func restRowIr*(restRows: Positive): RowIr =
   ## Creates a RowIr that "rests" or does nothing for a given amount of rows.
   ## Equivalent to consecutive empty rows in a track.
   result = RowIr(kind: rikRest, restDuration: restRows)
 
-func opRowIr(op: Operation): RowIr =
+func opRowIr*(op: Operation): RowIr =
   ## Creates a RowIr that performs an Operation.
   result = RowIr(kind: rikOp, op: op)
 
+func `==`*(a, b: RowIr;): bool =
+  if a.kind == b.kind:
+    case a.kind
+    of rikRest:
+      result = a.restDuration == b.restDuration
+    of rikOp:
+      result = a.op == b.op
+
 func toIr*(t: TrackView): TrackIr =
   ## Gets the immediate representation, ir, of a given track.
+  ##
+  proc addRest(restCount: var int; ir: var TrackIr) =
+    if restCount > 0:
+      ir.data.add(restRowIr(restCount))
+      restCount = 0
+
   if t.isValid():
     result.srcLen = t.len
     var rest = 0
@@ -333,61 +346,43 @@ func toIr*(t: TrackView): TrackIr =
       if op.isNoop():
         inc rest
       else:
-        if rest > 0:
-          result.data.add(restRowIr(rest))
-          rest = 0
+        addRest(rest, result)
         result.data.add(opRowIr(op))
+    addRest(rest, result)
 
-type
-  EffectStack = object
-    len: int
-    data: array[3, tuple[et: EffectType, ep: uint8]]
+func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
+  ## Converts an Operation back into a TrackRow. The converted row is set in
+  ## the `row` field. If the operation had too many effects set that could be
+  ## contained in `row` the `effectsOverflowed` is set to `true`, and the
+  ## conversion done was a partial one.
+  ##
+  proc addEffect(row: var TrackRow; index: var int; et: EffectType; ep = 0u8) =
+    if index <= row.effects.high:
+      row.effects[index] = Effect(effectType: et.uint8, param: ep)
+    inc index
 
-proc push(e: var EffectStack; et: EffectType; ep = 0u8) =
-  if e.len < e.data.len:
-    e.data[e.len] = (et, ep)
-    inc e.len
+  var effectCounter = 0
 
-proc pushIfSet(e: var EffectStack; op: Operation; setting: OperationSetting;
-               et: EffectType) =
-  if setting in op:
-    e.push(et, op[setting])
+  # note
+  if opsNote in op:
+    result.row.setNote(op[opsNote])
+  elif opsDuration in op:
+    let duration = op[opsDuration]
+    if duration == 0:
+      result.row.setNote(noteCut)
+    else:
+      addEffect(result.row, effectCounter, etDelayedCut, duration)
+  
+  # instrument
+  if opsInstrument in op:
+    result.row.setInstrument(op[opsInstrument])
 
-proc apply(e: EffectStack; track: var Track; rowNo: ByteIndex) =
-  for i in 0..<e.len:
-    track.setEffect(rowNo, i, e.data[i].et, e.data[i].ep)
-
-proc setFromIr*(track: var Track; ir: TrackIr) =
-  ## Sets the given track's row data using the given ir data. This proc does
-  ## not clear the track beforehand for optimization purposes, ensure that
-  ## `track` is an empty one first before calling this function.
-  if not track.isValid:
-    track = Track.init(ir.srcLen)
-  else:
-    track.len = ir.srcLen
-
-  for rowNo, rowOp in ir.ops:
-    var es: EffectStack
-    
-    # note
-    if opsNote in rowOp:
-      track.setNote(rowNo, rowOp[opsNote])
-    elif opsDuration in rowOp:
-      let duration = rowOp[opsDuration]
-      if duration == 0:
-        track.setNote(rowNo, noteCut)
-      else:
-        es.push(etDelayedCut, duration)
-    
-    # instrument
-    if opsInstrument in rowOp:
-      track.setInstrument(rowNo, rowOp[opsInstrument])
-    
-    # effects
-    if opsPatternCommand in rowOp:
-      es.push(rowOp.patternCommand.toEffectType(), rowOp[opsPatternCommand])
-    
-    for (setting, et) in [
+  # effects
+  if opsPatternCommand in op:
+    addEffect(result.row, effectCounter, op.patternCommand.toEffectType(),
+              op[opsPatternCommand])
+  
+  for (setting, et) in [
       (opsSpeed, etSetTempo),
       (opsVolume, etSetGlobalVolume),
       (opsDelay, etDelayedNote),
@@ -399,21 +394,36 @@ proc setFromIr*(track: var Track; ir: TrackIr) =
       (opsVibratoDelay, etVibratoDelay),
       (opsTune, etTuning)
     ]:
-      es.pushIfSet(rowOp, setting, et)
+      if setting in op:
+        addEffect(result.row, effectCounter, et, op[setting])
+  if opsFreqMod in op:
+    addEffect(result.row, effectCounter, op.freqMod.toEffectType(), op[opsFreqMod])
+  
+  if opsHalt in op:
+    addEffect(result.row, effectCounter, etPatternHalt)
+  if opsShouldLock in op:
+    addEffect(result.row, effectCounter, etLock)
+  
+  result.effectsOverflowed = effectCounter > result.row.effects.high
 
-    if opsFreqMod in rowOp:
-      es.push(rowOp.freqMod.toEffectType(), rowOp[opsFreqMod])
+proc setFromIr*(track: var Track; ir: TrackIr): bool =
+  ## Sets the given track's row data using the given ir data. This proc does
+  ## not clear the track beforehand for optimization purposes, ensure that
+  ## `track` is an empty one first before calling this function.
+  if not track.isValid:
+    track = Track.init(ir.srcLen)
+  else:
+    track.len = ir.srcLen
 
-    if opsHalt in rowOp:
-      es.push(etPatternHalt)
-    if opsShouldLock in rowOp:
-      es.push(etLock)
+  for rowNo, rowOp in ir.ops:
+    let conv = toTrackRow(rowOp)
+    track[rowNo] = conv.row
+    if conv.effectsOverflowed:
+      result = true
 
-    es.apply(track, rowNo)
-
-func fromIr*(ir: TrackIr): Track =
+func fromIr*(ir: TrackIr): tuple[track: Track; effectsOverflowed: bool] =
   ## Converts a TrackIr into a Track.
-  result = Track.init(ir.srcLen)
-  result.setFromIr(ir)
+  ##
+  result.effectsOverflowed = setFromIr(result.track, ir)
 
 {. pop .}

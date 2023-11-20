@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+### Added
+ - (data) `toView` converter in data module for `Track -> TrackView`
+ - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
+   `TrackRow`
+ - (ir) `==` operator overload for `RowIr`
+ - (ir) `runtime` proc for an `Operation`
+ - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
+
+### Changed
+ - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
+   containing a `Track`. (There were some Nim internal errors using a distinct
+   and borrow)
+ - (ir) `fromIr(TrackIr)` returns a tuple containing a track and a bool
+ - (ir) `setFromIr` proc now returns `bool`
+
+### Removed
+ - (ir) `SongPath` and `PatternVisit` types.
+
 ## [0.8.3] - 2023-11-08
 
 ### Fixed

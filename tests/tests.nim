@@ -7,7 +7,8 @@ import units/[
   tdata,
   tediting,
   tengine,
-  tio
+  tio,
+  tir
 ]
 
 import units/private/[
