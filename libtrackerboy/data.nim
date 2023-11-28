@@ -10,7 +10,7 @@ import
   ./private/data,
   ./private/utils
 
-import std/[math, options, parseutils, sequtils, tables]
+import std/[hashes, math, options, parseutils, sequtils, tables]
 
 export common, options
 
@@ -480,6 +480,17 @@ func new*(T: typedesc[Instrument]): ref Instrument =
   ## 
   new(result)
 
+func hash*(i: Instrument): Hash =
+  ## Calculate a hash code for an instrument.
+  ##
+  result = hash(i.sequences)
+
+func `==`*(a, b: Instrument; ): bool =
+  ## Determine if two instruments are **functionally** equivalent.
+  ## Informational data of the instruments are not tested.
+  ##
+  result = a.sequences == b.sequences
+
 # Waveform
 
 func init*(T: typedesc[Waveform]): Waveform =
@@ -521,6 +532,20 @@ func parseWave*(str: string): WaveData {.noInit.} =
         result[i] = 0
       break
     start += 2
+
+func hash*(x: Waveform): Hash =
+  ## Calculates a hash code for a Waveform. Only the waveform's wave data is
+  ## used when calculating the hash.
+  ##
+  template data(i: int): uint64 =
+    cast[array[2, uint64]](x.data)[i]
+  result = !$(hash(data(0)) !& hash(data(1)))
+
+func `==`*(a, b: Waveform; ): bool =
+  ## Determines if two waveforms are **functionally** equivalent, or if they
+  ## have the same wave data.
+  ##
+  result = a.data == b.data
 
 # Table
 
@@ -633,6 +658,49 @@ func wavedata*(t: WaveformTable; id: TableId): WaveData =
   ##
   doAssert id in t, "item does not exist"
   t.data[id].src.data
+
+type
+  IdBuf = object
+    buf: array[TableId, TableId]
+    len: TableId
+
+proc add(b: var IdBuf; id: TableId) =
+  b.buf[b.len] = id
+  inc b.len
+
+func `[]`(b: IdBuf; id: TableId): TableId =
+  b.buf[id]
+
+func hashOf[T: SomeData](t: Table[T]; id: TableId): Hash =
+  hash(t[id][])
+
+func uniqueIds*[T: SomeData](t: Table[T]): set[TableId] =
+  ## Gets a set of Ids that refer to unique data. This proc can be used to
+  ## deduplicate the table's data when exporting the module. The Id chosen in
+  ## the result for any set of duplicates encountered is the lowest one in the
+  ## set. Ie, a Table with data set for Ids 0, 1 and 2 with equivalent data,
+  ## has a uniqueIds set of `{ 0.TableId }`.
+  ##
+  var buf: IdBuf
+  for id in t:
+    buf.add(id)
+  
+  while buf.len > 0:
+    let 
+      currId = buf[0]
+      currHc = hashOf(t, currId)
+    
+    # add this unique id
+    result.incl(currId)
+    
+    # filter the buf in-place by removing duplicates
+    let oldLen = buf.len
+    buf.len = 0 # "clear" the buf, then re-add non-duplicates
+    for id in TableId(1)..<oldLen:
+      let nextId = buf[id]
+      if currHc != hashOf(t, nextId) or t[currId][] != t[nextId][]:
+        # these ids are not the same, add to buf
+        buf.add(nextId)
 
 # Order
 

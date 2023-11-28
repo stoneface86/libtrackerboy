@@ -4,195 +4,210 @@ import std/sequtils
 
 import libtrackerboy/data
 
-block: # ================================================================ Order
+suite "Order":
   const
     testrow1: OrderRow = [1u8, 1, 1, 1]
     testrow2: OrderRow = [2u8, 2, 2, 2]
   
-  suite "Order":
-    setup():
-      var order = Order.init
+  setup():
+    var order = Order.init
 
-    test "must have 1 row on init":
-      check:
-        order.len == 1
-        order[0] == default(OrderRow)
+  test "must have 1 row on init":
+    check:
+      order.len == 1
+      order[0] == default(OrderRow)
 
-    test "get/set":
-      order[0] = testrow1
-      check order[0] == testrow1
+  test "get/set":
+    order[0] = testrow1
+    check order[0] == testrow1
 
-    test "insert":
-      order.insert(testrow1, 1)
-      check:
-        order[0] == default(OrderRow)
-        order[1] == testrow1
+  test "insert":
+    order.insert(testrow1, 1)
+    check:
+      order[0] == default(OrderRow)
+      order[1] == testrow1
 
-      order.insert(testrow2, 0)
-      check:
-        order[0] == testrow2
-        order[1] == default(OrderRow)
-        order[2] == testrow1
+    order.insert(testrow2, 0)
+    check:
+      order[0] == testrow2
+      order[1] == default(OrderRow)
+      order[2] == testrow1
 
-    test "auto-row":
-      for i in 1u8..5u8:
-        order.insert(order.nextUnused(), order.len)
-        check order[i.ByteIndex] == [i, i, i, i]
+  test "auto-row":
+    for i in 1u8..5u8:
+      order.insert(order.nextUnused(), order.len)
+      check order[i.ByteIndex] == [i, i, i, i]
 
-    test "resizing":
-      order.setLen(5)
-      check:
-        order.len == 5
-        order.data.all(proc (o: OrderRow): bool = o == default(OrderRow))
+  test "resizing":
+    order.setLen(5)
+    check:
+      order.len == 5
+      order.data.all(proc (o: OrderRow): bool = o == default(OrderRow))
 
-      order[0] = testrow1
-      order[1] = testrow2
-      order.setLen(2)
-      check:
-        order.len == 2
-        order[0] == testrow1
-        order[1] == testrow2
+    order[0] = testrow1
+    order[1] = testrow2
+    order.setLen(2)
+    check:
+      order.len == 2
+      order[0] == testrow1
+      order[1] == testrow2
 
-block: # ============================================================ Sequence
-
+suite "Sequence":
+  
   func sequence(data = default(seq[uint8]); loop = none(ByteIndex)): Sequence =
     # TODO: move this to the library API
     result.data = data
     result.loopIndex = loop
+  
+  test "$":
+    const
+      data1 = @[127u8]
+      data2 = @[1u8, 2, 3, 0xFF, 0x80]
+    check:
+      $sequence() == ""
+      $sequence(data1) == "127"
+      $sequence(data2) == "1 2 3 -1 -128"
+      $sequence(data2, some(ByteIndex(1))) == "1 | 2 3 -1 -128"
+      $sequence(data2, some(ByteIndex(200))) == "1 2 3 -1 -128"
+      $sequence(loop = some(ByteIndex(3))) == ""
 
-  suite "Sequence":
-    test "$":
-      const
-        data1 = @[127u8]
-        data2 = @[1u8, 2, 3, 0xFF, 0x80]
-      check:
-        $sequence() == ""
-        $sequence(data1) == "127"
-        $sequence(data2) == "1 2 3 -1 -128"
-        $sequence(data2, some(ByteIndex(1))) == "1 | 2 3 -1 -128"
-        $sequence(data2, some(ByteIndex(200))) == "1 2 3 -1 -128"
-        $sequence(loop = some(ByteIndex(3))) == ""
+  test "parseSequence":
+    check:
+      parseSequence("") == default(Sequence)
+      parseSequence("  1 2   \t3  4\t") == sequence(@[1u8, 2, 3 ,4])
+      parseSequence("2 | 3 4") == sequence(@[2u8, 3, 4], some(ByteIndex(1)))
+      parseSequence("23sasd32sasd3@@$@21||23|2") == sequence(@[23u8, 32, 3, 21, 23, 2], some(ByteIndex(5)))
 
-    test "parseSequence":
-      check:
-        parseSequence("") == default(Sequence)
-        parseSequence("  1 2   \t3  4\t") == sequence(@[1u8, 2, 3 ,4])
-        parseSequence("2 | 3 4") == sequence(@[2u8, 3, 4], some(ByteIndex(1)))
-        parseSequence("23sasd32sasd3@@$@21||23|2") == sequence(@[23u8, 32, 3, 21, 23, 2], some(ByteIndex(5)))
+suite "SongList":
 
-block: # ============================================================= SongList
+  setup:
+    var songlist = SongList.init
 
-  suite "SongList":
+  test "1 song on init":
+    check:
+      songlist.len == 1
+      songlist[0] != nil
+
+  test "get/set":
+    var song = Song.new
+    check songlist[0] != nil
+    songlist[0] = song
+    check songlist[0] == song
+
+  test "add":
+    songlist.add()
+    check songlist.len == 2
+    songlist.add()
+    check songlist.len == 3
+    songlist.add()
+    check songlist.len == 4
+
+  test "duplicate":
+    songlist[0].rowsPerBeat = 8
+    songlist.duplicate(0)
+    check:
+      songlist.len == 2
+      songlist[0][] == songlist[1][]
+
+  test "remove":
+    songlist.add()
+    songlist.add()
+    songlist.remove(0)
+    check songlist.len == 2
+    songlist.remove(1)
+    check songlist.len == 1
+
+  test "removing when len=1 raises AssertionDefect":
+    expect AssertionDefect:
+      songlist.remove(0)
+
+  test "adding/duplicating when len=256 raises AssertionDefect":
+    for i in 0..254:
+      songlist.add()
+    expect AssertionDefect:
+      songlist.add()
+    expect AssertionDefect:
+      songlist.duplicate(2)
+
+template tableTests(T: typedesc[InstrumentTable|WaveformTable]) =    
+  suite $T:
+
+    const testName {.used.} = "test name"
 
     setup:
-      var songlist = SongList.init
+      var tab = init(T)
+    
+    test "can name items":
+      var item = tab[tab.add()]
+      check item.name == ""
+      item.name = testName
+      check item.name == testName
 
-    test "1 song on init":
-      check:
-        songlist.len == 1
-        songlist[0] != nil
-
-    test "get/set":
-      var song = Song.new
-      check songlist[0] != nil
-      songlist[0] = song
-      check songlist[0] == song
-
-    test "add":
-      songlist.add()
-      check songlist.len == 2
-      songlist.add()
-      check songlist.len == 3
-      songlist.add()
-      check songlist.len == 4
-
+    test "empty on init":
+      check tab.len == 0
+      for id in TableId.low..TableId.high:
+        check tab[id] == nil
+    
     test "duplicate":
-      songlist[0].rowsPerBeat = 8
-      songlist.duplicate(0)
+      let srcId = tab.add()
+      var src = tab[srcId]
+      
+      check src != nil
+      src[].name = testName
+
+      when src[] is Instrument:
+        src.sequences[skEnvelope].data = @[3u8]
+        src.sequences[skPanning].data = @[1u8, 1, 2, 2, 3]
+      else:
+        src.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
+
+      let dupId = tab.duplicate(srcId)
+      var duped = tab[dupId]
       check:
-        songlist.len == 2
-        songlist[0][] == songlist[1][]
+        duped != nil
+        src[] == duped[]
 
-    test "remove":
-      songlist.add()
-      songlist.add()
-      songlist.remove(0)
-      check songlist.len == 2
-      songlist.remove(1)
-      check songlist.len == 1
-
-    test "removing when len=1 raises AssertionDefect":
-      expect AssertionDefect:
-        songlist.remove(0)
-
-    test "adding/duplicating when len=256 raises AssertionDefect":
-      for i in 0..254:
-        songlist.add()
-      expect AssertionDefect:
-        songlist.add()
-      expect AssertionDefect:
-        songlist.duplicate(2)
-
-block: # ============================================================== Table
-  const testName {.used.} = "test name"
-
-  template tableTests(T: typedesc[InstrumentTable|WaveformTable]) =    
-    suite $T:
-      setup:
-        var tab = init(T)
+    test "keeps track of the next available id":
+      check:
+        tab.nextAvailableId == 0
+        tab.nextAvailableId == tab.add()
+        tab.nextAvailableId == 1
+        tab.nextAvailableId == tab.add()
+        tab.nextAvailableId == 2
+        tab.nextAvailableId == tab.add()
       
-      test "can name items":
-        var item = tab[tab.add()]
-        check item.name == ""
-        item.name = testName
-        check item.name == testName
+      tab.remove(0)
+      check tab.nextAvailableId == 0
+      tab.remove(1)
+      check tab.nextAvailableId == 0
 
-      test "empty on init":
-        check tab.len == 0
-        for id in TableId.low..TableId.high:
-          check tab[id] == nil
-      
-      test "duplicate":
-        let srcId = tab.add()
-        var src = tab[srcId]
-        
-        check src != nil
-        src[].name = testName
+      check:
+        tab.nextAvailableId == tab.add()
+        tab.nextAvailableId == 1
+        tab.nextAvailableId == tab.add()
+        tab.nextAvailableId == 3
 
-        when src[] is Instrument:
-          src.sequences[skEnvelope].data = @[3u8]
-          src.sequences[skPanning].data = @[1u8, 1, 2, 2, 3]
-        else:
-          src.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
+    test "uniqueIds":
+      # ids 0 and 1 are the same
+      discard tab.add()
+      discard tab.add()
+      # id 8 will be unique
+      tab.add(8)
+      when T is WaveformTable:
+        tab[8].data[0] = 0xFF
+      else:
+        tab[8].sequences[skTimbre] = parseSequence("0 1 2")
 
-        let dupId = tab.duplicate(srcId)
-        var duped = tab[dupId]
-        check:
-          duped != nil
-          src[] == duped[]
+      # uniqueIds should give us the set with 0 and 8 since id 1 is
+      # equivalent to id 0. When there are duplicates, the lowest id of all
+      # is used.
+      check:
+        uniqueIds(tab) == { 0.TableId, 8 }
+        uniqueIds(init(T)).card == 0
 
-      test "keeps track of the next available id":
-        check:
-          tab.nextAvailableId == 0
-          tab.nextAvailableId == tab.add()
-          tab.nextAvailableId == 1
-          tab.nextAvailableId == tab.add()
-          tab.nextAvailableId == 2
-          tab.nextAvailableId == tab.add()
-        
-        tab.remove(0)
-        check tab.nextAvailableId == 0
-        tab.remove(1)
-        check tab.nextAvailableId == 0
 
-        check:
-          tab.nextAvailableId == tab.add()
-          tab.nextAvailableId == 1
-          tab.nextAvailableId == tab.add()
-          tab.nextAvailableId == 3
-  
-  tableTests(InstrumentTable)
-  tableTests(WaveformTable)
+tableTests(InstrumentTable)
+tableTests(WaveformTable)
 
 
 static: # ============================================================ TrackRow
@@ -204,8 +219,8 @@ static: # ============================================================ TrackRow
     assert effect.effectType == uint8(etNoEffect)
     assert effect.param == 0
 
-block: # ============================================================= WaveData
-
+suite "WaveData":
+  
   const
     zero = default(WaveData)
     zeroStr = "00000000000000000000000000000000"
@@ -213,18 +228,55 @@ block: # ============================================================= WaveData
                 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10]
     triangleStr = "0123456789ABCDEFFEDCBA9876543210"
 
-  suite "WaveData":
-    test "$WaveData":
-      check:
-        $zero == zeroStr
-        $triangle == triangleStr
+  test "$WaveData":
+    check:
+      $zero == zeroStr
+      $triangle == triangleStr
 
-    test "parseWave":
-      check:
-        zeroStr.parseWave == zero
-        triangleStr.parseWave == triangle
-        # partial waveform
-        "11223344".parseWave == [0x11u8, 0x22, 0x33, 0x44, 0, 0, 0, 0, 
-                      0, 0, 0, 0, 0, 0, 0, 0]
-        # invalid string
-        "11@3sfji2maks;w".parseWave == [0x11u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  test "parseWave":
+    check:
+      zeroStr.parseWave == zero
+      triangleStr.parseWave == triangle
+      # partial waveform
+      "11223344".parseWave == [0x11u8, 0x22, 0x33, 0x44, 0, 0, 0, 0, 
+                    0, 0, 0, 0, 0, 0, 0, 0]
+      # invalid string
+      "11@3sfji2maks;w".parseWave == [0x11u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+
+suite "Waveform":  
+  
+  test "hash":
+    var
+      w1 = Waveform.init()
+      w2 = w1
+      w3 = w1
+    w3.data[0] = 0xFF
+
+    let
+      hc1 = hash(w1)
+      hc2 = hash(w2)
+      hc3 = hash(w3)
+    
+    check:
+      hc1 == hc2
+      w1 == w2
+      hc1 != hc3 or w1 != w3
+
+suite "Instrument":
+  test "hash":
+    var
+      i1 = Instrument.init()
+      i2 = i1
+      i3 = i1
+    i3.sequences[skArp] = parseSequence("-1 1 -2")
+
+    let
+      hc1 = hash(i1)
+      hc2 = hash(i2)
+      hc3 = hash(i3)
+
+    check:
+      hc1 == hc2
+      i1 == i2
+      hc1 != hc3 or i1 != i3

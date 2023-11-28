@@ -6,6 +6,9 @@
  - (data) `toView` converter in data module for `Track -> TrackView`
  - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
    `TrackRow`
+ - (data) `hash` procs for `Instrument` and `Waveform`
+ - (data) `==` procs for `Instrument` and `Waveform`
+ - (data) `uniqueIds` proc for `Table[T]`
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
