@@ -85,14 +85,11 @@
 <li><a class="reference" href="#OperationSetting" title="OperationSetting = range[opsPatternCommand .. opsTune]">OperationSetting</a></li>
 <li><a class="reference" href="#PatternCommand" title="PatternCommand = enum
   pcNone,                   ## No pattern command, do not change pattern
-  pcNext,                   ## Skip to the next pattern in the order, starting at a given row.
-  pcJump                     ## Jump to the given pattern in the order.">PatternCommand</a></li>
-<li><a class="reference" href="#PatternVisit" title="PatternVisit = object
-  pattern*: int              ## The index in the song's order of the pattern being visited
-  rows*: int                 ## The number of rows that were visited.
-  startRow*: int ## The starting row of the visit, 0 in most cases. When a visit's starting
-                 ## row is nonzero, this means that the Dxx effect (pattern skip) with a
-                 ## nonzero parameter was encountered in the previous pattern visit.">PatternVisit</a></li>
+                             ## 
+  pcNext, ## Skip to the next pattern in the order, starting at a given row.
+           ## 
+  pcJump                     ## Jump to the given pattern in the order.
+                             ##">PatternCommand</a></li>
 <li><a class="reference" href="#RowIr" title="RowIr = object
   case kind*: RowIrKind
   of rikRest:
@@ -106,9 +103,6 @@
             ## in a Track.
   rikOp ## This kind of IR is an operation, or a non-empty row that performs
         ## some kind of action.">RowIrKind</a></li>
-<li><a class="reference" href="#SongPath" title="SongPath = object
-  visits*: seq[PatternVisit]
-  loopIndex*: Option[int]">SongPath</a></li>
 <li><a class="reference" href="#TrackIr" title="TrackIr = object
   srcLen*: int
   data*: seq[RowIr]">TrackIr</a></li>
@@ -120,8 +114,12 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#12" id="62">Procs</a></summary>
     <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">fromIr
-  <li><a class="reference" href="#fromIr%2CTrackIr" title="fromIr(ir: TrackIr): Track">fromIr(ir: TrackIr): Track</a></li>
+      <ul class="simple nested-toc-section">==
+  <li><a class="reference" href="#%3D%3D%2CRowIr%2CRowIr" title="`==`(a, b: RowIr): bool">`==`(a, b: RowIr): bool</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">fromIr
+  <li><a class="reference" href="#fromIr%2CTrackIr" title="fromIr(ir: TrackIr): tuple[track: Track, effectsOverflowed: bool]">fromIr(ir: TrackIr): tuple[track: Track, effectsOverflowed: bool]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">isNoop
@@ -132,8 +130,20 @@
   <li><a class="reference" href="#len%2CTrackIr" title="len(ir: TrackIr): int">len(ir: TrackIr): int</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">opRowIr
+  <li><a class="reference" href="#opRowIr%2COperation" title="opRowIr(op: Operation): RowIr">opRowIr(op: Operation): RowIr</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">restRowIr
+  <li><a class="reference" href="#restRowIr%2CPositive" title="restRowIr(restRows: Positive): RowIr">restRowIr(restRows: Positive): RowIr</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">runtime
+  <li><a class="reference" href="#runtime%2COperation" title="runtime(op: Operation): int">runtime(op: Operation): int</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">setFromIr
-  <li><a class="reference" href="#setFromIr%2CTrack%2CTrackIr" title="setFromIr(track: var Track; ir: TrackIr)">setFromIr(track: var Track; ir: TrackIr)</a></li>
+  <li><a class="reference" href="#setFromIr%2CTrack%2CTrackIr" title="setFromIr(track: var Track; ir: TrackIr): bool">setFromIr(track: var Track; ir: TrackIr): bool</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toEffectType
@@ -147,6 +157,10 @@
 </ul>
 <ul class="simple nested-toc-section">toOperation
   <li><a class="reference" href="#toOperation%2CTrackRow" title="toOperation(row: TrackRow): Operation">toOperation(row: TrackRow): Operation</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">toTrackRow
+  <li><a class="reference" href="#toTrackRow%2COperation" title="toTrackRow(op: Operation): tuple[row: TrackRow, effectsOverflowed: bool]">toTrackRow(op: Operation): tuple[row: TrackRow, effectsOverflowed: bool]</a></li>
 
 </ul>
 
@@ -201,7 +215,8 @@
     
     <p class="module-desc"><p>Intermediate Represention (ir) of pattern data to be compiled.</p>
 <p>Using IR format allows us to easily convert between formats where the process for converting a given input to a given output follows:</p>
-<p>&lt;input&gt; -&gt; IR -&gt; &lt;output&gt;</p>
+<p><pre class="listing">
+<span class="Operator">&lt;</span><span class="Identifier">input</span><span class="Operator">&gt;</span> <span class="Operator">-&gt;</span> <span class="Identifier">IR</span> <span class="Operator">-&gt;</span> <span class="Operator">&lt;</span><span class="Identifier">output</span><span class="Operator">&gt;</span></pre></p>
 <p>Where input is typically a TBM, or another module format like FTM or MPT, and output can be ASM, GBS, TBM, etc.</p>
 <p>Example uses:</p>
 <table border="1" class="docutils"><tr><th>Input</th><th>Output</th><th>Description</th></tr>
@@ -226,8 +241,8 @@
   <dd>
     
     Enum for a frequency modulation effect. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L60" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L60" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L47" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L47" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -245,8 +260,8 @@
     <p>An Operation is the processed form of a TrackRow, that can be performed by a playback engine, or exported to an output format.</p>
 <p>You can convert a <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt> to an <tt class="docutils literal"><span class="pre"><span class="Identifier">Operation</span></span></tt> via the <tt class="docutils literal"><span class="pre"><span class="Identifier">toOperation</span></span></tt> proc. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L114" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L114" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L101" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L101" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -272,8 +287,8 @@
   <dd>
     
     Enum of flags that specify what the operation does. Each flag is either a column of the TrackRow (note, instrument) or an effect instance.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L69" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L69" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L56" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L56" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -282,37 +297,24 @@
   <dd>
     
     Subrange of OperationFlag that have a uint8 setting. Flags in this range have an additional uint8 value to be processed, ie, an effect parameter or a note.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L109" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L109" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L96" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L96" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="PatternCommand">
   <dt><pre><a href="ir.html#PatternCommand"><span class="Identifier">PatternCommand</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">pcNone</span><span class="Other">,</span>                   <span class="Comment">## No pattern command, do not change pattern</span>
-  <span class="Identifier">pcNext</span><span class="Other">,</span>                   <span class="Comment">## Skip to the next pattern in the order, starting at a given row.</span>
-  <span class="Identifier">pcJump</span>                     <span class="Comment">## Jump to the given pattern in the order.</span></pre></dt>
+                             <span class="Comment">## </span>
+  <span class="Identifier">pcNext</span><span class="Other">,</span> <span class="Comment">## Skip to the next pattern in the order, starting at a given row.</span>
+           <span class="Comment">## </span>
+  <span class="Identifier">pcJump</span>                     <span class="Comment">## Jump to the given pattern in the order.</span>
+                             <span class="Comment">## </span></pre></dt>
   <dd>
     
-    Enum for commands that change the current pattern.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L32" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L32" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="PatternVisit">
-  <dt><pre><a href="ir.html#PatternVisit"><span class="Identifier">PatternVisit</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">pattern</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>              <span class="Comment">## The index in the song's order of the pattern being visited</span>
-  <span class="Identifier">rows</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                 <span class="Comment">## The number of rows that were visited.</span>
-  <span class="Identifier">startRow</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Comment">## The starting row of the visit, 0 in most cases. When a visit's starting</span>
-                 <span class="Comment">## row is nonzero, this means that the Dxx effect (pattern skip) with a</span>
-                 <span class="Comment">## nonzero parameter was encountered in the previous pattern visit.</span>
-  </pre></dt>
-  <dd>
-    
-    A visit to a pattern contains its pattern index and the number of rows encountered before reaching the end or a pattern command occurred.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L41" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L41" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Enum for commands that change the current pattern. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L34" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L34" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -328,9 +330,9 @@
   </pre></dt>
   <dd>
     
-    Row intermediate representation. A <tt class="docutils literal"><span class="pre"><span class="Identifier">RowIR</span></span></tt> is an intermediate representation of a single non-empty <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt> (operation), or 1 or more empty <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRows</span></span></tt> (rest).
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L142" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L142" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Row intermediate representation. A <tt class="docutils literal"><span class="pre"><span class="Identifier">RowIr</span></span></tt> is an intermediate representation of a single non-empty <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt> (operation), or 1 or more empty <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRows</span></span></tt> (rest).
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L129" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L129" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -344,21 +346,8 @@
   <dd>
     
     Enum for the two different kinds of RowIr, rests and operations.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L132" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L132" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="SongPath">
-  <dt><pre><a href="ir.html#SongPath"><span class="Identifier">SongPath</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">visits</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="ir.html#PatternVisit"><span class="Identifier">PatternVisit</span></a><span class="Other">]</span>
-  <span class="Identifier">loopIndex</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span>
-</pre></dt>
-  <dd>
-    
-    A path of patterns in the order that they will be played out for a song, with an optional loop index. If <tt class="docutils literal"><span class="pre"><span class="Identifier">loopIndex</span><span class="Operator">.</span><span class="Identifier">isNone</span><span class="Punctuation">(</span><span class="Punctuation">)</span></span></tt> then the song will halt at the last pattern visited.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L119" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -369,11 +358,11 @@
 </pre></dt>
   <dd>
     
-    <p>Track intermediate representation. A <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackIR</span></span></tt> is an intermediate representation of a <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt>. It is simply a container of <tt class="docutils literal"><span class="pre"><span class="Identifier">RowIR</span></span></tt> for each processed <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt> in the <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt>.</p>
+    <p>Track intermediate representation. A <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackIr</span></span></tt> is an intermediate representation of a <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt>. It is simply a container of <tt class="docutils literal"><span class="pre"><span class="Identifier">RowIr</span></span></tt> for each processed <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt> in the <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt>.</p>
 <p>TrackIr can be created manually, or via the <tt class="docutils literal"><span class="pre"><span class="Identifier">toIr</span></span></tt> proc. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L154" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L154" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L141" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L141" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -383,14 +372,28 @@
 <div class="section" id="12">
   <h1><a class="toc-backref" href="#12">Procs</a></h1>
   <dl class="item">
-    <div id="fromIr-procs-all">
-  <div id="fromIr,TrackIr">
-  <dt><pre><span class="Keyword">func</span> <a href="#fromIr%2CTrackIr"><span class="Identifier">fromIr</span></a><span class="Other">(</span><span class="Identifier">ir</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a><span class="Other">)</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+    <div id="==-procs-all">
+  <div id="==,RowIr,RowIr">
+  <dt><pre><span class="Keyword">func</span> <a href="#%3D%3D%2CRowIr%2CRowIr"><span class="Identifier">`==`</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <a href="ir.html#RowIr"><span class="Identifier">RowIr</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Converts a TrackIr into a Track.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L414" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L414" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L325" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L325" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="fromIr-procs-all">
+  <div id="fromIr,TrackIr">
+  <dt><pre><span class="Keyword">func</span> <a href="#fromIr%2CTrackIr"><span class="Identifier">fromIr</span></a><span class="Other">(</span><span class="Identifier">ir</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">track</span><span class="Other">:</span> <a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">,</span> <span class="Identifier">effectsOverflowed</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">]</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Converts a TrackIr into a Track. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L424" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L424" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -402,8 +405,8 @@
   <dd>
     
     Determines if the operation has no effect, or is a no-op. Operations with this property can be safely excluded from the compilation process.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L292" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L292" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L279" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L279" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -415,8 +418,47 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L297" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L297" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L284" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L284" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="opRowIr-procs-all">
+  <div id="opRowIr,Operation">
+  <dt><pre><span class="Keyword">func</span> <a href="#opRowIr%2COperation"><span class="Identifier">opRowIr</span></a><span class="Other">(</span><span class="Identifier">op</span><span class="Other">:</span> <a href="ir.html#Operation"><span class="Identifier">Operation</span></a><span class="Other">)</span><span class="Other">:</span> <a href="ir.html#RowIr"><span class="Identifier">RowIr</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Creates a RowIr that performs an Operation.
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L321" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L321" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="restRowIr-procs-all">
+  <div id="restRowIr,Positive">
+  <dt><pre><span class="Keyword">func</span> <a href="#restRowIr%2CPositive"><span class="Identifier">restRowIr</span></a><span class="Other">(</span><span class="Identifier">restRows</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">)</span><span class="Other">:</span> <a href="ir.html#RowIr"><span class="Identifier">RowIr</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Creates a RowIr that &quot;rests&quot; or does nothing for a given amount of rows. Equivalent to consecutive empty rows in a track.
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L316" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L316" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="runtime-procs-all">
+  <div id="runtime,Operation">
+  <dt><pre><span class="Keyword">func</span> <a href="#runtime%2COperation"><span class="Identifier">runtime</span></a><span class="Other">(</span><span class="Identifier">op</span><span class="Other">:</span> <a href="ir.html#Operation"><span class="Identifier">Operation</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Gets the runtime, in frames, of the operation, assuming it can be determined. A runtime can be determined from an operation alone if its duration setting was set (note cut or delayed note cut effect). The determined runtime is returned, or -1 if it cannot be determined which means the operation can run indefinitely. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L292" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L292" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -424,13 +466,13 @@
 </div>
 <div id="setFromIr-procs-all">
   <div id="setFromIr,Track,TrackIr">
-  <dt><pre><span class="Keyword">proc</span> <a href="#setFromIr%2CTrack%2CTrackIr"><span class="Identifier">setFromIr</span></a><span class="Other">(</span><span class="Identifier">track</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">;</span> <span class="Identifier">ir</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#setFromIr%2CTrack%2CTrackIr"><span class="Identifier">setFromIr</span></a><span class="Other">(</span><span class="Identifier">track</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="data.html#Track"><span class="Identifier">Track</span></a><span class="Other">;</span> <span class="Identifier">ir</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Sets the given track's row data using the given ir data. This proc does not clear the track beforehand for optimization purposes, ensure that <tt class="docutils literal"><span class="pre"><span class="Identifier">track</span></span></tt> is an empty one first before calling this function.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L360" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L360" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L409" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L409" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -443,8 +485,8 @@
   <dd>
     
     Converts a FrequencyMod enum to an EffectType enum 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L168" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L168" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L155" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L155" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -454,8 +496,8 @@
   <dd>
     
     Converts a PatternCommand enum to an EffectType enum 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L179" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L179" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L166" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L166" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -466,9 +508,9 @@
   <dt><pre><span class="Keyword">func</span> <a href="#toIr%2CTrackView"><span class="Identifier">toIr</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">)</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets the immediate representation, ir, of a given track.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L326" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L326" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Gets the immediate representation, ir, of a given track. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L333" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L333" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -480,8 +522,22 @@
   <dd>
     
     Converts a TrackRow to an Operation. An Operation is a simplified version of a TrackRow, which removes any redundant effects. Some information in <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> may be lost when converting the operation back to a TrackRow. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L200" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L200" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L187" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L187" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="toTrackRow-procs-all">
+  <div id="toTrackRow,Operation">
+  <dt><pre><span class="Keyword">func</span> <a href="#toTrackRow%2COperation"><span class="Identifier">toTrackRow</span></a><span class="Other">(</span><span class="Identifier">op</span><span class="Other">:</span> <a href="ir.html#Operation"><span class="Identifier">Operation</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">row</span><span class="Other">:</span> <a href="data.html#TrackRow"><span class="Identifier">TrackRow</span></a><span class="Other">,</span> <span class="Identifier">effectsOverflowed</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">]</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Converts an Operation back into a TrackRow. The converted row is set in the <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> field. If the operation had too many effects set that could be contained in <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> the <tt class="docutils literal"><span class="pre"><span class="Identifier">effectsOverflowed</span></span></tt> is set to <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt>, and the conversion done was a partial one. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L353" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L353" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -500,8 +556,8 @@
   <dd>
     
     Iterate all Operations for the given TrackIr. The row number the operation occurs, along with the operation is yielded per iteration.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L305" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L305" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L304" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L304" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -519,8 +575,8 @@
   <dd>
     
     Shortcut for <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span><span class="Operator">.</span><span class="Identifier">getSetting</span><span class="Punctuation">(</span><span class="Identifier">flag</span><span class="Punctuation">)</span></span></tt>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L288" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L288" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L275" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L275" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -532,8 +588,8 @@
   <dd>
     
     Shortcut for <tt class="docutils literal"><span class="pre"><span class="Identifier">flag</span> <span class="Keyword">in</span> <span class="Identifier">op</span><span class="Operator">.</span><span class="Identifier">flags</span></span></tt>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L273" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L273" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L260" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L260" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -545,8 +601,8 @@
   <dd>
     
     Template that executes body if <tt class="docutils literal"><span class="pre"><span class="Identifier">flag</span></span></tt> is present in <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L277" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L277" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L264" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L264" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -558,8 +614,8 @@
   <dd>
     
     Gets the <tt class="docutils literal"><span class="pre"><span class="Identifier">uint8</span></span></tt> setting associated with the given <tt class="docutils literal"><span class="pre"><span class="Identifier">flag</span></span></tt>. If <tt class="docutils literal"><span class="pre"><span class="Identifier">flag</span></span></tt> is not present in <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt> is returned.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L283" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L283" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L270" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L270" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -575,7 +631,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-08 17:09:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-28 19:18:11 UTC</small>
       </div>
     </div>
   </div>
