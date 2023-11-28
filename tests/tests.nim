@@ -14,6 +14,7 @@ import units/[
 import units/private/[
   tendian,
   tioblocks,
+  trgbasm,
   tsynth,
   tutils
 ]
