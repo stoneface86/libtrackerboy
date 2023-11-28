@@ -27,6 +27,15 @@ test "Immutable[ref T] access":
     iref == ref1
     ref1 == iref
 
+test "Immutable[T] equality":
+  var x = 2
+  let
+    a = x.toImmutable
+    b = x.toImmutable
+  check:
+    a == b
+
+
 test "pan tests":
   check:
     not mixMute.pansLeft
@@ -37,3 +46,4 @@ test "pan tests":
     mixRight.pansRight
     mixMiddle.pansLeft
     mixMiddle.pansRight
+

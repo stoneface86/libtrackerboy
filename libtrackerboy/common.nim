@@ -91,21 +91,33 @@ template `==`*[T](i: Immutable[T]; rhs: T): bool =
   cast[T](i) == rhs
 
 template `==`*[T](lhs: T; i: Immutable[T]): bool =
+  ## Same as `i == lhs`
+  ##
   i == lhs
 
 template `==`*[T: ptr|ref](lhs: nil.typeof; rhs: Immutable[T]): bool =
+  ## Same as `rhs.isNil()`
+  ##
   rhs == lhs
+
+template `==`*[T](a, b: Immutable[T]; ): bool =
+  ## Test if the two immutables are equivalent. This just calls the `==` proc
+  ## for T.
+  ## 
+  cast[T](a) == cast[T](b)
 
 {. push inline, raises: [] .}
 
 func pansLeft*(mode: MixMode): bool =
   ## Determine whether the mode pans left, returns `true` when mode is
   ## `mixLeft` or `mixMiddle`
+  ##
   testBit(ord(mode), 0)
 
 func pansRight*(mode: MixMode): bool =
   ## Determine whether the mode pans right, returns `true` when mode is
   ## `mixRight` or `mixMiddle`
+  ##
   testBit(ord(mode), 1)
 
 {. pop .}
