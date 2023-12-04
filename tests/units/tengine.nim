@@ -1,5 +1,6 @@
 
-import libtrackerboy/private/[enginestate, apucontrol, hardware]
+import libtrackerboy/engine/[enginestate, apucontrol]
+import libtrackerboy/private/[hardware]
 import libtrackerboy/[data, engine, notes]
 
 import unittest2

@@ -19,6 +19,8 @@
    and borrow)
  - (ir) `fromIr(TrackIr)` returns a tuple containing a track and a bool
  - (ir) `setFromIr` proc now returns `bool`
+ - modules apucontrol, enginecontrol and enginestate are no longer private
+   and are now located in libtrackerboy/engine
 
 ### Removed
  - (ir) `SongPath` and `PatternVisit` types.

@@ -17,22 +17,19 @@ import
   ./common,
   ./data,
 
-  # enginecontrol and apucontrol are technically part of this module
-  # they are split into two modules for unit testing
-  ./private/apucontrol,
-  ./private/enginecontrol,
-  ./private/enginestate,
-  ./private/hardware
+  ./engine/apucontrol,
+  ./engine/enginestate,
+  ./engine/enginecontrol,
 
-import std/[options, times, with]
+  ./private/hardware,
+  ./private/optionutils
+
+import std/[options, times]
 
 export common, times
-export Module, Song, ApuIo, EngineFrame
-
-template withSome[T](opt: var Option[T]; body: untyped): untyped =
-  if opt.isSome():
-    with opt.get():
-      body
+export Module, Song   # data
+export ApuIo          # apuio
+export EngineFrame    # enginestate
 
 type
   Engine* = object
@@ -152,29 +149,24 @@ proc takeOperation*(e: var Engine): ApuOperation =
 
 # diagnostic functions
 
-template onSome[T](o: Option[T]; body: untyped): untyped =
-  if o.isSome():
-    template it(): lent T = o.get()
-    body
-
 func currentState*(e: Engine; chno: ChannelId): ChannelState =
   ## Gets the current channel state of the given channel. An empty channel
   ## state is returned if no music is playing.
   ## 
   onSome(e.musicRuntime):
-    result = it.states[chno]
+    result = it.currentState(chno)
 
 func currentNote*(e: Engine; chno: ChannelId): int =
   ## Gets the current note, as a note index, being played for the given
   ## channel. `0` is returned if no music is playing.
   ## 
   onSome(e.musicRuntime):
-    result = it.trackControls[chno].fc.note.int
+    result = it.currentNote(chno)
 
 template getTrackParameter(e: Engine; chno: ChannelId; param: untyped
                           ): untyped =
   onSome(e.musicRuntime):
-    result = it.trackControls[chno].param
+    result = `track param`(it, chno)
 
 func getTrackTimbre*(e: Engine; chno: ChannelId): uint8 =
   ## Gets the track's current timbre setting, for the given channel. Timbre
@@ -200,14 +192,14 @@ func isLocked*(e: Engine; chno: ChannelId): bool =
   ## Check if a channel is locked for music playback by the engine. `true` is
   ## returned if `chno` is locked, `false` when unlocked.
   ##
-  if e.musicRuntime.isSome():
-    result = chno notin e.musicRuntime.get().unlocked
+  onSome(e.musicRuntime):
+    result = it.isLocked(chno)
 
 func getLocked*(e: Engine): set[ChannelId] =
   ## Gets a set of the engine's locked channels.
   ##
-  if e.musicRuntime.isSome():
-    result = {ch1..ch4} - e.musicRuntime.get().unlocked
+  onSome(e.musicRuntime):
+    result = it.getLocked()
 
 # Apu stuff ===================================================================
 

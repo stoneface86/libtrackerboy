@@ -1,6 +1,25 @@
 ##[
 
-.. include:: warning.rst
+Engine control.
+
+This module contains the core components of `Engine`, and is responsible
+for music and sound effect playback of TrackerBoy modules.
+
+A brief overview of these components:
+
+* fc, `FrequencyControl` - handles frequency calculation and effects. Each
+  track has its own fc.
+* ir, `InstrumentRuntime` - for performing an instrument by stepping through
+  its sequences. Each track has its own ir, as one instrument is played per
+  track.
+* tc, `TrackControl` - handles the state of a channel for a track. It serves as
+  a container for an fc and ir, and ticks them when it is ticked. A tc also
+  handles note triggers and cuts.
+* mr, `MusicRuntime` - handles the performance of a `Song`. It is a container
+  for each channel's tc. It also manages the state of each channel, global
+  state for the entire runtime, and its position in the song.
+
+This module is part of the inner workings of the engine module.
 
 ]##
 
@@ -15,90 +34,98 @@ import std/[bitops, options, with]
 type
   Counter = distinct int
 
-  FcMode* = enum
-    fcmNone,
-    fcmPortamento,
-    fcmPitchSlide,
-    fcmNoteSlide,
-    fcmArpeggio
+  FcMode = enum
+    ## Modes of operation for the FrequencyControl
+    ##
+    fcmNone         ## None or no effect
+    fcmPortamento   ## Automatic portamento
+    fcmPitchSlide   ## Targeted pitch slide
+    fcmNoteSlide    ## Pitch slide to a target note
+    fcmArpeggio     ## 3-note arpeggio
 
-  SequenceInput* = array[SequenceKind, Option[uint8]]
+  SequenceInput = array[SequenceKind, Option[uint8]]
     ## Input data to pass to TrackControl and FrequencyControl from
     ## enumerated sequences
     ##
 
-  InstrumentRuntime* = object
-    ## Enumerates all sequences in an instrument
+  InstrumentRuntime = object
+    ## Performs an instrument by enumerating all of its sequences.
     ##
-    instrument*: Immutable[ref Instrument]
-    sequenceCounters*: array[SequenceKind, int]
+    instrument: Immutable[ref Instrument]
+      ## A reference to the Instrument to perform. Use `nil` for no instrument.
+      ## 
+    sequenceCounters: array[SequenceKind, int]
+      ## Each sequence's position. The value at this index will be yielded for
+      ## the next step.
+      ##
 
-  FrequencyLookupFunc* = proc(note: Natural): uint16 {.nimcall, gcSafe, raises: [], noSideEffect.}
+  FrequencyLookupFunc = proc(note: Natural): uint16 {.
+                          nimcall, gcSafe, raises: [], noSideEffect .}
 
-  FrequencyBounds* = object
-    maxFrequency*: uint16
-    maxNote*: uint8
-    lookupFn*: FrequencyLookupFunc
+  FrequencyBounds = object
+    maxFrequency: uint16
+    maxNote: uint8
+    lookupFn: FrequencyLookupFunc
 
-  FrequencyControl* = object
+  FrequencyControl = object
     ## Handles frequency calculation for a channel
     ##
-    bounds*: FrequencyBounds
-    mode*: FcMode
-    note*: uint8
-    tune*: int8
-    frequency*: uint16
+    bounds: FrequencyBounds
+    mode: FcMode
+    note: uint8
+    tune: int8
+    frequency: uint16
     # pitch slide
-    slideAmount*: uint8
-    slideTarget*: uint16
-    instrumentPitch*: int16
+    slideAmount: uint8
+    slideTarget: uint16
+    instrumentPitch: int16
     # arpeggio
-    chordOffset1*: uint8
-    chordOffset2*: uint8
-    chordIndex*: uint8
-    chord*: array[0u8..2u8, uint16]
+    chordOffset1: uint8
+    chordOffset2: uint8
+    chordIndex: uint8
+    chord: array[0u8..2u8, uint16]
     # vibrato
-    vibratoEnabled*: bool
-    vibratoDelayCounter*: uint8
-    vibratoCounter*: uint8
-    vibratoValue*: int8
-    vibratoDelay*: uint8
-    vibratoParam*: uint8
+    vibratoEnabled: bool
+    vibratoDelayCounter: uint8
+    vibratoCounter: uint8
+    vibratoValue: int8
+    vibratoDelay: uint8
+    vibratoParam: uint8
 
-  NoteAction* = enum
+  NoteAction = enum
     naOff       ## not playing a note
     naSustain   ## keep playing the note
     naTrigger   ## trigger a new note
     naCut       ## cut the note
 
-  TrackControl* = object
+  TrackControl = object
     ## Modifies a ChannelState and GlobalState for a given TrackRow
     ##
-    op*: Operation
-    ir*: InstrumentRuntime
-    fc*: FrequencyControl
-    delayCounter*: Counter #Option[int]
-    cutCounter*: Counter #Option[int]
-    playing*: bool
-    envelope*: uint8
-    panning*: uint8
-    timbre*: uint8
-    state*: ChannelState
+    op: Operation
+    ir: InstrumentRuntime
+    fc: FrequencyControl
+    delayCounter: Counter
+    cutCounter: Counter
+    playing: bool
+    envelope: uint8
+    panning: uint8
+    timbre: uint8
+    state: ChannelState
 
-  Timer* = object
-    period*, counter*: int
+  Timer = object
+    period, counter: int
 
   MusicRuntime* = object
-    song*: Immutable[ptr Song]
-    halted*: bool
-    orderCounter*: int
-    rowCounter*: int
-    patternRepeat*: bool
-    timer*: Timer
-    global*: GlobalState
-    unlocked*: set[ChannelId]
-    states*: array[ChannelId, ChannelState]
-    trackControls*: array[ChannelId, TrackControl]
+    song: Immutable[ptr Song]
+    halted: bool
+    orderCounter: int
+    rowCounter: int
+    patternRepeat: bool
+    timer: Timer
+    global: GlobalState
+    unlocked: set[ChannelId]
+    states: array[ChannelId, ChannelState]
+    trackControls: array[ChannelId, TrackControl]
 
 template getInt8(val: Option[uint8]): int8 =
   cast[int8](val.get())
@@ -462,6 +489,9 @@ proc step(tc: var TrackControl; itable: InstrumentTable;
 
 func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
            orderNo, rowNo: int; patternRepeat: bool): MusicRuntime =
+  ## Initializes a MusicRuntime the given song, starting position and
+  ## pattern repeat setting.
+  ##
   result = MusicRuntime(
     song: song,
     halted: false,
@@ -486,20 +516,31 @@ func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
   )
 
 proc haltAll(r: var MusicRuntime; op: var ApuOperation) =
+  ## Shutdowns all locked channels.
+  ##
   for ch in ChannelId:
     if ch notin r.unlocked:
       op.updates[ch] = ChannelUpdate(action: caShutdown)
       r.states[ch] = ChannelState.default
 
 proc halt*(r: var MusicRuntime; op: var ApuOperation) =
+  ## Halts performance of the song.
+  ##
   r.halted = true
   r.haltAll(op)
 
 proc jump*(r: var MusicRuntime; pattern: Natural) =
+  ## Jump to a given pattern in the order. The pattern will play at this
+  ## pattern on the next call to step, at row 0.
+  ##
   r.orderCounter = pattern
   r.rowCounter = 0
 
 proc lock*(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation) =
+  ## Lock a channel for music playback. The resulting ApuOperation will be
+  ## stored into `op`. If `chno` is already locked then this proc does
+  ## nothing, and leaves `op` unchanged.
+  ##
   if chno in r.unlocked:
     r.unlocked.excl(chno)
     op.updates[chno] = ChannelUpdate(
@@ -509,6 +550,11 @@ proc lock*(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation) =
     )
 
 proc unlock*(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation) =
+  ## Unlocks a channel for custom use. The runtime will no longer send
+  ## updates to this channel. The resulting `ApuOperation` will be stored
+  ## into `op`. If `chno` is already unlocked then this proc does nothing,
+  ## and leaves `op` unchanged.
+  ##
   if chno notin r.unlocked:
     r.unlocked.incl(chno)
     op.updates[chno] = ChannelUpdate(action: caShutdown)
@@ -525,6 +571,12 @@ func difference(state, prev: ChannelState;): UpdateFlags =
 proc step*(r: var MusicRuntime; itable: InstrumentTable;
            frame: var EngineFrame; op: var ApuOperation
           ): bool {.raises: [].} =
+  ## Steps the runtime for 1 frame or tick. Returns `true` if the runtime
+  ## halted or is currently halted. Afterwards, the `frame` variable will be
+  ## updated with the details of the tick that was just stepped. Also, `op`
+  ## will be updated with the necessary changes to the Apu as a result of this
+  ## tick.
+  ## 
   if r.halted:
     return true
 
@@ -623,3 +675,27 @@ proc step*(r: var MusicRuntime; itable: InstrumentTable;
           patternCommand = pcNext
           patternCommandParam = 0
   result = false
+
+func orderCounter*(mr: MusicRuntime): int =
+  mr.orderCounter
+
+func currentState*(mr: MusicRuntime; chno: ChannelId): ChannelState =
+  mr.states[chno]
+
+func currentNote*(mr: MusicRuntime; chno: ChannelId): int =
+  result = int(mr.trackControls[chno].fc.note)
+
+func trackTimbre*(mr: MusicRuntime; chno: ChannelId): uint8 =
+  mr.trackControls[chno].timbre
+
+func trackEnvelope*(mr: MusicRuntime; chno: ChannelId): uint8 =
+  mr.trackControls[chno].envelope
+
+func trackPanning*(mr: MusicRuntime; chno: ChannelId): uint8 =
+  mr.trackControls[chno].panning
+
+func isLocked*(mr: MusicRuntime; chno: ChannelId): bool =
+  chno notin mr.unlocked
+
+func getLocked*(mr: MusicRuntime): set[ChannelId] =
+  {ch1..ch4} - mr.unlocked

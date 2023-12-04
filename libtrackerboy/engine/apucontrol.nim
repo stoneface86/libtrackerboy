@@ -1,12 +1,17 @@
 ##[
 
-.. include:: warning.rst
+APU Control
+
+A module used by the engine module for determining the register writes needed
+by an `ApuOperation` object.
+
+This module is part of the inner workings of the engine module.
 
 ]##
 
 import 
   ./enginestate,
-  ./hardware,
+  ../private/hardware,
   ../common,
   ../data,
   ../notes
@@ -15,11 +20,21 @@ import std/[bitops, options]
 
 type
   ApuWrite* = tuple[regaddr, value: uint8]
+    ## Tuple for an APU register write. Consists of an address in the $FF00
+    ## page and a value to write.
+    ##
 
   # Fixed size array is used instead of a seq for performance reasons
   ApuWriteList* = object
+    ## A container for a list of APU writes.
+    ##
     data*: array[64, ApuWrite]
+      ## The list of writes. An array is used instead of seq for performance
+      ## reasons. Elements past `len` should be ignored.
+      ##
     len*: int
+      ## Length of the list.
+      ##
 
   PanningAccum = object
     val: uint8
@@ -35,6 +50,8 @@ proc add*(l: var ApuWriteList; regaddr, value: uint8;) =
   inc l.len
 
 iterator items*(l: ApuWriteList): ApuWrite =
+  ## Iterator for all ApuWrites in the list.
+  ##
   for i in 0..<l.len:
     yield l.data[i]
 
@@ -62,6 +79,8 @@ func update(accum: PanningAccum; nr51: uint8): uint8 =
   (nr51 and (not accum.mask)) or accum.val
 
 proc clearChannel*(chno: ChannelId; writes: var ApuWriteList) =
+  ## Adds the writes needed to the list to clear a given channel.
+  ##
   let regstart = rNR10 + (chno.ord * 5).uint8
   for regaddr in regstart..regstart+4:
     writes.add(regaddr, 0x00)
@@ -69,18 +88,19 @@ proc clearChannel*(chno: ChannelId; writes: var ApuWriteList) =
 func getRegAddr(chno: ChannelId): uint8 {.compileTime.} =
   rNR10 + (chno.ord * 5).uint8
 
-const dutyTable = [
-  0b00000000u8,   # V00 - 12.5%
-  0b01000000,     # V01 - 25.0%
-  0b10000000,     # V02 - 50.0%
-  0b11000000      # V03 - 75.0% (default)
-]
-const waveVolumes = [ 
-  0b00000000u8,   # V00 - mute
-  0b01100000,     # V01 - 25% volume
-  0b01000000,     # V02 - 50% volume
-  0b00100000      # V03 - 100% volume (default)
-]
+const 
+  dutyTable = [
+    0b00000000u8,   # V00 - 12.5%
+    0b01000000,     # V01 - 25.0%
+    0b10000000,     # V02 - 50.0%
+    0b11000000      # V03 - 75.0% (default)
+  ]
+  waveVolumes = [ 
+    0b00000000u8,   # V00 - mute
+    0b01100000,     # V01 - 25% volume
+    0b01000000,     # V02 - 50% volume
+    0b00100000      # V03 - 100% volume (default)
+  ]
 
 proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
                       update: ChannelUpdate; panningAccum: var PanningAccum;
@@ -139,6 +159,13 @@ proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
 
 func getWrites*(op: ApuOperation, wt: WaveformTable, nr51: uint8
                ): ApuWriteList =
+  ## Gets the list of writes needed for a given operation.
+  ## * `op`: the operation
+  ## * `wt`: the waveform table to use
+  ## * `nr51`: the current value of APU register NR51
+  ##
+  ## A list of register writes is returned. 
+  ## 
   var panningAccum: PanningAccum
 
   if op.sweep.isSome():
