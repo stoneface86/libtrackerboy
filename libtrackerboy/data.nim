@@ -660,16 +660,7 @@ func wavedata*(t: WaveformTable; id: TableId): WaveData =
   t.data[id].src.data
 
 type
-  IdBuf = object
-    buf: array[TableId, TableId]
-    len: TableId
-
-proc add(b: var IdBuf; id: TableId) =
-  b.buf[b.len] = id
-  inc b.len
-
-func `[]`(b: IdBuf; id: TableId): TableId =
-  b.buf[id]
+  IdBuf = FixedSeq[int(TableId.high - TableId.low + 1), TableId]
 
 func hashOf[T: SomeData](t: Table[T]; id: TableId): Hash =
   hash(t[id][])
@@ -696,7 +687,7 @@ func uniqueIds*[T: SomeData](t: Table[T]): set[TableId] =
     # filter the buf in-place by removing duplicates
     let oldLen = buf.len
     buf.len = 0 # "clear" the buf, then re-add non-duplicates
-    for id in TableId(1)..<oldLen:
+    for id in 1..<oldLen:
       let nextId = buf[id]
       if currHc != hashOf(t, nextId) or t[currId][] != t[nextId][]:
         # these ids are not the same, add to buf

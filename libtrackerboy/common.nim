@@ -49,6 +49,19 @@ type
     ## Both value and ref semantics can be used. When the source is a `ref`
     ## or `ptr`, accessing the source will dereference the ref/ptr.
     ##
+  
+  FixedSeq*[N: static int; T] = object
+    ## Provides a `seq`-like data structure that only has a fixed capacity, `N`.
+    ## Useful when you have a fixed number of items to store but you want to
+    ## convenience of a `seq` with `array` style storage.
+    ##
+    data*: array[N, T]
+      ## Storage location of items added to this seq.
+      ##
+    len*: int
+      ## The length of the seq, or the number of items added to it. Must be in
+      ## range `0..N`.
+      ##
 
 template toImmutable*[T](s: T): Immutable[T] =
   ## Converts a value to an Immutable. Note that a copy of the value might
@@ -105,6 +118,29 @@ template `==`*[T](a, b: Immutable[T]; ): bool =
   ## for T.
   ## 
   cast[T](a) == cast[T](b)
+
+proc add*[N, T](s: var FixedSeq[N, T]; item: sink T) =
+  ## Adds an item to the end of the quick list. An error will occur the list is
+  ## at maximum capacity.
+  ##
+  s.data[s.len] = item
+  inc s.len
+
+template capacity*[N, T](s: FixedSeq[N, T]|typedesc[FixedSeq[N, T]]): int =
+  ## Gets the capacity, or `q.data.len`, of this FixedSeq.
+  ##
+  N
+
+template `[]`*[N, T](s: FixedSeq[N, T]; i: int): T =
+  ## Access the `i`th element in the FixedSeq. 
+  ##
+  s.data[i]
+
+iterator items*[N, T](s: FixedSeq[N, T]): T =
+  ## Iterates all items in the FixedSeq.
+  ##
+  for i in 0..<s.len:
+    yield s.data[i]
 
 {. push inline, raises: [] .}
 

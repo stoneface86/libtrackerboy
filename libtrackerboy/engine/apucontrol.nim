@@ -24,17 +24,9 @@ type
     ## page and a value to write.
     ##
 
-  # Fixed size array is used instead of a seq for performance reasons
-  ApuWriteList* = object
+  ApuWriteList* = FixedSeq[64, ApuWrite]
     ## A container for a list of APU writes.
     ##
-    data*: array[64, ApuWrite]
-      ## The list of writes. An array is used instead of seq for performance
-      ## reasons. Elements past `len` should be ignored.
-      ##
-    len*: int
-      ## Length of the list.
-      ##
 
   PanningAccum = object
     val: uint8
@@ -45,15 +37,8 @@ type
     retrigger: bool
     frequency: uint16
 
-proc add*(l: var ApuWriteList; regaddr, value: uint8;) =
-  l.data[l.len] = (regaddr, value)
-  inc l.len
-
-iterator items*(l: ApuWriteList): ApuWrite =
-  ## Iterator for all ApuWrites in the list.
-  ##
-  for i in 0..<l.len:
-    yield l.data[i]
+template add*(l: var ApuWriteList; regaddr, value: uint8;) =
+  l.add((uint8(regaddr), uint8(value)))
 
 proc setRetrigger(b: var RetriggerByte) =
   b.shouldRender = true

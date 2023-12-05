@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+ - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
  - (data) `toView` converter in data module for `Track -> TrackView`
  - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
    `TrackRow`
