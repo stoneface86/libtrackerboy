@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>libtrackerboy/private/destroy2</title>
+<title>libtrackerboy/private/optionutils</title>
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA=="/>
@@ -20,7 +20,7 @@
 <body>
   <div class="document" id="documentId">
     <div class="container">
-      <h1 class="title">libtrackerboy/private/destroy2</h1>
+      <h1 class="title">libtrackerboy/private/optionutils</h1>
       <div class="row">
   <div class="three columns">
     <div class="theme-select-wrapper">
@@ -49,19 +49,14 @@
     <ul class="simple simple-toc" id="toc-list">
   <li>
   <details open>
-    <summary><a class="reference reference-toplevel" href="#10" id="60">Consts</a></summary>
+    <summary><a class="reference reference-toplevel" href="#18" id="68">Templates</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#destroyTakesVarT" title="destroyTakesVarT = false">destroyTakesVarT</a></li>
+      <ul class="simple nested-toc-section">onSome
+  <li><a class="reference" href="#onSome.t%2COption%5BT%5D%2Cuntyped" title="onSome[T](o: Option[T]; body: untyped): untyped">onSome[T](o: Option[T]; body: untyped): untyped</a></li>
 
-    </ul>
-  </details>
-</li>
-<li>
-  <details open>
-    <summary><a class="reference reference-toplevel" href="#17" id="67">Macros</a></summary>
-    <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">destroy2
-  <li><a class="reference" href="#destroy2.m" title="destroy2(fn)">destroy2(fn)</a></li>
+</ul>
+<ul class="simple nested-toc-section">withSome
+  <li><a class="reference" href="#withSome.t%2COption%5BT%5D%2Cuntyped" title="withSome[T](opt: var Option[T]; body: untyped): untyped">withSome[T](opt: var Option[T]; body: untyped): untyped</a></li>
 
 </ul>
 
@@ -73,42 +68,40 @@
 
   </div>
   <div class="nine columns" id="content">
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/destroy2.nim#L1" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/destroy2.nim#L1" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/optionutils.nim#L1" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/optionutils.nim#L1" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
     <div id="tocRoot"></div>
     
     <p class="module-desc"><p><strong>DO NOT INCLUDE THIS MODULE!</strong></p>
 <p>This module is intended to only be used internally by trackerboy modules.</p>
 <p><a class="reference external" href="../../libtrackerboy.html">take me back home ↩</a> </p>
+<p>Utilities for working with std's <tt class="docutils literal"><span class="pre"><span class="Identifier">Option</span><span class="Punctuation">[</span><span class="Identifier">T</span><span class="Punctuation">]</span></span></tt></p>
 </p>
-    <div class="section" id="10">
-  <h1><a class="toc-backref" href="#10">Consts</a></h1>
+    <div class="section" id="18">
+  <h1><a class="toc-backref" href="#18">Templates</a></h1>
   <dl class="item">
-    <div id="destroyTakesVarT">
-  <dt><pre><a href="destroy2.html#destroyTakesVarT"><span class="Identifier">destroyTakesVarT</span></a> <span class="Other">=</span> <span class="DecNumber">false</span></pre></dt>
+    <div id="onSome-templates-all">
+  <div id="onSome.t,Option[T],untyped">
+  <dt><pre><span class="Keyword">template</span> <a href="#onSome.t%2COption%5BT%5D%2Cuntyped"><span class="Identifier">onSome</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">o</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
-    Is true if the first parameter to <tt class="docutils literal"><span class="pre"><span class="Operator">=</span><span class="Identifier">destroy</span></span></tt> procs are of <tt class="docutils literal"><span class="pre"><span class="Keyword">var</span> <span class="Identifier">T</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/destroy2.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/destroy2.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/optionutils.nim#L17" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/optionutils.nim#L17" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
-  </dl>
 </div>
-<div class="section" id="17">
-  <h1><a class="toc-backref" href="#17">Macros</a></h1>
-  <dl class="item">
-    <div id="destroy2-macros-all">
-  <div id="destroy2.m">
-  <dt><pre><span class="Keyword">macro</span> <a href="#destroy2.m"><span class="Identifier">destroy2</span></a><span class="Other">(</span><span class="Identifier">fn</span><span class="Other">)</span></pre></dt>
+<div id="withSome-templates-all">
+  <div id="withSome.t,Option[T],untyped">
+  <dt><pre><span class="Keyword">template</span> <a href="#withSome.t%2COption%5BT%5D%2Cuntyped"><span class="Identifier">withSome</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">opt</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
-    Nim 2.0.0 changes the =destroy hook to take a <tt class="docutils literal"><span class="pre"><span class="Identifier">T</span></span></tt> parameter instead of <tt class="docutils literal"><span class="pre"><span class="Keyword">var</span> <span class="Identifier">T</span></span></tt>. This macro rewrites the first parameter type to <tt class="docutils literal"><span class="pre"><span class="Keyword">var</span> <span class="Identifier">T</span></span></tt> on Nim versions before 2.0.0, this way you only need to write a single <tt class="docutils literal"><span class="pre"><span class="Operator">=</span><span class="Identifier">destroy</span></span></tt> hook. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/destroy2.nim#L60" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/destroy2.nim#L60" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/optionutils.nim#L11" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/optionutils.nim#L11" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>

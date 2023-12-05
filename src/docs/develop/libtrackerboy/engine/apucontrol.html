@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>libtrackerboy/private/apucontrol</title>
+<title>libtrackerboy/engine/apucontrol</title>
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA=="/>
@@ -20,7 +20,7 @@
 <body>
   <div class="document" id="documentId">
     <div class="container">
-      <h1 class="title">libtrackerboy/private/apucontrol</h1>
+      <h1 class="title">libtrackerboy/engine/apucontrol</h1>
       <div class="row">
   <div class="three columns">
     <div class="theme-select-wrapper">
@@ -55,9 +55,7 @@
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#ApuWrite" title="ApuWrite = tuple[regaddr, value: uint8]">ApuWrite</a></li>
-<li><a class="reference" href="#ApuWriteList" title="ApuWriteList = object
-  data*: array[64, ApuWrite]
-  len*: int">ApuWriteList</a></li>
+<li><a class="reference" href="#ApuWriteList" title="ApuWriteList = FixedSeq[64, ApuWrite]">ApuWriteList</a></li>
 
     </ul>
   </details>
@@ -66,11 +64,7 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#12" id="62">Procs</a></summary>
     <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">add
-  <li><a class="reference" href="#add%2CApuWriteList%2Cuint8%2Cuint8" title="add(l: var ApuWriteList; regaddr, value: uint8)">add(l: var ApuWriteList; regaddr, value: uint8)</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">clearChannel
+      <ul class="simple nested-toc-section">clearChannel
   <li><a class="reference" href="#clearChannel%2CChannelId%2CApuWriteList" title="clearChannel(chno: ChannelId; writes: var ApuWriteList)">clearChannel(chno: ChannelId; writes: var ApuWriteList)</a></li>
 
 </ul>
@@ -84,10 +78,10 @@
 </li>
 <li>
   <details open>
-    <summary><a class="reference reference-toplevel" href="#15" id="65">Iterators</a></summary>
+    <summary><a class="reference reference-toplevel" href="#18" id="68">Templates</a></summary>
     <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">items
-  <li><a class="reference" href="#items.i%2CApuWriteList" title="items(l: ApuWriteList): ApuWrite">items(l: ApuWriteList): ApuWrite</a></li>
+      <ul class="simple nested-toc-section">add
+  <li><a class="reference" href="#add.t%2CApuWriteList%2Cuint8%2Cuint8" title="add(l: var ApuWriteList; regaddr, value: uint8)">add(l: var ApuWriteList; regaddr, value: uint8)</a></li>
 
 </ul>
 
@@ -99,19 +93,19 @@
 
   </div>
   <div class="nine columns" id="content">
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L1" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L1" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L1" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L1" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
     <div id="tocRoot"></div>
     
-    <p class="module-desc"><p><strong>DO NOT INCLUDE THIS MODULE!</strong></p>
-<p>This module is intended to only be used internally by trackerboy modules.</p>
-<p><a class="reference external" href="../../libtrackerboy.html">take me back home ↩</a> </p>
+    <p class="module-desc"><p>APU Control</p>
+<p>A module used by the engine module for determining the register writes needed by an <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuOperation</span></span></tt> object.</p>
+<p>This module is part of the inner workings of the engine module.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
   <dl class="item">
-    <a class="reference external" href="enginestate.html">enginestate</a>, <a class="reference external" href="hardware.html">hardware</a>, <a class="reference external" href="../common.html">../common</a>, <a class="reference external" href="../data.html">../data</a>, <a class="reference external" href="../notes.html">../notes</a>
+    <a class="reference external" href="enginestate.html">enginestate</a>, <a class="reference external" href="../private/hardware.html">../private/hardware</a>, <a class="reference external" href="../common.html">../common</a>, <a class="reference external" href="../data.html">../data</a>, <a class="reference external" href="../notes.html">../notes</a>
   </dl>
 </div>
 <div class="section" id="7">
@@ -121,22 +115,19 @@
   <dt><pre><a href="apucontrol.html#ApuWrite"><span class="Identifier">ApuWrite</span></a> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">regaddr</span><span class="Other">,</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">]</span></pre></dt>
   <dd>
     
-    
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L17" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L17" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Tuple for an APU register write. Consists of an address in the $FF00 page and a value to write. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L22" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L22" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="ApuWriteList">
-  <dt><pre><a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">data</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">64</span><span class="Other">,</span> <a href="apucontrol.html#ApuWrite"><span class="Identifier">ApuWrite</span></a><span class="Other">]</span>
-  <span class="Identifier">len</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-</pre></dt>
+  <dt><pre><a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a> <span class="Other">=</span> <a href="../common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a><span class="Other">[</span><span class="DecNumber">64</span><span class="Other">,</span> <a href="apucontrol.html#ApuWrite"><span class="Identifier">ApuWrite</span></a><span class="Other">]</span></pre></dt>
   <dd>
     
-    
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L20" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L20" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    A container for a list of APU writes. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L27" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L27" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -146,29 +137,15 @@
 <div class="section" id="12">
   <h1><a class="toc-backref" href="#12">Procs</a></h1>
   <dl class="item">
-    <div id="add-procs-all">
-  <div id="add,ApuWriteList,uint8,uint8">
-  <dt><pre><span class="Keyword">proc</span> <a href="#add%2CApuWriteList%2Cuint8%2Cuint8"><span class="Identifier">add</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a><span class="Other">;</span> <span class="Identifier">regaddr</span><span class="Other">,</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L33" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L33" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="clearChannel-procs-all">
+    <div id="clearChannel-procs-all">
   <div id="clearChannel,ChannelId,ApuWriteList">
   <dt><pre><span class="Keyword">proc</span> <a href="#clearChannel%2CChannelId%2CApuWriteList"><span class="Identifier">clearChannel</span></a><span class="Other">(</span><span class="Identifier">chno</span><span class="Other">:</span> <a href="../common.html#ChannelId"><span class="Identifier">ChannelId</span></a><span class="Other">;</span> <span class="Identifier">writes</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L64" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L64" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Adds the writes needed to the list to clear a given channel. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L66" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L66" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -180,9 +157,14 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L140" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L140" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Gets the list of writes needed for a given operation.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>: the operation</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">wt</span></span></tt>: the waveform table to use</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">nr51</span></span></tt>: the current value of APU register NR51</li>
+</ul>
+<p>A list of register writes is returned. </p>
+
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L145" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L145" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -191,17 +173,17 @@
 
   </dl>
 </div>
-<div class="section" id="15">
-  <h1><a class="toc-backref" href="#15">Iterators</a></h1>
+<div class="section" id="18">
+  <h1><a class="toc-backref" href="#18">Templates</a></h1>
   <dl class="item">
-    <div id="items-iterators-all">
-  <div id="items.i,ApuWriteList">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CApuWriteList"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a><span class="Other">)</span><span class="Other">:</span> <a href="apucontrol.html#ApuWrite"><span class="Identifier">ApuWrite</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+    <div id="add-templates-all">
+  <div id="add.t,ApuWriteList,uint8,uint8">
+  <dt><pre><span class="Keyword">template</span> <a href="#add.t%2CApuWriteList%2Cuint8%2Cuint8"><span class="Identifier">add</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apucontrol.html#ApuWriteList"><span class="Identifier">ApuWriteList</span></a><span class="Other">;</span> <span class="Identifier">regaddr</span><span class="Other">,</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">)</span></pre></dt>
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/apucontrol.nim#L37" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/apucontrol.nim#L37" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/apucontrol.nim#L40" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/apucontrol.nim#L40" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -217,7 +199,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-28 19:18:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-05 07:19:39 UTC</small>
       </div>
     </div>
   </div>

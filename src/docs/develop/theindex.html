@@ -21,7 +21,7 @@
   <div class="document" id="documentId">
     <div class="container">
       <h1 class="title">Index</h1>
-      Documents: <a href="module-file-format-spec.html">Module File Format Specifications</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/exports/wav.html">libtrackerboy/exports/wav</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/apucontrol.html">libtrackerboy/private/apucontrol</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/destroy2.html">libtrackerboy/private/destroy2</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/enginecontrol.html">libtrackerboy/private/enginecontrol</a>, <a href="libtrackerboy/private/enginestate.html">libtrackerboy/private/enginestate</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/private/wavwriter.html">libtrackerboy/private/wavwriter</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
+      Documents: <a href="module-file-format-spec.html">Module File Format Specifications</a>.<br/><p />Modules: <a href="libtrackerboy.html">libtrackerboy</a>, <a href="libtrackerboy/apu.html">libtrackerboy/apu</a>, <a href="libtrackerboy/apuio.html">libtrackerboy/apuio</a>, <a href="libtrackerboy/common.html">libtrackerboy/common</a>, <a href="libtrackerboy/data.html">libtrackerboy/data</a>, <a href="libtrackerboy/editing.html">libtrackerboy/editing</a>, <a href="libtrackerboy/engine.html">libtrackerboy/engine</a>, <a href="libtrackerboy/engine/apucontrol.html">libtrackerboy/engine/apucontrol</a>, <a href="libtrackerboy/engine/enginecontrol.html">libtrackerboy/engine/enginecontrol</a>, <a href="libtrackerboy/engine/enginestate.html">libtrackerboy/engine/enginestate</a>, <a href="libtrackerboy/exports/wav.html">libtrackerboy/exports/wav</a>, <a href="libtrackerboy/io.html">libtrackerboy/io</a>, <a href="libtrackerboy/ir.html">libtrackerboy/ir</a>, <a href="libtrackerboy/notes.html">libtrackerboy/notes</a>, <a href="libtrackerboy/private/data.html">libtrackerboy/private/data</a>, <a href="libtrackerboy/private/destroy2.html">libtrackerboy/private/destroy2</a>, <a href="libtrackerboy/private/endian.html">libtrackerboy/private/endian</a>, <a href="libtrackerboy/private/hardware.html">libtrackerboy/private/hardware</a>, <a href="libtrackerboy/private/ioblocks.html">libtrackerboy/private/ioblocks</a>, <a href="libtrackerboy/private/optionutils.html">libtrackerboy/private/optionutils</a>, <a href="libtrackerboy/private/ptrarith.html">libtrackerboy/private/ptrarith</a>, <a href="libtrackerboy/private/synth.html">libtrackerboy/private/synth</a>, <a href="libtrackerboy/private/utils.html">libtrackerboy/private/utils</a>, <a href="libtrackerboy/private/wavwriter.html">libtrackerboy/private/wavwriter</a>, <a href="libtrackerboy/version.html">libtrackerboy/version</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc `$`(s: Sequence): string" href="libtrackerboy/data.html#%24%2CSequence">data: proc `$`(s: Sequence): string</a></li>
@@ -70,6 +70,8 @@
           </ul></dd>
 <dt><a name="%60%5B%5D%60" href="#%60%5B%5D%60"><span>`[]`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="common: template `[]`[N, T](s: FixedSeq[N, T]; i: int): T" href="libtrackerboy/common.html#%5B%5D.t%2CFixedSeq%5BN%2CT%5D%2Cint">common: template `[]`[N, T](s: FixedSeq[N, T]; i: int): T</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="common: template `[]`[T](i: Immutable[[type node]]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2CImmutable%5B%5D">common: template `[]`[T](i: Immutable[[type node]]): lent T</a></li>
           <li><a class="reference external"
           data-doc-search-tag="common: template `[]`[T: not ptr | ref](i: Immutable[T]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2CImmutable%5BT%3A%20not%20ptr%20or%20ref%5D">common: template `[]`[T: not ptr | ref](i: Immutable[T]): lent T</a></li>
@@ -96,6 +98,8 @@
           </ul></dd>
 <dt><a name="add" href="#add"><span>add:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="common: proc add[N, T](s: var FixedSeq[N, T]; item: sink T)" href="libtrackerboy/common.html#add%2CFixedSeq%5BN%2CT%5D%2CsinkT">common: proc add[N, T](s: var FixedSeq[N, T]; item: sink T)</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="data: proc add(l: var SongList)" href="libtrackerboy/data.html#add%2CSongList">data: proc add(l: var SongList)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc add(l: var SongList; song: ref Song)" href="libtrackerboy/data.html#add%2CSongList%2Cref.Song">data: proc add(l: var SongList; song: ref Song)</a></li>
@@ -104,7 +108,7 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc add[T: SomeData](t: var Table[T]; id: TableId)" href="libtrackerboy/data.html#add%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: proc add[T: SomeData](t: var Table[T]; id: TableId)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="apucontrol: proc add(l: var ApuWriteList; regaddr, value: uint8)" href="libtrackerboy/private/apucontrol.html#add%2CApuWriteList%2Cuint8%2Cuint8">apucontrol: proc add(l: var ApuWriteList; regaddr, value: uint8)</a></li>
+          data-doc-search-tag="apucontrol: template add(l: var ApuWriteList; regaddr, value: uint8)" href="libtrackerboy/engine/apucontrol.html#add.t%2CApuWriteList%2Cuint8%2Cuint8">apucontrol: template add(l: var ApuWriteList; regaddr, value: uint8)</a></li>
           </ul></dd>
 <dt><a name="apply" href="#apply"><span>apply:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -120,7 +124,7 @@
           </ul></dd>
 <dt><a name="ApuOperation" href="#ApuOperation"><span>ApuOperation:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: object ApuOperation" href="libtrackerboy/private/enginestate.html#ApuOperation">enginestate: object ApuOperation</a></li>
+          data-doc-search-tag="enginestate: object ApuOperation" href="libtrackerboy/engine/enginestate.html#ApuOperation">enginestate: object ApuOperation</a></li>
           </ul></dd>
 <dt><a name="ApuRegister" href="#ApuRegister"><span>ApuRegister:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -128,11 +132,11 @@
           </ul></dd>
 <dt><a name="ApuWrite" href="#ApuWrite"><span>ApuWrite:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="apucontrol: tuple ApuWrite" href="libtrackerboy/private/apucontrol.html#ApuWrite">apucontrol: tuple ApuWrite</a></li>
+          data-doc-search-tag="apucontrol: tuple ApuWrite" href="libtrackerboy/engine/apucontrol.html#ApuWrite">apucontrol: tuple ApuWrite</a></li>
           </ul></dd>
 <dt><a name="ApuWriteList" href="#ApuWriteList"><span>ApuWriteList:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="apucontrol: object ApuWriteList" href="libtrackerboy/private/apucontrol.html#ApuWriteList">apucontrol: object ApuWriteList</a></li>
+          data-doc-search-tag="apucontrol: type ApuWriteList" href="libtrackerboy/engine/apucontrol.html#ApuWriteList">apucontrol: type ApuWriteList</a></li>
           </ul></dd>
 <dt><a name="ar10" href="#ar10"><span>ar10:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -250,23 +254,25 @@
           </ul></dd>
 <dt><a name="caCut" href="#caCut"><span>caCut:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: ChannelAction.caCut" href="libtrackerboy/private/enginestate.html#caCut">enginestate: ChannelAction.caCut</a></li>
+          data-doc-search-tag="enginestate: ChannelAction.caCut" href="libtrackerboy/engine/enginestate.html#caCut">enginestate: ChannelAction.caCut</a></li>
           </ul></dd>
 <dt><a name="caNone" href="#caNone"><span>caNone:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: ChannelAction.caNone" href="libtrackerboy/private/enginestate.html#caNone">enginestate: ChannelAction.caNone</a></li>
+          data-doc-search-tag="enginestate: ChannelAction.caNone" href="libtrackerboy/engine/enginestate.html#caNone">enginestate: ChannelAction.caNone</a></li>
           </ul></dd>
 <dt><a name="capacity" href="#capacity"><span>capacity:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="common: template capacity[N, T](s: FixedSeq[N, T] | typedesc[FixedSeq[N, T]]): int" href="libtrackerboy/common.html#capacity.t">common: template capacity[N, T](s: FixedSeq[N, T] | typedesc[FixedSeq[N, T]]): int</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="data: proc capacity[T: SomeData](t: Table[T]): static[int]" href="libtrackerboy/data.html#capacity%2CTable%5BT%3A%20SomeData%5D">data: proc capacity[T: SomeData](t: Table[T]): static[int]</a></li>
           </ul></dd>
 <dt><a name="caShutdown" href="#caShutdown"><span>caShutdown:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: ChannelAction.caShutdown" href="libtrackerboy/private/enginestate.html#caShutdown">enginestate: ChannelAction.caShutdown</a></li>
+          data-doc-search-tag="enginestate: ChannelAction.caShutdown" href="libtrackerboy/engine/enginestate.html#caShutdown">enginestate: ChannelAction.caShutdown</a></li>
           </ul></dd>
 <dt><a name="caUpdate" href="#caUpdate"><span>caUpdate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: ChannelAction.caUpdate" href="libtrackerboy/private/enginestate.html#caUpdate">enginestate: ChannelAction.caUpdate</a></li>
+          data-doc-search-tag="enginestate: ChannelAction.caUpdate" href="libtrackerboy/engine/enginestate.html#caUpdate">enginestate: ChannelAction.caUpdate</a></li>
           </ul></dd>
 <dt><a name="ch1" href="#ch1"><span>ch1:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -286,7 +292,7 @@
           </ul></dd>
 <dt><a name="ChannelAction" href="#ChannelAction"><span>ChannelAction:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: enum ChannelAction" href="libtrackerboy/private/enginestate.html#ChannelAction">enginestate: enum ChannelAction</a></li>
+          data-doc-search-tag="enginestate: enum ChannelAction" href="libtrackerboy/engine/enginestate.html#ChannelAction">enginestate: enum ChannelAction</a></li>
           </ul></dd>
 <dt><a name="channelFrequency" href="#channelFrequency"><span>channelFrequency:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -302,11 +308,11 @@
           </ul></dd>
 <dt><a name="ChannelState" href="#ChannelState"><span>ChannelState:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: object ChannelState" href="libtrackerboy/private/enginestate.html#ChannelState">enginestate: object ChannelState</a></li>
+          data-doc-search-tag="enginestate: object ChannelState" href="libtrackerboy/engine/enginestate.html#ChannelState">enginestate: object ChannelState</a></li>
           </ul></dd>
 <dt><a name="ChannelUpdate" href="#ChannelUpdate"><span>ChannelUpdate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: object ChannelUpdate" href="libtrackerboy/private/enginestate.html#ChannelUpdate">enginestate: object ChannelUpdate</a></li>
+          data-doc-search-tag="enginestate: object ChannelUpdate" href="libtrackerboy/engine/enginestate.html#ChannelUpdate">enginestate: object ChannelUpdate</a></li>
           </ul></dd>
 <dt><a name="channelVolume" href="#channelVolume"><span>channelVolume:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -322,7 +328,7 @@
           </ul></dd>
 <dt><a name="clearChannel" href="#clearChannel"><span>clearChannel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="apucontrol: proc clearChannel(chno: ChannelId; writes: var ApuWriteList)" href="libtrackerboy/private/apucontrol.html#clearChannel%2CChannelId%2CApuWriteList">apucontrol: proc clearChannel(chno: ChannelId; writes: var ApuWriteList)</a></li>
+          data-doc-search-tag="apucontrol: proc clearChannel(chno: ChannelId; writes: var ApuWriteList)" href="libtrackerboy/engine/apucontrol.html#clearChannel%2CChannelId%2CApuWriteList">apucontrol: proc clearChannel(chno: ChannelId; writes: var ApuWriteList)</a></li>
           </ul></dd>
 <dt><a name="clearInstrument" href="#clearInstrument"><span>clearInstrument:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -427,6 +433,8 @@
 <dt><a name="currentNote" href="#currentNote"><span>currentNote:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc currentNote(e: Engine; chno: ChannelId): int" href="libtrackerboy/engine.html#currentNote%2CEngine%2CChannelId">engine: proc currentNote(e: Engine; chno: ChannelId): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc currentNote(mr: MusicRuntime; chno: ChannelId): int" href="libtrackerboy/engine/enginecontrol.html#currentNote%2CMusicRuntime%2CChannelId">enginecontrol: proc currentNote(mr: MusicRuntime; chno: ChannelId): int</a></li>
           </ul></dd>
 <dt><a name="currentSong" href="#currentSong"><span>currentSong:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -435,6 +443,8 @@
 <dt><a name="currentState" href="#currentState"><span>currentState:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc currentState(e: Engine; chno: ChannelId): ChannelState" href="libtrackerboy/engine.html#currentState%2CEngine%2CChannelId">engine: proc currentState(e: Engine; chno: ChannelId): ChannelState</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc currentState(mr: MusicRuntime; chno: ChannelId): ChannelState" href="libtrackerboy/engine/enginecontrol.html#currentState%2CMusicRuntime%2CChannelId">enginecontrol: proc currentState(mr: MusicRuntime; chno: ChannelId): ChannelState</a></li>
           </ul></dd>
 <dt><a name="currentVersion" href="#currentVersion"><span>currentVersion:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -550,7 +560,7 @@
           </ul></dd>
 <dt><a name="EngineFrame" href="#EngineFrame"><span>EngineFrame:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: object EngineFrame" href="libtrackerboy/private/enginestate.html#EngineFrame">enginestate: object EngineFrame</a></li>
+          data-doc-search-tag="enginestate: object EngineFrame" href="libtrackerboy/engine/enginestate.html#EngineFrame">enginestate: object EngineFrame</a></li>
           </ul></dd>
 <dt><a name="EqRef" href="#EqRef"><span>EqRef:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -656,33 +666,13 @@
 <li><a class="reference external"
           data-doc-search-tag="wav: proc exportWav(module: Module; config: WavConfig)" href="libtrackerboy/exports/wav.html#exportWav%2CModule%2CWavConfig">wav: proc exportWav(module: Module; config: WavConfig)</a></li>
           </ul></dd>
-<dt><a name="fcmArpeggio" href="#fcmArpeggio"><span>fcmArpeggio:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FcMode.fcmArpeggio" href="libtrackerboy/private/enginecontrol.html#fcmArpeggio">enginecontrol: FcMode.fcmArpeggio</a></li>
-          </ul></dd>
-<dt><a name="fcmNone" href="#fcmNone"><span>fcmNone:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FcMode.fcmNone" href="libtrackerboy/private/enginecontrol.html#fcmNone">enginecontrol: FcMode.fcmNone</a></li>
-          </ul></dd>
-<dt><a name="fcmNoteSlide" href="#fcmNoteSlide"><span>fcmNoteSlide:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FcMode.fcmNoteSlide" href="libtrackerboy/private/enginecontrol.html#fcmNoteSlide">enginecontrol: FcMode.fcmNoteSlide</a></li>
-          </ul></dd>
-<dt><a name="FcMode" href="#FcMode"><span>FcMode:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: enum FcMode" href="libtrackerboy/private/enginecontrol.html#FcMode">enginecontrol: enum FcMode</a></li>
-          </ul></dd>
-<dt><a name="fcmPitchSlide" href="#fcmPitchSlide"><span>fcmPitchSlide:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FcMode.fcmPitchSlide" href="libtrackerboy/private/enginecontrol.html#fcmPitchSlide">enginecontrol: FcMode.fcmPitchSlide</a></li>
-          </ul></dd>
-<dt><a name="fcmPortamento" href="#fcmPortamento"><span>fcmPortamento:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: FcMode.fcmPortamento" href="libtrackerboy/private/enginecontrol.html#fcmPortamento">enginecontrol: FcMode.fcmPortamento</a></li>
-          </ul></dd>
 <dt><a name="finish" href="#finish"><span>finish:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: proc finish(b: var OutputBlock)" href="libtrackerboy/private/ioblocks.html#finish%2COutputBlock">ioblocks: proc finish(b: var OutputBlock)</a></li>
+          </ul></dd>
+<dt><a name="FixedSeq" href="#FixedSeq"><span>FixedSeq:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="common: object FixedSeq" href="libtrackerboy/common.html#FixedSeq">common: object FixedSeq</a></li>
           </ul></dd>
 <dt><a name="forflagPresent" href="#forflagPresent"><span>forflagPresent:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -719,18 +709,6 @@
 <dt><a name="freqPortamento" href="#freqPortamento"><span>freqPortamento:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ir: FrequencyMod.freqPortamento" href="libtrackerboy/ir.html#freqPortamento">ir: FrequencyMod.freqPortamento</a></li>
-          </ul></dd>
-<dt><a name="FrequencyBounds" href="#FrequencyBounds"><span>FrequencyBounds:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object FrequencyBounds" href="libtrackerboy/private/enginecontrol.html#FrequencyBounds">enginecontrol: object FrequencyBounds</a></li>
-          </ul></dd>
-<dt><a name="FrequencyControl" href="#FrequencyControl"><span>FrequencyControl:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object FrequencyControl" href="libtrackerboy/private/enginecontrol.html#FrequencyControl">enginecontrol: object FrequencyControl</a></li>
-          </ul></dd>
-<dt><a name="FrequencyLookupFunc" href="#FrequencyLookupFunc"><span>FrequencyLookupFunc:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: type FrequencyLookupFunc" href="libtrackerboy/private/enginecontrol.html#FrequencyLookupFunc">enginecontrol: type FrequencyLookupFunc</a></li>
           </ul></dd>
 <dt><a name="FrequencyMod" href="#FrequencyMod"><span>FrequencyMod:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -811,6 +789,8 @@
 <dt><a name="getLocked" href="#getLocked"><span>getLocked:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc getLocked(e: Engine): set[ChannelId]" href="libtrackerboy/engine.html#getLocked%2CEngine">engine: proc getLocked(e: Engine): set[ChannelId]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc getLocked(mr: MusicRuntime): set[ChannelId]" href="libtrackerboy/engine/enginecontrol.html#getLocked%2CMusicRuntime">enginecontrol: proc getLocked(mr: MusicRuntime): set[ChannelId]</a></li>
           </ul></dd>
 <dt><a name="getRow" href="#getRow"><span>getRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -848,17 +828,17 @@
           </ul></dd>
 <dt><a name="getWrites" href="#getWrites"><span>getWrites:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="apucontrol: proc getWrites(op: ApuOperation; wt: WaveformTable; nr51: uint8): ApuWriteList" href="libtrackerboy/private/apucontrol.html#getWrites%2CApuOperation%2CWaveformTable%2Cuint8">apucontrol: proc getWrites(op: ApuOperation; wt: WaveformTable; nr51: uint8): ApuWriteList</a></li>
+          data-doc-search-tag="apucontrol: proc getWrites(op: ApuOperation; wt: WaveformTable; nr51: uint8): ApuWriteList" href="libtrackerboy/engine/apucontrol.html#getWrites%2CApuOperation%2CWaveformTable%2Cuint8">apucontrol: proc getWrites(op: ApuOperation; wt: WaveformTable; nr51: uint8): ApuWriteList</a></li>
           </ul></dd>
 <dt><a name="GlobalState" href="#GlobalState"><span>GlobalState:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: object GlobalState" href="libtrackerboy/private/enginestate.html#GlobalState">enginestate: object GlobalState</a></li>
+          data-doc-search-tag="enginestate: object GlobalState" href="libtrackerboy/engine/enginestate.html#GlobalState">enginestate: object GlobalState</a></li>
           </ul></dd>
 <dt><a name="halt" href="#halt"><span>halt:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc halt(e: var Engine)" href="libtrackerboy/engine.html#halt%2CEngine">engine: proc halt(e: var Engine)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc halt(r: var MusicRuntime; op: var ApuOperation)" href="libtrackerboy/private/enginecontrol.html#halt%2CMusicRuntime%2CApuOperation">enginecontrol: proc halt(r: var MusicRuntime; op: var ApuOperation)</a></li>
+          data-doc-search-tag="enginecontrol: proc halt(r: var MusicRuntime; op: var ApuOperation)" href="libtrackerboy/engine/enginecontrol.html#halt%2CMusicRuntime%2CApuOperation">enginecontrol: proc halt(r: var MusicRuntime; op: var ApuOperation)</a></li>
           </ul></dd>
 <dt><a name="hasColumn" href="#hasColumn"><span>hasColumn:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -926,19 +906,19 @@
           <li><a class="reference external"
           data-doc-search-tag="editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternSelection%5D%2CPatternAnchor">editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="engine: proc init(__1996488733: typedesc[Engine]): Engine" href="libtrackerboy/engine.html#init%2Ctypedesc%5BEngine%5D">engine: proc init(__1996488733: typedesc[Engine]): Engine</a></li>
+          data-doc-search-tag="engine: proc init(__1996488729: typedesc[Engine]): Engine" href="libtrackerboy/engine.html#init%2Ctypedesc%5BEngine%5D">engine: proc init(__1996488729: typedesc[Engine]): Engine</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
+     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime" href="libtrackerboy/engine/enginecontrol.html#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bptr.Song%5D%2Cint%2Cint%2Cbool">enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
+     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState" href="libtrackerboy/engine/enginestate.html#init%2Ctypedesc%5BChannelState%5D">enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginestate: proc init(T: typedesc[GlobalState]): GlobalState" href="libtrackerboy/engine/enginestate.html#init%2Ctypedesc%5BGlobalState%5D">enginestate: proc init(T: typedesc[GlobalState]): GlobalState</a></li>
           <li><a class="reference external"
           data-doc-search-tag="wav: proc init(T: typedesc[WavConfig]): WavConfig" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavConfig%5D">wav: proc init(T: typedesc[WavConfig]): WavConfig</a></li>
           <li><a class="reference external"
           data-doc-search-tag="wav: proc init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavExporter%5D%2CModule%2CWavConfig">wav: proc init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime" href="libtrackerboy/private/enginecontrol.html#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bptr.Song%5D%2Cint%2Cint%2Cbool">enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState" href="libtrackerboy/private/enginestate.html#init%2Ctypedesc%5BChannelState%5D">enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginestate: proc init(T: typedesc[GlobalState]): GlobalState" href="libtrackerboy/private/enginestate.html#init%2Ctypedesc%5BGlobalState%5D">enginestate: proc init(T: typedesc[GlobalState]): GlobalState</a></li>
           <li><a class="reference external"
           data-doc-search-tag="ioblocks: proc init(T: typedesc[InputBlock]; stream: Stream): InputBlock" href="libtrackerboy/private/ioblocks.html#init%2Ctypedesc%5BInputBlock%5D%2CStream">ioblocks: proc init(T: typedesc[InputBlock]; stream: Stream): InputBlock</a></li>
           <li><a class="reference external"
@@ -946,8 +926,8 @@
           <li><a class="reference external"
           data-doc-search-tag="synth: proc init(__1761608390: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth" href="libtrackerboy/private/synth.html#init%2Ctypedesc%5BSynth%5D%2Cint">synth: proc init(__1761608390: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="wavwriter: proc init(__2298478634: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: proc init(__2298478634: typedesc[WavWriter]; filename: sink string;
+          data-doc-search-tag="wavwriter: proc init(__2315255850: typedesc[WavWriter]; filename: sink string;
+     channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: proc init(__2315255850: typedesc[WavWriter]; filename: sink string;
      channels, samplerate: int): WavWriter</a></li>
           </ul></dd>
 <dt><a name="InputBlock" href="#InputBlock"><span>InputBlock:</span></a></dt><dd><ul class="simple">
@@ -963,10 +943,6 @@
 <dt><a name="Instrument" href="#Instrument"><span>Instrument:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: object Instrument" href="libtrackerboy/data.html#Instrument">data: object Instrument</a></li>
-          </ul></dd>
-<dt><a name="InstrumentRuntime" href="#InstrumentRuntime"><span>InstrumentRuntime:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object InstrumentRuntime" href="libtrackerboy/private/enginecontrol.html#InstrumentRuntime">enginecontrol: object InstrumentRuntime</a></li>
           </ul></dd>
 <dt><a name="InstrumentTable" href="#InstrumentTable"><span>InstrumentTable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -991,6 +967,8 @@
 <dt><a name="isLocked" href="#isLocked"><span>isLocked:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc isLocked(e: Engine; chno: ChannelId): bool" href="libtrackerboy/engine.html#isLocked%2CEngine%2CChannelId">engine: proc isLocked(e: Engine; chno: ChannelId): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc isLocked(mr: MusicRuntime; chno: ChannelId): bool" href="libtrackerboy/engine/enginecontrol.html#isLocked%2CMusicRuntime%2CChannelId">enginecontrol: proc isLocked(mr: MusicRuntime; chno: ChannelId): bool</a></li>
           </ul></dd>
 <dt><a name="isNil" href="#isNil"><span>isNil:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1010,6 +988,8 @@
           </ul></dd>
 <dt><a name="items" href="#items"><span>items:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="common: iterator items[N, T](s: FixedSeq[N, T]): T" href="libtrackerboy/common.html#items.i%2CFixedSeq%5BN%2CT%5D">common: iterator items[N, T](s: FixedSeq[N, T]): T</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="data: iterator items(l: SongList): Immutable[ref Song]" href="libtrackerboy/data.html#items.i%2CSongList">data: iterator items(l: SongList): Immutable[ref Song]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: iterator items[T: SomeData](t: Table[T]): TableId" href="libtrackerboy/data.html#items.i%2CTable%5BT%3A%20SomeData%5D">data: iterator items[T: SomeData](t: Table[T]): TableId</a></li>
@@ -1017,8 +997,6 @@
           data-doc-search-tag="data: iterator items(t: Track): TrackRow" href="libtrackerboy/data.html#items.i%2CTrack">data: iterator items(t: Track): TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: iterator items(t: TrackView): TrackRow" href="libtrackerboy/data.html#items.i%2CTrackView">data: iterator items(t: TrackView): TrackRow</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="apucontrol: iterator items(l: ApuWriteList): ApuWrite" href="libtrackerboy/private/apucontrol.html#items.i%2CApuWriteList">apucontrol: iterator items(l: ApuWriteList): ApuWrite</a></li>
           </ul></dd>
 <dt><a name="iter" href="#iter"><span>iter:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1028,7 +1006,7 @@
 <li><a class="reference external"
           data-doc-search-tag="engine: proc jump(e: var Engine; pattern: Natural)" href="libtrackerboy/engine.html#jump%2CEngine%2CNatural">engine: proc jump(e: var Engine; pattern: Natural)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc jump(r: var MusicRuntime; pattern: Natural)" href="libtrackerboy/private/enginecontrol.html#jump%2CMusicRuntime%2CNatural">enginecontrol: proc jump(r: var MusicRuntime; pattern: Natural)</a></li>
+          data-doc-search-tag="enginecontrol: proc jump(r: var MusicRuntime; pattern: Natural)" href="libtrackerboy/engine/enginecontrol.html#jump%2CMusicRuntime%2CNatural">enginecontrol: proc jump(r: var MusicRuntime; pattern: Natural)</a></li>
           </ul></dd>
 <dt><a name="len" href="#len"><span>len:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1052,7 +1030,7 @@
 <li><a class="reference external"
           data-doc-search-tag="engine: proc lock(e: var Engine; chno: ChannelId)" href="libtrackerboy/engine.html#lock%2CEngine%2CChannelId">engine: proc lock(e: var Engine; chno: ChannelId)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc lock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)" href="libtrackerboy/private/enginecontrol.html#lock%2CMusicRuntime%2CChannelId%2CApuOperation">enginecontrol: proc lock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)</a></li>
+          data-doc-search-tag="enginecontrol: proc lock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)" href="libtrackerboy/engine/enginecontrol.html#lock%2CMusicRuntime%2CChannelId%2CApuOperation">enginecontrol: proc lock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)</a></li>
           </ul></dd>
 <dt><a name="lookupNoiseNote" href="#lookupNoiseNote"><span>lookupNoiseNote:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1124,23 +1102,7 @@
           </ul></dd>
 <dt><a name="MusicRuntime" href="#MusicRuntime"><span>MusicRuntime:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object MusicRuntime" href="libtrackerboy/private/enginecontrol.html#MusicRuntime">enginecontrol: object MusicRuntime</a></li>
-          </ul></dd>
-<dt><a name="naCut" href="#naCut"><span>naCut:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: NoteAction.naCut" href="libtrackerboy/private/enginecontrol.html#naCut">enginecontrol: NoteAction.naCut</a></li>
-          </ul></dd>
-<dt><a name="naOff" href="#naOff"><span>naOff:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: NoteAction.naOff" href="libtrackerboy/private/enginecontrol.html#naOff">enginecontrol: NoteAction.naOff</a></li>
-          </ul></dd>
-<dt><a name="naSustain" href="#naSustain"><span>naSustain:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: NoteAction.naSustain" href="libtrackerboy/private/enginecontrol.html#naSustain">enginecontrol: NoteAction.naSustain</a></li>
-          </ul></dd>
-<dt><a name="naTrigger" href="#naTrigger"><span>naTrigger:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: NoteAction.naTrigger" href="libtrackerboy/private/enginecontrol.html#naTrigger">enginecontrol: NoteAction.naTrigger</a></li>
+          data-doc-search-tag="enginecontrol: object MusicRuntime" href="libtrackerboy/engine/enginecontrol.html#MusicRuntime">enginecontrol: object MusicRuntime</a></li>
           </ul></dd>
 <dt><a name="new" href="#new"><span>new:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1174,13 +1136,13 @@
 <li><a class="reference external"
           data-doc-search-tag="notes: proc note(str: string): uint8" href="libtrackerboy/notes.html#note%2Cstring">notes: proc note(str: string): uint8</a></li>
           </ul></dd>
-<dt><a name="NoteAction" href="#NoteAction"><span>NoteAction:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: enum NoteAction" href="libtrackerboy/private/enginecontrol.html#NoteAction">enginecontrol: enum NoteAction</a></li>
-          </ul></dd>
 <dt><a name="noteCut" href="#noteCut"><span>noteCut:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="notes: const noteCut" href="libtrackerboy/notes.html#noteCut">notes: const noteCut</a></li>
+          </ul></dd>
+<dt><a name="onSome" href="#onSome"><span>onSome:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="optionutils: template onSome[T](o: Option[T]; body: untyped): untyped" href="libtrackerboy/private/optionutils.html#onSome.t%2COption%5BT%5D%2Cuntyped">optionutils: template onSome[T](o: Option[T]; body: untyped): untyped</a></li>
           </ul></dd>
 <dt><a name="Operation" href="#Operation"><span>Operation:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1273,6 +1235,10 @@
 <dt><a name="Order" href="#Order"><span>Order:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: object Order" href="libtrackerboy/data.html#Order">data: object Order</a></li>
+          </ul></dd>
+<dt><a name="orderCounter" href="#orderCounter"><span>orderCounter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc orderCounter(mr: MusicRuntime): int" href="libtrackerboy/engine/enginecontrol.html#orderCounter%2CMusicRuntime">enginecontrol: proc orderCounter(mr: MusicRuntime): int</a></li>
           </ul></dd>
 <dt><a name="OrderId" href="#OrderId"><span>OrderId:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1618,10 +1584,6 @@
 <li><a class="reference external"
           data-doc-search-tag="data: object Sequence" href="libtrackerboy/data.html#Sequence">data: object Sequence</a></li>
           </ul></dd>
-<dt><a name="SequenceInput" href="#SequenceInput"><span>SequenceInput:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: type SequenceInput" href="libtrackerboy/private/enginecontrol.html#SequenceInput">enginecontrol: type SequenceInput</a></li>
-          </ul></dd>
 <dt><a name="SequenceKind" href="#SequenceKind"><span>SequenceKind:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: enum SequenceKind" href="libtrackerboy/data.html#SequenceKind">data: enum SequenceKind</a></li>
@@ -1777,7 +1739,7 @@
           data-doc-search-tag="engine: proc step(e: var Engine; itable: InstrumentTable)" href="libtrackerboy/engine.html#step%2CEngine%2CInstrumentTable">engine: proc step(e: var Engine; itable: InstrumentTable)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="enginecontrol: proc step(r: var MusicRuntime; itable: InstrumentTable; frame: var EngineFrame;
-     op: var ApuOperation): bool" href="libtrackerboy/private/enginecontrol.html#step%2CMusicRuntime%2CInstrumentTable%2CEngineFrame%2CApuOperation">enginecontrol: proc step(r: var MusicRuntime; itable: InstrumentTable; frame: var EngineFrame;
+     op: var ApuOperation): bool" href="libtrackerboy/engine/enginecontrol.html#step%2CMusicRuntime%2CInstrumentTable%2CEngineFrame%2CApuOperation">enginecontrol: proc step(r: var MusicRuntime; itable: InstrumentTable; frame: var EngineFrame;
      op: var ApuOperation): bool</a></li>
           </ul></dd>
 <dt><a name="stepAndApply" href="#stepAndApply"><span>stepAndApply:</span></a></dt><dd><ul class="simple">
@@ -1835,10 +1797,6 @@
 <dt><a name="time" href="#time"><span>time:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="apu: proc time(a: Apu): uint32" href="libtrackerboy/apu.html#time%2CApu">apu: proc time(a: Apu): uint32</a></li>
-          </ul></dd>
-<dt><a name="Timer" href="#Timer"><span>Timer:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object Timer" href="libtrackerboy/private/enginecontrol.html#Timer">enginecontrol: object Timer</a></li>
           </ul></dd>
 <dt><a name="toAddress" href="#toAddress"><span>toAddress:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1918,9 +1876,9 @@
 <li><a class="reference external"
           data-doc-search-tag="editing: enum TrackColumn" href="libtrackerboy/editing.html#TrackColumn">editing: enum TrackColumn</a></li>
           </ul></dd>
-<dt><a name="TrackControl" href="#TrackControl"><span>TrackControl:</span></a></dt><dd><ul class="simple">
+<dt><a name="trackEnvelope" href="#trackEnvelope"><span>trackEnvelope:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: object TrackControl" href="libtrackerboy/private/enginecontrol.html#TrackControl">enginecontrol: object TrackControl</a></li>
+          data-doc-search-tag="enginecontrol: proc trackEnvelope(mr: MusicRuntime; chno: ChannelId): uint8" href="libtrackerboy/engine/enginecontrol.html#trackEnvelope%2CMusicRuntime%2CChannelId">enginecontrol: proc trackEnvelope(mr: MusicRuntime; chno: ChannelId): uint8</a></li>
           </ul></dd>
 <dt><a name="TrackId" href="#TrackId"><span>TrackId:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1938,6 +1896,10 @@
 <li><a class="reference external"
           data-doc-search-tag="data: type TrackLen" href="libtrackerboy/data.html#TrackLen">data: type TrackLen</a></li>
           </ul></dd>
+<dt><a name="trackPanning" href="#trackPanning"><span>trackPanning:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc trackPanning(mr: MusicRuntime; chno: ChannelId): uint8" href="libtrackerboy/engine/enginecontrol.html#trackPanning%2CMusicRuntime%2CChannelId">enginecontrol: proc trackPanning(mr: MusicRuntime; chno: ChannelId): uint8</a></li>
+          </ul></dd>
 <dt><a name="TrackRow" href="#TrackRow"><span>TrackRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: object TrackRow" href="libtrackerboy/data.html#TrackRow">data: object TrackRow</a></li>
@@ -1950,6 +1912,10 @@
 <li><a class="reference external"
           data-doc-search-tag="editing: enum TrackSelect" href="libtrackerboy/editing.html#TrackSelect">editing: enum TrackSelect</a></li>
           </ul></dd>
+<dt><a name="trackTimbre" href="#trackTimbre"><span>trackTimbre:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc trackTimbre(mr: MusicRuntime; chno: ChannelId): uint8" href="libtrackerboy/engine/enginecontrol.html#trackTimbre%2CMusicRuntime%2CChannelId">enginecontrol: proc trackTimbre(mr: MusicRuntime; chno: ChannelId): uint8</a></li>
+          </ul></dd>
 <dt><a name="TrackView" href="#TrackView"><span>TrackView:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: object TrackView" href="libtrackerboy/data.html#TrackView">data: object TrackView</a></li>
@@ -1960,23 +1926,23 @@
           </ul></dd>
 <dt><a name="ufAll" href="#ufAll"><span>ufAll:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: const ufAll" href="libtrackerboy/private/enginestate.html#ufAll">enginestate: const ufAll</a></li>
+          data-doc-search-tag="enginestate: const ufAll" href="libtrackerboy/engine/enginestate.html#ufAll">enginestate: const ufAll</a></li>
           </ul></dd>
 <dt><a name="ufEnvelope" href="#ufEnvelope"><span>ufEnvelope:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: UpdateFlag.ufEnvelope" href="libtrackerboy/private/enginestate.html#ufEnvelope">enginestate: UpdateFlag.ufEnvelope</a></li>
+          data-doc-search-tag="enginestate: UpdateFlag.ufEnvelope" href="libtrackerboy/engine/enginestate.html#ufEnvelope">enginestate: UpdateFlag.ufEnvelope</a></li>
           </ul></dd>
 <dt><a name="ufFrequency" href="#ufFrequency"><span>ufFrequency:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: UpdateFlag.ufFrequency" href="libtrackerboy/private/enginestate.html#ufFrequency">enginestate: UpdateFlag.ufFrequency</a></li>
+          data-doc-search-tag="enginestate: UpdateFlag.ufFrequency" href="libtrackerboy/engine/enginestate.html#ufFrequency">enginestate: UpdateFlag.ufFrequency</a></li>
           </ul></dd>
 <dt><a name="ufPanning" href="#ufPanning"><span>ufPanning:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: UpdateFlag.ufPanning" href="libtrackerboy/private/enginestate.html#ufPanning">enginestate: UpdateFlag.ufPanning</a></li>
+          data-doc-search-tag="enginestate: UpdateFlag.ufPanning" href="libtrackerboy/engine/enginestate.html#ufPanning">enginestate: UpdateFlag.ufPanning</a></li>
           </ul></dd>
 <dt><a name="ufTimbre" href="#ufTimbre"><span>ufTimbre:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: UpdateFlag.ufTimbre" href="libtrackerboy/private/enginestate.html#ufTimbre">enginestate: UpdateFlag.ufTimbre</a></li>
+          data-doc-search-tag="enginestate: UpdateFlag.ufTimbre" href="libtrackerboy/engine/enginestate.html#ufTimbre">enginestate: UpdateFlag.ufTimbre</a></li>
           </ul></dd>
 <dt><a name="uniqueIds" href="#uniqueIds"><span>uniqueIds:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1990,15 +1956,15 @@
 <li><a class="reference external"
           data-doc-search-tag="engine: proc unlock(e: var Engine; chno: ChannelId)" href="libtrackerboy/engine.html#unlock%2CEngine%2CChannelId">engine: proc unlock(e: var Engine; chno: ChannelId)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc unlock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)" href="libtrackerboy/private/enginecontrol.html#unlock%2CMusicRuntime%2CChannelId%2CApuOperation">enginecontrol: proc unlock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)</a></li>
+          data-doc-search-tag="enginecontrol: proc unlock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)" href="libtrackerboy/engine/enginecontrol.html#unlock%2CMusicRuntime%2CChannelId%2CApuOperation">enginecontrol: proc unlock(r: var MusicRuntime; chno: ChannelId; op: var ApuOperation)</a></li>
           </ul></dd>
 <dt><a name="UpdateFlag" href="#UpdateFlag"><span>UpdateFlag:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: enum UpdateFlag" href="libtrackerboy/private/enginestate.html#UpdateFlag">enginestate: enum UpdateFlag</a></li>
+          data-doc-search-tag="enginestate: enum UpdateFlag" href="libtrackerboy/engine/enginestate.html#UpdateFlag">enginestate: enum UpdateFlag</a></li>
           </ul></dd>
 <dt><a name="UpdateFlags" href="#UpdateFlags"><span>UpdateFlags:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="enginestate: type UpdateFlags" href="libtrackerboy/private/enginestate.html#UpdateFlags">enginestate: type UpdateFlags</a></li>
+          data-doc-search-tag="enginestate: type UpdateFlags" href="libtrackerboy/engine/enginestate.html#UpdateFlags">enginestate: type UpdateFlags</a></li>
           </ul></dd>
 <dt><a name="version" href="#version"><span>version:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2048,6 +2014,10 @@
 <li><a class="reference external"
           data-doc-search-tag="endian: const willCorrect" href="libtrackerboy/private/endian.html#willCorrect">endian: const willCorrect</a></li>
           </ul></dd>
+<dt><a name="withSome" href="#withSome"><span>withSome:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="optionutils: template withSome[T](opt: var Option[T]; body: untyped): untyped" href="libtrackerboy/private/optionutils.html#withSome.t%2COption%5BT%5D%2Cuntyped">optionutils: template withSome[T](opt: var Option[T]; body: untyped): untyped</a></li>
+          </ul></dd>
 <dt><a name="write" href="#write"><span>write:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: proc write[T](b: var OutputBlock; data: openArray[T])" href="libtrackerboy/private/ioblocks.html#write%2COutputBlock%2CopenArray%5BT%5D">ioblocks: proc write[T](b: var OutputBlock; data: openArray[T])</a></li>
@@ -2068,7 +2038,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-28 19:18:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-05 07:19:40 UTC</small>
       </div>
     </div>
   </div>
