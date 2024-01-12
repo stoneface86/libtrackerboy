@@ -1,16 +1,47 @@
 ##[
 
+.. importdoc:: apuio.nim
+
 The engine module is responsible for playing a song from a module. Similar
 to a sound driver, the engine is stepped every frame and the APU's registers
 are updated in order to play music.
 
+There are three parts to this module: the engine itself, interfacing with an
+ApuIo, and some utility calculation procs.
+
+## Engine
+
+This module provides an [Engine] type that handles the performance of a `Song`
+(and sound effects, in the future).
+
+To create an engine, initialize one with [init(typedesc[Engine])]. Then give
+it a song to play via the [play] proc. Reference semantics are used so you
+will need a `ref Song` when playing it. Afterwards, you can call [step] to
+perform a single tick of the engine.
+
+There are also other procs for controlling playback, as well as informational
+ones for diagnostics.
+
+## ApuIo interface
+
+The engine creates an [ApuOperation] every step. This object can be converted
+into register writes and then sent to an [ApuIo].
+
+## Runtime calculation and pathing
+
+There are also some utility procs for determining the runtime, in ticks, of
+a song, as well as the order of patterns it will go through (the path).
+
+Use any overload of the `runtime` procs to get a song's runtime. Use [getPath]
+to get a [SongPath] for a `Song`.
+
 ]##
 
-## common abbrievations
-## fc - frequency control
-## tc - track control
-## mr - music runtime
-## chno - channel number
+# common abbrievations
+# fc - frequency control
+# tc - track control
+# mr - music runtime
+# chno - channel number
 
 import
   ./apuio,
@@ -27,9 +58,9 @@ import
 import std/[options, times]
 
 export common, times
-export Module, Song   # data
-export ApuIo          # apuio
-export EngineFrame    # enginestate
+export Module, Song, SongPos    # data
+export ApuIo                    # apuio
+export EngineFrame              # enginestate
 
 type
   Engine* = object
@@ -48,7 +79,7 @@ type
 
 {. push raises: [] .}
 
-func init*(_: typedesc[Engine]): Engine =
+func init*(T: typedesc[Engine]): Engine =
   ## Constructs a new Engine.
   ##
   discard  # default init is sufficient
@@ -91,8 +122,8 @@ proc reset*(e: var Engine) =
   e.time = 0
   e.apuOp = ApuOperation.default
 
-proc play*(e: var Engine; song: sink Immutable[ref Song]; pattern = Natural(0);
-           row = Natural(0)) =
+proc play*(e: var Engine; song: sink Immutable[ref Song];
+           startAt = default(SongPos)) =
   ## Sets the engine to begin playback of the given song. `song` must not be
   ## `nil`. By default, the engine will play the song from the start, or
   ## pattern 0, row 0. You can override this position via the `pattern` and
@@ -103,13 +134,20 @@ proc play*(e: var Engine; song: sink Immutable[ref Song]; pattern = Natural(0);
   ## 
   doAssert not song.isNil, "song must not be nil!"
   
-  if pattern >= song[].order.len:
+  if startAt.pattern >= song[].order.len:
     raise newException(IndexDefect, "invalid pattern index")
-  if row >= song[].trackLen:
+  if startAt.row >= song[].trackLen:
     raise newException(IndexDefect, "invalid row index")
 
   e.song = song
-  e.musicRuntime = some(MusicRuntime.init(cast[Immutable[ptr Song]](song), pattern, row, e.patternRepeat))
+  e.musicRuntime = some(
+    MusicRuntime.init(
+      cast[Immutable[ptr Song]](song),
+      startAt.pattern,
+      startAt.row,
+      e.patternRepeat
+    )
+  )
   e.frame = EngineFrame(startedNewPattern: true)
   e.time = 0
 
@@ -229,12 +267,85 @@ proc stepAndApply*(e: var Engine; itable: InstrumentTable;
 
 # Runtime calculation =========================================================
 
-func runtime*(song: Song; loopFor = Positive(1);
-              pattern = ByteIndex(0); row = ByteIndex(0)): int =
+type
+  PatternHistory = object
+    # a history of rows visited in each pattern
+    startRows: seq[set[ByteIndex]]
+
+  SongPather = object
+    # Used for path calculation and runtime calculation
+    mr: MusicRuntime
+    itable: InstrumentTable
+    current: SongPos
+    history: PatternHistory
+
+  SongPath* = object
+    ## Defines the path a song will take during performance. A song's path is
+    ## the order in which patterns are encountered, or visited. The path also
+    ## has an optional loop index, that indicates whether the song will loop
+    ## to a previous visit or halt at the last visit.
+    ## * `visits`: This seq contains the patterns that were visited, in order
+    ##             of occurance.
+    ## * `loopsTo`: Specifies the index of the visit the song will loop to
+    ##              after the last visit. If not provided, then the song will
+    ##              halt after the last visit.
+    ##
+    visits*: seq[SongPos]
+    loopsTo*: Option[int]
+
+func init(T: typedesc[PatternHistory]; totalPatterns: Positive
+          ): PatternHistory =
+  # initialize a pattern history for a given number of patterns
+  result.startRows.setLen(totalPatterns)
+
+proc add(h: var PatternHistory; visit: SongPos): bool =
+  # Adds the visit to the history, returns `true` if this visit was already
+  # added.
+  let pslot = h.startRows[visit.pattern].addr
+  result = visit.row in pslot[]
+  pslot[].incl(visit.row)
+
+
+func init(T: typedesc[SongPather]; song: Song; startPos: SongPos; ): SongPather =
+  # initialize a song pather for the given song and starting position.
+  result = SongPather(
+    mr: MusicRuntime.init(toImmutable(unsafeAddr(song)), startPos.pattern, startPos.row, false),
+    itable: InstrumentTable.init(),
+    current: startPos,
+    history: PatternHistory.init(song.order.len)
+  )
+
+proc nextVisit(sp: var SongPather; steps: ptr int = nil): bool =
+  # calculate the next pattern visit, which is stored into `p.current`
+  # if `steps` is provided, then the pointer's value is incremented with the
+  # number of ticks that have been performed.
+  var count = 0
+  while true:
+    var 
+      frame: EngineFrame
+      op: ApuOperation
+    inc count
+    if sp.mr.step(sp.itable, frame, op):
+      result = true
+      break
+    if frame.startedNewPattern:
+      sp.current.pattern = frame.order
+      sp.current.row = frame.row
+      result = false
+      break
+  if steps != nil:
+    steps[] += count
+
+proc addCurrentToHistory(sp: var SongPather): bool =
+  # adds sp's current visit to its history, returning `true` if it was already
+  # added.
+  result = sp.history.add(sp.current)
+
+func runtime*(song: Song; loopFor = Positive(1); startPos = default(SongPos)
+              ): int =
   ## Gets the runtime in frames when playing a song.
   ## * `loopFor` is the number of times to loop
-  ## * `pattern` is the starting pattern
-  ## * `row` is the starting row
+  ## * `startPos` is the starting position, default is start of the song
   ##
   ## The minimum runtime of a song is 1 frame, since 1 frame is required to be
   ## stepped in order for a song to halt.
@@ -244,34 +355,33 @@ func runtime*(song: Song; loopFor = Positive(1);
   ## track length. This means that the song cannot be played with these
   ## arguments and therefore has a runtime of 0 frames.
   ##
-  if pattern >= song.order.len or row >= song.trackLen:
-    # we cannot start at this position so the song has no runtime
-    return 0
-  
-  var
-    # this seq keeps track of how many times each pattern has been visited.
-    # when a pattern has been visited more than loopFor, we are done playing.
-    visits = newSeq[int](song.order.len)
-    mr = MusicRuntime.init(toImmutable(song.unsafeAddr), pattern, row, false)
-    itable = InstrumentTable.init()
-    postStepOp: ApuOperation
-    postStepFrame: EngineFrame
 
-  # loop until we have reached a cycle `loopFor` times
-  while visits[mr.orderCounter] < loopFor:
-    inc visits[mr.orderCounter]
-    # loop until we start a new pattern (or halt)
-    while true:
-      inc result
-      if mr.step(itable, postStepFrame, postStepOp):
-        # halted, stop here
-        return result
-      let done = postStepFrame.startedNewPattern
-      postStepFrame.reset()
-      postStepOp.reset() # discard the op
-      if done:
-        break
-  dec result # cycle detection results in an extra frame being stepped
+  if not song.validPosition(startPos):
+    return 0
+
+  var 
+    sp = SongPather.init(song, startPos)
+    pathOpen = true
+    loopVisit: SongPos
+    loopCount = 0
+  
+  while true:
+    if sp.addCurrentToHistory():
+      # we have revisited a previous visit
+      if pathOpen:
+        # close the path, mark this visit as the loop point
+        pathOpen = false
+        loopVisit = sp.current
+      if loopVisit == sp.current:
+        # loop point encountered, a single loop has been made
+        inc loopCount
+        if loopCount == loopFor:
+          dec result # remove the extra step added during call to nextVisit
+          # done: target number of loops has been reached
+          break
+    if sp.nextVisit(addr(result)):
+      # done: no next visit since the song halted
+      break
     
 func runtime*(duration: Duration; framerate: float): int =
   ## Gets the runtime in frames when playing a song for a given time duration.
@@ -284,5 +394,38 @@ func runtime*(duration: Duration): int =
   ##
   const rate = defaultTickrate.hertz
   runtime(duration, rate)
+
+# pathing
+
+func isValid*(p: SongPath): bool =
+  ## Determines if a path is valid, or has one or more visits.
+  ##
+  result = p.visits.len > 0
+
+func getPath*(song: Song; startPos = default(SongPos)): SongPath =
+  ## Determines the path, or the order in which patterns are visited when
+  ## performing a song. The calculated `SongPath` is returned for the given
+  ## song, when starting at a specified pattern and row (default is the start
+  ## of the song).
+  ## 
+  ## If `startRow` or `startPattern` are invalid positions for `song`, then an
+  ## empty SongPath is returned.
+  ##
+
+  # invalid positions result in an empty path
+  if song.validPosition(startPos):
+    var sp = SongPather.init(song, startPos)
+
+    while true:
+      if sp.addCurrentToHistory():
+        # end of path: song loops
+        result.loopsTo = some(find(result.visits, sp.current))
+        break
+      result.visits.add(sp.current)
+
+      # determine the next pattern that will be visited
+      if sp.nextVisit():
+        # end of path: song halted
+        break 
 
 {. pop .}

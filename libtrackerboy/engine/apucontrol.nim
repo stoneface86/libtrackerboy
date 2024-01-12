@@ -87,6 +87,11 @@ const
     0b00100000      # V03 - 100% volume (default)
   ]
 
+func nr43*(state: ChannelState): uint8 =
+  result = lookupNoiseNote(state.frequency)
+  if state.timbre > 0:
+    result.setBit(3)
+
 proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
                       update: ChannelUpdate; panningAccum: var PanningAccum;
                       list: var ApuWriteList) =
@@ -118,11 +123,8 @@ proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
         nrx4.setRetrigger()
 
     when chno == ch4:
-      if ufTimbre in update.flags or ufFrequency in update.flags:
-        var nr43 = lookupNoiseNote(update.state.frequency)
-        if update.state.timbre > 0:
-          nr43.setBit(3)
-        list.add(rNR43, nr43)
+      if update.flags.hasAny({ ufTimbre, ufFrequency }):
+        list.add(rNR43, nr43(update.state))
     else:
       if ufTimbre in update.flags:
         when chno == ch3:

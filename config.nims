@@ -109,9 +109,12 @@ task docs, "Generate documentation":
   # Generate all rst documents
   docsRstImpl(gitargs)
 
+  echo "Indexing whole project..."
+  exec "nim doc --hints:off --project --index:only libtrackerboy.nim"
+
   # generate project documentation via libtrackerboy.nim
   echo "Generating documentation for whole project..."
-  exec &"nim doc --hints:off --project --index:on --outdir:htmldocs {gitargs} libtrackerboy.nim"
+  exec &"nim doc --hints:off --project --outdir:htmldocs {gitargs} libtrackerboy.nim"
 
   # generate the index
   echo "Building index..."

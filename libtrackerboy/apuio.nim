@@ -47,19 +47,8 @@ type
     readRegister(a, uint8) is uint8
     writeRegister(a, uint8, uint8)
 
-template toAddress*(reg: ApuRegister): uint8 = reg.ord.uint8
+template toAddress*(reg: ApuRegister): uint8 =
   ## Convert the register to its address. This just converts the result of
   ## ord to an uint8.
   ##
-
-# These don't work with the ApuIo concept, "too nested for type matching"
-
-# template readRegister*(apu: ApuIo, reg: ApuRegister): uint8 =
-#     ## Shortcut for the `ApuIo`'s `readRegister` proc by using an ApuRegister
-#     ## enum instead of an address.
-#     apu.readRegister(reg.toAddress)
-
-# template writeRegister*(apu: var ApuIo, reg: ApuRegister, val: uint8) =
-#     ## Shortcut for the ApuIo's `writeRegister` proc by using an ApuRegister
-#     ## enum instead of an address
-#     apu.writeRegister(reg.toAddress, val)
+  uint8(ord(reg))

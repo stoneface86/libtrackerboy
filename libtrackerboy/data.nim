@@ -295,6 +295,14 @@ type
       ## should be used instead.
       ##
 
+  SongPos* = object
+    ## Song position. This object contains the starting position of a song.
+    ## By default the starting position is the first pattern and first row,
+    ## which are both 0.
+    ##
+    pattern*: int
+    row*: int 
+
   SongList* {.requiresInit.} = object
     ## Container for songs. Songs stored in this container are references,
     ## like InstrumentTable and WaveformTable. A SongList can contain 1-256
@@ -1245,6 +1253,19 @@ func patternLen*(s: Song; order: ByteIndex): Natural =
           for effect in row.effects:
             if effectTypeShortensPattern(effect.effectType.EffectType):
               return
+
+func songPos*(pattern = ByteIndex(0); row = ByteIndex(0)): SongPos =
+  ## Constructs a song position
+  ##
+  SongPos(pattern: pattern, row: row)
+
+func validPosition*(song: Song; pos: SongPos; ): bool =
+  ## Determines if `pos` is a valid position in the song.
+  ##
+  result = pos.pattern >= 0 and
+           pos.pattern < song.order.len and
+           pos.row >= 0 and
+           pos.row < song.trackLen
 
 # SongList
 

@@ -156,4 +156,13 @@ func pansRight*(mode: MixMode): bool =
   ##
   testBit(ord(mode), 1)
 
+func hasAny*[T](x, y: set[T]; ): bool =
+  ## Checks if one or more elements in `y` are present in `x`. This just
+  ## checks if the intersection of `x` and `y` has a nonzero cardinality.
+  ##
+  runnableExamples:
+    assert { 'a', 'b', 'c', 'd' }.hasAny({ 'a', 'c' })
+    assert not { 'a', 'b', 'c' }.hasAny({ 'z', 'y' })
+  card(x * y) > 0
+
 {. pop .}

@@ -76,7 +76,7 @@ func init(T: typedesc[EngineHarness]): EngineHarness =
   )
 
 proc play(e: var EngineHarness; order = 0; row = 0) =
-  e.engine.play(e.song.toImmutable, order, row)
+  e.engine.play(e.song.toImmutable, songPos(order, row))
 
 func currentState(e: EngineHarness, chno: ChannelId): ChannelState =
   e.engine.currentState(chno)
@@ -831,12 +831,12 @@ block: # =========================================================== Engine
     test "play raises IndexDefect on invalid pattern index":
       var song = Song.new()
       expect IndexDefect:
-        engine.play(song.toImmutable, song.order.len)
+        engine.play(song.toImmutable, songPos(song.order.len))
 
     test "play raises IndexDefect on invalid row index":
       var song = Song.new()
       expect IndexDefect:
-        engine.play(song.toImmutable, 0, song[].trackLen)
+        engine.play(song.toImmutable, songPos(0, song[].trackLen))
 
 block: # ========================================================== instruments
   const
@@ -1042,13 +1042,74 @@ block: # ============================================================== runtime
     test "no runtime for pattern >= song order len":
       let song = Song.init()
       check:
-        runtime(song, 1, 1) == 0
-        runtime(song, 1, 32) == 0
+        runtime(song, 1, songPos(1)) == 0
+        runtime(song, 1, songPos(32)) == 0
 
     test "no runtime for row >= song.trackLen":
       var song = Song.init()
       song.trackLen = 10
       check:
-        runtime(song, row = 10) == 0
-        runtime(song, row = 63) == 0
-    
+        runtime(song, startPos = songPos(row = 10)) == 0
+        runtime(song, startPos = songPos(row = 63)) == 0
+
+suite "engine.getPath":
+
+  template pv(ppattern: int; prow = 0): SongPos =
+    SongPos(pattern: ppattern, row: prow)
+
+  test "default song has path of 1 visit and loops":
+    let 
+      song = Song.init()
+      path = song.getPath()
+    check:
+      path.visits == [ pv(0) ]
+      path.loopsTo == some(0)
+
+  test "simple song that loops":
+    var song = Song.init()
+    song.order.setLen(3)
+    let path = song.getPath()
+    check:
+      path.visits == [ pv(0), pv(1), pv(2) ]
+      path.loopsTo == some(0)
+
+  test "song that halts":
+    var song = Song.init()
+    song.order.setLen(2)
+    song.order[1] = [ 0u8, 0u8, 0u8, 1u8]
+    song.editTrack(ch4, 1, track):
+      track.setEffect(23, 0, etPatternHalt)
+    let path = song.getPath()
+    check:
+      path.visits == [ pv(0), pv(1) ]
+      path.loopsTo == none(int)
+
+  test "song loops via Bxx":
+    var song = Song.init()
+    song.order.setLen(3)
+    song.order[2] = [ 0u8, 1, 0, 0 ]
+    song.editTrack(ch2, 1, track):
+      track.setEffect(63, 1, etPatternGoto, 1)
+    let path = song.getPath()
+    check:
+      path.visits == [ pv(0), pv(1), pv(2) ]
+      path.loopsTo == some(1)
+
+  test "song with Dxx":
+    var song = Song.init()
+    song.order.setLen(5)
+    song.order[1] = [1u8, 0, 0, 0]
+    song.order[2] = [2u8, 0, 0, 0]
+    song.order[4] = [3u8, 0, 0, 0]
+    song.editTrack(ch1, 1, track):
+      track.setEffect(63, 0, etPatternSkip, 32)
+    song.editTrack(ch1, 2, track):
+      track.setEffect(63, 0, etPatternGoto, 4)
+      # if we start this pattern from rows 0-31, we will go to pattern 3 next
+      track.setEffect(31, 0, etPatternGoto, 3)
+    song.editTrack(ch1, 3, track):
+      track.setEffect(63, 0, etPatternGoto, 2)
+    let path = song.getPath()
+    check:
+      path.visits == [ pv(0), pv(1), pv(2, 32), pv(4), pv(2), pv(3) ]
+      path.loopsTo == some(3)

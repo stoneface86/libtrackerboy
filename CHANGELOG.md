@@ -4,15 +4,18 @@
 
 ### Added
  - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
+ - (common) `hasAny` proc for two sets
  - (data) `toView` converter in data module for `Track -> TrackView`
  - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
    `TrackRow`
  - (data) `hash` procs for `Instrument` and `Waveform`
  - (data) `==` procs for `Instrument` and `Waveform`
  - (data) `uniqueIds` proc for `Table[T]`
+ - (data) `SongPos` object
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
+ - (engine) `SongPath` object and `getPath` proc
 
 ### Changed
  - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
@@ -22,6 +25,8 @@
  - (ir) `setFromIr` proc now returns `bool`
  - modules apucontrol, enginecontrol and enginestate are no longer private
    and are now located in libtrackerboy/engine
+ - (engine) `play` proc signature takes a `SongPos` instead of two ints
+ - (engine) `runtime` proc for looping takes a `SongPos` instead of two ints
 
 ### Removed
  - (ir) `SongPath` and `PatternVisit` types.
