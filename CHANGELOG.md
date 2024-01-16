@@ -11,10 +11,12 @@
  - (data) `hash` procs for `Instrument` and `Waveform`
  - (data) `==` procs for `Instrument` and `Waveform`
  - (data) `uniqueIds` proc for `Table[T]`
- - (data) `SongPos` object
+ - (data) `SongPos` type
+ - (data) `SongSpan` type
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
+ - (ir) overload for `toIr` proc for partial ir conversion
  - (engine) `SongPath` object and `getPath` proc
 
 ### Changed

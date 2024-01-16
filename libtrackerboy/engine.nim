@@ -276,8 +276,14 @@ type
     # Used for path calculation and runtime calculation
     mr: MusicRuntime
     itable: InstrumentTable
-    current: SongPos
+    lastFrame: EngineFrame
     history: PatternHistory
+
+  SongPatherStep = object
+    next: SongPos
+    previousRow: int
+    steps: int
+    halted: bool
 
   SongPath* = object
     ## Defines the path a song will take during performance. A song's path is
@@ -290,7 +296,7 @@ type
     ##              after the last visit. If not provided, then the song will
     ##              halt after the last visit.
     ##
-    visits*: seq[SongPos]
+    visits*: seq[SongSpan]
     loopsTo*: Option[int]
 
 func init(T: typedesc[PatternHistory]; totalPatterns: Positive
@@ -311,35 +317,26 @@ func init(T: typedesc[SongPather]; song: Song; startPos: SongPos; ): SongPather 
   result = SongPather(
     mr: MusicRuntime.init(toImmutable(unsafeAddr(song)), startPos.pattern, startPos.row, false),
     itable: InstrumentTable.init(),
-    current: startPos,
     history: PatternHistory.init(song.order.len)
   )
 
-proc nextVisit(sp: var SongPather; steps: ptr int = nil): bool =
-  # calculate the next pattern visit, which is stored into `p.current`
-  # if `steps` is provided, then the pointer's value is incremented with the
-  # number of ticks that have been performed.
-  var count = 0
+proc nextVisit(sp: var SongPather): SongPatherStep =
+  var 
+    frame = sp.lastFrame
+    prevRow: int
   while true:
-    var 
-      frame: EngineFrame
-      op: ApuOperation
-    inc count
+    var op: ApuOperation
+    inc result.steps
+    prevRow = frame.row
     if sp.mr.step(sp.itable, frame, op):
-      result = true
+      result.halted = true
       break
     if frame.startedNewPattern:
-      sp.current.pattern = frame.order
-      sp.current.row = frame.row
-      result = false
+      result.next.pattern = frame.order
+      result.next.row = frame.row
       break
-  if steps != nil:
-    steps[] += count
-
-proc addCurrentToHistory(sp: var SongPather): bool =
-  # adds sp's current visit to its history, returning `true` if it was already
-  # added.
-  result = sp.history.add(sp.current)
+  sp.lastFrame = frame
+  result.previousRow = prevRow
 
 func runtime*(song: Song; loopFor = Positive(1); startPos = default(SongPos)
               ): int =
@@ -356,32 +353,36 @@ func runtime*(song: Song; loopFor = Positive(1); startPos = default(SongPos)
   ## arguments and therefore has a runtime of 0 frames.
   ##
 
-  if not song.validPosition(startPos):
+  if not song.isValid(startPos):
     return 0
 
-  var 
-    sp = SongPather.init(song, startPos)
+  var
+    current = startPos
+    sp = SongPather.init(song, current)
     pathOpen = true
     loopVisit: SongPos
     loopCount = 0
   
   while true:
-    if sp.addCurrentToHistory():
+    if sp.history.add(current):
       # we have revisited a previous visit
       if pathOpen:
         # close the path, mark this visit as the loop point
         pathOpen = false
-        loopVisit = sp.current
-      if loopVisit == sp.current:
+        loopVisit = current
+      if loopVisit == current:
         # loop point encountered, a single loop has been made
         inc loopCount
         if loopCount == loopFor:
           dec result # remove the extra step added during call to nextVisit
           # done: target number of loops has been reached
           break
-    if sp.nextVisit(addr(result)):
+    let step = sp.nextVisit()
+    if step.halted:
       # done: no next visit since the song halted
       break
+    current = step.next
+    result += step.steps
     
 func runtime*(duration: Duration; framerate: float): int =
   ## Gets the runtime in frames when playing a song for a given time duration.
@@ -413,19 +414,24 @@ func getPath*(song: Song; startPos = default(SongPos)): SongPath =
   ##
 
   # invalid positions result in an empty path
-  if song.validPosition(startPos):
-    var sp = SongPather.init(song, startPos)
+  if song.isValid(startPos):
+    var 
+      current = startPos
+      sp = SongPather.init(song, current)
 
     while true:
-      if sp.addCurrentToHistory():
+      if sp.history.add(current):
         # end of path: song loops
-        result.loopsTo = some(find(result.visits, sp.current))
+        for i, visit in pairs(result.visits):
+          if visit.pos == current:
+            result.loopsTo = some(i)
+            break
         break
-      result.visits.add(sp.current)
-
-      # determine the next pattern that will be visited
-      if sp.nextVisit():
+      let step = sp.nextVisit()
+      result.visits.add(songSpan(current.pattern, current.row, step.previousRow))
+      if step.halted:
         # end of path: song halted
-        break 
+        break
+      current = step.next
 
 {. pop .}

@@ -1054,15 +1054,15 @@ block: # ============================================================== runtime
 
 suite "engine.getPath":
 
-  template pv(ppattern: int; prow = 0): SongPos =
-    SongPos(pattern: ppattern, row: prow)
+  template pv(ppattern: int; prows: Slice[int]): SongSpan =
+    songSpan(ppattern, prows.a, prows.b)
 
   test "default song has path of 1 visit and loops":
     let 
       song = Song.init()
       path = song.getPath()
     check:
-      path.visits == [ pv(0) ]
+      path.visits == [ pv(0, 0..63) ]
       path.loopsTo == some(0)
 
   test "simple song that loops":
@@ -1070,7 +1070,7 @@ suite "engine.getPath":
     song.order.setLen(3)
     let path = song.getPath()
     check:
-      path.visits == [ pv(0), pv(1), pv(2) ]
+      path.visits == [ pv(0, 0..63), pv(1, 0..63), pv(2, 0..63) ]
       path.loopsTo == some(0)
 
   test "song that halts":
@@ -1081,7 +1081,7 @@ suite "engine.getPath":
       track.setEffect(23, 0, etPatternHalt)
     let path = song.getPath()
     check:
-      path.visits == [ pv(0), pv(1) ]
+      path.visits == [ pv(0, 0..63), pv(1, 0..23) ]
       path.loopsTo == none(int)
 
   test "song loops via Bxx":
@@ -1092,7 +1092,7 @@ suite "engine.getPath":
       track.setEffect(63, 1, etPatternGoto, 1)
     let path = song.getPath()
     check:
-      path.visits == [ pv(0), pv(1), pv(2) ]
+      path.visits == [ pv(0, 0..63), pv(1, 0..63), pv(2, 0..63) ]
       path.loopsTo == some(1)
 
   test "song with Dxx":
@@ -1111,5 +1111,12 @@ suite "engine.getPath":
       track.setEffect(63, 0, etPatternGoto, 2)
     let path = song.getPath()
     check:
-      path.visits == [ pv(0), pv(1), pv(2, 32), pv(4), pv(2), pv(3) ]
+      path.visits == [ 
+        pv(0, 0..63),
+        pv(1, 0..63),
+        pv(2, 32..63),
+        pv(4, 0..63),
+        pv(2, 0..31),
+        pv(3, 0..63) 
+      ]
       path.loopsTo == some(3)

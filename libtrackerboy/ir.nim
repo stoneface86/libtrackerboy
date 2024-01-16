@@ -330,8 +330,9 @@ func `==`*(a, b: RowIr;): bool =
     of rikOp:
       result = a.op == b.op
 
-func toIr*(t: TrackView): TrackIr =
-  ## Gets the immediate representation, ir, of a given track.
+func toIr*(t: TrackView; rows: Slice[ByteIndex]): TrackIr =
+  ## Gets immediate representation, ir, of a given track, for only the given
+  ## range of rows.
   ##
   proc addRest(restCount: var int; ir: var TrackIr) =
     if restCount > 0:
@@ -341,14 +342,19 @@ func toIr*(t: TrackView): TrackIr =
   if t.isValid():
     result.srcLen = t.len
     var rest = 0
-    for row in t:
-      let op = row.toOperation()
+    for i in rows:
+      let op = t[i].toOperation()
       if op.isNoop():
         inc rest
       else:
         addRest(rest, result)
         result.data.add(opRowIr(op))
     addRest(rest, result)
+
+func toIr*(t: TrackView): TrackIr =
+  ## Gets the immediate representation, ir, of a given track.
+  ##
+  result = toIr(t, ByteIndex(0)..ByteIndex(t.len-1))
 
 func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
   ## Converts an Operation back into a TrackRow. The converted row is set in

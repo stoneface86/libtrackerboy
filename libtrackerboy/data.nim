@@ -299,9 +299,20 @@ type
     ## Song position. This object contains the starting position of a song.
     ## By default the starting position is the first pattern and first row,
     ## which are both 0.
+    ## * `pattern` - The index in the song's order of the pattern.
+    ## * `row` - The index of the row to start at.
     ##
     pattern*: int
     row*: int 
+
+  SongSpan* = object
+    ## References a span in a song, or a range of rows within a pattern in
+    ## a song.
+    ## * `pos` - The starting position of the span.
+    ## * `rows` - The amount of rows from `pos` included in the span.
+    ##
+    pos*: SongPos
+    rows*: int
 
   SongList* {.requiresInit.} = object
     ## Container for songs. Songs stored in this container are references,
@@ -1259,13 +1270,56 @@ func songPos*(pattern = ByteIndex(0); row = ByteIndex(0)): SongPos =
   ##
   SongPos(pattern: pattern, row: row)
 
-func validPosition*(song: Song; pos: SongPos; ): bool =
+func songSpan*(pos: SongPos; rows = 0): SongSpan =
+  ## Create a span from a position, with optional amount of rows to specify the
+  ## span's range.
+  ## 
+  result = SongSpan(pos: pos, rows: rows)
+
+func songSpan*(pattern: ByteIndex; rowStart, rowEnd: ByteIndex;): SongSpan =
+  ## Create a span with the given pattern and range of rows.
+  ##
+  result = SongSpan(
+    pos: songPos(pattern, rowStart),
+    rows: rowEnd - rowStart + 1
+  )
+
+func asSlice*(span: SongSpan): Slice[int] =
+  ## Get the span's range of rows as a slice
+  ##
+  result = span.pos.row..(span.pos.row + span.rows - 1)
+
+func isValid*(song: Song; pos: SongPos; ): bool =
   ## Determines if `pos` is a valid position in the song.
   ##
   result = pos.pattern >= 0 and
            pos.pattern < song.order.len and
            pos.row >= 0 and
            pos.row < song.trackLen
+
+func isValid*(song: Song; span: SongSpan): bool =
+  ## Determines if `span` is a valid span in the song. A span is valid if its
+  ## starting position is valid and if its range of rows is within 
+  ## `0..(song.trackLen-1)`.
+  ##
+  let lastRow = span.pos.row + span.rows
+  result = isValid(song, span.pos) and
+           span.rows > 0 and
+           lastRow >= 0 and
+           lastRow < song.trackLen
+
+func `$`*(pos: SongPos): string =
+  ## Stringify a position, formated as `pattern:row`
+  ##
+  result = $pos.pattern
+  result.add(':')
+  result.add($pos.row)
+
+func `$`*(span: SongSpan): string =
+  ## Stringify a span, formatted as `pattern:row+rows`
+  result = $span.pos
+  result.add('+')
+  result.add($span.rows)
 
 # SongList
 
