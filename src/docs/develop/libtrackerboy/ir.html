@@ -12,10 +12,10 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.0.2">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js"></script>
+<script type="text/javascript" src="../dochack.js?v=2.0.2"></script>
 </head>
 <body>
   <div class="document" id="documentId">
@@ -153,6 +153,7 @@
 </ul>
 <ul class="simple nested-toc-section">toIr
   <li><a class="reference" href="#toIr%2CTrackView" title="toIr(t: TrackView): TrackIr">toIr(t: TrackView): TrackIr</a></li>
+<li><a class="reference" href="#toIr%2CTrackView%2CSlice%5BByteIndex%5D" title="toIr(t: TrackView; rows: Slice[ByteIndex]): TrackIr">toIr(t: TrackView; rows: Slice[ByteIndex]): TrackIr</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toOperation
@@ -392,8 +393,8 @@
   <dd>
     
     Converts a TrackIr into a Track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L424" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L424" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L430" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L430" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -471,8 +472,8 @@
   <dd>
     
     Sets the given track's row data using the given ir data. This proc does not clear the track beforehand for optimization purposes, ensure that <tt class="docutils literal"><span class="pre"><span class="Identifier">track</span></span></tt> is an empty one first before calling this function.
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L409" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L409" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L415" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L415" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -509,6 +510,17 @@
   <dd>
     
     Gets the immediate representation, ir, of a given track. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L354" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L354" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="toIr,TrackView,Slice[ByteIndex]">
+  <dt><pre><span class="Keyword">func</span> <a href="#toIr%2CTrackView%2CSlice%5BByteIndex%5D"><span class="Identifier">toIr</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="data.html#TrackView"><span class="Identifier">TrackView</span></a><span class="Other">;</span> <span class="Identifier">rows</span><span class="Other">:</span> <span class="Identifier">Slice</span><span class="Other">[</span><a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="ir.html#TrackIr"><span class="Identifier">TrackIr</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Gets immediate representation, ir, of a given track, for only the given range of rows. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L333" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L333" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -536,8 +548,8 @@
   <dd>
     
     Converts an Operation back into a TrackRow. The converted row is set in the <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> field. If the operation had too many effects set that could be contained in <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> the <tt class="docutils literal"><span class="pre"><span class="Identifier">effectsOverflowed</span></span></tt> is set to <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt>, and the conversion done was a partial one. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L353" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L353" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/ir.nim#L359" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/ir.nim#L359" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -631,7 +643,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-05 07:19:39 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-21 18:36:17 UTC</small>
       </div>
     </div>
   </div>
