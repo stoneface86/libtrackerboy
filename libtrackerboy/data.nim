@@ -10,7 +10,7 @@ import
   ./private/data,
   ./private/utils
 
-import std/[hashes, math, options, parseutils, sequtils, tables]
+import std/[hashes, math, options, parseutils, sequtils, strutils, tables]
 
 export common, options
 
@@ -414,6 +414,45 @@ func toEffectType*(x: uint8): EffectType =
     x.EffectType
   else:
     etNoEffect
+
+func effectTypeToChar*(et: uint8): char =
+  ## Get a `char` representation for the given effect type value. For any
+  ## unrecognized effect, `?` is returned.
+  ##
+  const
+    effectChars: array[EffectType, char] = [
+      '?', # etNoEffect
+      'B', # etPatternGoto
+      'C', # etPatternHalt
+      'D', # etPatternSkip
+      'F', # etSetTempo
+      'T', # etSfx
+      'E', # etSetEnvelope
+      'V', # etSetTimbre
+      'I', # etSetPanning
+      'H', # etSetSweep
+      'S', # etDelayedCut
+      'G', # etDelayedNote
+      'L', # etLock
+      '0', # etArpeggio
+      '1', # etPitchUp
+      '2', # etPitchDown
+      '3', # etAutoPortamento
+      '4', # etVibrato
+      '5', # etVibratoDelay
+      'P', # etTuning
+      'Q', # etNoteSlideUp
+      'R', # etNoteSlideDown
+      'J'  # etSetGlobalVolume
+    ]
+  result = effectChars[toEffectType(et)]
+
+func `$`*(e: Effect): string =
+  ## Stringify an [Effect]. The string returned is the canonical representation
+  ## of the effect in a tracker column.
+  ##
+  result.add(effectTypeToChar(e.effectType))
+  result.add(toHex(e.param))
 
 # Sequence
 

@@ -13,6 +13,8 @@
  - (data) `uniqueIds` proc for `Table[T]`
  - (data) `SongPos` type
  - (data) `SongSpan` type
+ - (data) `effectTypeToChar` proc
+ - (data) `$` overload for `Effect`
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
