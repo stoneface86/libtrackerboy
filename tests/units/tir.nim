@@ -8,27 +8,15 @@ import std/sequtils
 when NimMajor >= 2:
   {.warning[ImplicitDefaultValue]:off.}
 
-func mkRow(note, inst, et1, ep1, et2, ep2, et3, ep3 = 0u8;): TrackRow =
-  result.note = note
-  result.instrument = inst
-  result.effects[0].effectType = et1
-  result.effects[0].param = ep1
-  result.effects[1].effectType = et2
-  result.effects[1].param = ep2
-  result.effects[2].effectType = et3
-  result.effects[2].param = ep3
-
-func rowOp(note, inst, et1, ep1, et2, ep2, et3, ep3 = 0u8;): Operation =
-  toOperation mkRow(note, inst, et1, ep1, et2, ep2, et3, ep3)
+template rowOp(note = noteNone; instrument = instrumentNone;
+               e1 = effectNone; e2 = effectNone; e3 = effectNone): Operation =
+  toOperation(TrackRow.init(note, instrument, e1, e2, e3))
 
 const
-  CUT = noteCut + 1
-  e0XY = etArpeggio.uint8
-  e1XX = etPitchUp.uint8
-  e3XX = etAutoPortamento.uint8
-  FXX = etSetTempo.uint8
-  GXX = etDelayedNote.uint8
-  SXX = etDelayedCut.uint8
+  CUT = noteColumn(noteCut)
+  G00 = Effect.init(etDelayedNote)
+  S00 = Effect.init(etDelayedCut)
+  S03 = Effect.init(etDelayedCut, 3)
 
 suite "ir.Operation":
 
@@ -38,25 +26,27 @@ suite "ir.Operation":
 
   test "unknown effect is noop":
     let
-      row = mkRow(et1 = EffectType.high.uint8 + 1)
+      row = TrackRow.init(e1 = Effect(effectType: EffectType.high.uint8 + 1))
       op = toOperation(row)
     check op.isNoop()
 
   test "G00 is noop":
-    let op = rowOp(et1 = GXX)
+    let op = toOperation(TrackRow.init(e1 = G00))
     check op.isNoop()
 
   test "invalid speed is noop":
     let 
-      op1 = rowOp(et1 = FXX, ep1 = 0x0F)
-      op2 = rowOp(et2 = FXX, ep2 = 0xF2)
+      op1 = rowOp(e1 = Effect.init(etSetTempo, 0x0F))
+      op2 = rowOp(e2 = Effect.init(etSetTempo, 0xF2))
     check:
       op1.isNoop()
       op2.isNoop()
 
   test "frequency effect conflict":
     let
-      op = rowOp(et1 = e0XY, et2 = e1XX, et3 = e3XX)
+      op = rowOp(e1 = Effect.init(etArpeggio),
+                 e2 = Effect.init(etPitchUp),
+                 e3 = Effect.init(etAutoPortamento))
     # all effect columns conflict with each other, the last effect is always
     # used.
     check:
@@ -65,9 +55,9 @@ suite "ir.Operation":
   
   test "pattern command conflict":
     let
-      op = rowOp(et1 = etPatternSkip.uint8,
-                 et2 = etPatternGoto.uint8,
-                 et3 = etPatternHalt.uint8)
+      op = rowOp(e1 = Effect.init(etPatternSkip),
+                 e2 = Effect.init(etPatternGoto),
+                 e3 = Effect.init(etPatternHalt))
     check:
       op.flags == { opsHalt, opsPatternCommand }
       op.patternCommand == pcJump
@@ -109,17 +99,17 @@ suite "ir.Operation":
     let
       # case 1 (runtime of 0 == immediate cut)
       op1 = rowOp(note = CUT)
-      op2 = rowOp(et1 = SXX)
-      op3 = rowOp(note = CUT, et1 = GXX)
-      op4 = rowOp(et1 = GXX, et2 = SXX)
-      op5 = rowOp(note = CUT, et1 = GXX, et2 = SXX)
+      op2 = rowOp(e1 = S00)
+      op3 = rowOp(note = CUT, e1 = G00)
+      op4 = rowOp(e1 = G00, e2 = S00)
+      op5 = rowOp(note = CUT, e1 = G00, e2 = S00)
       # case 2 (runtime of 3: cuts in 3 frames)
-      op6 = rowOp(note = CUT, et1 = GXX, ep1 = 3)
-      op7 = rowOp(note = CUT, et2 = SXX, ep2 = 3)
-      op8 = rowOp(note = CUT, et1 = GXX, et2 = SXX, ep2 = 3)
+      op6 = rowOp(note = CUT, e1 = Effect.init(etDelayedNote, 3))
+      op7 = rowOp(note = CUT, e2 = S03)
+      op8 = rowOp(note = CUT, e1 = G00, e2 = S03)
       # case 3 (runtime of 6: delays note by 4, then delayed cut in 2 frames)
-      op9 = rowOp(note = CUT, et1 = GXX, ep1 = 4,
-                              et2 = SXX, ep2 = 2)
+      op9 = rowOp(note = CUT, e1 = Effect.init(etDelayedNote, 4),
+                              e2 = Effect.init(etDelayedCut, 2))
 
     check:
       runtime(op1) == 0

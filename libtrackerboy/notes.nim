@@ -1,7 +1,6 @@
 ##[
 
-Note lookup procs. Contains lookup procs for the two types of notes in
-Trackerboy, tone notes and noise notes.
+Types and procs for dealing with music notes and also note-to-frequency lookup.
 
 ]##
 
@@ -15,6 +14,30 @@ type
     ## Note index range for a noise note (Noise notes are only played on
     ## channel 4). A noise note ranges from octaves 2 to 6, but the actual
     ## note played maps to a frequency setting in the noiseNoteTable.
+  
+  NoteRange* = range[0 .. high(ToneNote) + 1]
+    ## Full note range, including special note indices. The full range is 7
+    ## octaves (84 notes) with 1 special note index (cut), for a total of 85
+    ## indices.
+    ## 
+
+  Octave* = range[2 .. 8]
+    ## Available octave range of TrackerBoy notes
+    ## 
+  
+  Letter* = range[0 .. 11]
+    ## Note letter as an integer range. 0 is C, 1 is C#, ... 11 is B
+    ## 
+  
+  NoteIndex* = uint8
+    ## Index type that refers to a note in a lookup table.
+    ##
+
+  NotePair* = object
+    ## Note represented as a pair of a [Letter] and [Octave].
+    ##
+    letter*: Letter
+    octave*: Octave
 
 const
   toneNoteTable: array[ToneNote, uint16] = [
@@ -40,6 +63,60 @@ const
   noteCut* = (high(ToneNote) + 1).uint8
     ## Special note index for a note cut. When used the channel will be
     ## silenced by disabling the DAC.
+    ##
+
+  C*      = Letter(0)
+    ## Note of C at any octave.
+    ##
+  CSharp* = Letter(1)
+    ## Note of C#/Db at any octave.
+    ##
+  D*      = Letter(2)
+    ## Note of D at any octave.
+    ##
+  DSharp* = Letter(3)
+    ## Note of D#/Eb at any octave.
+    ##
+  E*      = Letter(4)
+    ## Note of E at any octave.
+    ##
+  F*      = Letter(5)
+    ## Note of F at any octave.
+    ##
+  FSharp* = Letter(6)
+    ## Note of F#/Gb at any octave.
+    ##
+  G*      = Letter(7)
+    ## Note of G at any octave.
+    ##
+  GSharp* = Letter(8)
+    ## Note of G#/Ab at any octave.
+    ##
+  A*      = Letter(9)
+    ## Note of A at any octave.
+    ##
+  ASharp* = Letter(10)
+    ## Note of A#/Bb at any octave.
+    ## 
+  B*      = Letter(11)
+    ## Note of B at any octave.
+    ##
+
+  DFlat* = CSharp
+    ## Db, same as [CSharp].
+    ##
+  EFlat* = DSharp
+    ## Eb, same as [DSharp].
+    ##
+  GFlat* = FSharp
+    ## Gb, Same as [FSharp].
+    ##
+  AFlat* = GSharp
+    ## Ab, Same as [GSharp].
+    ##
+  BFlat* = ASharp
+    ## Bb, Same as [ASharp].
+    ##
 
 template lookup(table: untyped; note: Natural): auto =
   table[clamp(note, low(table), high(table))]
@@ -47,12 +124,44 @@ template lookup(table: untyped; note: Natural): auto =
 {. push raises: [] .}
 
 func lookupToneNote*(note: Natural): uint16 =
+  ## Lookup the frequency value for the given note index. `note` is clamped
+  ## within the bounds of [ToneNote].
+  ##
   lookup(toneNoteTable, note)
 
 func lookupNoiseNote*(note: Natural): uint8 =
+  ## Lookup the noise value or NR43 setting for the given note index. `note` is
+  ## clamped within the bounds of [NoiseNote].
+  ##
   lookup(noiseNoteTable, note)
 
-func note*(str: string): uint8 {.compileTime.} =
+func toNote*(letter: Letter; octave: Octave): NoteIndex =
+  ## Convert a note at a given octave to a note index.
+  ##
+  result = NoteIndex(((octave.int - 2) * 12) + letter)
+
+func toNote*(p: NotePair): NoteIndex {.inline.} =
+  ## Convert the note pair to a note index.
+  ##
+  result = toNote(p.letter, p.octave)
+
+func toNote*(i: int): NoteIndex {.inline.} =
+  ## Convert an integer index to a note index, clamping if necessary.
+  ##
+  result = NoteIndex(clamp(i, NoteRange.low, NoteRange.high))
+
+func notePair*(letter: Letter; octave: Octave): NotePair =
+  ## Construct a note pair with the given components.
+  ##
+  result = NotePair(letter: letter, octave: octave)
+
+func toPair*(index: NoteIndex): NotePair =
+  ## Convert a note index into a letter and octave pairing.
+  ##
+  result = notePair(Letter(int(index) mod 12), Octave((int(index) div 12) + 2))
+
+
+func note*(str: string): uint8 {.compileTime, deprecated.} =
   ## Compile time function for converting a string literal to a note index
   ## Notes must range from C-2 to B-8, sharp and flat accidentals can be used.
   ## ie `note("c-2") => 0`, `"D#3".note => 15`
@@ -91,6 +200,3 @@ func note*(str: string): uint8 {.compileTime.} =
 
 {. pop .}
 
-static:
-  assert note("c-2") == 0
-  assert note("---") == noteCut

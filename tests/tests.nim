@@ -8,7 +8,8 @@ import units/[
   tediting,
   tengine,
   tio,
-  tir
+  tir,
+  tnotes
 ]
 
 import units/private/[

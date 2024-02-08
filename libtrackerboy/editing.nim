@@ -401,9 +401,9 @@ proc pasteImpl(c: PatternClip; song: var Song; order: ByteIndex;
               c.data[bufIndexInTrack].unsafeAddr,  # unsafeAddr because c.data is immutable
               length
             )
-            if columnIter.hasColumn(selNote) and rowdata.note == 0:
+            if columnIter.hasColumn(selNote) and rowdata.note == noteNone:
               rowdata.note = src.note
-            if columnIter.hasColumn(selInstrument) and rowdata.instrument == 0:
+            if columnIter.hasColumn(selInstrument) and rowdata.instrument == instrumentNone:
               rowdata.instrument = src.instrument
             for effectCol in selEffect1..selEffect3:
               if columnIter.hasColumn(effectCol):

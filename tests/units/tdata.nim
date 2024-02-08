@@ -213,8 +213,8 @@ tableTests(WaveformTable)
 static: # ============================================================ TrackRow
   assert sizeof(TrackRow) == 8
   let row = default(TrackRow)
-  assert row.queryNote().isNone()
-  assert row.queryInstrument().isNone()
+  assert row.note == noteNone
+  assert row.instrument == instrumentNone
   for effect in row.effects:
     assert effect.effectType == uint8(etNoEffect)
     assert effect.param == 0

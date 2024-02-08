@@ -191,18 +191,17 @@ func toOperation*(row: TrackRow): Operation =
   ##
   
   # note column
-  let note = row.queryNote()
-  if note.isSome():
-    if note.get() == noteCut:
+  if row.note.has():
+    let note = row.note.value()
+    if note == noteCut:
       # noteCut behaves exactly the same as effect S00
       result.setSetting(opsDuration, 0)
     else:
-      result.setSetting(opsNote, note.get())
+      result.setSetting(opsNote, note)
 
   # instrument column
-  let inst = row.queryInstrument()
-  if inst.isSome():
-    result.setSetting(opsInstrument, inst.get())
+  if row.instrument.has():
+    result.setSetting(opsInstrument, row.instrument.value())
   
   # effects
   for effect in row.effects:
@@ -371,17 +370,17 @@ func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
 
   # note
   if opsNote in op:
-    result.row.setNote(op[opsNote])
+    result.row.note = noteColumn(op[opsNote])
   elif opsDuration in op:
     let duration = op[opsDuration]
     if duration == 0:
-      result.row.setNote(noteCut)
+      result.row.note = noteColumn(noteCut)
     else:
       addEffect(result.row, effectCounter, etDelayedCut, duration)
   
   # instrument
   if opsInstrument in op:
-    result.row.setInstrument(op[opsInstrument])
+    result.row.instrument = instrumentColumn(op[opsInstrument])
 
   # effects
   if opsPatternCommand in op:

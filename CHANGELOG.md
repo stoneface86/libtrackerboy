@@ -15,11 +15,19 @@
  - (data) `SongSpan` type
  - (data) `effectTypeToChar` proc
  - (data) `$` overload for `Effect`
+ - (data) `PatternRow` type
+ - (data) `getRow` overload that returns a `PatternRow`
+ - (data) `effectsCharMap` const
+ - (data) constructor for `Effect`
+ - (data) `NoteColumn` and `InstrumentColumn` types for `TrackRow`
+ - (data) `noteNone`, `instrumentNone` and `effectNone` consts.
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
  - (ir) overload for `toIr` proc for partial ir conversion
  - (engine) `SongPath` object and `getPath` proc
+ - (note) `NoteRange`, `Octave`, `Letter`, `NoteIndex` and `NotePair` types
+ - (note) procs for converting a `NoteIndex` to a `NotePair` and vice versa
 
 ### Changed
  - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
@@ -31,6 +39,11 @@
    and are now located in libtrackerboy/engine
  - (engine) `play` proc signature takes a `SongPos` instead of two ints
  - (engine) `runtime` proc for looping takes a `SongPos` instead of two ints
+
+### Deprecated
+ - (data) `queryNote`, `queryInstrument`, `clearNote`, `clearInstrument`,
+          `hasNote`, `hasInstrument`, `setNote`, `setInstrument`
+ - (note) `note`
 
 ### Removed
  - (ir) `SongPath` and `PatternVisit` types.

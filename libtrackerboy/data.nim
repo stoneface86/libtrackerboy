@@ -6,6 +6,7 @@ Module for the data model. This module contains data types used in the library.
 
 import
   ./common,
+  ./notes,
   ./version,
   ./private/data,
   ./private/utils
@@ -191,13 +192,25 @@ type
       ## Effect parameter byte, only needed for certain types.
       ##
 
+  Column = distinct uint8
+    ## Column value in a TrackRow, as a biased uint8. An unset column is 0, and
+    ## a column with a value of 0 is 1, value of 1 is 2, etc
+
+  NoteColumn* = distinct Column
+    ## Column in a [TrackRow] that contains the an optional note value.
+    ##
+
+  InstrumentColumn* = distinct Column
+    ## Column in a [TrackRow] that contains an optional instrument to use.
+    ##
+
   TrackRow* {.packed.} = object
     ## A single row of data in a Track. Guaranteed to be 8 bytes.
     ##
-    note*: uint8
+    note*: NoteColumn
       ## The note index to trigger with a bias of 1 (0 means unset).
       ##
-    instrument*: uint8
+    instrument*: InstrumentColumn
       ## The index of the instrument to set with a bias of 1 (0 means unset).
       ##
     effects*: array[EffectIndex, Effect]
@@ -241,6 +254,10 @@ type
   TrackMap = object
     data: array[ChannelId, tables.Table[ByteIndex, EqRef[TrackData]]]
   
+  PatternRow* = array[ChannelId, TrackRow]
+    ## A full row in a pattern is a [TrackRow] for each track/channel.
+    ##
+
   System* = enum
     ## Enumeration for types of systems the module is for. The system
     ## determines the vblank interval, or tick rate, of the engine.
@@ -385,6 +402,35 @@ const
     ## Default tickrate setting for new Modules.
     ##
 
+  effectCharMap*: array[EffectType, char] = [
+    '?', # etNoEffect
+    'B', # etPatternGoto
+    'C', # etPatternHalt
+    'D', # etPatternSkip
+    'F', # etSetTempo
+    'T', # etSfx
+    'E', # etSetEnvelope
+    'V', # etSetTimbre
+    'I', # etSetPanning
+    'H', # etSetSweep
+    'S', # etDelayedCut
+    'G', # etDelayedNote
+    'L', # etLock
+    '0', # etArpeggio
+    '1', # etPitchUp
+    '2', # etPitchDown
+    '3', # etAutoPortamento
+    '4', # etVibrato
+    '5', # etVibratoDelay
+    'P', # etTuning
+    'Q', # etNoteSlideUp
+    'R', # etNoteSlideDown
+    'J'  # etSetGlobalVolume
+  ]
+    ## Array that maps an [EffectType] to a `char`. Each effect is represented
+    ## by a letter or number as its type when displayed in a tracker.
+    ##
+
 {. push raises: [] .}
 
 func hertz*(t: Tickrate): float =
@@ -397,6 +443,11 @@ func hertz*(t: Tickrate): float =
     result = 61.1
   of systemCustom:
     result = t.customFramerate
+
+func init*(T: typedesc[Effect]; et = etNoEffect; param = 0u8): Effect =
+  ## Initialize an Effect column with the given type and parameter.
+  ##
+  result = Effect(effectType: uint8(ord(et)), param: param)
 
 func effectTypeShortensPattern*(et: EffectType): bool =
   ## Determines if the given effect type will shorten the runtime length of
@@ -419,33 +470,7 @@ func effectTypeToChar*(et: uint8): char =
   ## Get a `char` representation for the given effect type value. For any
   ## unrecognized effect, `?` is returned.
   ##
-  const
-    effectChars: array[EffectType, char] = [
-      '?', # etNoEffect
-      'B', # etPatternGoto
-      'C', # etPatternHalt
-      'D', # etPatternSkip
-      'F', # etSetTempo
-      'T', # etSfx
-      'E', # etSetEnvelope
-      'V', # etSetTimbre
-      'I', # etSetPanning
-      'H', # etSetSweep
-      'S', # etDelayedCut
-      'G', # etDelayedNote
-      'L', # etLock
-      '0', # etArpeggio
-      '1', # etPitchUp
-      '2', # etPitchDown
-      '3', # etAutoPortamento
-      '4', # etVibrato
-      '5', # etVibratoDelay
-      'P', # etTuning
-      'Q', # etNoteSlideUp
-      'R', # etNoteSlideDown
-      'J'  # etSetGlobalVolume
-    ]
-  result = effectChars[toEffectType(et)]
+  result = effectCharMap[toEffectType(et)]
 
 func `$`*(e: Effect): string =
   ## Stringify an [Effect]. The string returned is the canonical representation
@@ -455,6 +480,11 @@ func `$`*(e: Effect): string =
   result.add(toHex(e.param))
 
 # Sequence
+
+func init*(T: typedesc[Sequence]; loopIndex: Option[ByteIndex];
+           data: openArray[uint8]): Sequence =
+  result.loopIndex = loopIndex
+  result.data = @data
 
 func `[]`*(s: Sequence; i: ByteIndex): uint8 =
   ## Gets the `i`th element in the sequence
@@ -837,55 +867,157 @@ proc swap*(o: var Order; i1, i2: ByteIndex;) =
 
 # TrackRow ====================================================================
 
-# note and instrument columns are biased by 1 when set
+const
+  noteNone* = NoteColumn(0)
+    ## Note column value for an unset column. Same as `default(NoteColumn)`.
+    ##
+  instrumentNone* = InstrumentColumn(0)
+    ## Instrument column value for an unset column. Same as 
+    ## `default(InstrumentColumn)`.
+    ##
+  effectNone* = Effect.init()
+    ## Effect column value for an unset effect. Same as `default(Effect)`.
+    ##
 
-template bias(val: uint8): uint8 = val + 1
-template unbias(val: uint8): uint8 = val - 1
+func has(x: Column): bool {.inline.} =
+  result = uint8(x) != 0
 
-template clearNote*(row: var TrackRow) =
-  ## Clears the note column for this row.
-  ##
-  row.note = 0
+func value(x: Column): uint8 {.inline.} =
+  result = uint8(x) - 1
 
-template clearInstrument*(row: var TrackRow) =
-  ## Clears the instrument column for this row.
-  ##
-  row.instrument = 0
+func column(x: range[0u8..254u8]): Column {.inline.} =
+  result = Column(x + 1)
 
-template hasNote*(row: TrackRow): bool =
-  row.note != 0
-
-template hasInstrument*(row: TrackRow): bool =
-  row.instrument != 0
-
-proc setNote*(row: var TrackRow; note: uint8) =
-  ## Sets the note column to the given note value.
-  ##
-  row.note = bias(note)
-
-proc setInstrument*(row: var TrackRow; instrument: TableId) =
-  ## Sets the instrument column to the given instrument id.
-  ##
-  row.instrument = bias(instrument)
-
-func queryColumn(col: uint8): Option[uint8] =
-  if col > 0:
-    some(unbias(col))
+func asOption(col: Column): Option[uint8] =
+  if col.has():
+    some(col.value())
   else:
     none(uint8)
 
-func queryNote*(row: TrackRow): Option[uint8] =
+func `==`(x, y: Column; ): bool {.borrow.}
+
+func `$`(c: Column): string =
+  result = "Column("
+  if c.has():
+    result.add($c.value())
+  result.add(')')
+
+func `$`*(c: NoteColumn): string {.borrow.}
+
+func `$`*(c: InstrumentColumn): string {.borrow.}
+
+func `==`*(x, y: NoteColumn; ): bool {.borrow.}
+  ## Test if two note columns are equivalent.
+  ##
+
+func `==`*(x, y: InstrumentColumn; ): bool {.borrow.}
+  ## Test if two instrument columns are equivalent.
+  ##
+
+func noteColumn*(index: NoteRange; ): NoteColumn =
+  ## Initialize a note column with the given note index.
+  ##
+  result = NoteColumn(column(uint8(index)))
+
+func noteColumn*(note: Letter; octave: Octave): NoteColumn =
+  ## Initialize a note column using a note and octave pair.
+  ##
+  result = noteColumn((octave * 12) + note)
+
+func instrumentColumn*(id: TableId): InstrumentColumn {.inline.} =
+  ## Initialize an instrument column with the given instrument id.
+  ##
+  result = InstrumentColumn(column(id))
+
+func has*(n: NoteColumn): bool {.borrow.}
+  ## Test if the note column is set, or has a value.
+  ##
+
+func has*(i: InstrumentColumn): bool {.borrow.}
+  ## Test if the instrument column is set, or has a value.
+  ##
+
+func value*(n: NoteColumn): uint8 {.borrow.}
+  ## Get the value of the set note column. Do not use for unset columns!
+  ##
+
+func value*(i: InstrumentColumn): uint8 {.borrow.}
+  ## Get the value of the set instrument column. Do not use for unset columns!
+  ##
+
+func asOption*(n: NoteColumn): Option[uint8] {.borrow.}
+  ## Convert the note column to an Option.
+  ##
+
+func asOption*(n: InstrumentColumn): Option[uint8] {.borrow.}
+  ## Convert the instrument column to an Option.
+  ##
+
+func init*(T: typedesc[TrackRow]; note = noteNone; instrument = instrumentNone;
+           effects = [effectNone, effectNone, effectNone]
+           ): TrackRow =
+  ## Initialize a [TrackRow] with the given columns.
+  ##
+  result = TrackRow(
+    note: note,
+    instrument: instrument,
+    effects: effects
+  )
+
+func init*(T: typedesc[TrackRow]; note = noteNone; instrument = instrumentNone;
+           e1 = effectNone; e2 = effectNone; e3 = effectNone
+           ): TrackRow =
+  ## Initialize a [TrackRow], with each effect as a parameter.
+  ##
+  result = TrackRow.init(note, instrument, [e1, e2, e3])
+
+template clearNote*(row: var TrackRow)
+   {.deprecated: "set the note field directly instead" .} =
+  ## Clears the note column for this row.
+  ##
+  row.note = noteNone
+
+template clearInstrument*(row: var TrackRow)
+  {.deprecated: "set the instrument field directly instead" .} =
+  ## Clears the instrument column for this row.
+  ##
+  row.instrument = instrumentNone
+
+template hasNote*(row: TrackRow): bool
+ {.deprecated: "use the note field directly instead" .} =
+  row.note != noteNone
+
+template hasInstrument*(row: TrackRow): bool
+  {.deprecated: "use the instrument field directly instead" .} = 
+  row.instrument != instrumentNone
+
+proc setNote*(row: var TrackRow; note: uint8) 
+  {.deprecated: "set the note field directly instead" .} =
+  ## Sets the note column to the given note value.
+  ##
+  row.note = noteColumn(note)
+
+proc setInstrument*(row: var TrackRow; instrument: TableId) 
+  {.deprecated: "set row.instrument directly instead" .} =
+  ## Sets the instrument column to the given instrument id.
+  ##
+  row.instrument = instrumentColumn(instrument)
+
+func queryNote*(row: TrackRow): Option[uint8]
+  {.deprecated: "use row.note.asOption() instead" .} =
   ## Gets the note index of the row if set, otherwise `none` is returned.
   ##
-  queryColumn(row.note)
+  asOption(row.note)
 
-func queryInstrument*(row: TrackRow): Option[uint8] =
+func queryInstrument*(row: TrackRow): Option[uint8]
+  {.deprecated: "use row.instrument.asOption() instead" .} =
   ## Gets the instrument index of the row if set, otherwise `none` is returned.
   ##
-  queryColumn(row.instrument)
+  asOption(row.instrument)
 
 func isEmpty*(row: TrackRow): bool =
-  ## Determine if the row is empty, or has all columns unset.
+  ## Determine if the row is empty, or has all columns unset. Prefer this
+  ## function over `row == default(TrackRow)` for performance.
   ##
   static: assert sizeof(uint64) == sizeof(TrackRow)
   cast[uint64](row) == 0u64
@@ -958,15 +1090,28 @@ iterator mitems*(t: var Track): var TrackRow =
   ##
   itemsImpl(t)
 
-proc setNote*(t: var Track; i: ByteIndex; note: uint8) =
+proc setNote*(t: var Track; i: ByteIndex; note: uint8) 
+  {. deprecated: "Use NoteColumn overload instead" .} =
   ## Sets the note index at the `i`th row to the given note index
   ##
-  t.get(i).note = note + 1
+  t.get(i).note = noteColumn(note)
 
-proc setInstrument*(t: var Track; i: ByteIndex; instrument: TableId) =
+proc setNote*(t: var Track; i: ByteIndex; note: NoteColumn) =
+  ## Sets the note column at the `i`th row to the given note column value.
+  ##
+  t.get(i).note = note
+
+proc setInstrument*(t: var Track; i: ByteIndex; instrument: TableId) 
+  {. deprecated: "Use InstrumentColumn overload instead" .} =
   ## Sets the instrument index at the `i`th row to the given instrument
   ##
-  t.get(i).instrument = instrument + 1
+  t.get(i).instrument = instrumentColumn(instrument)
+
+proc setInstrument*(t: var Track; i: ByteIndex; instrument: InstrumentColumn) =
+  ## Sets the instrument column at the `i`th row to the given instrument column
+  ## value.
+  ##
+  t.get(i).instrument = instrument
 
 proc setEffect*(t: var Track; i: ByteIndex; effectNo: EffectIndex;
                 et: EffectType; param = 0u8) =
@@ -1167,6 +1312,14 @@ proc getRow*(s: Song; ch: ChannelId; order, row: ByteIndex;): TrackRow =
     data[][row]
   else:
     TrackRow()
+
+func getRow*(s: Song; order, row: ByteIndex; ): PatternRow =
+  result = [
+    s.getRow(ch1, order, row),
+    s.getRow(ch2, order, row),
+    s.getRow(ch3, order, row),
+    s.getRow(ch4, order, row)
+  ]
 
 func totalTracks*(s: Song): int =
   ## Gets the total number of tracks from all channels in this song.

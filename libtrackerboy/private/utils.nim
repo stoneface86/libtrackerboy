@@ -61,3 +61,8 @@ template `==`*[T](lhs, rhs: EqRef[T];): bool =
 template defaultInit*(): untyped = discard
   ## Alias for `discard`, to indicate that default initialization is intended.
   ##
+
+template defaultInit*(someField: typed) = discard
+  ## Do-nothing template that indicates that an object's field is default
+  ## initialized.
+  ##
