@@ -21,6 +21,7 @@
  - (data) constructor for `Effect`
  - (data) `NoteColumn` and `InstrumentColumn` types for `TrackRow`
  - (data) `noteNone`, `instrumentNone` and `effectNone` consts.
+ - (data) constructor for `Sequence`
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
@@ -28,6 +29,7 @@
  - (engine) `SongPath` object and `getPath` proc
  - (note) `NoteRange`, `Octave`, `Letter`, `NoteIndex` and `NotePair` types
  - (note) procs for converting a `NoteIndex` to a `NotePair` and vice versa
+ - New module, text, for text conversion and parsing of libtrackerboy data.
 
 ### Changed
  - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
@@ -46,6 +48,9 @@
  - (note) `note`
 
 ### Removed
+ - (data) `$` procs for `Sequence` and `WaveData` types. Use text module instead.
+ - (data) `parseSequence` proc, use text module instead.
+ - (data) `parseWave` proc, use text module instead.
  - (ir) `SongPath` and `PatternVisit` types.
 
 ## [0.8.3] - 2023-11-08

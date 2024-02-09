@@ -1,6 +1,6 @@
 
 
-import libtrackerboy/[data, io, version]
+import libtrackerboy/[data, io, text, version]
 import std/[streams]
 
 import unittest2
@@ -206,7 +206,7 @@ block: # =============================================================== major1
       let fr = i.deserialize(strm)
       check fr == frNone
       if fr == frNone:
-        check i.sequences[skEnvelope] == "87".parseSequence
+        check i.sequences[skEnvelope] == litSequence("87")
 
 block: # ============================================================== modules
 

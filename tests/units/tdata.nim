@@ -2,7 +2,7 @@
 import unittest2
 import std/sequtils
 
-import libtrackerboy/data
+import libtrackerboy/[data, text]
 
 suite "Order":
   const
@@ -51,32 +51,6 @@ suite "Order":
       order.len == 2
       order[0] == testrow1
       order[1] == testrow2
-
-suite "Sequence":
-  
-  func sequence(data = default(seq[uint8]); loop = none(ByteIndex)): Sequence =
-    # TODO: move this to the library API
-    result.data = data
-    result.loopIndex = loop
-  
-  test "$":
-    const
-      data1 = @[127u8]
-      data2 = @[1u8, 2, 3, 0xFF, 0x80]
-    check:
-      $sequence() == ""
-      $sequence(data1) == "127"
-      $sequence(data2) == "1 2 3 -1 -128"
-      $sequence(data2, some(ByteIndex(1))) == "1 | 2 3 -1 -128"
-      $sequence(data2, some(ByteIndex(200))) == "1 2 3 -1 -128"
-      $sequence(loop = some(ByteIndex(3))) == ""
-
-  test "parseSequence":
-    check:
-      parseSequence("") == default(Sequence)
-      parseSequence("  1 2   \t3  4\t") == sequence(@[1u8, 2, 3 ,4])
-      parseSequence("2 | 3 4") == sequence(@[2u8, 3, 4], some(ByteIndex(1)))
-      parseSequence("23sasd32sasd3@@$@21||23|2") == sequence(@[23u8, 32, 3, 21, 23, 2], some(ByteIndex(5)))
 
 suite "SongList":
 
@@ -159,7 +133,7 @@ template tableTests(T: typedesc[InstrumentTable|WaveformTable]) =
         src.sequences[skEnvelope].data = @[3u8]
         src.sequences[skPanning].data = @[1u8, 1, 2, 2, 3]
       else:
-        src.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
+        src.data = litWave("0123456789ABCDEFFEDCBA9876543210")
 
       let dupId = tab.duplicate(srcId)
       var duped = tab[dupId]
@@ -196,7 +170,7 @@ template tableTests(T: typedesc[InstrumentTable|WaveformTable]) =
       when T is WaveformTable:
         tab[8].data[0] = 0xFF
       else:
-        tab[8].sequences[skTimbre] = parseSequence("0 1 2")
+        tab[8].sequences[skTimbre] = Sequence.init([0u8, 1, 2]) #parseSequence("0 1 2")
 
       # uniqueIds should give us the set with 0 and 8 since id 1 is
       # equivalent to id 0. When there are duplicates, the lowest id of all
@@ -218,31 +192,6 @@ static: # ============================================================ TrackRow
   for effect in row.effects:
     assert effect.effectType == uint8(etNoEffect)
     assert effect.param == 0
-
-suite "WaveData":
-  
-  const
-    zero = default(WaveData)
-    zeroStr = "00000000000000000000000000000000"
-    triangle: WaveData = [0x01u8, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
-                0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10]
-    triangleStr = "0123456789ABCDEFFEDCBA9876543210"
-
-  test "$WaveData":
-    check:
-      $zero == zeroStr
-      $triangle == triangleStr
-
-  test "parseWave":
-    check:
-      zeroStr.parseWave == zero
-      triangleStr.parseWave == triangle
-      # partial waveform
-      "11223344".parseWave == [0x11u8, 0x22, 0x33, 0x44, 0, 0, 0, 0, 
-                    0, 0, 0, 0, 0, 0, 0, 0]
-      # invalid string
-      "11@3sfji2maks;w".parseWave == [0x11u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
 
 suite "Waveform":  
   
@@ -269,7 +218,7 @@ suite "Instrument":
       i1 = Instrument.init()
       i2 = i1
       i3 = i1
-    i3.sequences[skArp] = parseSequence("-1 1 -2")
+    i3.sequences[skArp] = Sequence.init([255u8, 1, 254])
 
     let
       hc1 = hash(i1)

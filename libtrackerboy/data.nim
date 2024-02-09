@@ -481,8 +481,13 @@ func `$`*(e: Effect): string =
 
 # Sequence
 
-func init*(T: typedesc[Sequence]; loopIndex: Option[ByteIndex];
-           data: openArray[uint8]): Sequence =
+func init*(T: typedesc[Sequence]; data: openArray[uint8]; 
+           loopIndex = none(ByteIndex)
+          ): Sequence =
+  ## Creates a sequence with an optional loop index and data. `data.len` must
+  ## be <= 256!
+  ##
+  doAssert data.len <= 256, "cannot init Sequence: data is too big"
   result.loopIndex = loopIndex
   result.data = @data
 
@@ -516,44 +521,6 @@ proc `data=`*(s: var Sequence; data: sink seq[uint8]) =
   ##
   doAssert data.len <= 256, "cannot set data: sequence is too big"
   s.data = data
-
-func `$`*(s: Sequence): string =
-  ## Stringify operator for Sequences. The string returned can be passed to
-  ## `parseSequence` to get the original sequence.
-  ## 
-  let loopIndex = if s.loopIndex.isSome(): s.loopIndex.get().int else: -1
-  for i, item in s.data.pairs:
-    if i == loopIndex:
-      result.add("| ")
-    result.add($cast[int8](s.data[i]))
-    if i != s.data.high:
-      result.add(' ')
-
-func parseSequence*(str: string; minVal = int8.low; maxVal = int8.high
-                   ): Sequence =
-  ## Convert a string to a Sequence. The string should have its sequence data
-  ## separated by whitespace, with the loop index using a '|' char before the
-  ## data to loop to. Any invalid element is ignored.
-  ## 
-  var i = 0
-  while true:
-    i += str.skipWhitespace(i)
-    if i >= str.len:
-      break
-    if str[i] == '|':
-      result.loopIndex = some(result.data.len.ByteIndex)
-      inc i
-    else:
-      var data: int
-      
-      let parsed = try: str.parseInt(data, i)
-                   except ValueError: 0
-      if parsed == 0:
-        # skip this character
-        inc i
-      else:
-        i += parsed
-        result.data.add(cast[uint8](clamp(data, minVal, maxVal)))
 
 # Instrument
 
@@ -591,35 +558,6 @@ func new*(T: typedesc[Waveform]): ref Waveform =
   ## Ref contructor for a Waveform. Same behavior as `init`
   ## 
   new(result)
-
-func `$`*(wave: WaveData): string =
-  ## Stringify operator for `WaveData <#WaveData>`_. The data is represented
-  ## as a string of 32 uppercase hex characters, with the first character
-  ## being the first sample in the wave data.
-  ## 
-  const hextable = ['0', '1', '2', '3', '4', '5', '6', '7',
-                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
-  result = newString(32)
-  var i = 0
-  for samples in wave:
-    result[i] = hextable[samples shr 4]
-    inc i
-    result[i] = hextable[samples and 0xF]
-    inc i
-
-func parseWave*(str: string): WaveData {.noInit.} =
-  ## Parses the string as a WaveData string. The given string should be exactly
-  ## 32 characters, and each character should be a hexadecimal digit.
-  ## 
-  var start = 0
-  for dest in result.mitems:
-    let parsed = parseHex(str, dest, start, 2)
-    if parsed != 2:
-      # clear the rest
-      for i in (start div 2)..<result.len:
-        result[i] = 0
-      break
-    start += 2
 
 func hash*(x: Waveform): Hash =
   ## Calculates a hash code for a Waveform. Only the waveform's wave data is

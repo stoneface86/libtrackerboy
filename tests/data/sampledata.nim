@@ -3,7 +3,7 @@
 # Sample data to be used in testing the io module
 #
 
-import libtrackerboy/data
+import libtrackerboy/[data, text]
 
 type
   InstrumentSamples* = enum
@@ -30,8 +30,8 @@ const
       # file path: data/sample.tbi
       var i = Instrument.init
       i.name = "main 1"
-      i.sequences[skEnvelope] = "87".parseSequence
-      i.sequences[skTimbre] = "1".parseSequence
+      i.sequences[skEnvelope] = litSequence("87")
+      i.sequences[skTimbre] = litSequence("1")
       i
   ]
   waveformData: array[WaveformSamples, Waveform] = [
@@ -44,13 +44,13 @@ const
       # file path: data/sample.tbw
       var w = Waveform.init
       w.name = "triangle"
-      w.data = "0123456789ABCDEFFEDCBA9876543210".parseWave
+      w.data = litWave("0123456789ABCDEFFEDCBA9876543210")
       w
     ,
     block:
       var w = Waveform.init
       w.name = "Duty 37.5%"
-      w.data = "FFFFFFFFFFFF00000000000000000000".parseWave
+      w.data = litWave("FFFFFFFFFFFF00000000000000000000")
       w
   ]
 

@@ -1,7 +1,7 @@
 
 import libtrackerboy/engine/[enginestate, apucontrol]
 import libtrackerboy/private/[hardware]
-import libtrackerboy/[data, engine, notes]
+import libtrackerboy/[data, engine, notes, text]
 
 import unittest2
 
@@ -10,7 +10,7 @@ import std/[strformat, times, with]
 func getSampleTable(): WaveformTable =
   result = WaveformTable.init
   let id = result.add()
-  result[id][].data = "0123456789ABCDEFFEDCBA9876543210".parseWave
+  result[id][].data = litWave("0123456789ABCDEFFEDCBA9876543210")
 
 func `==`(a, b: ChannelUpdate): bool =
   if a.action == b.action:
@@ -867,7 +867,7 @@ block: # ========================================================== instruments
           lookupToneNote(testNote - 1)
         ]
       
-      instrument[].sequences[skArp] = parseSequence("0 1 2 3 -1")
+      instrument[].sequences[skArp] = litSequence("0 1 2 3 -1")
 
       eh.play()
       check:
@@ -884,7 +884,7 @@ block: # ========================================================== instruments
       const
         baseFreq = lookupToneNote(testNote)
 
-      instrument[].sequences[skPitch] = parseSequence("0 | -1 -1 -1 1 1 1")
+      instrument[].sequences[skPitch] = litSequence("0 | -1 -1 -1 1 1 1")
       
       # this pitch sequence simulates a triangle vibrato in range [-3, 0]
 
@@ -900,7 +900,7 @@ block: # ========================================================== instruments
           eh.frequencyTest(ch1) == baseFreq
 
     test "panning":
-      instrument[].sequences[skPanning] = parseSequence("3 2 1 0 2 -1 5")
+      instrument[].sequences[skPanning] = litSequence("3 2 1 0 2 -1 5")
 
       eh.play()
       check:
@@ -914,7 +914,7 @@ block: # ========================================================== instruments
         eh.panningTest(ch1) == (3u8, 3u8)
 
     test "timbre":
-      instrument[].sequences[skTimbre] = parseSequence("0 0 1 1 3 2")
+      instrument[].sequences[skTimbre] = litSequence("0 0 1 1 3 2")
       eh.play()
       check:
         eh.timbreTest(ch1) == (3u8, 0u8)

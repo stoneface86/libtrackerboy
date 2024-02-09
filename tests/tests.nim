@@ -9,7 +9,8 @@ import units/[
   tengine,
   tio,
   tir,
-  tnotes
+  tnotes,
+  ttext
 ]
 
 import units/private/[
