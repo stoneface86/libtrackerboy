@@ -23,18 +23,20 @@ import libtrackerboy/[data, io]        # import specific modules (Recommended)
 
 ### Available modules
 
-| Module                                | Description                                    |
-|---------------------------------------|------------------------------------------------|
-| [apu](libtrackerboy/apu.html)         | Game Boy APU emulation                         |
-| [apuio](libtrackerboy/apuio.html)     | APU I/O access, provides ApuIo concept         |
-| [common](libtrackerboy/common.html)   | Common types/procs used throughout the library |
-| [data](libtrackerboy/data.html)       | Data model                                     |
-| [editing](libtrackerboy/editing.html) | Utilities for editing pattern data             |
-| [engine](libtrackerboy/engine.html)   | Song playback, or driver implementation        |
-| [io](libtrackerboy/io.html)           | Module serialization/deserialization           |
-| [ir](libtrackerboy/ir.html)           | Intermediate representation for import/export  |
-| [notes](libtrackerboy/notes.html)     | Note lookup procs, note values                 |
-| [version](libtrackerboy/version.html) | Version type and consts                        |
+| Module                                  | Description                                    |
+|-----------------------------------------|------------------------------------------------|
+| [apu](libtrackerboy/apu.html)           | Game Boy APU emulation                         |
+| [apuio](libtrackerboy/apuio.html)       | APU I/O access, provides ApuIo concept         |
+| [common](libtrackerboy/common.html)     | Common types/procs used throughout the library |
+| [data](libtrackerboy/data.html)         | Data model                                     |
+| [editing](libtrackerboy/editing.html)   | Utilities for editing pattern data             |
+| [engine](libtrackerboy/engine.html)     | Song playback, or driver implementation        |
+| [io](libtrackerboy/io.html)             | Module serialization/deserialization           |
+| [ir](libtrackerboy/ir.html)             | Intermediate representation for import/export  |
+| [notes](libtrackerboy/notes.html)       | Note lookup procs, note values                 |
+| [text](libtrackerboy/text.html)         | Text conversion and parsing                    |
+| [tracking](libtrackerboy/tracking.html) | Music tracking and pathing                     |
+| [version](libtrackerboy/version.html)   | Version type and consts                        |
 
 ### Exporter modules
 
@@ -73,8 +75,21 @@ import
   ./libtrackerboy/engine,
   ./libtrackerboy/io,
   ./libtrackerboy/notes,
+  ./libtrackerboy/text,
+  ./libtrackerboy/tracking,
   ./libtrackerboy/version,
   ./libtrackerboy/exports/wav
 
 
-export apu, common, data, editing, engine, io, notes, version, wav
+export 
+  apu,
+  common,
+  data,
+  editing,
+  engine,
+  io,
+  notes,
+  text,
+  tracking,
+  version,
+  wav

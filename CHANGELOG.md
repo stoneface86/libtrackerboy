@@ -30,6 +30,7 @@
  - (note) `NoteRange`, `Octave`, `Letter`, `NoteIndex` and `NotePair` types
  - (note) procs for converting a `NoteIndex` to a `NotePair` and vice versa
  - New module, text, for text conversion and parsing of libtrackerboy data.
+ - New module, tracking, for tracking playback of a song.
 
 ### Changed
  - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
