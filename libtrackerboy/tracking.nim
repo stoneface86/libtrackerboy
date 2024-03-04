@@ -125,7 +125,7 @@ func isEnabled*(c: Counter): bool {.inline.} =
   ##
   result = c != noCounter
 
-func counter*(v: int): Counter =
+func initCounter*(v: int): Counter =
   ## Initialize an enabled counter for a target number of ticks, `v`. A
   ## counter of target 0 is an instantaneous one, or triggers on the first
   ## call to tick.
@@ -150,7 +150,7 @@ proc setRow(t: var TrackTimer; row: TrackRow) =
   # set the counter to the op's delay parameter (Gxx effect)
   # note: if Gxx was not present in `row`, then delayCounter is now an
   # instantaneous one, since the value of opsDelay in op will be 0.
-  t.delayCounter = counter(t.op[opsDelay].int)
+  t.delayCounter = initCounter(t.op[opsDelay].int)
 
 proc tick(t: var TrackTimer; pc: var PatternChange): bool =
   # tick the TrackTimer. `true` is returned if an operation should be performed
@@ -177,7 +177,7 @@ proc tick(t: var TrackTimer; pc: var PatternChange): bool =
     t.delayCounter = noCounter
     
 
-func patternChange(): PatternChange =
+func initPatternChange(): PatternChange =
   result = PatternChange(
     cmd: pcNone,
     param: 0u8,
@@ -190,7 +190,7 @@ func patternChange(): PatternChange =
 # Timer
 # song timer for counting ticks
 
-func init(T: typedesc[Timer]; speed: Speed): Timer =
+func initTimer(speed: Speed): Timer =
   # Create a timer with the given speed as its period.
   #
   result = Timer(
@@ -223,16 +223,16 @@ proc tick(t: var Timer): bool =
 
 # ======
 
-func init*(T: typedesc[Tracker]; song: Song; startAt = default(SongPos);
-           effectsFilter: set[EffectType] = {}; patternRepeat = false
-           ): Tracker =
+func initTracker*(song: Song; startAt = default(SongPos);
+                  effectsFilter: set[EffectType] = {}; patternRepeat = false
+                  ): Tracker =
   ## Initialize a [Tracker] for a song and starting position. `effectsFilter`
   ## is a set of effect types to remove/ignore when performing a row in a
   ## track. 
   ## 
   result.running = song.isValid(startAt)
   result.pos = startAt
-  result.timer = Timer.init(song.speed)
+  result.timer = initTimer(song.speed)
   defaultInit(result.tracks)
   defaultInit(result.nextRowCmd)
   defaultInit(result.nextRowParam)
@@ -359,7 +359,7 @@ proc tick*(t: var Tracker; song: Song): TrackerResult =
           t.tracks[ch].setRow(filtered)
 
     # tick track timers
-    var pc = patternChange()
+    var pc = initPatternChange()
     for ch in ChannelId:
       if t.tracks[ch].tick(pc):
         # this channel has an op for this tick
@@ -397,8 +397,7 @@ type
     
     totalTicks: int
 
-func init(T: typedesc[PatternHistory]; totalPatterns: Positive
-          ): PatternHistory =
+func initPatternHistory(totalPatterns: Positive): PatternHistory =
   # initialize a pattern history for a given number of patterns
   result.startRows.setLen(totalPatterns)
 
@@ -409,11 +408,11 @@ proc add(h: var PatternHistory; visit: SongPos): bool =
   result = visit.row in pslot[]
   pslot[].incl(visit.row)
 
-func patternTracker(song: Song; startPos: SongPos): PatternTracker =
+func initPatternTracker(song: Song; startPos: SongPos): PatternTracker =
   result = PatternTracker(
-    tracker: Tracker.init(song, startPos),
+    tracker: initTracker(song, startPos),
     itable: InstrumentTable.init(),
-    history: PatternHistory.init(song.order.len),
+    history: initPatternHistory(song.order.len),
     current: startPos,
     currentAlreadyVisited: false,
     halted: false,
@@ -458,7 +457,7 @@ func runtime*(song: Song; loopFor = Positive(1); startPos = default(SongPos)
   ##
   if song.isValid(startPos):
     var
-      pt = patternTracker(song, startPos)
+      pt = initPatternTracker(song, startPos)
       loopPos: Option[SongPos]
       loopCount = 0
 
@@ -513,7 +512,7 @@ func getPath*(song: Song; startPos = default(SongPos)): SongPath =
 
   # invalid positions result in an empty path
   if song.isValid(startPos):
-    var pt = patternTracker(song, startPos)
+    var pt = initPatternTracker(song, startPos)
     while true:
       if pt.currentAlreadyVisited:
         # end of path: song loops

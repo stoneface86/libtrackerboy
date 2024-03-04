@@ -18,6 +18,14 @@ type
     ch3
     ch4
 
+  Tristate* = enum
+    ## Enum of a generic state with three possible values, off/on and a
+    ## transitional state.
+    ##
+    triOff    # "off" state
+    triTrans  # transitional state, off -> on / on -> off
+    triOn     # "on" state
+
   PcmF32* = float32
     ## 32-bit floating point PCM sample
     ##

@@ -5,6 +5,7 @@
 ### Added
  - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
  - (common) `hasAny` proc for two sets
+ - (common) `Tristate` enum
  - (data) `toView` converter in data module for `Track -> TrackView`
  - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
    `TrackRow`

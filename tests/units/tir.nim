@@ -1,5 +1,5 @@
 
-import libtrackerboy/[data, ir, notes]
+import libtrackerboy/[data, ir, notes, text]
 
 import unittest2
 
@@ -147,10 +147,8 @@ suite "ir.TrackIr":
     # ... .. ...
     # --- .. ...
     # ... .. ...
-    track.setNote(1, "C-3".note)
-    track.setInstrument(1, 0)
-    track.setEffect(1, 0, etSetTimbre, 2)
-    track.setNote(3, noteCut)
+    track[1] = litTrackRow("C-3 00 V02 ... ...")
+    track[3] = litTrackRow("--- .. ... ... ...")
     let ir = toIr(track)
     check:
       ir.srcLen == testLen

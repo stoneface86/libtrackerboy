@@ -29,14 +29,14 @@ suite "Counter":
       not c.isEnabled()
 
   test "instant counter":
-    var c = counter(0)
+    var c = initCounter(0)
     check:
       c.isEnabled()
       c.tick()
       not c.isEnabled()
 
   test "1 tick counter":
-    var c = counter(1)
+    var c = initCounter(1)
     check:
       c.isEnabled()
       not c.tick()
@@ -48,9 +48,9 @@ suite "Tracker":
   test "invalid position results in halt":
     const badPos = songPos(2, 123)
     let s = Song.init()
-    var t = Tracker.init(s, badPos)
+    var t = initTracker(s, badPos)
     check t.isHalted()
-    t = Tracker.init(s)
+    t = initTracker(s)
     check t.isRunning()
     t.jump(s, badPos)
     check t.isHalted()
@@ -66,7 +66,7 @@ suite "Tracker":
       s.speed = unitSpeed * 2
       s.trackLen = 2
       s
-    var t = Tracker.init(song)
+    var t = initTracker(song)
     check:
       t.isRunning()
       t.tick(song) == trackerResult(tsNewRow)
@@ -91,7 +91,7 @@ suite "Tracker":
       s.editTrack(ch1, 0, track):
         track[0] = litTrackRow("C-4 00 B01 V02 ...")
       s
-    var t = Tracker.init(song, effectsFilter = { etPatternGoto })
+    var t = initTracker(song, effectsFilter = { etPatternGoto })
     check:
       t.tick(song) == trackerResult(tsNewRow, false, {ch1}, {ch1})
       t.pos() == songPos(0, 0)
@@ -117,7 +117,7 @@ suite "Tracker":
 
   test "forced halt":
     let s = Song.init()
-    var t = Tracker.init(s)
+    var t = initTracker(s)
     check:
       t.isRunning()
       t.pos() == songPos(0, 0)
@@ -135,7 +135,7 @@ suite "Tracker":
       s.trackLen = 2
       s.order.setLen(2)
       s
-    var t = Tracker.init(s, patternRepeat = true)
+    var t = initTracker(s, patternRepeat = true)
     check:
       t.isRunning()
       t.tick(s) == trackerResult(tsNewRow)
