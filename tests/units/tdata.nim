@@ -10,7 +10,7 @@ suite "Order":
     testrow2: OrderRow = [2u8, 2, 2, 2]
   
   setup():
-    var order = Order.init
+    var order = initOrder()
 
   test "must have 1 row on init":
     check:

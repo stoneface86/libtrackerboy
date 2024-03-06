@@ -5,7 +5,7 @@ import libtrackerboy/[data, engine, notes, text]
 
 import unittest2
 
-import std/[strformat, times, with]
+import std/[strformat, times]
 
 func getSampleTable(): WaveformTable =
   result = WaveformTable.init
@@ -422,48 +422,45 @@ block: # =========================================================== effects
   suite "engine.effects":
     test "0xy":  # arpeggio
       const
-        baseNote1 = "C-4".note
-        baseNote2 = "C-8".note
+        baseNote1 = litNote("C-4")
+        baseNote2 = litNote("C-8")
         maxFreq = lookupToneNote(ToneNote.high)
         chord12 = [
-          lookupToneNote(baseNote1),
-          lookupToneNote(baseNote1 + 1),
-          lookupToneNote(baseNote1 + 2)
+          lookupToneNote(baseNote1.value),
+          lookupToneNote(baseNote1.value + 1),
+          lookupToneNote(baseNote1.value + 2)
         ]
-        noiseBaseNote = NoiseNote.high - 11
+        noiseBaseNote = noteColumn(NoiseNote.high - 11)
 
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          with track:
-            setNote(0, baseNote1)
-            setEffect(0, 0, etArpeggio, 0x12)
-            setEffect(5, 0, etArpeggio, 0x00)
-            setNote(7, baseNote2)
-            setEffect(7, 0, etArpeggio, 0xFF)
+          track[0].note = baseNote1
+          track[0].effects[0] = litEffect("012")
+          track[5].effects[0] = litEffect("000")
+          track[7].note = baseNote2
+          track[7].effects[0] = litEffect("0FF")
         s.editTrack(ch4, 0, track):
-          with track:
-            setNote(0, 0)
-            setEffect(0, 0, etArpeggio, 0x12)
-            setEffect(5, 0, etArpeggio, 0x00)
-            setNote(7, noiseBaseNote)
-            setEffect(7, 0, etArpeggio, 0xFF)
+          track[0] = litTrackRow("C-2 .. 012 ... ...")
+          track[5] = litTrackRow("... .. 000 ... ...")
+          track[7].note = noiseBaseNote
+          track[7].effects[0] = litEffect("0FF")
       
       # tone arpeggio
       eh.play()
       check:
-        eh.frequencyTest(ch1) == chord12[0]                  # 00 (note C-4, effect 012)
-        eh.frequencyTest(ch1) == chord12[1]                  # 01
-        eh.frequencyTest(ch1) == chord12[2]                  # 02
-        eh.frequencyTest(ch1) == chord12[0]                  # 03
-        eh.frequencyTest(ch1) == chord12[1]                  # 04
-        eh.frequencyTest(ch1) == chord12[0]                  # 05 (effect 000)
-        eh.frequencyTest(ch1) == chord12[0]                  # 06
-        eh.frequencyTest(ch1) == lookupToneNote(baseNote2)   # 07 (note C-8, effect 0FF)
-        eh.frequencyTest(ch1) == maxFreq                     # 08
-        eh.frequencyTest(ch1) == maxFreq                     # 09
-        eh.frequencyTest(ch1) == lookupToneNote(baseNote2)   # 0A
+        eh.frequencyTest(ch1) == chord12[0]                       # 00 (note C-4, effect 012)
+        eh.frequencyTest(ch1) == chord12[1]                       # 01
+        eh.frequencyTest(ch1) == chord12[2]                       # 02
+        eh.frequencyTest(ch1) == chord12[0]                       # 03
+        eh.frequencyTest(ch1) == chord12[1]                       # 04
+        eh.frequencyTest(ch1) == chord12[0]                       # 05 (effect 000)
+        eh.frequencyTest(ch1) == chord12[0]                       # 06
+        eh.frequencyTest(ch1) == lookupToneNote(baseNote2.value)  # 07 (note C-8, effect 0FF)
+        eh.frequencyTest(ch1) == maxFreq                          # 08
+        eh.frequencyTest(ch1) == maxFreq                          # 09
+        eh.frequencyTest(ch1) == lookupToneNote(baseNote2.value)  # 0A
         
       # noise arpeggio
       eh.play()
@@ -475,34 +472,33 @@ block: # =========================================================== effects
         eh.frequencyTest(ch4) == 1                       # 04
         eh.frequencyTest(ch4) == 0                       # 05 (effect 000)
         eh.frequencyTest(ch4) == 0                       # 06
-        eh.frequencyTest(ch4) == noiseBaseNote           # 07 (note C-6, effect 0FF)
+        eh.frequencyTest(ch4) == noiseBaseNote.value     # 07 (note C-6, effect 0FF)
         eh.frequencyTest(ch4) == NoiseNote.high.uint16   # 08
         eh.frequencyTest(ch4) == NoiseNote.high.uint16   # 09
-        eh.frequencyTest(ch4) == noiseBaseNote           # 0A
+        eh.frequencyTest(ch4) == noiseBaseNote.value     # 0A
 
     test "1xx":  # pitch slide up
       const
-        startToneNote = ToneNote.high.uint8
-        toneNote2 = "C-4".note
-        startFreq = lookupToneNote(startToneNote)
+        startToneNote = noteColumn(ToneNote.high)
+        toneNote2 = litNote("C-4")
+        startFreq = lookupToneNote(startToneNote.value)
       
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          with track:
-            setNote(0, startToneNote)
-            setEffect(0, 0, etPitchUp, 0x09)
-            setEffect(1, 0, etPitchUp, 0x00)
-            setEffect(2, 0, etPitchUp, 0x09)
-            setNote(4, toneNote2)
+          track[0].note = startToneNote
+          track[0].effects[0] = litEffect("109")
+          track[1].effects[0] = litEffect("100")
+          track[2].effects[0] = litEffect("109")
+          track[4].note = toneNote2
         s.editTrack(ch4, 0, track):
-          with track:
-            setNote(0, 49)
-            setEffect(0, 0, etPitchUp, 0x09)
-            setEffect(1, 0, etPitchUp, 0x00)
-            setEffect(2, 0, etPitchUp, 0x09)
-            setNote(4, 0)
+          track[0].note = noteColumn(49)
+          track[0].effects[0] = litEffect("109")
+          track[0].effects[0] = litEffect("109")
+          track[1].effects[0] = litEffect("100")
+          track[2].effects[0] = litEffect("109")
+          track[4].note = noteColumn(0)
 
       eh.play()
       check:
@@ -510,7 +506,7 @@ block: # =========================================================== effects
         eh.frequencyTest(ch1) == startFreq + 9
         eh.frequencyTest(ch1) == 0x7FF
         eh.frequencyTest(ch1) == 0x7FF
-        eh.frequencyTest(ch1) == lookupToneNote(toneNote2) + 9
+        eh.frequencyTest(ch1) == lookupToneNote(toneNote2.value) + 9
 
       eh.play()
       check:
@@ -539,9 +535,9 @@ block: # =========================================================== effects
         s.order.setLen(3)
         s.order[1] = [1u8, 0, 0, 0]
         s.editTrack(ch1, 0, track):
-          track.setEffect(0, 0, etPatternGoto, 1)
+          track[0] = litTrackRow("... .. B01 ... ...")
         s.editTrack(ch1, 1, track):
-          track.setEffect(0, 0, etPatternGoto, 0xFF)
+          track[0] = litTrackRow("... .. BFF ... ...")
       eh.play()
       
       eh.frameTest(f):
@@ -562,7 +558,7 @@ block: # =========================================================== effects
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          track.setEffect(0, 0, etPatternHalt, 0)
+          track[0] = litTrackRow("... .. C00 ... ...")
       eh.play()
 
       # halt effect occurs here
@@ -579,11 +575,14 @@ block: # =========================================================== effects
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.speed = unitSpeed
-        s.order.insert([0u8, 0, 1, 0], 1)
+        s.order.setData([
+          [0u8, 0, 0, 0],
+          [0u8, 0, 1, 0]
+        ])
         s.editTrack(ch1, 0, track):
-          track.setEffect(0, 0, etPatternSkip, 10)
+          track[0] = litTrackRow("... .. D0A ... ...")
         s.editTrack(ch3, 1, track):
-          track.setEffect(10, 1, etPatternSkip, 32)
+          track[10] = litTrackRow("... .. ... D20 ...")
 
       eh.play()
       eh.frameTest(f):
@@ -601,9 +600,9 @@ block: # =========================================================== effects
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.editTrack(ch1, 0, track):
-          track.setEffect(4, 0, etSetTempo, 0x40)
-          track.setEffect(5, 0, etSetTempo, 0x02) # invalid speed
-          track.setEffect(6, 0, etSetTempo, 0xFF) # invalid speed
+          track[4] = litTrackRow("... .. F40 ... ...")
+          track[5] = litTrackRow("... .. F02 ... ...") # invalid speed
+          track[6] = litTrackRow("... .. FFF ... ...") # invalid speed
       eh.play()
       for i in 0..<4:
         eh.stepRow()
@@ -624,10 +623,6 @@ block: # =========================================================== effects
     test "Gxx":  # note delay
       var eh = EngineHarness.init()
 
-      const 
-        testNote1 = "A-4".note
-        testNote2 = "G-3".note
-        testNote3 = "F-3".note
       eh.setupSong(s):
         s.speed = 0x20
         # 00 : A-4 -- G01
@@ -637,35 +632,38 @@ block: # =========================================================== effects
         # 04 : A-4 -- G02 <- this note doesn't play since row 5 occurs before the delay expires
         # 05 : F-3 -- ---
         s.editTrack(ch1, 0, track):
-          with track:
-            setNote(0, testNote1)
-            setEffect(0, 0, etDelayedNote, 1)
-            setNote(1, testNote2)
-            setEffect(1, 0, etDelayedNote, 4)
-            setNote(4, testNote1)
-            setEffect(4, 0, etDelayedNote, 2)
-            setNote(5, testNote3)
+          track[0] = litTrackRow("A-4 .. G01 ... ...")
+          track[1] = litTrackRow("G-3 .. G04 ... ...")
+          # 02
+          # 03
+          track[4] = litTrackRow("A-4 .. G02 ... ...")
+          track[5] = litTrackRow("F-3 .. ... ... ...")
 
       eh.play()
       
+      const 
+        noteA4 = toNote(A, 4)
+        noteG3 = toNote(G, 3)
+        noteF3 = toNote(F, 3)
+
       # frame 0: no change
       check eh.noteTest(ch1) == 0
-      # frame 1: note was set to testNote1 (row 00 delayed by 1 frame)
-      check eh.noteTest(ch1) == testNote1.int
+      # frame 1: note was set to A-4 (row 00 delayed by 1 frame)
+      check eh.noteTest(ch1) == noteA4.int
 
       # frames 2-5, no change
       for i in 2..5:
-        check eh.noteTest(ch1) == testNote1.int
+        check eh.noteTest(ch1) == noteA4.int
 
-      # frame 6: not was set to testNote2 (row 01 delayed by 4 frames)
-      check eh.noteTest(ch1) == testNote2.int
+      # frame 6: note was set to G-3 (row 01 delayed by 4 frames)
+      check eh.noteTest(ch1) == noteG3.int
 
       # frames 7-9: no change
       for i in 7..9:
-        check eh.noteTest(ch1) == testNote2.int
+        check eh.noteTest(ch1) == noteG3.int
 
-      # frame 10: note was set to testNote3 (row 05 performed)
-      check eh.noteTest(ch1) == testNote3.int
+      # frame 10: note was set to F-3 (row 05 performed)
+      check eh.noteTest(ch1) == noteF3.int
 
 
     # test "Hxx":  # set sweep register
@@ -682,10 +680,10 @@ block: # =========================================================== effects
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editPattern(0, pat):
-          pat(ch1).setEffect(0, 0, etLock)
-          pat(ch2).setEffect(1, 0, etLock)
-          pat(ch3).setEffect(2, 0, etLock)
-          pat(ch4).setEffect(3, 0, etLock)
+          pat(ch1)[0] = litTrackRow("... .. L00 ... ...")
+          pat(ch2)[1] = litTrackRow("... .. L00 ... ...")
+          pat(ch3)[2] = litTrackRow("... .. L00 ... ...")
+          pat(ch4)[3] = litTrackRow("... .. L00 ... ...")
       
       eh.play()
       
@@ -708,10 +706,8 @@ block: # =========================================================== effects
 
     test "Pxx (tone)":  # fine tuning
       const
-        testNote1 = "C-4".note
-        testNote2 = "D-6".note
-        testNote1Freq = lookupToneNote(testNote1)
-        testNote2Freq = lookupToneNote(testNote2)
+        testNote1Freq = lookupToneNote(toNote(C, 4))
+        testNote2Freq = lookupToneNote(toNote(D, 6))
 
       var eh = EngineHarness.init()
       # 00 C-4 .. ... ; freq = testNote1Freq
@@ -727,19 +723,16 @@ block: # =========================================================== effects
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          with track:
-            setNote(0, testNote1)
-            setEffect(1, 0, etTuning, 0x80)
-            setEffect(2, 0, etTuning, 0x7F)
-            setEffect(3, 0, etTuning, 0x81)
-            setNote(4, testNote2)
-            setNote(5, testNote1)
-            setEffect(5, 0, etTuning, 0x80)
-            setEffect(6, 0, etTuning, 0x00)
-            setEffect(7, 0, etTuning, 0xFF)
-            setNote(8, ToneNote.high.uint8)
-            setNote(9, ToneNote.low.uint8)
-            setEffect(9, 0, etTuning, 0x00)
+          track[0] = litTrackRow("C-4 .. ... ... ...")
+          track[1] = litTrackRow("... .. P80 ... ...")
+          track[2] = litTrackRow("... .. P7F ... ...")
+          track[3] = litTrackRow("... .. P81 ... ...")
+          track[4] = litTrackRow("D-6 .. ... ... ...")
+          track[5] = litTrackRow("C-4 .. P80 ... ...")
+          track[6] = litTrackRow("... .. P00 ... ...")
+          track[7] = litTrackRow("... .. PFF ... ...")
+          track[8] = litTrackRow("B-8 .. ... ... ...")
+          track[9] = litTrackRow("C-2 .. P00 ... ...")
 
       eh.play()
       check:
@@ -756,19 +749,18 @@ block: # =========================================================== effects
 
     test "Pxx (noise)":
       const
-        testNote = "C-4".note
+        testNote = uint16(toNote(C, 4))
 
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch4, 0, track):
-          with track:
-            setNote(0, testNote)
-            setEffect(1, 0, etTuning, 0x80)
-            setEffect(2, 0, etTuning, 0x81)
-            setEffect(3, 0, etTuning, 0x7F)
-            setEffect(4, 0, etTuning, 0xFF)
-            setEffect(5, 0, etTuning, 0x00)
+          track[0] = litTrackRow("C-4 .. ... ... ...")
+          track[1] = litTrackRow("... .. P80 ... ...")
+          track[2] = litTrackRow("... .. P81 ... ...")
+          track[3] = litTrackRow("... .. P7F ... ...")
+          track[4] = litTrackRow("... .. PFF ... ...")
+          track[5] = litTrackRow("... .. P00 ... ...")
       
       eh.play()
       check:
@@ -796,16 +788,15 @@ block: # =========================================================== effects
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          with track:
-            setEffect(0, 0, etSetTimbre, 0)
-            setEffect(1, 0, etSetTimbre, 1)
-            setEffect(2, 0, etSetTimbre, 2)
-            setEffect(3, 0, etSetTimbre, 3)
-            setEffect(4, 0, etSetTimbre, 4)
-            setEffect(5, 0, etSetTimbre, 0)
-            setEffect(6, 0, etSetTimbre, 0xFF)
-            setNote(7, "C-2".note)
-            setEffect(8, 0, etSetTimbre, 2)
+          track[0] = litTrackRow("... .. V00 ... ...")
+          track[1] = litTrackRow("... .. V01 ... ...")
+          track[2] = litTrackRow("... .. V02 ... ...")
+          track[3] = litTrackRow("... .. V03 ... ...")
+          track[4] = litTrackRow("... .. V04 ... ...")
+          track[5] = litTrackRow("... .. V00 ... ...")
+          track[6] = litTrackRow("... .. VFF ... ...")
+          track[7] = litTrackRow("C-2 .. ... ... ...")
+          track[8] = litTrackRow("... .. V02 ... ...")
       eh.play()
 
       check:
@@ -847,9 +838,8 @@ block: # ========================================================== instruments
     let id = result.instruments.add()
     result.setupSong(s):
       s.editTrack(ch1, 0, track):
-        with track:
-          setNote(0, testNote)
-          setInstrument(0, id)
+        track[0].note = noteColumn(testNote)
+        track[0].instrument = instrumentColumn(id)
   
   suite "engine.instruments":
 

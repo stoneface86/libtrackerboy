@@ -72,15 +72,16 @@ func get*(sample: SongSamples): Song =
     result.speed = 0x48
     result.effectCounts = [3.EffectColumns, 1, 1, 1]
     result.trackLen = 16
-    result.order.setLen(3)
-    result.order[0] = [0u8, 0, 0, 0]
-    result.order[1] = [1u8, 1, 1, 1]
-    result.order[2] = [2u8, 2, 2, 2]
+    result.order.setData([
+      [0u8, 0, 0, 0],
+      [1u8, 1, 1, 1],
+      [2u8, 2, 2, 2]
+    ])
     result.editTrack(ch1, 0, track):
-      track.setNote(0, 0x1F)
-      track.setNote(8, 0x1F)
+      track[0] = litTrackRow("G-4 .. ... ... ...")
+      track[8] = litTrackRow("G-4 .. ... ... ...")
     result.editTrack(ch3, 2, track):
-      track.setNote(4, 0x1F)
+      track[4] = litTrackRow("G-4 .. ... ... ...")
 
 func makeModule*(): Module =
   result = Module.init

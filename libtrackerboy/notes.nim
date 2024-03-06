@@ -160,43 +160,5 @@ func toPair*(index: NoteIndex): NotePair =
   ##
   result = notePair(Letter(int(index) mod 12), Octave((int(index) div 12) + 2))
 
-
-func note*(str: string): uint8 {.compileTime, deprecated.} =
-  ## Compile time function for converting a string literal to a note index
-  ## Notes must range from C-2 to B-8, sharp and flat accidentals can be used.
-  ## ie `note("c-2") => 0`, `"D#3".note => 15`
-  # C C# D D# E F F# G G# A A# B
-  # C Db D Eb E F Gb G Ab A Bb B
-  # 0 1  2 3  4 5 6  7 8  9 10 11
-  doAssert str.len == 3
-  case str[0]:
-  of 'C', 'c':
-    result = 0
-  of 'D', 'd':
-    result = 2
-  of 'E', 'e':
-    result = 4
-  of 'F', 'f':
-    result = 5
-  of 'G', 'g':
-    result = 7
-  of 'A', 'a':
-    result = 9
-  of 'B', 'b':
-    result = 11
-  of '-':
-    return noteCut
-  else:
-    doAssert false, "invalid note"
-  if str[1] == '#':
-    inc result
-  elif str[1] == 'b':
-    dec result
-  else:
-    doAssert str[1] == '-', "invalid note"
-  let octave = (str[2].ord - '2'.ord)
-  doAssert octave >= 0 and octave <= 6, "invalid octave"
-  result += (octave * 12).uint8
-
 {. pop .}
 

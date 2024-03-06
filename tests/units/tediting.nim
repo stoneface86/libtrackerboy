@@ -1,8 +1,6 @@
 
 import unittest2
-import libtrackerboy/[data, editing, notes]
-
-import std/with
+import libtrackerboy/[data, editing, text]
 
 template a(r: int, t: int, c: TrackSelect): PatternAnchor =
   PatternAnchor(row: r, track: t, column: c)
@@ -29,27 +27,31 @@ block: # ========================================================== PatternClip
     # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
     # pattern 2 is empty
     result.trackLen = patternSize
-    result.order.setLen(3)
-    result.order[1] = [1u8, 1, 1, 1]
-    result.order[2] = [2u8, 2, 2, 2]
+    result.order.setData([
+      [0u8, 0, 0, 0],
+      [1u8, 1, 1, 1],
+      [2u8, 2, 2, 2]
+    ])
     for i in 0..1:
       result.editPattern(i, pattern):
-        with pattern(ch1):
-          setNote(0, "G-5".note)
-          setInstrument(0, 0)
-          setNote(4, "B-5".note)
-          setInstrument(4, 0)
-        with pattern(ch4):
-          setNote(0, "G-6".note)
-          setInstrument(0, 1)
-          setNote(2, "G-6".note)
-          setInstrument(2, 1)
-          setEffect(2, 0, etDelayedNote, 3)
-          setNote(4, "G-6".note)
-          setInstrument(4, 2)
-          setNote(6, "G-6".note)
-          setInstrument(6, 1)
-          setEffect(6, 0, etDelayedNote, 3)
+        ###### CH1 #########################################
+        pattern(ch1)[0] = litTrackRow("G-5 00 ... ... ...")
+        # 01
+        # 02
+        # 03
+        pattern(ch1)[4] = litTrackRow("B-5 00 ... ... ...")
+        # 05
+        # 06
+        # 07
+        ###### CH4 #########################################
+        pattern(ch4)[0] = litTrackRow("G-6 01 ... ... ...")
+        # 01
+        pattern(ch4)[2] = litTrackRow("G-6 01 G03 ... ...")
+        # 03
+        pattern(ch4)[4] = litTrackRow("G-6 02 ... ... ...")
+        # 05
+        pattern(ch4)[6] = litTrackRow("G-6 01 G03 ... ...")
+        # 07        
     result.editPattern(2, pattern):
       discard
 
@@ -150,21 +152,12 @@ block: # ========================================================== PatternClip
 
       proc makeExpected(): Track =
         result = Track.init(patternSize)
-        with result:
-          setNote(0, "G-6".note)
-          setInstrument(0, 1)
-          setNote(1, "G-5".note)
-          setInstrument(1, 0)
-          setNote(2, "G-6".note)
-          setInstrument(2, 1)
-          setEffect(2, 0, etDelayedNote, 3)
-          setNote(4, "G-6".note)
-          setInstrument(4, 2)
-          setNote(5, "B-5".note)
-          setInstrument(5, 0)
-          setNote(6, "G-6".note)
-          setInstrument(6, 1)
-          setEffect(6, 0, etDelayedNote, 3)
+        result[0] = litTrackRow("G-6 01 ... ... ...")
+        result[1] = litTrackRow("G-5 00 ... ... ...")
+        result[2] = litTrackRow("G-6 01 G03 ... ...")
+        result[4] = litTrackRow("G-6 02 ... ... ...")
+        result[5] = litTrackRow("B-5 00 ... ... ...")
+        result[6] = litTrackRow("G-6 01 G03 ... ...")
 
       song.viewPattern(0, p0):
         song.viewPattern(1, p1):

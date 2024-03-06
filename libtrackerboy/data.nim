@@ -11,7 +11,7 @@ import
   ./private/data,
   ./private/utils
 
-import std/[hashes, math, options, parseutils, sequtils, strutils, tables]
+import std/[hashes, math, options, sequtils, strutils, tables]
 
 export common, options
 
@@ -145,12 +145,12 @@ type
     ## An OrderRow is a set of TrackIds, one for each channel.
     ##
   
-  Order* {.requiresInit.} = object
+  Order* = object
     ## An Order is a sequence of OrderRows, that determine the layout of
     ## a Song. Each Order must have at least 1 OrderRow and no more than
     ## 256 rows.
     ##
-    data: seq[OrderRow]
+    data*: seq[OrderRow]
 
   # patterns
 
@@ -721,39 +721,35 @@ func uniqueIds*[T: SomeData](t: Table[T]): set[TableId] =
 
 # Order
 
-func init*(T: typedesc[Order]): Order =
-  ## Value constructor for an Order. The Order is initialized with a single
-  ## row all having a track id of 0.
+func initOrder*(): Order =
+  ## Initializes a default Order. The default Order contains one row with all
+  ## track ids set to 0.
   ##
-  Order(
-    data: @[[0u8, 0, 0, 0]]
-  )
+  result = Order(data: newSeq[OrderRow](1))
 
-proc `[]`*(o: Order; index: Natural): OrderRow =
+func init*(T: typedesc[Order]): Order {.deprecated: "use initOrder instead".} =
+  result = initOrder()
+
+func initOrder*(data: openArray[OrderRow]): Order =
+  ## Initializes an Order with the given array of rows.
+  ## 
+  result = Order(data: @data)
+
+func isValid*(o: Order): bool =
+  result = o.data.len in low(OrderSize)..high(OrderSize)
+
+proc `[]`*(o: Order; index: Natural): OrderRow {.inline.} =
   ## Access the order via row index. `index` must be in range of `0..o.len-1`
   ##
   o.data[index]
 
-proc `[]=`*(o: var Order; index: Natural; val: OrderRow) =
+proc `[]=`*(o: var Order; index: Natural; val: OrderRow) {.inline.} =
   ## Modifies the order row via a row index. `index` must be in range of
   ## `0..o.len-1`
   ##
   o.data[index] = val
 
-proc data*(o: Order): lent seq[OrderRow] =
-  ## Gets the Order's data, a sequence of OrderRows
-  ##
-  o.data
-
-proc `data=`*(o: var Order; data: sink seq[OrderRow]) =
-  ## Assigns the Order's data to the given sequence. `data.len` must be in
-  ## the range of a `PositiveByte<#PositiveByte>`_, otherwise an
-  ## `AssertionDefect` will be raised.
-  ##
-  doAssert data.len in PositiveByte.low..PositiveByte.high, "cannot assign data, len must be in 1..256"
-  o.data = data
-
-proc len*(o: Order): int =
+proc len*(o: Order): int {.inline.} =
   ## Gets the len, or number of rows in the order.
   ##
   o.data.len
@@ -771,6 +767,16 @@ proc nextUnused*(o: Order): OrderRow =
       if not idmap.contains(id):
         result[track] = id
         break
+
+proc setData*(o: var Order; data: openArray[OrderRow]) =
+  doAssert data.len in low(OrderSize)..high(OrderSize), "cannot set data: invalid size"
+  o.data.setLen(data.len)
+  for i in 0..<data.len:
+    o.data[i] = data[i]
+
+proc add*(o: var Order; row: OrderRow) =
+  doAssert o.data.len < OrderSize.high, "cannot add: Order is full"
+  o.data.add(row)
 
 proc insert*(o: var Order; row: OrderRow; before = ByteIndex(0)) =
   ## Inserts a row into the order before the given index. An `AssertionDefect`
@@ -1156,7 +1162,7 @@ template construct(T: typedesc[Song|ref Song]): untyped =
     rowsPerMeasure: defaultRpm,
     speed: defaultSpeed,
     effectCounts: [2.EffectColumns, 2, 2, 2],
-    order: Order.init,
+    order: initOrder(),
     trackLen: defaultTrackSize,
     tracks: default(Song.tracks.typeOf),
     tickrate: none(Tickrate)
