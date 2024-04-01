@@ -5,8 +5,6 @@ exported by other modules so you typically do not need to import it yourself.
 
 ]##
 
-import std/bitops
-
 type
 
   ChannelId* = enum
@@ -34,22 +32,13 @@ type
     ## Type alias for the PCM type used in this library
     ##
 
-  ByteIndex* = range[low(uint8).int..high(uint8).int]
+  ByteIndex* = range[0..255]
     ## Index type using the range of a uint8 (0-255)
     ## 
   
-  PositiveByte* = range[1..high(uint8).int+1]
+  PositiveByte* = range[1..256]
     ## Positive type using the range of a uint8 (1-256)
     ##
-
-  MixMode* = enum
-    ## Enum of possible mix operations: mute, left-only, right-only or
-    ## middle (both).
-    ##
-    mixMute     = 0
-    mixLeft     = 1
-    mixRight    = 2
-    mixMiddle   = mixLeft.ord or mixRight.ord
 
   Immutable*[T] = distinct T
     ## Wrapper type that forces immutability on T. Useful for `ref` or `ptr`
@@ -57,7 +46,7 @@ type
     ## Both value and ref semantics can be used. When the source is a `ref`
     ## or `ptr`, accessing the source will dereference the ref/ptr.
     ##
-  
+
   FixedSeq*[N: static int; T] = object
     ## Provides a `seq`-like data structure that only has a fixed capacity, `N`.
     ## Useful when you have a fixed number of items to store but you want to
@@ -150,27 +139,3 @@ iterator items*[N, T](s: FixedSeq[N, T]): T =
   for i in 0..<s.len:
     yield s.data[i]
 
-{. push inline, raises: [] .}
-
-func pansLeft*(mode: MixMode): bool =
-  ## Determine whether the mode pans left, returns `true` when mode is
-  ## `mixLeft` or `mixMiddle`
-  ##
-  testBit(ord(mode), 0)
-
-func pansRight*(mode: MixMode): bool =
-  ## Determine whether the mode pans right, returns `true` when mode is
-  ## `mixRight` or `mixMiddle`
-  ##
-  testBit(ord(mode), 1)
-
-func hasAny*[T](x, y: set[T]; ): bool =
-  ## Checks if one or more elements in `y` are present in `x`. This just
-  ## checks if the intersection of `x` and `y` has a nonzero cardinality.
-  ##
-  runnableExamples:
-    assert { 'a', 'b', 'c', 'd' }.hasAny({ 'a', 'c' })
-    assert not { 'a', 'b', 'c' }.hasAny({ 'z', 'y' })
-  card(x * y) > 0
-
-{. pop .}

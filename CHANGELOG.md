@@ -4,7 +4,6 @@
 
 ### Added
  - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
- - (common) `hasAny` proc for two sets
  - (common) `Tristate` enum
  - (data) `toView` converter in data module for `Track -> TrackView`
  - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
@@ -15,7 +14,6 @@
  - (data) `SongPos` type
  - (data) `SongSpan` type
  - (data) `effectTypeToChar` proc
- - (data) `$` overload for `Effect`
  - (data) `PatternRow` type
  - (data) `getRow` overload that returns a `PatternRow`
  - (data) `effectsCharMap` const
@@ -53,6 +51,7 @@
  - (data) `$` procs for `Sequence` and `WaveData` types. Use text module instead.
  - (data) `parseSequence` proc, use text module instead.
  - (data) `parseWave` proc, use text module instead.
+ - (common) `MixMode` type and related procs.
  - (ir) `SongPath` and `PatternVisit` types.
 
 ## [0.8.3] - 2023-11-08

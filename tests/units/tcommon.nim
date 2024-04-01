@@ -39,17 +39,6 @@ suite "Immutable[T]":
     check:
       a == b
 
-test "pan tests":
-  check:
-    not mixMute.pansLeft
-    not mixMute.pansRight
-    mixLeft.pansLeft
-    not mixLeft.pansRight
-    not mixRight.pansLeft
-    mixRight.pansRight
-    mixMiddle.pansLeft
-    mixMiddle.pansRight
-
 suite "FixedSeq[N, T]":
 
   test "default init":

@@ -25,6 +25,15 @@ type
     sum: float32
     highpass: float32
 
+  MixMode* = enum
+    ## Enum of possible mix operations: mute, left-only, right-only or
+    ## middle (both).
+    ##
+    mixMute
+    mixLeft
+    mixRight
+    mixMiddle
+
   Synth* {.requiresInit.} = object
     volumeStepLeft*, volumeStepRight*: float32
     samplerate: int
@@ -76,6 +85,18 @@ const
     # extra step! this step is just the first one reversed
     [ 0.000000000f,  0.001312256f, -0.003509521f,  0.010681152f, -0.014892578f,  0.034667969f, -0.027893066f,  0.178863525f,  0.641540527f,  0.178863525f, -0.027893066f,  0.034667969f, -0.014892578f,  0.010681152f, -0.003509521f,  0.001312256f ]
   ]
+
+func pansLeft*(mode: MixMode): bool =
+  ## Determine whether the mode pans left, returns `true` when mode is
+  ## `mixLeft` or `mixMiddle`
+  ##
+  result = mode in { mixLeft, mixMiddle }
+
+func pansRight*(mode: MixMode): bool =
+  ## Determine whether the mode pans right, returns `true` when mode is
+  ## `mixRight` or `mixMiddle`
+  ##
+  result = mode in { mixRight, mixMiddle }
 
 template assertTime(s: Synth; t: int): untyped =
   assert t < s.buffer.len, "attempted to mix past the buffer"

@@ -58,11 +58,41 @@ template `==`*[T](lhs, rhs: EqRef[T];): bool =
     assert a == b
   lhs.src.deepEquals(rhs.src)
 
-template defaultInit*(): untyped = discard
+template defaultInit*(): untyped =
   ## Alias for `discard`, to indicate that default initialization is intended.
   ##
+  discard
 
-template defaultInit*(someField: typed) = discard
-  ## Do-nothing template that indicates that an object's field is default
-  ## initialized.
+template defaultInit*(someField: var typed) =
+  ## Do-nothing template that indicates that a variable was intended to
+  ## be default-initialized.
   ##
+  discard
+
+template contains*[T](R: typedesc[SomeOrdinal]; x: T): bool =
+  ## Sugar for checking if a value is within the bounds of an ordinal type.
+  ##
+  runnableExamples:
+    type
+      IntRange = range[3..10]
+      CharRange = range['a'..'z']
+    assert 5 in IntRange
+    assert 0 notin IntRange
+    assert 'r' in CharRange
+    assert '9' notin CharRange
+  x in T(low(R))..T(high(R))
+
+func hasAny*[T](x, y: set[T]; ): bool =
+  ## Checks if one or more elements in `y` are present in `x`. This just
+  ## checks if the intersection of `x` and `y` has a nonzero cardinality.
+  ##
+  runnableExamples:
+    assert { 'a', 'b', 'c', 'd' }.hasAny({ 'a', 'c' })
+    assert not { 'a', 'b', 'c' }.hasAny({ 'z', 'y' })
+  card(x * y) > 0
+
+func clone*[T](x: ref T): ref T =
+  ## Creates a new ref that has the same value as x.
+  ##
+  new(result)
+  result[] = x[]

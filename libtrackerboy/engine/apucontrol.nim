@@ -12,6 +12,7 @@ This module is part of the inner workings of the engine module.
 import 
   ./enginestate,
   ../private/hardware,
+  ../private/utils,
   ../common,
   ../data,
   ../notes
