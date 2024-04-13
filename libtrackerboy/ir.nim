@@ -152,24 +152,24 @@ type
 
 # === Operation ===============================================================
 
-func toEffectType*(x: FrequencyMod): EffectType =
+func toEffectCmd*(x: FrequencyMod): EffectCmd =
   ## Converts a FrequencyMod enum to an EffectType enum
   ## 
   case x
-  of freqPortamento: etAutoPortamento
-  of freqPitchUp: etPitchUp
-  of freqPitchDown: etPitchDown
-  of freqNoteUp: etNoteSlideUp
-  of freqNoteDown: etNoteSlideDown
-  of freqArpeggio: etArpeggio
+  of freqPortamento: ecAutoPortamento
+  of freqPitchUp: ecPitchUp
+  of freqPitchDown: ecPitchDown
+  of freqNoteUp: ecNoteSlideUp
+  of freqNoteDown: ecNoteSlideDown
+  of freqArpeggio: ecArpeggio
 
-func toEffectType*(x: PatternCommand): EffectType =
+func toEffectCmd*(x: PatternCommand): EffectCmd =
   ## Converts a PatternCommand enum to an EffectType enum
   ## 
   case x
-  of pcNone: etNoEffect
-  of pcJump: etPatternGoto
-  of pcNext: etPatternSkip
+  of pcNone: ecNoEffect
+  of pcJump: ecPatternGoto
+  of pcNext: ecPatternSkip
 
 proc setSetting(op: var Operation; flag: OperationFlag; val: uint8) =
   op.flags.incl(flag)
@@ -205,54 +205,54 @@ func toOperation*(row: TrackRow): Operation =
   
   # effects
   for effect in row.effects:
-    case effect.effectType.toEffectType():
-    of etNoEffect:
+    case effect.cmd.toEffectCmd():
+    of ecNoEffect:
       discard  # ignore any unknown effect
-    of etPatternGoto:
+    of ecPatternGoto:
       result.setPatternCommand(pcJump, effect.param)
-    of etPatternHalt:
+    of ecPatternHalt:
       result.flags.incl(opsHalt)
-    of etPatternSkip:
+    of ecPatternSkip:
       result.setPatternCommand(pcNext, effect.param)
-    of etSetTempo:
-      if effect.param >= low(Speed) and effect.param <= high(Speed):
+    of ecSetTempo:
+      if isValid(Speed(effect.param)):
         result.setSetting(opsSpeed, effect.param)
-    of etSfx:
+    of ecSfx:
       discard  # TBD
-    of etSetEnvelope:
+    of ecSetEnvelope:
       result.setSetting(opsEnvelope, effect.param)
-    of etSetTimbre:
+    of ecSetTimbre:
       result.setSetting(opsTimbre, clamp(effect.param, 0, 3))
-    of etSetPanning:
+    of ecSetPanning:
       result.setSetting(opsPanning, clamp(effect.param, 0, 3))
-    of etSetSweep:
+    of ecSetSweep:
       result.setSetting(opsSweep, effect.param)
-    of etDelayedCut:
+    of ecDelayedCut:
       result.setSetting(opsDuration, effect.param)
-    of etDelayedNote:
+    of ecDelayedNote:
       if effect.param > 0:  # G00, or a delay of 0 has no effect
         result.setSetting(opsDelay, effect.param)
-    of etLock:
+    of ecLock:
       result.flags.incl(opsShouldLock)
-    of etArpeggio:
+    of ecArpeggio:
       result.setFrequencyMod(freqArpeggio, effect.param)
-    of etPitchUp:
+    of ecPitchUp:
       result.setFrequencyMod(freqPitchUp, effect.param)
-    of etPitchDown:
+    of ecPitchDown:
       result.setFrequencyMod(freqPitchDown, effect.param)
-    of etAutoPortamento:
+    of ecAutoPortamento:
       result.setFrequencyMod(freqPortamento, effect.param)
-    of etVibrato:
+    of ecVibrato:
       result.setSetting(opsVibrato, effect.param)
-    of etVibratoDelay:
+    of ecVibratoDelay:
       result.setSetting(opsVibratoDelay, effect.param)
-    of etTuning:
+    of ecTuning:
       result.setSetting(opsTune, effect.param)
-    of etNoteSlideUp:
+    of ecNoteSlideUp:
       result.setFrequencyMod(freqNoteUp, effect.param)
-    of etNoteSlideDown:
+    of ecNoteSlideDown:
       result.setFrequencyMod(freqNoteDown, effect.param)
-    of etSetGlobalVolume:
+    of ecSetGlobalVolume:
       if (effect.param and 0x88) == 0:
         result.setSetting(opsVolume, effect.param)
 
@@ -361,9 +361,9 @@ func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
   ## contained in `row` the `effectsOverflowed` is set to `true`, and the
   ## conversion done was a partial one.
   ##
-  proc addEffect(row: var TrackRow; index: var int; et: EffectType; ep = 0u8) =
+  proc addEffect(row: var TrackRow; index: var int; ec: EffectCmd; ep = 0u8) =
     if index <= row.effects.high:
-      row.effects[index] = Effect(effectType: et.uint8, param: ep)
+      row.effects[index] = initEffect(ec, ep)
     inc index
 
   var effectCounter = 0
@@ -376,7 +376,7 @@ func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
     if duration == 0:
       result.row.note = noteColumn(noteCut)
     else:
-      addEffect(result.row, effectCounter, etDelayedCut, duration)
+      addEffect(result.row, effectCounter, ecDelayedCut, duration)
   
   # instrument
   if opsInstrument in op:
@@ -384,30 +384,30 @@ func toTrackRow*(op: Operation): tuple[row: TrackRow; effectsOverflowed: bool] =
 
   # effects
   if opsPatternCommand in op:
-    addEffect(result.row, effectCounter, op.patternCommand.toEffectType(),
+    addEffect(result.row, effectCounter, op.patternCommand.toEffectCmd(),
               op[opsPatternCommand])
   
-  for (setting, et) in [
-      (opsSpeed, etSetTempo),
-      (opsVolume, etSetGlobalVolume),
-      (opsDelay, etDelayedNote),
-      (opsEnvelope, etSetEnvelope),
-      (opsTimbre, etSetTimbre),
-      (opsPanning, etSetPanning),
-      (opsSweep, etSetSweep),
-      (opsVibrato, etVibrato),
-      (opsVibratoDelay, etVibratoDelay),
-      (opsTune, etTuning)
+  for (setting, cmd) in [
+      (opsSpeed, ecSetTempo),
+      (opsVolume, ecSetGlobalVolume),
+      (opsDelay, ecDelayedNote),
+      (opsEnvelope, ecSetEnvelope),
+      (opsTimbre, ecSetTimbre),
+      (opsPanning, ecSetPanning),
+      (opsSweep, ecSetSweep),
+      (opsVibrato, ecVibrato),
+      (opsVibratoDelay, ecVibratoDelay),
+      (opsTune, ecTuning)
     ]:
       if setting in op:
-        addEffect(result.row, effectCounter, et, op[setting])
+        addEffect(result.row, effectCounter, cmd, op[setting])
   if opsFreqMod in op:
-    addEffect(result.row, effectCounter, op.freqMod.toEffectType(), op[opsFreqMod])
+    addEffect(result.row, effectCounter, op.freqMod.toEffectCmd(), op[opsFreqMod])
   
   if opsHalt in op:
-    addEffect(result.row, effectCounter, etPatternHalt)
+    addEffect(result.row, effectCounter, ecPatternHalt)
   if opsShouldLock in op:
-    addEffect(result.row, effectCounter, etLock)
+    addEffect(result.row, effectCounter, ecLock)
   
   result.effectsOverflowed = effectCounter > result.row.effects.high
 
@@ -415,10 +415,10 @@ proc setFromIr*(track: var Track; ir: TrackIr): bool =
   ## Sets the given track's row data using the given ir data. This proc does
   ## not clear the track beforehand for optimization purposes, ensure that
   ## `track` is an empty one first before calling this function.
-  if not track.isValid:
-    track = Track.init(ir.srcLen)
+  if not track.isValid():
+    track = initTrack(ir.srcLen)
   else:
-    track.len = ir.srcLen
+    track.setLen(ir.srcLen)
 
   for rowNo, rowOp in ir.ops:
     let conv = toTrackRow(rowOp)

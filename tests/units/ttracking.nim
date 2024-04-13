@@ -7,10 +7,10 @@ test "filter":
   const row = litTrackRow("C-2 00 034 B02 G00")
   check:
     filter({}, row) == row
-    filter({ etPitchUp, etPitchDown }, row) == row
-    filter({ etDelayedNote }, row) == litTrackRow("C-2 00 034 B02 ...")
-    filter({ etArpeggio }, row) == litTrackRow("C-2 00 ... B02 G00")
-    filter({ etPatternGoto, etDelayedNote }, row) == litTrackRow("C-2 00 034 ... ...")
+    filter({ ecPitchUp, ecPitchDown }, row) == row
+    filter({ ecDelayedNote }, row) == litTrackRow("C-2 00 034 B02 ...")
+    filter({ ecArpeggio }, row) == litTrackRow("C-2 00 ... B02 G00")
+    filter({ ecPatternGoto, ecDelayedNote }, row) == litTrackRow("C-2 00 034 ... ...")
 
 # func tickOut(songStats: set[SongStat] = {}; 
 #              ts1: set[TrackStat] = {}; ts2: set[TrackStat] = {};
@@ -47,7 +47,7 @@ suite "Tracker":
 
   test "invalid position results in halt":
     const badPos = songPos(2, 123)
-    let s = Song.init()
+    let s = initSong()
     var t = initTracker(s, badPos)
     check t.isHalted()
     t = initTracker(s)
@@ -62,8 +62,8 @@ suite "Tracker":
 
   test "basic tracking":
     let song = block:
-      var s = Song.init()
-      s.speed = unitSpeed * 2
+      var s = initSong()
+      s.speed = Speed(0x20)
       s.trackLen = 2
       s
     var t = initTracker(song)
@@ -86,12 +86,12 @@ suite "Tracker":
 
   test "effect filter":
     let song = block:
-      var s = Song.init()
+      var s = initSong()
       s.speed = unitSpeed
       s.editTrack(ch1, 0, track):
         track[0] = litTrackRow("C-4 00 B01 V02 ...")
       s
-    var t = initTracker(song, effectsFilter = { etPatternGoto })
+    var t = initTracker(song, effectsFilter = { ecPatternGoto })
     check:
       t.tick(song) == trackerResult(tsNewRow, false, {ch1}, {ch1})
       t.pos() == songPos(0, 0)
@@ -116,7 +116,7 @@ suite "Tracker":
     discard
 
   test "forced halt":
-    let s = Song.init()
+    let s = initSong()
     var t = initTracker(s)
     check:
       t.isRunning()
@@ -130,7 +130,7 @@ suite "Tracker":
 
   test "pattern repeat":
     let s = block:
-      var s = Song.init()
+      var s = initSong()
       s.speed = unitSpeed
       s.trackLen = 2
       s.order.setLen(2)
@@ -163,7 +163,7 @@ suite "tracker.runtime":
     check runtime(minute, 60.0) == 3600
 
   test "song 1":
-    var song = Song.init()
+    var song = initSong()
     song.speed = unitSpeed
     song.trackLen = 1
     song.order.setLen(3)
@@ -174,7 +174,7 @@ suite "tracker.runtime":
       runtime(song, 3) == 9
   
   test "song 2":
-    let song = Song.init()
+    let song = initSong()
     # 6.0 FPR * 64 rows per pattern = 384 frames per pattern
     check:
       runtime(song, 1) == 384
@@ -182,7 +182,7 @@ suite "tracker.runtime":
       runtime(song, 3) == 1152
   
   test "song 3":
-    var song = Song.init()
+    var song = initSong()
     # 0 -> 1 -> 2 -> 3
     #      ^         |
     #      \---------/
@@ -190,7 +190,7 @@ suite "tracker.runtime":
     song.trackLen = 4
     song.order.setLen(4)
     song.order[3] = [0u8, 0, 0, 1]
-    song.editTrack(ch4, 3, track):
+    song.editTrack(ch4, 1, track):
       track[3].effects[0] = litEffect("B01") #Effect.init(etPatternGoto, 1)
     
     check:
@@ -199,13 +199,13 @@ suite "tracker.runtime":
       runtime(song, 3) == 40  # 28 + 4 + 4 + 4
 
   test "no runtime for pattern >= song order len":
-    let song = Song.init()
+    let song = initSong()
     check:
       runtime(song, 1, songPos(1)) == 0
       runtime(song, 1, songPos(32)) == 0
 
   test "no runtime for row >= song.trackLen":
-    var song = Song.init()
+    var song = initSong()
     song.trackLen = 10
     check:
       runtime(song, startPos = songPos(row = 10)) == 0
@@ -222,14 +222,14 @@ suite "getPath":
 
   test "default song has path of 1 visit and loops":
     let 
-      song = Song.init()
+      song = initSong()
       path = song.getPath()
     check:
       path.visits == [ pv(0, 0..63) ]
       path.loopsTo == some(0)
 
   test "simple song that loops":
-    var song = Song.init()
+    var song = initSong()
     song.order.setLen(3)
     let path = song.getPath()
     check:
@@ -237,41 +237,41 @@ suite "getPath":
       path.loopsTo == some(0)
 
   test "song that halts":
-    var song = Song.init()
+    var song = initSong()
     song.order.setLen(2)
     song.order[1] = [ 0u8, 0u8, 0u8, 1u8]
     song.editTrack(ch4, 1, track):
-      track.setEffect(23, 0, etPatternHalt)
+      track[23].effects[0] = initEffect(ecPatternHalt)
     let path = song.getPath()
     check:
       path.visits == [ pv(0, 0..63), pv(1, 0..22) ]
       path.loopsTo == none(int)
 
   test "song loops via Bxx":
-    var song = Song.init()
+    var song = initSong()
     song.order.setLen(3)
     song.order[2] = [ 0u8, 1, 0, 0 ]
-    song.editTrack(ch2, 2, track):
-      track.setEffect(63, 1, etPatternGoto, 1)
+    song.editTrack(ch2, 1, track):
+      track[63].effects[1] = initEffect(ecPatternGoto, 1)
     let path = song.getPath()
     check:
       path.visits == [ pv(0, 0..63), pv(1, 0..63), pv(2, 0..63) ]
       path.loopsTo == some(1)
 
   test "song with Dxx":
-    var song = Song.init()
+    var song = initSong()
     song.order.setLen(5)
     song.order[1] = [1u8, 0, 0, 0]
     song.order[2] = [2u8, 0, 0, 0]
     song.order[4] = [3u8, 0, 0, 0]
     song.editTrack(ch1, 1, track):
-      track.setEffect(63, 0, etPatternSkip, 32)
+      track[63].effects[0] = initEffect(ecPatternSkip, 32)
     song.editTrack(ch1, 2, track):
-      track.setEffect(63, 0, etPatternGoto, 4)
+      track[63].effects[0] = initEffect(ecPatternGoto, 4)
       # if we start this pattern from rows 0-31, we will go to pattern 3 next
-      track.setEffect(31, 0, etPatternGoto, 3)
-    song.editTrack(ch1, 4, track):
-      track.setEffect(63, 0, etPatternGoto, 2)
+      track[31].effects[0] = initEffect(ecPatternGoto, 3)
+    song.editTrack(ch1, 3, track):
+      track[63].effects[0] = initEffect(ecPatternGoto, 2)
     let path = song.getPath()
     check:
       path.visits == [ 

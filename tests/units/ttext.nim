@@ -11,7 +11,7 @@ block: # NoteColumn
   test "noteText":
     check:
       noteText(noteNone) == "..."
-      noteText(noteColumn(0, 2)) == "C-4"
+      noteText(noteColumn(C, 2)) == "C-2"
       noteText(noteColumn(noteCut)) == "---"
       noteText(noteColumn(1)) == "C#2"
       noteText(noteColumn(1), true) == "Db2"
@@ -22,8 +22,8 @@ block: # NoteColumn
       parseNote("B-2") == some(noteColumn(11))
       parseNote("...") == some(noteNone)
       parseNote("---") == some(noteColumn(noteCut))
-      parseNote("C#4") == some(noteColumn(1, 2))
-      parseNote("Db4") == some(noteColumn(1, 2))
+      parseNote("C#4") == some(noteColumn(CSharp, 4))
+      parseNote("Db4") == some(noteColumn(CSharp, 4))
       parseNote("ssd").isNone()
       parseNote("").isNone()
       parseNote("C#").isNone()
@@ -52,11 +52,11 @@ block: # InstrumentColumn
 
 block: # Effect
   const
-    test1 = Effect.init(etArpeggio, 0x32)
+    test1 = initEffect(ecArpeggio, 0x32)
     test1Str = "032"
-    test2 = Effect.init(etTuning, 0x83)
+    test2 = initEffect(ecTuning, 0x83)
     test2Str = "P83"
-    test3 = Effect.init(etLock)
+    test3 = initEffect(ecLock)
     test3Str = "L00"
 
 
@@ -110,7 +110,7 @@ block: # TrackRow
     rowEmpty = default(TrackRow)
     rowEmptyStr  = "... .. ... ... ..."
     
-    row1 = TrackRow.init(noteColumn(37), e2 = Effect.init(etPitchUp, 2))
+    row1 = initTrackRow(noteColumn(37), e2 = initEffect(ecPitchUp, 2))
     row1Str      = "C#5 .. ... 102 ..."
     row1StrFlats = "Db5 .. ... 102 ..."
   
@@ -136,12 +136,12 @@ block: # Sequence
     data2 = [1u8, 2, 3, 0xFF, 0x80]
     data2Clamped = [1u8, 2, 3, 0, 0]
 
-    s0 = Sequence.init([])
-    s1 = Sequence.init(data1)
-    s2 = Sequence.init(data2)
-    s3 = Sequence.init(data2, some(ByteIndex(1)))
-    s4 = Sequence.init(data2, some(ByteIndex(200)))
-    s5 = Sequence.init([], some(ByteIndex(3)))
+    s0 = initSequence([])
+    s1 = initSequence(data1)
+    s2 = initSequence(data2)
+    s3 = initSequence(data2, initLoopPoint(1))
+    s4 = initSequence(data2, initLoopPoint(200))
+    s5 = initSequence([], initLoopPoint(3))
 
     str0 = ""
     str1 = "127"
@@ -163,7 +163,7 @@ block: # Sequence
       parseSequence(str1) == some(s1)
       parseSequence(str2) == some(s2)
       parseSequence(str3) == some(s3)
-      parseSequence(str2, 0, 3) == some(Sequence.init(data2Clamped))
+      parseSequence(str2, 0, 3) == some(initSequence(data2Clamped))
 
 block: # WaveData
   const

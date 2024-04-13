@@ -154,11 +154,11 @@ func hasColumn*(i: ColumnIter; col: TrackSelect): bool =
   ##
   col >= i.columnStart and col <= i.columnEnd
 
-func effectNumber*(column: TrackSelect): EffectIndex =
+func effectNumber*(column: TrackSelect): int =
   ## Convert a column to its corresponding effect number. 0 is returned
   ## for non-effect columns.
   ##
-  result = max(column.int - selEffect1.int, 0).EffectIndex
+  result = max(column.int - selEffect1.int, 0)
 
 func toSelect(column: TrackColumn): TrackSelect =
   ## Convert a column to a selectable column.
@@ -335,7 +335,7 @@ proc save*(c: var PatternClip; song: Song; order: ByteIndex;
 
       var bufIndexInTrack = bufIndex
       for row in iter.rows():
-        var src = pattern(track.ChannelId)[row]
+        var src = pattern[track.ChannelId][row]
         copyMem(
           c.data[bufIndexInTrack].addr,
           # convert the source row to an array of bytes, then take its
@@ -391,7 +391,7 @@ proc pasteImpl(c: PatternClip; song: var Song; order: ByteIndex;
 
         var bufIndexInTrack = bufIndex
         for row in iter.rows():
-          let rowdata = pattern(track.ChannelId)[row].addr
+          let rowdata = pattern[track.ChannelId][row].addr
           when mix:
             # mix paste, only empty columns will be pasted data from clip
             # create a (partial) TrackRow from the clip data
@@ -408,7 +408,7 @@ proc pasteImpl(c: PatternClip; song: var Song; order: ByteIndex;
             for effectCol in selEffect1..selEffect3:
               if columnIter.hasColumn(effectCol):
                 let effno = effectCol.effectNumber()
-                if rowdata.effects[effno].effectType == etNoEffect.uint8:
+                if rowdata.effects[effno].cmd == ecNoEffect.uint8:
                   rowdata.effects[effno] = src.effects[effno]
           else:
             # overwrite paste, copy clip data to destination track row

@@ -10,13 +10,13 @@ when NimMajor >= 2:
 
 template rowOp(note = noteNone; instrument = instrumentNone;
                e1 = effectNone; e2 = effectNone; e3 = effectNone): Operation =
-  toOperation(TrackRow.init(note, instrument, e1, e2, e3))
+  toOperation(initTrackRow(note, instrument, e1, e2, e3))
 
 const
   CUT = noteColumn(noteCut)
-  G00 = Effect.init(etDelayedNote)
-  S00 = Effect.init(etDelayedCut)
-  S03 = Effect.init(etDelayedCut, 3)
+  G00 = initEffect(ecDelayedNote)
+  S00 = initEffect(ecDelayedCut)
+  S03 = initEffect(ecDelayedCut, 3)
 
 suite "ir.Operation":
 
@@ -26,27 +26,27 @@ suite "ir.Operation":
 
   test "unknown effect is noop":
     let
-      row = TrackRow.init(e1 = Effect(effectType: EffectType.high.uint8 + 1))
+      row = initTrackRow(e1 = Effect(cmd: EffectCmd.high.uint8 + 1))
       op = toOperation(row)
     check op.isNoop()
 
   test "G00 is noop":
-    let op = toOperation(TrackRow.init(e1 = G00))
+    let op = toOperation(initTrackRow(e1 = G00))
     check op.isNoop()
 
   test "invalid speed is noop":
     let 
-      op1 = rowOp(e1 = Effect.init(etSetTempo, 0x0F))
-      op2 = rowOp(e2 = Effect.init(etSetTempo, 0xF2))
+      op1 = rowOp(e1 = initEffect(ecSetTempo, 0x0F))
+      op2 = rowOp(e2 = initEffect(ecSetTempo, 0xF2))
     check:
       op1.isNoop()
       op2.isNoop()
 
   test "frequency effect conflict":
     let
-      op = rowOp(e1 = Effect.init(etArpeggio),
-                 e2 = Effect.init(etPitchUp),
-                 e3 = Effect.init(etAutoPortamento))
+      op = rowOp(e1 = initEffect(ecArpeggio),
+                 e2 = initEffect(ecPitchUp),
+                 e3 = initEffect(ecAutoPortamento))
     # all effect columns conflict with each other, the last effect is always
     # used.
     check:
@@ -55,9 +55,9 @@ suite "ir.Operation":
   
   test "pattern command conflict":
     let
-      op = rowOp(e1 = Effect.init(etPatternSkip),
-                 e2 = Effect.init(etPatternGoto),
-                 e3 = Effect.init(etPatternHalt))
+      op = rowOp(e1 = initEffect(ecPatternSkip),
+                 e2 = initEffect(ecPatternGoto),
+                 e3 = initEffect(ecPatternHalt))
     check:
       op.flags == { opsHalt, opsPatternCommand }
       op.patternCommand == pcJump
@@ -104,12 +104,12 @@ suite "ir.Operation":
       op4 = rowOp(e1 = G00, e2 = S00)
       op5 = rowOp(note = CUT, e1 = G00, e2 = S00)
       # case 2 (runtime of 3: cuts in 3 frames)
-      op6 = rowOp(note = CUT, e1 = Effect.init(etDelayedNote, 3))
+      op6 = rowOp(note = CUT, e1 = initEffect(ecDelayedNote, 3))
       op7 = rowOp(note = CUT, e2 = S03)
       op8 = rowOp(note = CUT, e1 = G00, e2 = S03)
       # case 3 (runtime of 6: delays note by 4, then delayed cut in 2 frames)
-      op9 = rowOp(note = CUT, e1 = Effect.init(etDelayedNote, 4),
-                              e2 = Effect.init(etDelayedCut, 2))
+      op9 = rowOp(note = CUT, e1 = initEffect(ecDelayedNote, 4),
+                              e2 = initEffect(ecDelayedCut, 2))
 
     check:
       runtime(op1) == 0
@@ -133,7 +133,7 @@ suite "ir.TrackIr":
 
   test "empty track":
     let 
-      track = Track.init(testLen)
+      track = initTrack(testLen)
       ir = toIr(track)
     check:
       ir.srcLen == testLen
@@ -141,7 +141,7 @@ suite "ir.TrackIr":
       toSeq(ir.ops).len == 0
 
   test "2 ops":
-    var track = Track.init(testLen)
+    var track = initTrack(testLen)
     # ... .. ...
     # C-3 00 V02
     # ... .. ...

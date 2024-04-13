@@ -134,9 +134,9 @@ proc play*(e: var Engine; song: sink Immutable[ref Song];
   ## 
   doAssert not song.isNil, "song must not be nil!"
   
-  if startAt.pattern >= song[].order.len:
+  if startAt.pattern >= song[].patternLen():
     raise newException(IndexDefect, "invalid pattern index")
-  if startAt.row >= song[].trackLen:
+  if startAt.row >= song[].trackLen():
     raise newException(IndexDefect, "invalid row index")
 
   e.song = song

@@ -176,10 +176,10 @@ func effectText*(effect: Effect): EffectString =
   ## Converts an Effect to textual representation. See [EffectString] for
   ## details on the format of the text.
   ##
-  if effect.effectType == etNoEffect.uint8:
+  if effect.cmd == uint8(ecNoEffect):
     result.fill(noValueChar)
   else:
-    result[0] = effectTypeToChar(effect.effectType)
+    result[0] = effectCmdToChar(effect.cmd)
     let param = toHex(effect.param)
     result[1] = param[0]
     result[2] = param[1]
@@ -233,7 +233,7 @@ func sequenceText*(s: Sequence): string =
     str.add($(cast[int8](data[index])))
   
   if s.data.len > 0:
-    let loop = if s.loopIndex.isSome(): s.loopIndex.get().int else: -1
+    let loop = if s.loop.enabled: int(s.loop.index) else: -1
     addItem(result, s.data, 0, loop)
     for i in 1..<s.data.len:
       result.add(' ')
@@ -357,14 +357,14 @@ func parseInstrument*(str: string): Option[InstrumentColumn] {.inline.} =
   ##
   result = parseInstrument(toOpenArray(str))
 
-func parseEffectType*(ch: char): EffectType =
+func parseEffectCmd*(ch: char): EffectCmd =
   ## Converts a character to the `EffectType` it represents. For any
   ## unrecognized character, `etNoEffect` is returned.
   ## 
-  for et in (etNoEffect.succ)..(EffectType.high):
-    if ch == effectCharMap[et]:
-      return et
-  result = etNoEffect
+  for ec in (ecNoEffect.succ)..(EffectCmd.high):
+    if ch == effectCharMap[ec]:
+      return ec
+  result = ecNoEffect
 
 func parseEffect*(str: openArray[char]): Option[Effect] =
   ## Parse the character buffer containing the textual representation of an
@@ -380,11 +380,11 @@ func parseEffect*(str: openArray[char]): Option[Effect] =
     if str == [ noValueChar, noValueChar, noValueChar ]:
       result = some(effectNone)
     else:
-      let et = parseEffectType(str[0])
-      if et != etNoEffect:
+      let ec = parseEffectCmd(str[0])
+      if ec != ecNoEffect:
         let ep = parseHex(str[1], str[2])
         if ep != -1:
-          result = some(Effect.init(et, ep.uint8))
+          result = some(initEffect(ec, uint8(ep)))
 
 func parseEffect*(str: string): Option[Effect] {.inline.} =
   ## Convenience overload that takes a `string`.
@@ -505,17 +505,17 @@ func parseSequence*(str: string; minVal = low(int8); maxVal = high(int8)
   let lastPos = str.len - 1
   var 
     i = 0
-    loopIndex: Option[ByteIndex]
+    loop = noLoopPoint
     buf: FixedSeq[256, uint8]
   while true:
     i += skipWhitespace(toOpenArray(str, i, lastPos))
     if i > lastPos:
       break
     if str[i] == '|':
-      if loopIndex.isSome():
+      if loop.enabled:
         return # loop index already parsed
       else:
-        loopIndex = some(buf.len.ByteIndex)
+        loop = initLoopPoint(uint8(buf.len))
         inc i
     else:
       var num: int
@@ -528,7 +528,7 @@ func parseSequence*(str: string; minVal = low(int8); maxVal = high(int8)
           return # sequence is too big
         i += chars
         buf.add(cast[uint8](clamp(num, int(minVal), int(maxVal))))
-  result = some(Sequence.init(toOpenArray(buf.data, 0, buf.len - 1), loopIndex))
+  result = some(initSequence(toOpenArray(buf.data, 0, buf.len - 1), loop))
 
 # literal functions, construct libtrackerboy data from text at compile time
 

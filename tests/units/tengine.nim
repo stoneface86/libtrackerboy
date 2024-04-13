@@ -8,7 +8,7 @@ import unittest2
 import std/[strformat, times]
 
 func getSampleTable(): WaveformTable =
-  result = WaveformTable.init
+  result = initWaveformTable()
   let id = result.add()
   result[id][].data = litWave("0123456789ABCDEFFEDCBA9876543210")
 
@@ -71,8 +71,8 @@ type
 func init(T: typedesc[EngineHarness]): EngineHarness =
   result = EngineHarness(
     engine: Engine.init(),
-    instruments: InstrumentTable.init(),
-    song: Song.new()
+    instruments: initInstrumentTable(),
+    song: newSong()
   )
 
 proc play(e: var EngineHarness; order = 0; row = 0) =
@@ -192,11 +192,11 @@ block: # =========================================================== apucontrol
 
 
     test "empty operation results in no writes":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       check getWrites(ApuOperation(), wt, 0x00u8).len == 0
 
     test "update timbre":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       
       func timbreTest(timbre: uint8, wt: WaveformTable): ApuWriteList =
         let op = mkOperation(
@@ -235,7 +235,7 @@ block: # =========================================================== apucontrol
       ]
 
     test "cuts":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(mkCut(), mkCut(), mkCut(), mkCut())
       )
@@ -246,7 +246,7 @@ block: # =========================================================== apucontrol
     test "panning":
       # ch1 and ch4 will update the panning
       # ch2 and ch3 panning should be untouched
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(
           up1 = mkUpdate(mkState(p = 2), {ufPanning}),
@@ -259,7 +259,7 @@ block: # =========================================================== apucontrol
       check getWrites(op, wt, 0b10001001).len == 0
 
     test "trigger":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(
           mkUpdate(mkState(e = 0xF0, p = 3), t = true),
@@ -314,7 +314,7 @@ block: # =========================================================== apucontrol
       check getWrites(op, wt, 0).len == 0
 
     test "frequency":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(
           up2 = mkUpdate(ChannelState(frequency: 0x1D9, envelope: 0x77), {ufFrequency, ufEnvelope}),
@@ -332,7 +332,7 @@ block: # =========================================================== apucontrol
       ]
 
     test "sweep":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(
           up1 = mkUpdate(mkState(e = 0xF0), t = true)
@@ -347,7 +347,7 @@ block: # =========================================================== apucontrol
       ]
 
     test "volume":
-      let wt = WaveformTable.init
+      let wt = initWaveformTable()
       let op = mkOperation(
         mkUpdates(),
         v = some(0x43u8)
@@ -575,10 +575,10 @@ block: # =========================================================== effects
       var eh = EngineHarness.init()
       eh.setupSong(s):
         s.speed = unitSpeed
-        s.order.setData([
-          [0u8, 0, 0, 0],
-          [0u8, 0, 1, 0]
-        ])
+        s.order = @[
+          orow(0, 0, 0, 0),
+          orow(0, 0, 1, 0)
+        ]
         s.editTrack(ch1, 0, track):
           track[0] = litTrackRow("... .. D0A ... ...")
         s.editTrack(ch3, 1, track):
@@ -606,7 +606,7 @@ block: # =========================================================== effects
       eh.play()
       for i in 0..<4:
         eh.stepRow()
-        check eh.currentFrame().speed == defaultSpeed
+        check eh.currentFrame().speed == uint8(defaultSpeed)
       
       eh.stepRow()
       check eh.currentFrame().speed == 0x40u8
@@ -624,7 +624,7 @@ block: # =========================================================== effects
       var eh = EngineHarness.init()
 
       eh.setupSong(s):
-        s.speed = 0x20
+        s.speed = Speed(0x20)
         # 00 : A-4 -- G01
         # 01 : G-3 -- G04
         # 02 : --- -- ---
@@ -680,10 +680,10 @@ block: # =========================================================== effects
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editPattern(0, pat):
-          pat(ch1)[0] = litTrackRow("... .. L00 ... ...")
-          pat(ch2)[1] = litTrackRow("... .. L00 ... ...")
-          pat(ch3)[2] = litTrackRow("... .. L00 ... ...")
-          pat(ch4)[3] = litTrackRow("... .. L00 ... ...")
+          pat[ch1][0] = litTrackRow("... .. L00 ... ...")
+          pat[ch2][1] = litTrackRow("... .. L00 ... ...")
+          pat[ch3][2] = litTrackRow("... .. L00 ... ...")
+          pat[ch4][3] = litTrackRow("... .. L00 ... ...")
       
       eh.play()
       
@@ -820,12 +820,12 @@ block: # =========================================================== Engine
         engine.play(toImmutable[ref Song](nil))
 
     test "play raises IndexDefect on invalid pattern index":
-      var song = Song.new()
+      var song = newSong()
       expect IndexDefect:
         engine.play(song.toImmutable, songPos(song.order.len))
 
     test "play raises IndexDefect on invalid row index":
-      var song = Song.new()
+      var song = newSong()
       expect IndexDefect:
         engine.play(song.toImmutable, songPos(0, song[].trackLen))
 
@@ -952,12 +952,12 @@ block: # ============================================================= playback
           for startedNewRow in expected:
             eh.frameTest(f):
               check:
-                f.speed == speed
+                f.speed == uint8(speed)
                 f.startedNewRow == startedNewRow
 
-      speedtest([true],  0x10)
-      speedtest([true, false, false, true, false], 0x28)
-      speedtest([true, false, false, false, false, false], 0x60)
+      speedtest([true],  Speed(0x10))
+      speedtest([true, false, false, true, false], Speed(0x28))
+      speedtest([true, false, false, false, false, false], Speed(0x60))
 
     test "song looping":
       var eh = EngineHarness.init()

@@ -167,16 +167,16 @@ func init(T: typedesc[Timer]; speed: Speed): Timer =
   )
 
 func active(t: Timer): bool =
-  t.counter < unitSpeed
+  t.counter < int(unitSpeed)
 
 proc setPeriod(t: var Timer; speed: Speed) =
   t.period = clamp(speed, low(Speed), high(Speed)).int
   # if the counter exceeds the new period, clamp it to 1 unit less
   # this way, the timer will overflow on the next call to step
-  t.counter = min(t.counter, t.period - unitSpeed)
+  t.counter = min(t.counter, t.period - int(unitSpeed))
 
 proc step(t: var Timer): bool =
-  t.counter += unitSpeed
+  t.counter += int(unitSpeed)
   result = t.counter >= t.period
   if result:
     # timer overflow
@@ -361,9 +361,9 @@ proc step(r: var InstrumentRuntime): SequenceInput =
   proc next(s: Sequence, index: var int): Option[uint8] =
     let seqlen = s.data.len
     if index >= seqlen:
-      if seqlen != 0 and s.loopIndex.isSome():
+      if seqlen != 0 and s.loop.enabled:
         # loop to the loop index
-        index = s.loopIndex.get()
+        index = int(s.loop.index)
       else:
         # at end of sequence, return none
         return
@@ -597,7 +597,7 @@ proc step*(r: var MusicRuntime; itable: InstrumentTable;
         discard
       of pcNext:
         inc r.orderCounter
-        if r.orderCounter >= r.song[].order.len:
+        if r.orderCounter >= r.song[].patternLen():
           # loop back to the first pattern
           r.orderCounter = 0
         r.rowCounter = r.global.patternCommandParam.int
@@ -606,14 +606,14 @@ proc step*(r: var MusicRuntime; itable: InstrumentTable;
       of pcJump:
         r.rowCounter = 0
         # if the parameter goes past the last one, use the last one
-        r.orderCounter = min(r.global.patternCommandParam.int, r.song[].order.len - 1)
+        r.orderCounter = min(r.global.patternCommandParam.int, r.song[].patternLen() - 1)
         r.global.patternCommand = pcNone
         frame.startedNewPattern = true
     
     # set current track row to the track controls
-    let order = r.song[].order[r.orderCounter]
+    let prow = r.song[].getRow(r.orderCounter, r.rowCounter)
     for chno in ChannelId:
-      r.trackControls[chno].setRow(r.song[].getRow(chno, order[chno], r.rowCounter))
+      r.trackControls[chno].setRow(prow[chno])
     
     if r.global.halt:
       r.halt(op)
@@ -660,9 +660,9 @@ proc step*(r: var MusicRuntime; itable: InstrumentTable;
 
   # change speed if the Fxx effect was used
   if r.global.speed > 0:
-    r.timer.setPeriod(r.global.speed)
+    r.timer.setPeriod(Speed(r.global.speed))
     r.global.speed = 0
-  frame.speed = r.timer.period.Speed
+  frame.speed = uint8(r.timer.period)
 
   if r.timer.step():
     # timer overflow, advance row counter

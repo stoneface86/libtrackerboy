@@ -41,7 +41,7 @@ task endianTests, "Runs tests/private/tendian.nim with different configurations"
 
 task buildTests, "Builds the unit tester":
   nohints()
-  vexec("nim", "--hints:off", "c", flagOutdir, "tests/tests.nim")
+  vexec("nim", "--hints:off", "--rangeChecks:on", "c", flagOutdir, "tests/tests.nim")
 
 task test, "Runs unit tests":
   buildTestsTask()

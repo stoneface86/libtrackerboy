@@ -69,7 +69,7 @@ template defaultInit*(someField: var typed) =
   ##
   discard
 
-template contains*[T](R: typedesc[SomeOrdinal]; x: T): bool =
+template contains*[T](R: typedesc[Ordinal | enum | range]; x: T): bool =
   ## Sugar for checking if a value is within the bounds of an ordinal type.
   ##
   runnableExamples:

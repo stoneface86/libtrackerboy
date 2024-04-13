@@ -14,7 +14,7 @@ block: # ========================================================== PatternClip
     )
 
   proc makeTestSong(): Song =
-    result = Song.init
+    result = initSong()
     # sample pattern data (patterns 0 and 1)
     #      ch1          ch2          ch3          ch4
     # 00 | G-5 00 ... | ... .. ... | ... .. ... | G-6 01 ... |
@@ -27,30 +27,30 @@ block: # ========================================================== PatternClip
     # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
     # pattern 2 is empty
     result.trackLen = patternSize
-    result.order.setData([
-      [0u8, 0, 0, 0],
-      [1u8, 1, 1, 1],
-      [2u8, 2, 2, 2]
-    ])
+    result.order = @[
+      orow(0, 0, 0, 0),
+      orow(1, 1, 1, 1),
+      orow(2, 2, 2, 2)
+    ]
     for i in 0..1:
       result.editPattern(i, pattern):
         ###### CH1 #########################################
-        pattern(ch1)[0] = litTrackRow("G-5 00 ... ... ...")
+        pattern[ch1][0] = litTrackRow("G-5 00 ... ... ...")
         # 01
         # 02
         # 03
-        pattern(ch1)[4] = litTrackRow("B-5 00 ... ... ...")
+        pattern[ch1][4] = litTrackRow("B-5 00 ... ... ...")
         # 05
         # 06
         # 07
         ###### CH4 #########################################
-        pattern(ch4)[0] = litTrackRow("G-6 01 ... ... ...")
+        pattern[ch4][0] = litTrackRow("G-6 01 ... ... ...")
         # 01
-        pattern(ch4)[2] = litTrackRow("G-6 01 G03 ... ...")
+        pattern[ch4][2] = litTrackRow("G-6 01 G03 ... ...")
         # 03
-        pattern(ch4)[4] = litTrackRow("G-6 02 ... ... ...")
+        pattern[ch4][4] = litTrackRow("G-6 02 ... ... ...")
         # 05
-        pattern(ch4)[6] = litTrackRow("G-6 01 G03 ... ...")
+        pattern[ch4][6] = litTrackRow("G-6 01 G03 ... ...")
         # 07        
     result.editPattern(2, pattern):
       discard
@@ -93,10 +93,10 @@ block: # ========================================================== PatternClip
       song.viewPattern(0, p0):
         song.viewPattern(2, p1):
           check:
-            p0(ch1) == p1(ch1)
-            p0(ch2) == p1(ch2)
-            p0(ch3) == p1(ch3)
-            p0(ch4) == p1(ch4)
+            p0[ch1] == p1[ch1]
+            p0[ch2] == p1[ch2]
+            p0[ch3] == p1[ch3]
+            p0[ch4] == p1[ch4]
 
     test "overwrite paste":
       # clip all of track1
@@ -116,10 +116,10 @@ block: # ========================================================== PatternClip
       song.viewPattern(0, p0):
         song.viewPattern(1, p1):
           check:
-            p0(ch1) == p1(ch1)
-            p0(ch2) == p1(ch2)
-            p0(ch3) == p1(ch3)
-            p1(ch1) == p1(ch4)
+            p0[ch1] == p1[ch1]
+            p0[ch2] == p1[ch2]
+            p0[ch3] == p1[ch3]
+            p1[ch1] == p1[ch4]
 
     test "mix paste":
       var song = makeTestSong()
@@ -134,10 +134,10 @@ block: # ========================================================== PatternClip
       song.viewPattern(0, p0):
         song.viewPattern(1, p1):
           check:
-            p0(ch1) == p1(ch1)
-            p0(ch2) == p1(ch2)
-            p0(ch3) == p1(ch3)
-            p0(ch4) == p1(ch4)
+            p0[ch1] == p1[ch1]
+            p0[ch2] == p1[ch2]
+            p0[ch3] == p1[ch3]
+            p0[ch4] == p1[ch4]
 
       # now mix paste at row 1:
       # 00 ... | G-6 01 ... |     ... | G-6 01 ... |
@@ -151,7 +151,7 @@ block: # ========================================================== PatternClip
       clip.paste(song, 1, PatternCursor(row: 1, track: 3, column: colNote), true)
 
       proc makeExpected(): Track =
-        result = Track.init(patternSize)
+        result = initTrack(patternSize)
         result[0] = litTrackRow("G-6 01 ... ... ...")
         result[1] = litTrackRow("G-5 00 ... ... ...")
         result[2] = litTrackRow("G-6 01 G03 ... ...")
@@ -163,11 +163,11 @@ block: # ========================================================== PatternClip
         song.viewPattern(1, p1):
           check:
             # these tracks should remain unchanged
-            p0(ch1) == p1(ch1)
-            p0(ch2) == p1(ch2)
-            p0(ch3) == p1(ch3)
+            p0[ch1] == p1[ch1]
+            p0[ch2] == p1[ch2]
+            p0[ch3] == p1[ch3]
             # check that the mix works
-            p1(ch4) == TrackView.init(makeExpected())
+            p1[ch4] == initTrackView(makeExpected())
 
 block: # ===================================================== PatternSelection
   suite "PatternSelection":

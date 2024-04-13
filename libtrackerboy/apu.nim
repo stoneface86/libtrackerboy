@@ -22,6 +22,7 @@ import
 import std/[bitops, algorithm, math]
 
 export common
+export MixMode, pansLeft, pansRight
 
 const
   dcOffset: float32 = 7.5f

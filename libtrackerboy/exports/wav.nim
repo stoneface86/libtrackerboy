@@ -6,38 +6,34 @@ This module provides an exporter for exporting individual songs in a module to
 a WAV file. The song is played, the APU is emulated, and the resulting
 sound samples are written to an output WAV file.
 
-There are two ways of using this module: `one-shot <#oneminusshot>`_ and
-`iterative <#iterative>`_.
+There are two ways of using this module: [oneminusshot] and [iterative].
 
-One-shot
---------
+## One-shot
 
-One-shot mode is done by just calling the
-`exportWav <#exportWav,Module,WavConfig>`_ proc. The WAV file is generated in
-that proc alone according to the given configuration.
+One-shot mode is done by just calling the [exportWav] proc. The WAV file is
+generated in that proc alone according to the given configuration.
 
-Iterative
----------
+## Iterative
 
-Iterative mode is done by creating a `WavExporter <#WavExporter>`_ object and
-then calling the `process <#process,WavExporter,Module>`_ proc repeatedly until 
-`hasWork <#hasWork,WavExporter>`_ is false. You can use the
-`progress <#progress,WavExporter>`_ and `progressMax <#progressMax,WavExporter>`_
-procs to display overall progress of the export.
+Iterative mode is done by creating a [WavExporter] object and
+then calling the [process] proc repeatedly until [hasWork] is false. You can
+use the [progress] and [progressMax] procs to display overall progress of the
+export.
 
 This mode is preferred for GUI applications, so that you can report progress
 to the user while the export is in process.
 
 Example:
 
-.. code:: nim
-  var config = WavConfig.init()
-  config.filename = "out.wav"
-  var ex = WavExporter.init(module, config)
-  # progressBar.setMax(ex.progressMax)
-  while ex.hasWork():
-    # progressBar.setValue(ex.progress)
-    ex.process(module)
+```nim
+var config = WavConfig.init()
+config.filename = "out.wav"
+var ex = WavExporter.init(module, config)
+# progressBar.setMax(ex.progressMax)
+while ex.hasWork():
+  # progressBar.setValue(ex.progress)
+  ex.process(module)
+```
 
 ]##
 
@@ -46,7 +42,8 @@ import
   ../apu,
   ../data,
   ../engine,
-  ../private/wavwriter
+  ../private/wavwriter,
+  ../tracking
 
 import std/os
 
@@ -55,45 +52,38 @@ type
   SongDuration* = object
     ## Duration of the song to export. The amount can either be specified in
     ## number of loops, or a `Duration` from `std/times`.
+    ## - `unitInLoops`: If `true`, then this duration will loop the song a given
+    ##                  number of times. If `false`, then this duration will use
+    ##                  a time duration.
+    ## - `loopAmount`: Number of times to loop the song.
+    ## - `timeAmount`: Amount of time to play the song for.
     ##
     case unitInLoops*: bool
-      ## If `true`, then this duration will loop the song a given number of
-      ## times. If `false, then this duration will use a time duration.
-      ##
     of true:
       loopAmount*: Positive
-        ## Number of times to loop the song
-        ##
     of false:
       timeAmount*: Duration
-        ## Amount of time to play the song for.
-        ##
 
   WavConfig* = object
     ## Configuration of the WAV file to create.
+    ## - `song`: Index of the song in the module to export. Default is 0, or
+    ##           the first song in the module.
+    ## - `duration`: The duration to export. Default is a time unit of 1 minute.
+    ## - `filename`: Destination filename of the output WAV file.
+    ## - `samplerate`: Output samplerate, in Hertz, of the output WAV file.
+    ##                 Must not be 0. Default is 44100 Hz.
+    ## - `channels`: Set of channels to export, default is all channels.
+    ## - `isMono`: If set to `true`, the output file will be in mono sound
+    ##             (1 sound channel), stereo otherwise. Mono sound conversion
+    ##             is done by averaging the left and right channels. Default is\
+    ##             false, or stereo sound.
     ## 
     song*: Natural
-      ## Index of the song in the module to export. Default is 0, or the first
-      ## song.
-      ##
     duration*: SongDuration
-      ## The duration to export. Default is a time unit of 1 minute.
-      ##
     filename*: string
-      ## Destination filename of the output WAV file.
-      ##
     samplerate*: Natural
-      ## Output samplerate, in Hertz, of the output WAV file. Must not be 0.
-      ## Default is 44100 Hz.
-      ##
     channels*: set[ChannelId]
-      ## Set of channels to export. Default is all channels.
-      ##
     isMono*: bool
-      ## If set to true, the output file will be in mono sound (1 sound channel).
-      ## stereo otherwise. Mono sound conversion is done by averaging the left
-      ## and right channels. Default is false, or stereo sound.
-      ##
 
   WavExporter* = object
     ## WavExporter object for iterative mode. An exporter can be created via
@@ -127,7 +117,7 @@ func init*(T: typedesc[WavConfig]): WavConfig =
   )
 
 proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
-          ): WavExporter {. raises: [IOError] .} =
+           ): WavExporter {. raises: [IOError] .} =
   ## Initializes a WavExporter for a given module and config. The output WAV
   ## file specified in `config` is created and ready to be filled with samples.
   ## 

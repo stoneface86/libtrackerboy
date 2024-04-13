@@ -22,6 +22,14 @@ proc overwriteRevMajor(strm: Stream, major: uint8) =
   strm.setPosition(24) # seek to revMajor
   strm.write(major)    # overwrite with the given major
 
+template init(T: typedesc[ModulePiece]): auto =
+  when T is Song:
+    initSong()
+  elif T is Instrument:
+    initInstrument()
+  else:
+    initWaveform()
+
 
 template pieceTests(
   correctData: ModulePiece,
@@ -106,7 +114,7 @@ block: # =============================================================== major0
     setup:
       var 
         strm = newStringStream(moduleBin)
-        m = Module.init()
+        m = initModule()
 
     test "deserialize":
       let fr = m.deserialize(strm)
@@ -139,7 +147,7 @@ block: # =============================================================== major1
     instEnvelope = slurp("../data/major1-sample.tbi")
 
   var 
-    testModule = Module.init
+    testModule = initModule()
     testModuleResult: FormatResult
 
   block:
@@ -175,7 +183,7 @@ block: # =============================================================== major1
       strm.write(48u16)
       strm.setPosition(0)
 
-      var m = Module.init()
+      var m = initModule()
       let fr = m.deserialize(strm)
       check fr == frNone
       if fr == frNone:
@@ -186,7 +194,7 @@ block: # =============================================================== major1
 
     test "song deserialized with default tickrate override":
       skipOnFormatError()
-      check    testModule.songs[0].tickrate.isNone()
+      check    testModule.songs[0][].tickrate.isNone()
 
     test "instrument with no initEnvelope converted to empty envelope sequence":
       let strm = newStringStream(instNoEnvelope)
@@ -232,7 +240,7 @@ block: # ============================================================== modules
       strm.write(moduleBin)
       strm.setPosition(0)
 
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       let res = moduleIn.deserialize(strm)
       check res == frNone
       if res == frNone:
@@ -241,7 +249,7 @@ block: # ============================================================== modules
     test "deserialize - invalid signature":
       strm.write(moduleBin)
       corruptSignature(strm)
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       check moduleIn.deserialize(strm) == frInvalidSignature
 
     test "deserialize - future revision":
@@ -249,7 +257,7 @@ block: # ============================================================== modules
       # overwrite the rev major in the header to a future version
       overwriteRevMajor(strm, uint8.high)
       strm.setPosition(0)
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       # deserialize should return with error frInvalidRevision
       check moduleIn.deserialize(strm) == frInvalidRevision
 
@@ -258,7 +266,7 @@ block: # ============================================================== modules
       strm.setPosition(127)
       strm.write(System.high.uint8 + 1)
       strm.setPosition(0)
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       # if the system field in the header is not a valid System value, it will default to systemDmg
       check moduleIn.deserialize(strm) == frNone
       check moduleIn.tickrate == defaultTickrate
@@ -270,7 +278,7 @@ block: # ============================================================== modules
       strm.setPosition(126)
       strm.write(TableId.high+1)
       strm.setPosition(0)
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       check moduleIn.deserialize(strm) == frInvalidCount
 
     test "deserialize - invalid terminator":
@@ -283,7 +291,7 @@ block: # ============================================================== modules
       strm.setPosition(pos)
       strm.write(data)
       strm.setPosition(0)
-      var moduleIn = Module.init
+      var moduleIn = initModule()
       check moduleIn.deserialize(strm) == frInvalidTerminator
 
     test "serialize":
@@ -300,7 +308,7 @@ block: # ============================================================== modules
       check serializeRes == frNone
       if serializeRes == frNone:
         strm.setPosition(0)
-        var moduleIn = Module.init
+        var moduleIn = initModule()
         let deserializeRes = moduleIn.deserialize(strm)
         check deserializeRes == frNone
         if deserializeRes == frNone:

@@ -9,7 +9,8 @@ import
   ./data,
   ./version,
   ./private/endian,
-  ./private/ioblocks
+  ./private/ioblocks,
+  ./private/utils
 import ./private/data as dataPrivate
 
 import std/[options]
@@ -220,21 +221,18 @@ template invalidWhen(cond: bool; res = frInvalidSize): untyped =
     return res
 
 template checkChannel(channel: int): untyped =
-  if channel notin ChannelId.low.ord..ChannelId.high.ord:
+  if channel notin ChannelId:
     return frInvalidChannel
 
 func packEffectCounts(ec: EffectCounts): PackedEffects =
-  (ec[0] or (ec[1] shl 2) or (ec[2] shl 4) or (ec[3] shl 6)).PackedEffects
+  PackedEffects(ec[ch1] or (ec[ch2] shl 2) or (ec[ch3] shl 4) or (ec[ch4] shl 6))
 
 func unpackEffectCounts(ec: PackedEffects): EffectCounts =
-  template toColumn(val: uint8): EffectColumns =
-    # clamp(val, EffectColumns.low, EffectColumns.high)
-    max(val, EffectColumns.low)
-  [ 
-    toColumn(ec.uint8 and 0x3),
-    toColumn((ec.uint8 shr 2) and 0x3),
-    toColumn((ec.uint8 shr 4) and 0x3),
-    toColumn((ec.uint8 shr 6) and 0x3)
+  result = [ 
+    ec.uint8 and 0x3,
+    (ec.uint8 shr 2) and 0x3,
+    (ec.uint8 shr 4) and 0x3,
+    (ec.uint8 shr 6) and 0x3
   ]
 
 func `$`(p: PackedEffects): string =
@@ -244,8 +242,8 @@ proc upgradeHeader0to1(h: var HeaderBuf): bool =
   template h0(): Header0 = cast[Header0](h)
   template h1(): var Header1 = cast[ptr Header1](h.addr)[]
   let
-    icount = h0.numberOfInstruments.toNE()
-    wcount = h0.numberOfWaveforms.toNE()
+    icount = toNE(h0.numberOfInstruments)
+    wcount = toNE(h0.numberOfWaveforms)
     system = h0.system
     customFramerate = h0.customFramerate
   if icount > high(uint8) or wcount > high(uint8):
@@ -256,9 +254,9 @@ proc upgradeHeader0to1(h: var HeaderBuf): bool =
     # Was Header0's customFramerate field
     h1.reserved = 0
     # Was Header0's numberOfInstruments and numberOfWaveforms fields
-    h1.icount = icount.uint8
-    h1.scount = 1.bias
-    h1.wcount = wcount.uint8
+    h1.icount = uint8(icount)
+    h1.scount = bias(1)
+    h1.wcount = uint8(wcount)
     h1.system = system
     # overwrites 2 bytes of Header0's reserved
     h1.customFramerate = customFramerate
@@ -269,30 +267,29 @@ proc upgradeHeader1to2(h: var HeaderBuf) =
   template h2(): var Header2 = cast[ptr Header2](h.addr)[]
   # customFramerate field is now a float32
   # convert existing value from uint16 to float32
-  let customFramerateFloat = h1.customFramerate.toNE.float32
+  let customFramerateFloat = float32(toNE(h1.customFramerate))
   # store it back as a little endian uint32
-  h2.customFramerate = customFramerateFloat.toLE
+  h2.customFramerate = toLE(customFramerateFloat)
 
 proc deserialize(str: var string; ib: var InputBlock): FormatResult =
   str.setLen(block:
     # get the 2-byte length prefix
     var len: LittleEndian[uint16]
     invalidWhen ib.read(len)
-    len.toNE.int
+    int(toNE(len))
   )
   invalidWhen ib.read(str)
-  frNone
-
+  result = frNone
+  
 proc deserialize(s: var Sequence; ib: var InputBlock): FormatResult =
   var format: SequenceFormat
   invalidWhen ib.read(format)
-  let seqlen = format.length.toNE.int
-  invalidWhen seqlen > high(SequenceSize)
-  s.loopIndex = block:
-    if format.loopEnabled:
-      some(format.loopIndex.ByteIndex)
-    else:
-      none(ByteIndex)
+  let seqlen = int(toNE(format.length))
+  invalidWhen seqlen notin SequenceLen
+  if format.loopEnabled:
+    s.loop = initLoopPoint(format.loopIndex)
+  else:
+    s.loop = noLoopPoint
 
   var seqdata = newSeq[uint8](seqlen)
   invalidWhen ib.read(seqdata)
@@ -310,8 +307,8 @@ proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
     if major < 2:
       var format: InstrumentFormat
       invalidWhen ib.read(format)
-      checkChannel format.channel.int
-      p.channel = format.channel.ChannelId
+      checkChannel int(format.channel)
+      p.channel = ChannelId(format.channel)
       if format.envelopeEnabled:
         p.sequences[skEnvelope].setLen(1)
         p.sequences[skEnvelope][0] = format.envelope
@@ -319,8 +316,8 @@ proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
       # 2.0 replaces InstrumentFormat with a uint8 channel
       var channel: uint8
       invalidWhen ib.read(channel)
-      checkChannel channel.int
-      p.channel = channel.ChannelId
+      checkChannel int(channel)
+      p.channel = ChannelId(channel)
     # deserialize sequences
     for kind in skArp..skTimbre:
       errorCheck: p.sequences[kind].deserialize(ib)
@@ -331,10 +328,10 @@ proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
   elif T is Song:
     var format: SongFormat
     invalidWhen ib.read(format)
-    p.rowsPerBeat = format.rowsPerBeat
-    p.rowsPerMeasure = format.rowsPerMeasure
-    invalidWhen format.speed.Speed notin (low(Speed)..high(Speed)), frInvalidSpeed
-    p.speed = format.speed.Speed
+    p.rowsPerBeat = int(format.rowsPerBeat)
+    p.rowsPerMeasure = int(format.rowsPerMeasure)
+    invalidWhen not isValid(Speed(format.speed)), frInvalidSpeed
+    p.speed = Speed(format.speed)
     if major > 0:
       var ex1: SongFormatEx1
       invalidWhen ib.read(ex1)
@@ -349,7 +346,7 @@ proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
         of 2:
           p.tickrate = some(Tickrate(system: systemSgb))
         of 3:
-          let framerate = ex2.customFramerateOverride.toNE
+          let framerate = toNE(ex2.customFramerateOverride)
           p.tickrate = some(Tickrate(
             system: systemCustom, 
             customFramerate: (
@@ -363,52 +360,52 @@ proc deserialize[T: ModulePiece](p: var T; ib: var InputBlock; major: int
           p.tickrate = none(Tickrate)
     # Order
     block:
-      var order = newSeq[OrderRow](format.patternCount.unbias)
+      var order = newSeq[OrderRow](unbias(format.patternCount))
       invalidWhen ib.read(order)
-      p.order.data = order
+      p.order = order
     # Track data
     p.removeAllTracks()
-    let trackSize = format.rowsPerTrack.unbias.TrackLen
+    let trackSize = unbias(format.rowsPerTrack)
     p.trackLen = trackSize
-    for i in 0..<format.numberOfTracks.toNE.int:
+    for i in 0..<int(toNE(format.numberOfTracks)):
       var trackFormat: TrackFormat
       invalidWhen ib.read(trackFormat)
-      checkChannel trackFormat.channel.int
-      p.editTrack(trackFormat.channel.ChannelId, trackFormat.trackId, track):
-        let rowcount = trackFormat.rows.unbias.TrackLen
+      checkChannel int(trackFormat.channel)
+      p.editTrack(ChannelId(trackFormat.channel), trackFormat.trackId, track):
+        let rowcount = unbias(trackFormat.rows)
         invalidWhen rowcount > trackSize, frInvalidRowCount
         for j in 0..<rowcount:
           var rowFormat: RowFormat
           invalidWhen ib.read(rowFormat)
-          invalidWhen rowFormat.rowno.int >= trackSize.int, frInvalidRowNumber
+          invalidWhen int(rowFormat.rowno) >= int(trackSize), frInvalidRowNumber
           track[rowFormat.rowno] = rowFormat.rowdata
   else:   # Waveform
     invalidWhen ib.read(p.data)
-  frNone
+  result = frNone
 
 proc serialize(str: string; ob: var OutputBlock) =
-  ob.write(toLE(str.len.uint16))
+  ob.write(toLE(uint16(str.len)))
   ob.write(str)
 
 proc serialize[T: ModulePiece](p: T; ob: var OutputBlock) =
   serialize(p.name, ob)
   when T is Instrument:
-    ob.write(p.channel.uint8)
+    ob.write(uint8(p.channel))
     for sequence in p.sequences:
       ob.write(SequenceFormat(
-        length: toLE(sequence.data.len.uint16),
-        loopEnabled: sequence.loopIndex.isSome(),
-        loopIndex: sequence.loopIndex.get(0).uint8
+        length: toLE(uint16(sequence.len)),
+        loopEnabled: sequence.loop.enabled,
+        loopIndex: sequence.loop.index
       ))
       ob.write(sequence.data)
   elif T is Song:
     ob.write(SongFormat(
-      rowsPerBeat: p.rowsPerBeat.uint8,
-      rowsPerMeasure: p.rowsPerMeasure.uint8,
-      speed: p.speed.uint8,
-      patternCount: p.order.len.bias,
-      rowsPerTrack: p.trackLen.bias,
-      numberOfTracks: p.totalTracks().uint16.toLE
+      rowsPerBeat: uint8(p.rowsPerBeat),
+      rowsPerMeasure: uint8(p.rowsPerMeasure),
+      speed: uint8(p.speed),
+      patternCount: bias(p.patternLen()),
+      rowsPerTrack: bias(p.trackLen()),
+      numberOfTracks: toLE(uint16(p.totalTracks()))
     ))
     ob.write(SongFormatEx1(
       numberOfEffects: packEffectCounts(p.effectCounts)
@@ -416,11 +413,12 @@ proc serialize[T: ModulePiece](p: T; ob: var OutputBlock) =
     block:
       var f: SongFormatEx2
       if p.tickrate.isSome():
-        f.systemOverride = p.tickrate.get().system.ord.uint8 + 1
-        f.customFramerateOverride = p.tickrate.get().customFramerate.toLE
+        let tickrate = p.tickrate.get()
+        f.systemOverride = uint8(tickrate.system) + 1
+        f.customFramerateOverride = toLE(tickrate.customFramerate)
       ob.write(f)
     # write the song order
-    ob.write(p.order.data)
+    ob.write(p.order)
     # write out all tracks
     for chno in ChannelId:
       for trackid in p.trackIds(chno):
@@ -429,15 +427,15 @@ proc serialize[T: ModulePiece](p: T; ob: var OutputBlock) =
           if rowcount > 0:
             # only save non-empty tracks
             ob.write(TrackFormat(
-              channel: chno.uint8,
-              trackId: trackid.uint8,
-              rows: rowcount.bias
+              channel: uint8(chno),
+              trackId: trackid,
+              rows: bias(rowcount)
             ))
             for rowno in 0..<track.len:
-              let row = track[rowno.ByteIndex]
+              let row = track[rowno]
               if not row.isEmpty():
                 ob.write(RowFormat(
-                  rowno: rowno.uint8,
+                  rowno: uint8(rowno),
                   rowdata: row
                 ))
 
@@ -448,7 +446,7 @@ proc serialize[T: ModulePiece](p: T; ob: var OutputBlock) =
 # A payload is composed of blocks
 
 proc processIndx(m: var Module; ib: var InputBlock; icount, wcount: int;
-                ): FormatResult =
+                 ): FormatResult =
   # Index block, only present in legacy modules
 
   proc legacyDeserialize(str: var string; ib: var InputBlock): bool =
@@ -456,10 +454,10 @@ proc processIndx(m: var Module; ib: var InputBlock; icount, wcount: int;
     var len: uint8
     if ib.read(len):
       return true
-    str.setLen(len.int)
+    str.setLen(int(len))
     ib.read(str)
 
-  invalidWhen legacyDeserialize(m.songs[0].name, ib)
+  invalidWhen legacyDeserialize(m.songs.mget(0).name, ib)
   
   template readListIndex(count: int; table: untyped): untyped =
     for i in 0..<count:
@@ -515,10 +513,10 @@ proc deserialize*(m: var Module; stream: Stream): FormatResult {.raises: [].} =
     if header.bh.signature != signature:
       return frInvalidSignature
 
-    if header.system in System.low.uint8..System.high.uint8:
-      m.tickrate.system = header.system.System
+    if header.system in System:
+      m.tickrate.system = System(header.system)
       if m.tickrate.system == systemCustom:
-        let framerate = cast[float32](header.customFramerate.toNE)
+        let framerate = cast[float32](toNE(header.customFramerate))
         m.tickrate.customFramerate = block:
           if framerate > 0.0f:
             framerate
@@ -527,28 +525,29 @@ proc deserialize*(m: var Module; stream: Stream): FormatResult {.raises: [].} =
     else:
       m.tickrate = defaultTickrate
     
-    invalidWhen header.icount > high(TableId)+1 or header.wcount > high(TableId)+1, frInvalidCount
+    invalidWhen header.icount > high(TableId)+1 or 
+                header.wcount > high(TableId)+1, frInvalidCount
 
-    m.private.revisionMajor = header.bh.revMajor.int
-    m.private.revisionMinor = header.bh.revMinor.int
-    m.private.version.major = header.bh.versionMajor.toNE.int
-    m.private.version.minor = header.bh.versionMinor.toNE.int
-    m.private.version.patch = header.bh.versionPatch.toNE.int
+    m.private.revisionMajor = int(header.bh.revMajor)
+    m.private.revisionMinor = int(header.bh.revMinor)
+    m.private.version.major = int(toNE(header.bh.versionMajor))
+    m.private.version.minor = int(toNE(header.bh.versionMinor))
+    m.private.version.patch = int(toNE(header.bh.versionPatch))
 
     m.title = header.title
     m.artist = header.artist
     m.copyright = header.copyright
 
-    m.instruments = InstrumentTable.init
-    m.waveforms = WaveformTable.init
-    m.songs = SongList.init(header.scount.unbias)
+    m.instruments = initInstrumentTable()
+    m.waveforms = initWaveformTable()
+    m.songs = initSongList(unbias(header.scount))
 
     # read the payload
-    let major = header.bh.revMajor.int
+    let major = int(header.bh.revMajor)
     case major:
     of 0: # Rev A module
       readBlock blockIdIndex, stream:
-        errorCheck: processIndx(m, ib, header.icount.int, header.wcount.int)
+        errorCheck: processIndx(m, ib, int(header.icount), int(header.wcount))
       readBlock blockIdComment, stream:
         errorCheck: processComm(m, ib)
       readBlock blockIdSong, stream:
@@ -566,7 +565,7 @@ proc deserialize*(m: var Module; stream: Stream): FormatResult {.raises: [].} =
       readBlock blockIdComment, stream:
         errorCheck: processComm(m, ib)
       
-      for i in 0..<header.scount.unbias:
+      for i in 0..<unbias(header.scount):
         readBlock blockIdSong, stream:
           errorCheck: deserialize(m.songs[i][], ib, major)
 
@@ -576,13 +575,13 @@ proc deserialize*(m: var Module; stream: Stream): FormatResult {.raises: [].} =
           readBlock blockId, stream:
             var id: TableId
             invalidWhen ib.read(id)
-            invalidWhen id notin low(TableId)..high(TableId), frInvalidId
+            invalidWhen id notin TableId, frInvalidId
             invalidWhen table[id] != nil, frInvalidDuplicateId
             table.add(id)
             errorCheck: deserialize(table[id][], ib, major)
 
-      processTableBlock(m.instruments, header.icount.int, blockIdInstrument)
-      processTableBlock(m.waveforms, header.wcount.int, blockIdWave)
+      processTableBlock(m.instruments, int(header.icount), blockIdInstrument)
+      processTableBlock(m.waveforms, int(header.wcount), blockIdWave)
 
 
     # check the terminator (rev B and up)
@@ -603,13 +602,13 @@ template blockIdOfType(T: typedesc[ModulePiece]): BlockId =
     blockIdWave
 
 template deserializeImpl[T: ModulePiece](p: var T; stream: Stream
-                                        ): FormatResult =
+                                         ): FormatResult =
   try:
     var header: BasicHeader
     stream.read(header)
     if header.signature != signature:
       return frInvalidSignature
-    let major = header.revMajor.int
+    let major = int(header.revMajor)
     if major notin 1..currentFileMajor: # only rev 1 and up supports single block files
       return frInvalidRevision
 
@@ -621,13 +620,15 @@ template deserializeImpl[T: ModulePiece](p: var T; stream: Stream
   frNone
 
 proc deserialize*(i: var Instrument; stream: Stream
-                 ): FormatResult {.raises: [].} =
+                  ): FormatResult {.raises: [].} =
   deserializeImpl(i, stream)
 
-proc deserialize*(s: var Song; stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(s: var Song; stream: Stream
+                  ): FormatResult {.raises: [].} =
   deserializeImpl(s, stream)
 
-proc deserialize*(w: var Waveform; stream: Stream): FormatResult {.raises: [].} =
+proc deserialize*(w: var Waveform; stream: Stream
+                  ): FormatResult {.raises: [].} =
   deserializeImpl(w, stream)
 
 template writeBlock(id: BlockId; stream: Stream; body: untyped): untyped =
@@ -646,11 +647,11 @@ proc serialize*(m: Module; stream: Stream): FormatResult {.raises: [].} =
         title: m.title,
         artist: m.artist,
         copyright: m.copyright,
-        icount: m.instruments.len.uint8,
-        scount: m.songs.len.bias,
-        wcount: m.waveforms.len.uint8,
-        system: m.tickrate.system.ord.uint8,
-        customFramerate: m.tickrate.customFramerate.toLE
+        icount: uint8(m.instruments.len()),
+        scount: bias(m.songs.len()),
+        wcount: uint8(m.waveforms.len()),
+        system: uint8(m.tickrate.system),
+        customFramerate: toLE(m.tickrate.customFramerate)
       )
       
       stream.write(header)
@@ -659,7 +660,7 @@ proc serialize*(m: Module; stream: Stream): FormatResult {.raises: [].} =
     writeBlock blockIdComment, stream:
       ob.write(m.comments)
 
-    for i in 0..<m.songs.len:
+    for i in 0..<m.songs.len():
       writeBlock blockIdSong, stream:
         serialize(m.songs[i][], ob)
 
@@ -680,7 +681,7 @@ proc serialize*(m: Module; stream: Stream): FormatResult {.raises: [].} =
 template serializeImpl[T: ModulePiece](p: T; stream: Stream): FormatResult =
   try:
     stream.write(currentVersionHeader())
-    writeBlock blockIdOfType(T.type), stream:
+    writeBlock blockIdOfType(typeOf(T)), stream:
       serialize(p, ob)
   except IOError, OSError:
     return frWriteError

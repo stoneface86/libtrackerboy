@@ -16,6 +16,8 @@ import
 
 import std/[options, times]
 
+export options
+
 type
   Counter* = distinct int
     ## A counter for counting ticks.
@@ -49,7 +51,7 @@ type
     nextRowParam: uint8
     incRow: bool
     
-    effectsFilter: set[EffectType]
+    effectsFilter: set[EffectCmd]
     patternRepeat: bool
 
   TrackerStatus* = enum
@@ -89,7 +91,7 @@ type
     loopsTo*: Option[int]
     
 
-func filter*(filter: set[EffectType]; row: TrackRow): TrackRow =
+func filter*(filter: set[EffectCmd]; row: TrackRow): TrackRow =
   ## Applies an effect filter to a row. The resulting row is a copy of `row`,
   ## except that any effect whose `effectType` is contained in `filter` will
   ## be replaced by an empty Effect.
@@ -101,7 +103,7 @@ func filter*(filter: set[EffectType]; row: TrackRow): TrackRow =
   result.instrument = row.instrument
   for i in 0..<row.effects.len:
     let e = row.effects[i]
-    if toEffectType(e.effectType) notin filter:
+    if toEffectCmd(e.cmd) notin filter:
       result.effects[i] = e
 
 func trackerResult*(status = tsHalted; speedChanged = false;
@@ -187,6 +189,8 @@ func initPatternChange(): PatternChange =
 
 # ======
 
+const iUnitSpeed = int(unitSpeed)
+
 # Timer
 # song timer for counting ticks
 
@@ -194,14 +198,14 @@ func initTimer(speed: Speed): Timer =
   # Create a timer with the given speed as its period.
   #
   result = Timer(
-    period: speed.int,
+    period: int(speed),
     counter: 0
   )
 
 func active(t: Timer): bool =
   # Determine if the timer is active. An active timer means that the tracker
   # should start a new row.
-  t.counter < unitSpeed
+  t.counter < iUnitSpeed
 
 proc setPeriod(t: var Timer; speed: Speed) =
   # Change the timer's period to the given speed.
@@ -209,13 +213,13 @@ proc setPeriod(t: var Timer; speed: Speed) =
   t.period = clamp(speed, low(Speed), high(Speed)).int
   # if the counter exceeds the new period, clamp it to 1 unit less
   # this way, the timer will overflow on the next tick
-  t.counter = min(t.counter, t.period - unitSpeed)
+  t.counter = min(t.counter, t.period - iUnitSpeed)
 
 proc tick(t: var Timer): bool =
   # Tick the timer. `true` is returned if the timer overflowed, which means the
   # tracker should advance its position to the next row.
   #
-  t.counter += unitSpeed
+  t.counter += iUnitSpeed
   result = t.counter >= t.period
   if result:
     # timer overflow
@@ -224,7 +228,7 @@ proc tick(t: var Timer): bool =
 # ======
 
 func initTracker*(song: Song; startAt = default(SongPos);
-                  effectsFilter: set[EffectType] = {}; patternRepeat = false
+                  effectsFilter: set[EffectCmd] = {}; patternRepeat = false
                   ): Tracker =
   ## Initialize a [Tracker] for a song and starting position. `effectsFilter`
   ## is a set of effect types to remove/ignore when performing a row in a
@@ -251,12 +255,12 @@ proc `patternRepeat=`*(t: var Tracker; val: bool) {.inline.} =
   ## 
   t.patternRepeat = val  
 
-func effectsFilter*(t: Tracker): set[EffectType] {.inline.} =
+func effectsFilter*(t: Tracker): set[EffectCmd] {.inline.} =
   ## Gets the current effects filter in use.
   ##
   t.effectsFilter
 
-func `effectsFilter=`*(t: var Tracker; filter: set[EffectType]) {.inline.} =
+func `effectsFilter=`*(t: var Tracker; filter: set[EffectCmd]) {.inline.} =
   ## Set an effect filter. By default the tracker has no filter, or an empty
   ## set. When a filter is set, any effect with the type contained in the
   ## filter will be ignored during performance.
@@ -316,7 +320,7 @@ proc tick*(t: var Tracker; song: Song): TrackerResult =
       result = tsNewRow
     else:
       inc t.pos.pattern
-      if t.pos.pattern >= song.order.len:
+      if t.pos.pattern >= song.patternLen():
         t.pos.pattern = 0
       t.pos.row = min(int(t.nextRowParam), song.trackLen - 1)
       result = tsNewPattern
@@ -332,7 +336,7 @@ proc tick*(t: var Tracker; song: Song): TrackerResult =
       of pcNone: # no command, advance row by 1
         if t.incRow:
           inc t.pos.row
-          if t.pos.row >= song.trackLen:
+          if t.pos.row >= song.trackLen():
             result.status = nextPatternImpl(t, song)
           
       of pcNext: # Dxx command
@@ -340,7 +344,7 @@ proc tick*(t: var Tracker; song: Song): TrackerResult =
       of pcJump: # Bxx command
         t.pos.row = 0
         if not t.patternRepeat:
-          t.pos.pattern = min(int(t.nextRowParam), song.order.len - 1)
+          t.pos.pattern = min(int(t.nextRowParam), song.patternLen() - 1)
           result.status = tsNewPattern
       
       # "consume" the command
@@ -369,8 +373,8 @@ proc tick*(t: var Tracker; song: Song): TrackerResult =
       t.halt()
       result.status = tsHalted
     else:
-      if pc.speed in Speed.low..Speed.high and int(pc.speed) != t.timer.period:
-        t.timer.setPeriod(pc.speed)
+      if isValid(Speed(pc.speed)) and int(pc.speed) != t.timer.period:
+        t.timer.setPeriod(Speed(pc.speed))
         result.speedChanged = true
       if pc.cmd != pcNone:
         t.nextRowCmd = pc.cmd
@@ -411,8 +415,8 @@ proc add(h: var PatternHistory; visit: SongPos): bool =
 func initPatternTracker(song: Song; startPos: SongPos): PatternTracker =
   result = PatternTracker(
     tracker: initTracker(song, startPos),
-    itable: InstrumentTable.init(),
-    history: initPatternHistory(song.order.len),
+    itable: initInstrumentTable(),
+    history: initPatternHistory(song.patternLen()),
     current: startPos,
     currentAlreadyVisited: false,
     halted: false,

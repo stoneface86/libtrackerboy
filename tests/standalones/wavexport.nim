@@ -10,7 +10,7 @@ when isMainModule:
 
   const bloopPath = getProjectPath() / "bloop.tbm"
 
-  var bloopMod = Module.init()
+  var bloopMod = initModule()
   var strm = newFileStream(bloopPath, fmRead)
   doAssert bloopMod.deserialize(strm) == frNone
   strm.close()

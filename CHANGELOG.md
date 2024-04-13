@@ -2,49 +2,101 @@
 
 ## Unreleased
 
+## Important
+
+**Nim 2.0.0 is now required.**
+
+The API in the data module has been completely overhauled:
+- renamed all init procs, `init(T, ...)` -> `initT(...)`
+- removed types `EffectIndex`, `EffectColumns`
+- added consts `rangeSpeed`, `noLoopPoint`, `noteNone`, `instrumentNone` and
+  `effectNone`
+- Speed
+  - is now a `distinct uint8`
+  - Renamed `speedToFloat` -> `toFloat`
+  - Renamed `speedToTempo` -> `tempo`
+  - Added `toSpeed`, `isValid`, `$` procs
+- added type `LoopPoint`
+- Sequence
+  - renamed field `loopIndex` -> `loop`
+  - `loop` field is now of type `LoopPoint`
+  - add `isValid` proc
+  - removed `data`, `data=` procs
+- Instrument
+  - removed `new` overload
+  - add `hash` overload
+- Waveform
+  - removed `new` overload
+  - add `hash` overload
+- Renamed `SequenceSize` -> `SequenceLen`
+- Renamed `OrderSize` -> `OrderLen`
+- Table
+  - added proc `uniqueIds`
+- Order
+  - `Order` is now a `seq[OrderRow]`
+  - add proc `initOrderRow`, template `orow`
+  - removed procs `[]`, `[]=`, `len`, `setLen`, `setData`, `add`, `insert`,
+    `remove` and `swap`
+- Effect
+  - renamed `EffectType` -> `EffectCmd`, each enum starts with `ec` instead of `et`
+  - renamed field `effectType` -> `cmd`
+  - renamed proc `effectTypeShortensPattern` -> `shortensPattern`
+  - renamed proc `toEffectType` -> `toEffectCmd`
+  - renamed proc `effectTypeToChar` -> `effectCmdToChar`
+- TrackRow
+  - add types `NoteColumn` and `InstrumentColumn`
+  - field `note` is now of type `NoteColumn`
+  - field `instrument` is now of type `InstrumentColumn`
+  - added procs `has`, `value`, `asOption`, `$` for Column types
+  - removed procs `clearNote`, `clearInstrument`, `hasNote`, `hasInstrument`,
+    `setNote`, `setInstrument`, `queryNote`, `queryInstrument`,
+- Track
+  - Track data is now stored using a `ref seq[TrackRow]`
+  - added proc `data` for accessing the track's data seq
+  - removed procs `setNote`, `setInstrument`, `setEffect`, `setEffectType`,
+    `setEffectParam`
+- TrackView
+  - `TrackView` is no longer a `distinct Track`, but a proxy object containing
+     a `Track`. (There were some Nim internal errors using the borrow pragma).
+  - add converter `toView`
+- added types `Pattern`, `PatternView`, `SomePattern`, `SomeTrack`
+- Song
+  - add procs `$`, `isValid`, `removeUnusedTracks`, `allocateTracks`, `getRow`,
+    `effectiveTickrate`, `patternLen`
+  - `trackLen` is now a property instead of a field
+  - `editPattern` and `viewPattern` templates inject a `Pattern` variable
+    instead of a template. Use `value[channel]` instead of `value(channel)`
+- add types `SongPos`, `SongSpan`
+- SongList
+  - add procs `isValid`, `data`
+  - removed overload for `get` that returns a `ref Song`
+  - added proc `mget` that returns a `ref Song`
+  - removed procs `add`, `duplicate`, `remove`, `moveUp`, `moveDown`
+- Module
+  - add proc `isValid`
+
 ### Added
  - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
  - (common) `Tristate` enum
- - (data) `toView` converter in data module for `Track -> TrackView`
- - (data) `clearNote`, `clearInstrument`, `setNote`, `setInstrument` procs for
-   `TrackRow`
- - (data) `hash` procs for `Instrument` and `Waveform`
- - (data) `==` procs for `Instrument` and `Waveform`
- - (data) `uniqueIds` proc for `Table[T]`
- - (data) `SongPos` type
- - (data) `SongSpan` type
- - (data) `effectTypeToChar` proc
- - (data) `PatternRow` type
- - (data) `getRow` overload that returns a `PatternRow`
- - (data) `effectsCharMap` const
- - (data) constructor for `Effect`
- - (data) `NoteColumn` and `InstrumentColumn` types for `TrackRow`
- - (data) `noteNone`, `instrumentNone` and `effectNone` consts.
- - (data) constructor for `Sequence`
  - (ir) `==` operator overload for `RowIr`
  - (ir) `runtime` proc for an `Operation`
  - (ir) `toTrackRow` proc for converting an `Operation` back into a `TrackRow`
  - (ir) overload for `toIr` proc for partial ir conversion
- - (engine) `SongPath` object and `getPath` proc
  - (note) `NoteRange`, `Octave`, `Letter`, `NoteIndex` and `NotePair` types
  - (note) procs for converting a `NoteIndex` to a `NotePair` and vice versa
- - New module, text, for text conversion and parsing of libtrackerboy data.
- - New module, tracking, for tracking playback of a song.
+ - New module, `text`, for text conversion and parsing of libtrackerboy data.
+ - New module, `tracking`, for tracking playback of a song.
 
 ### Changed
- - (data) `TrackView` is no longer a `distinct Track`, but a proxy object
-   containing a `Track`. (There were some Nim internal errors using a distinct
-   and borrow)
+ - (data) The data module has been overhauled, see above
  - (ir) `fromIr(TrackIr)` returns a tuple containing a track and a bool
  - (ir) `setFromIr` proc now returns `bool`
- - modules apucontrol, enginecontrol and enginestate are no longer private
-   and are now located in libtrackerboy/engine
+ - (ir) renamed proc `toEffectType` -> `toEffectCmd`
+ - modules `apucontrol`, `enginecontrol` and `enginestate` are no longer
+   private and are now located in `libtrackerboy/engine`
  - (engine) `play` proc signature takes a `SongPos` instead of two ints
- - (engine) `runtime` proc for looping takes a `SongPos` instead of two ints
 
 ### Deprecated
- - (data) `queryNote`, `queryInstrument`, `clearNote`, `clearInstrument`,
-          `hasNote`, `hasInstrument`, `setNote`, `setInstrument`
  - (note) `note`
 
 ### Removed
