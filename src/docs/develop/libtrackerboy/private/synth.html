@@ -54,7 +54,9 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Synth" title="Synth {.requiresInit.} = object
+      <li><a class="reference" href="#MixMode" title="MixMode = enum
+  mixMute, mixLeft, mixRight, mixMiddle">MixMode</a></li>
+<li><a class="reference" href="#Synth" title="Synth {.requiresInit.} = object
   volumeStepLeft*, volumeStepRight*: float32">Synth</a></li>
 
     </ul>
@@ -69,7 +71,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BSynth%5D%2Cint" title="init(__1761608390: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth">init(__1761608390: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
+  <li><a class="reference" href="#init%2Ctypedesc%5BSynth%5D%2Cint" title="init(__1761608413: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth">init(__1761608413: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">mix
@@ -79,6 +81,14 @@
 </ul>
 <ul class="simple nested-toc-section">mixDc
   <li><a class="reference" href="#mixDc%2CSynth%2CPcmF32%2CPcmF32%2Cuint32" title="mixDc(s: var Synth; dcLeft, dcRight: PcmF32; cycletime: uint32)">mixDc(s: var Synth; dcLeft, dcRight: PcmF32; cycletime: uint32)</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">pansLeft
+  <li><a class="reference" href="#pansLeft%2CMixMode" title="pansLeft(mode: MixMode): bool">pansLeft(mode: MixMode): bool</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">pansRight
+  <li><a class="reference" href="#pansRight%2CMixMode" title="pansRight(mode: MixMode): bool">pansRight(mode: MixMode): bool</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">samplerate
@@ -131,15 +141,26 @@
 <div class="section" id="7">
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
-    <div id="Synth">
+    <div id="MixMode">
+  <dt><pre><a href="synth.html#MixMode"><span class="Identifier">MixMode</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">mixMute</span><span class="Other">,</span> <span class="Identifier">mixLeft</span><span class="Other">,</span> <span class="Identifier">mixRight</span><span class="Other">,</span> <span class="Identifier">mixMiddle</span></pre></dt>
+  <dd>
+    
+    Enum of possible mix operations: mute, left-only, right-only or middle (both). 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L28" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L28" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="Synth">
   <dt><pre><a href="synth.html#Synth"><span class="Identifier">Synth</span></a> {.<span class="Identifier">requiresInit</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">volumeStepLeft</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">volumeStepRight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float32</span>
   </pre></dt>
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L28" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L28" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L37" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L37" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -155,8 +176,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L178" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L178" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L199" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L199" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -164,13 +185,13 @@
 </div>
 <div id="init-procs-all">
   <div id="init,typedesc[Synth],int">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSynth%5D%2Cint"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">__1761608390</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="synth.html#Synth"><span class="Identifier">Synth</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">samplerate</span> <span class="Other">=</span> <span class="DecNumber">44100</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BSynth%5D%2Cint"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">__1761608413</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="synth.html#Synth"><span class="Identifier">Synth</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">samplerate</span> <span class="Other">=</span> <span class="DecNumber">44100</span><span class="Other">;</span>
           <span class="Identifier">buffersize</span> <span class="Other">=</span> <span class="Identifier">Natural</span><span class="Other">(</span><span class="DecNumber">0</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <a href="synth.html#Synth"><span class="Identifier">Synth</span></a></pre></dt>
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L197" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L197" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L218" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L218" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -178,13 +199,13 @@
 </div>
 <div id="mix-procs-all">
   <div id="mix,Synth,MixMode,int8,uint32">
-  <dt><pre><span class="Keyword">proc</span> <a href="#mix%2CSynth%2CMixMode%2Cint8%2Cuint32"><span class="Identifier">mix</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="synth.html#Synth"><span class="Identifier">Synth</span></a><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <a href="../common.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">;</span> <span class="Identifier">delta</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">cycletime</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">)</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#mix%2CSynth%2CMixMode%2Cint8%2Cuint32"><span class="Identifier">mix</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="synth.html#Synth"><span class="Identifier">Synth</span></a><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <a href="synth.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">;</span> <span class="Identifier">delta</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">cycletime</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">)</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L160" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L160" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L181" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L181" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -193,8 +214,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L124" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L124" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L145" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L145" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -207,8 +228,34 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L172" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L172" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L193" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L193" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="pansLeft-procs-all">
+  <div id="pansLeft,MixMode">
+  <dt><pre><span class="Keyword">func</span> <a href="#pansLeft%2CMixMode"><span class="Identifier">pansLeft</span></a><span class="Other">(</span><span class="Identifier">mode</span><span class="Other">:</span> <a href="synth.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Determine whether the mode pans left, returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> when mode is <tt class="docutils literal"><span class="pre"><span class="Identifier">mixLeft</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">mixMiddle</span></span></tt> 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L89" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L89" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="pansRight-procs-all">
+  <div id="pansRight,MixMode">
+  <dt><pre><span class="Keyword">func</span> <a href="#pansRight%2CMixMode"><span class="Identifier">pansRight</span></a><span class="Other">(</span><span class="Identifier">mode</span><span class="Other">:</span> <a href="synth.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Determine whether the mode pans right, returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> when mode is <tt class="docutils literal"><span class="pre"><span class="Identifier">mixRight</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">mixMiddle</span></span></tt> 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L95" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L95" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -220,8 +267,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L183" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L183" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L204" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L204" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -234,8 +281,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L186" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L186" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L207" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L207" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -248,8 +295,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L93" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L114" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L114" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -262,8 +309,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L193" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L193" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L214" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L214" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -276,8 +323,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L222" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L222" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/synth.nim#L243" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/synth.nim#L243" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -299,7 +346,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-21 18:36:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:32 UTC</small>
       </div>
     </div>
   </div>

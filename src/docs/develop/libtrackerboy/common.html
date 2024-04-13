@@ -51,7 +51,7 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#ByteIndex" title="ByteIndex = range[low(uint8).int .. high(uint8).int]">ByteIndex</a></li>
+      <li><a class="reference" href="#ByteIndex" title="ByteIndex = range[0 .. 255]">ByteIndex</a></li>
 <li><a class="reference" href="#ChannelId" title="ChannelId = enum
   ch1, ch2, ch3, ch4">ChannelId</a></li>
 <li><a class="reference" href="#FixedSeq" title="FixedSeq[N; T] = object
@@ -61,11 +61,11 @@
             ## range `0..N`.
             ##">FixedSeq</a></li>
 <li><a class="reference" href="#Immutable" title="Immutable[T] = distinct T">Immutable</a></li>
-<li><a class="reference" href="#MixMode" title="MixMode = enum
-  mixMute = 0, mixLeft = 1, mixRight = 2, mixMiddle = 3">MixMode</a></li>
 <li><a class="reference" href="#Pcm" title="Pcm = PcmF32">Pcm</a></li>
 <li><a class="reference" href="#PcmF32" title="PcmF32 = float32">PcmF32</a></li>
-<li><a class="reference" href="#PositiveByte" title="PositiveByte = range[1 .. int(high(uint8)) + 1]">PositiveByte</a></li>
+<li><a class="reference" href="#PositiveByte" title="PositiveByte = range[1 .. 256]">PositiveByte</a></li>
+<li><a class="reference" href="#Tristate" title="Tristate = enum
+  triOff, triTrans, triOn">Tristate</a></li>
 
     </ul>
   </details>
@@ -76,18 +76,6 @@
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">add
   <li><a class="reference" href="#add%2CFixedSeq%5BN%2CT%5D%2CsinkT" title="add[N, T](s: var FixedSeq[N, T]; item: sink T)">add[N, T](s: var FixedSeq[N, T]; item: sink T)</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">hasAny
-  <li><a class="reference" href="#hasAny%2Cset%5BT%5D%2Cset%5BT%5D" title="hasAny[T](x, y: set[T]): bool">hasAny[T](x, y: set[T]): bool</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">pansLeft
-  <li><a class="reference" href="#pansLeft%2CMixMode" title="pansLeft(mode: MixMode): bool">pansLeft(mode: MixMode): bool</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">pansRight
-  <li><a class="reference" href="#pansRight%2CMixMode" title="pansRight(mode: MixMode): bool">pansRight(mode: MixMode): bool</a></li>
 
 </ul>
 
@@ -154,12 +142,12 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="ByteIndex">
-  <dt><pre><a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a> <span class="Other">=</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Identifier">low</span><span class="Other">(</span><span class="Identifier">uint8</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">int</span> <span class="Operator">..</span> <span class="Identifier">high</span><span class="Other">(</span><span class="Identifier">uint8</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+  <dt><pre><a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a> <span class="Other">=</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Index type using the range of a uint8 (0-255) 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L29" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L29" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L35" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L35" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -169,8 +157,8 @@
   <dd>
     
     Channel identifier. Used to specify a hardware channel of the game boy APU 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L12" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L12" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L10" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L10" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -185,8 +173,8 @@
   <dd>
     
     Provides a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span></span></tt>-like data structure that only has a fixed capacity, <tt class="docutils literal"><span class="pre"><span class="Identifier">N</span></span></tt>. Useful when you have a fixed number of items to store but you want to convenience of a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span></span></tt> with <tt class="docutils literal"><span class="pre"><span class="Identifier">array</span></span></tt> style storage. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L50" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L50" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -195,19 +183,8 @@
   <dd>
     
     Wrapper type that forces immutability on T. Useful for <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt> types. Accessing the source is done through the <a class="reference internal" href="#"></a> overload proc. Both value and ref semantics can be used. When the source is a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt>, accessing the source will dereference the ref/ptr. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L46" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L46" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="MixMode">
-  <dt><pre><a href="common.html#MixMode"><span class="Identifier">MixMode</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">mixMute</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">mixLeft</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">mixRight</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="Identifier">mixMiddle</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
-  <dd>
-    
-    Enum of possible mix operations: mute, left-only, right-only or middle (both). 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L37" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L37" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L43" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L43" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -216,8 +193,8 @@
   <dd>
     
     Type alias for the PCM type used in this library 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L25" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L25" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L31" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L31" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -226,18 +203,29 @@
   <dd>
     
     32-bit floating point PCM sample 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L21" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L21" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L27" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L27" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="PositiveByte">
-  <dt><pre><a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a> <span class="Other">=</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">1</span> <span class="Operator">..</span> <span class="Identifier">int</span><span class="Other">(</span><span class="Identifier">high</span><span class="Other">(</span><span class="Identifier">uint8</span><span class="Other">)</span><span class="Other">)</span> <span class="Operator">+</span> <span class="DecNumber">1</span><span class="Other">]</span></pre></dt>
+  <dt><pre><a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a> <span class="Other">=</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">1</span> <span class="Operator">..</span> <span class="DecNumber">256</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Positive type using the range of a uint8 (1-256) 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L33" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L33" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L39" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L39" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="Tristate">
+  <dt><pre><a href="common.html#Tristate"><span class="Identifier">Tristate</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">triOff</span><span class="Other">,</span> <span class="Identifier">triTrans</span><span class="Other">,</span> <span class="Identifier">triOn</span></pre></dt>
+  <dd>
+    
+    Enum of a generic state with three possible values, off/on and a transitional state. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L19" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L19" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -253,50 +241,8 @@
   <dd>
     
     Adds an item to the end of the quick list. An error will occur the list is at maximum capacity. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L122" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L122" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="hasAny-procs-all">
-  <div id="hasAny,set[T],set[T]">
-  <dt><pre><span class="Keyword">func</span> <a href="#hasAny%2Cset%5BT%5D%2Cset%5BT%5D"><span class="Identifier">hasAny</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Checks if one or more elements in <tt class="docutils literal"><span class="pre"><span class="Identifier">y</span></span></tt> are present in <tt class="docutils literal"><span class="pre"><span class="Identifier">x</span></span></tt>. This just checks if the intersection of <tt class="docutils literal"><span class="pre"><span class="Identifier">x</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">y</span></span></tt> has a nonzero cardinality. 
-<p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Identifier">assert</span> <span class="Punctuation">{</span> <span class="CharLit">'a'</span><span class="Punctuation">,</span> <span class="CharLit">'b'</span><span class="Punctuation">,</span> <span class="CharLit">'c'</span><span class="Punctuation">,</span> <span class="CharLit">'d'</span> <span class="Punctuation">}</span><span class="Operator">.</span><span class="Identifier">hasAny</span><span class="Punctuation">(</span><span class="Punctuation">{</span> <span class="CharLit">'a'</span><span class="Punctuation">,</span> <span class="CharLit">'c'</span> <span class="Punctuation">}</span><span class="Punctuation">)</span>
-<span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Punctuation">{</span> <span class="CharLit">'a'</span><span class="Punctuation">,</span> <span class="CharLit">'b'</span><span class="Punctuation">,</span> <span class="CharLit">'c'</span> <span class="Punctuation">}</span><span class="Operator">.</span><span class="Identifier">hasAny</span><span class="Punctuation">(</span><span class="Punctuation">{</span> <span class="CharLit">'z'</span><span class="Punctuation">,</span> <span class="CharLit">'y'</span> <span class="Punctuation">}</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L159" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L159" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="pansLeft-procs-all">
-  <div id="pansLeft,MixMode">
-  <dt><pre><span class="Keyword">func</span> <a href="#pansLeft%2CMixMode"><span class="Identifier">pansLeft</span></a><span class="Other">(</span><span class="Identifier">mode</span><span class="Other">:</span> <a href="common.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Determine whether the mode pans left, returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> when mode is <tt class="docutils literal"><span class="pre"><span class="Identifier">mixLeft</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">mixMiddle</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L147" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L147" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="pansRight-procs-all">
-  <div id="pansRight,MixMode">
-  <dt><pre><span class="Keyword">func</span> <a href="#pansRight%2CMixMode"><span class="Identifier">pansRight</span></a><span class="Other">(</span><span class="Identifier">mode</span><span class="Other">:</span> <a href="common.html#MixMode"><span class="Identifier">MixMode</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Determine whether the mode pans right, returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> when mode is <tt class="docutils literal"><span class="pre"><span class="Identifier">mixRight</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">mixMiddle</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L153" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L153" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L119" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -314,8 +260,8 @@
   <dd>
     
     Iterates all items in the FixedSeq. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L139" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L139" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L136" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L136" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -333,8 +279,8 @@
   <dd>
     
     Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">rhs</span><span class="Operator">.</span><span class="Identifier">isNil</span><span class="Punctuation">(</span><span class="Punctuation">)</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L111" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L111" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L108" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L108" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -343,8 +289,8 @@
   <dd>
     
     Test if the two immutables are equivalent. This just calls the <tt class="docutils literal"><span class="pre"><span class="Operator">==</span></span></tt> proc for T. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L116" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L116" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L113" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L113" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -353,8 +299,8 @@
   <dd>
     
     Test if the Immutable's source is equivalent to the given value 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L101" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L101" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L98" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L98" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -363,8 +309,8 @@
   <dd>
     
     Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span> <span class="Operator">==</span> <span class="Identifier">lhs</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L106" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L106" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L103" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L103" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -376,8 +322,8 @@
   <dd>
     
     Access the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th element in the FixedSeq. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L134" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L134" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L131" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L131" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -391,8 +337,8 @@
 <span class="Keyword">let</span> <span class="Identifier">immutableVal</span> <span class="Operator">=</span> <span class="Identifier">myval</span><span class="Operator">.</span><span class="Identifier">toImmutable</span>
 <span class="Identifier">assert</span> <span class="Identifier">immutableVal</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Identifier">myval</span>
 <span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">compiles</span><span class="Punctuation">(</span><span class="Identifier">immutableVal</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L86" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L86" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L83" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L83" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -407,8 +353,8 @@
 <span class="Keyword">let</span> <span class="Identifier">immutableRef</span> <span class="Operator">=</span> <span class="Identifier">myref</span><span class="Operator">.</span><span class="Identifier">toImmutable</span>
 <span class="Identifier">assert</span> <span class="Identifier">immutableRef</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Identifier">myref</span><span class="Punctuation">[</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">compiles</span><span class="Punctuation">(</span><span class="Identifier">immutableRef</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L74" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L74" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L71" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L71" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -420,8 +366,8 @@
   <dd>
     
     Gets the capacity, or <tt class="docutils literal"><span class="pre"><span class="Identifier">q</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt>, of this FixedSeq. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L129" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L129" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L126" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L126" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -433,8 +379,8 @@
   <dd>
     
     Test if the Immutable source is nil. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L96" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L96" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -446,8 +392,8 @@
   <dd>
     
     Converts a value to an Immutable. Note that a copy of the value might be made. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L66" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L66" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L63" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L63" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -463,7 +409,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-21 18:36:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:32 UTC</small>
       </div>
     </div>
   </div>

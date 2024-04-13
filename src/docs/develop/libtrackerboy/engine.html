@@ -58,9 +58,6 @@
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#Engine" title="Engine = object">Engine</a></li>
-<li><a class="reference" href="#SongPath" title="SongPath = object
-  visits*: seq[SongSpan]
-  loopsTo*: Option[int]">SongPath</a></li>
 
     </ul>
   </details>
@@ -93,10 +90,6 @@
   <li><a class="reference" href="#getLocked%2CEngine" title="getLocked(e: Engine): set[ChannelId]">getLocked(e: Engine): set[ChannelId]</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">getPath
-  <li><a class="reference" href="#getPath%2CSong" title="getPath(song: Song; startPos = default(SongPos)): SongPath">getPath(song: Song; startPos = default(SongPos)): SongPath</a></li>
-
-</ul>
 <ul class="simple nested-toc-section">getTrackEnvelope
   <li><a class="reference" href="#getTrackEnvelope%2CEngine%2CChannelId" title="getTrackEnvelope(e: Engine; chno: ChannelId): uint8">getTrackEnvelope(e: Engine; chno: ChannelId): uint8</a></li>
 
@@ -125,10 +118,6 @@
   <li><a class="reference" href="#isLocked%2CEngine%2CChannelId" title="isLocked(e: Engine; chno: ChannelId): bool">isLocked(e: Engine; chno: ChannelId): bool</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">isValid
-  <li><a class="reference" href="#isValid%2CSongPath" title="isValid(p: SongPath): bool">isValid(p: SongPath): bool</a></li>
-
-</ul>
 <ul class="simple nested-toc-section">jump
   <li><a class="reference" href="#jump%2CEngine%2CNatural" title="jump(e: var Engine; pattern: Natural)">jump(e: var Engine; pattern: Natural)</a></li>
 
@@ -143,12 +132,6 @@
 </ul>
 <ul class="simple nested-toc-section">reset
   <li><a class="reference" href="#reset%2CEngine" title="reset(e: var Engine)">reset(e: var Engine)</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">runtime
-  <li><a class="reference" href="#runtime%2CDuration" title="runtime(duration: Duration): int">runtime(duration: Duration): int</a></li>
-<li><a class="reference" href="#runtime%2CDuration%2Cfloat" title="runtime(duration: Duration; framerate: float): int">runtime(duration: Duration; framerate: float): int</a></li>
-<li><a class="reference" href="#runtime%2CSong" title="runtime(song: Song; loopFor = Positive(1); startPos = default(SongPos)): int">runtime(song: Song; loopFor = Positive(1); startPos = default(SongPos)): int</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">setup
@@ -200,7 +183,7 @@
 <h2><a class="toc-backref" id="apuio-interface" href="#apuio-interface">ApuIo interface</a></h2><p>The engine creates an <a class="reference internal" href="#ApuOperation">ApuOperation</a> every step. This object can be converted into register writes and then sent to an <a class="reference external" href="./apuio.html#ApuIo">apuio: ApuIo</a>.</p>
 
 <h2><a class="toc-backref" id="runtime-calculation-and-pathing" href="#runtime-calculation-and-pathing">Runtime calculation and pathing</a></h2><p>There are also some utility procs for determining the runtime, in ticks, of a song, as well as the order of patterns it will go through (the path).</p>
-<p>Use any overload of the <tt class="docutils literal"><span class="pre"><span class="Identifier">runtime</span></span></tt> procs to get a song's runtime. Use <a class="reference internal nimdoc" title="proc getPath(song: Song; startPos = default(SongPos)): SongPath" href="#getPath,Song">getPath</a> to get a <a class="reference internal nimdoc" title="object SongPath" href="#SongPath">SongPath</a> for a <tt class="docutils literal"><span class="pre"><span class="Identifier">Song</span></span></tt>.</p>
+<p>Use any overload of the <tt class="docutils literal"><span class="pre"><span class="Identifier">runtime</span></span></tt> procs to get a song's runtime. Use <a class="reference internal" href="#getPath">getPath</a> to get a <a class="reference internal" href="#SongPath">SongPath</a> for a <tt class="docutils literal"><span class="pre"><span class="Identifier">Song</span></span></tt>.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -219,22 +202,6 @@
     Music/Sfx engine. Plays a Song, creating an ApuOperation that can be applied to an ApuIo object. The Engine does not interface with an ApuIo object directly, in order to reduce coupling and code duplication. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L66" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L66" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="SongPath">
-  <dt><pre><a href="engine.html#SongPath"><span class="Identifier">SongPath</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">visits</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="data.html#SongSpan"><span class="Identifier">SongSpan</span></a><span class="Other">]</span>
-  <span class="Identifier">loopsTo</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span>
-</pre></dt>
-  <dd>
-    
-    Defines the path a song will take during performance. A song's path is the order in which patterns are encountered, or visited. The path also has an optional loop index, that indicates whether the song will loop to a previous visit or halt at the last visit.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">visits</span></span></tt>: This seq contains the patterns that were visited, in order of occurance.</li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">loopsTo</span></span></tt>: Specifies the index of the visit the song will loop to after the last visit. If not provided, then the song will halt after the last visit.</li>
-</ul>
-
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L288" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L288" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -320,22 +287,6 @@
     Gets a set of the engine's locked channels. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L236" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L236" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="getPath-procs-all">
-  <div id="getPath,Song">
-  <dt><pre><span class="Keyword">func</span> <a href="#getPath%2CSong"><span class="Identifier">getPath</span></a><span class="Other">(</span><span class="Identifier">song</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">;</span> <span class="Identifier">startPos</span> <span class="Other">=</span> <span class="Identifier">default</span><span class="Other">(</span><a href="data.html#SongPos"><span class="Identifier">SongPos</span></a><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <a href="engine.html#SongPath"><span class="Identifier">SongPath</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    <p>Determines the path, or the order in which patterns are visited when performing a song. The calculated <tt class="docutils literal"><span class="pre"><span class="Identifier">SongPath</span></span></tt> is returned for the given song, when starting at a specified pattern and row (default is the start of the song).</p>
-<p>If <tt class="docutils literal"><span class="pre"><span class="Identifier">startRow</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">startPattern</span></span></tt> are invalid positions for <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt>, then an empty SongPath is returned. </p>
-
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L406" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L406" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -436,19 +387,6 @@
 </div>
 
 </div>
-<div id="isValid-procs-all">
-  <div id="isValid,SongPath">
-  <dt><pre><span class="Keyword">func</span> <a href="#isValid%2CSongPath"><span class="Identifier">isValid</span></a><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <a href="engine.html#SongPath"><span class="Identifier">SongPath</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Determines if a path is valid, or has one or more visits. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L401" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L401" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
 <div id="jump-procs-all">
   <div id="jump,Engine,Natural">
   <dt><pre><span class="Keyword">proc</span> <a href="#jump%2CEngine%2CNatural"><span class="Identifier">jump</span></a><span class="Other">(</span><span class="Identifier">e</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">;</span> <span class="Identifier">pattern</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -499,46 +437,6 @@
     Resets the engine to default state. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L117" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L117" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-
-</div>
-<div id="runtime-procs-all">
-  <div id="runtime,Duration">
-  <dt><pre><span class="Keyword">func</span> <a href="#runtime%2CDuration"><span class="Identifier">runtime</span></a><span class="Other">(</span><span class="Identifier">duration</span><span class="Other">:</span> <span class="Identifier">Duration</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Gets the runtime in frames when playing a song for a given time duration. The default framerate (DMG, 59.7 Hz) is used. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L392" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L392" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="runtime,Duration,float">
-  <dt><pre><span class="Keyword">func</span> <a href="#runtime%2CDuration%2Cfloat"><span class="Identifier">runtime</span></a><span class="Other">(</span><span class="Identifier">duration</span><span class="Other">:</span> <span class="Identifier">Duration</span><span class="Other">;</span> <span class="Identifier">framerate</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Gets the runtime in frames when playing a song for a given time duration. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L387" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L387" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="runtime,Song">
-  <dt><pre><span class="Keyword">func</span> <a href="#runtime%2CSong"><span class="Identifier">runtime</span></a><span class="Other">(</span><span class="Identifier">song</span><span class="Other">:</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">;</span> <span class="Identifier">loopFor</span> <span class="Other">=</span> <span class="Identifier">Positive</span><span class="Other">(</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">startPos</span> <span class="Other">=</span> <span class="Identifier">default</span><span class="Other">(</span><a href="data.html#SongPos"><span class="Identifier">SongPos</span></a><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    Gets the runtime in frames when playing a song.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">loopFor</span></span></tt> is the number of times to loop</li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">startPos</span></span></tt> is the starting position, default is start of the song</li>
-</ul>
-<p>The minimum runtime of a song is 1 frame, since 1 frame is required to be stepped in order for a song to halt.</p>
-<p>A runtime of 0 will be returned if <tt class="docutils literal"><span class="pre"><span class="Identifier">pattern</span></span></tt> is greater than or equal to the song's order count or if <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> is greater than or equal to the song's track length. This means that the song cannot be played with these arguments and therefore has a runtime of 0 frames. </p>
-
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L341" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L341" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -618,7 +516,7 @@
 <div class="section" id="19">
   <h1><a class="toc-backref" href="#19">Exports</a></h1>
   <dl class="item">
-    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#pansRight,MixMode"><span class="Identifier">pansRight</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#MixMode"><span class="Identifier">MixMode</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#hasAny,set[T],set[T]"><span class="Identifier">hasAny</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#pansLeft,MixMode"><span class="Identifier">pansLeft</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>, <a href="data.html#Module"><span class="Identifier">Module</span></a>, <a href="data.html#Song"><span class="Identifier">Song</span></a>, <a href="data.html#SongPos"><span class="Identifier">SongPos</span></a>, <a href="apuio.html#ApuIo"><span class="Identifier">ApuIo</span></a>, <a href="engine/enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a>
+    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>, <a href="data.html#Module"><span class="Identifier">Module</span></a>, <a href="data.html#Song"><span class="Identifier">Song</span></a>, <a href="data.html#SongPos"><span class="Identifier">SongPos</span></a>, <a href="apuio.html#ApuIo"><span class="Identifier">ApuIo</span></a>, <a href="engine/enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a>
   </dl>
 </div>
 
@@ -628,7 +526,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-21 18:36:17 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
       </div>
     </div>
   </div>
