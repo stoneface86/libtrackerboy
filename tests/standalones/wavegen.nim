@@ -68,11 +68,11 @@ when isMainModule:
   let outDir = getAppDir().joinPath("wavegen.d")
   outDir.createDir()
 
-  var s = Synth.init()
+  var s = initSynth()
   s.volumeStepLeft = volumeStep
   s.volumeStepRight = volumeStep
   for i, preset in presetWaveforms.pairs:
     generateWaveform(s, preset)
     s.takeSamples(gbClockrate, buf.addr)
-    var wav = WavWriter.init(joinPath(outDir, $preset), 2, preset.samplerate)
+    var wav = initWavWriter(joinPath(outDir, $preset), 2, preset.samplerate)
     wav.write(buf)

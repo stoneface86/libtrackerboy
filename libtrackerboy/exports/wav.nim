@@ -26,9 +26,9 @@ to the user while the export is in process.
 Example:
 
 ```nim
-var config = WavConfig.init()
+var config = initWavConfig()
 config.filename = "out.wav"
-var ex = WavExporter.init(module, config)
+var ex = initWavExporter(module, config)
 # progressBar.setMax(ex.progressMax)
 while ex.hasWork():
   # progressBar.setValue(ex.progress)
@@ -107,7 +107,7 @@ func songDuration*(time: Duration): SongDuration =
   ##
   SongDuration(unitInLoops: false, timeAmount: time)
 
-func init*(T: typedesc[WavConfig]): WavConfig =
+func initWavConfig*(): WavConfig =
   ## Initializes a WavConfig with default settings.
   ## 
   WavConfig(
@@ -116,8 +116,8 @@ func init*(T: typedesc[WavConfig]): WavConfig =
     duration: songDuration(initDuration(minutes = 1))
   )
 
-proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
-           ): WavExporter {. raises: [IOError] .} =
+proc initWavExporter*(module: Module; config: WavConfig
+                      ): WavExporter {. raises: [IOError] .} =
   ## Initializes a WavExporter for a given module and config. The output WAV
   ## file specified in `config` is created and ready to be filled with samples.
   ## 
@@ -138,9 +138,9 @@ proc init*(T: typedesc[WavExporter]; module: Module; config: WavConfig
         runtime(config.duration.timeAmount, tickrateHz)
 
   result = WavExporter(
-    apu: Apu.init(config.samplerate, tickrateHz),
-    engine: Engine.init(),
-    writer: WavWriter.init(config.filename, wavChannels, config.samplerate),
+    apu: initApu(config.samplerate, tickrateHz),
+    engine: initEngine(),
+    writer: initWavWriter(config.filename, wavChannels, config.samplerate),
     framesRendered: 0,
     framesToRender: runtime,
     buf: newSeq[Pcm](),
@@ -221,6 +221,6 @@ proc exportWav*(module: Module; config: WavConfig) {. raises: [IOError] .} =
   ## 
   ## An `IOError` may be raised if the output WAV file could not be written to.
   ## 
-  var ex = WavExporter.init(module, config)
+  var ex = initWavExporter(module, config)
   while ex.hasWork():
     ex.process(module)

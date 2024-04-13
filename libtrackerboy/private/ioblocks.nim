@@ -58,7 +58,7 @@ proc begin*(b: var InputBlock): BlockId =
 func isFinished*(b: InputBlock): bool =
   b.avail == 0
 
-func init*(T: typedesc[InputBlock]; stream: Stream): InputBlock =
+func initInputBlock*(stream: Stream): InputBlock =
   InputBlock(
     stream: stream,
     avail: 0,
@@ -86,7 +86,7 @@ proc read*[T](b: var InputBlock; buf: var openarray[T]): bool =
   else:
     false
 
-func init*(T: typedesc[OutputBlock]; stream: Stream): OutputBlock =
+func initOutputBlock*(stream: Stream): OutputBlock =
   OutputBlock(
     stream: stream,
     lengthPos: 0,

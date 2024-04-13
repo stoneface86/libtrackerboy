@@ -103,7 +103,7 @@ template assertTime(s: Synth; t: int): untyped =
 
 template frameIndex(t: Natural): int = t * 2
 
-func init(T: typedesc[Accumulator]): T.typeOf =
+func initAccumulator(): Accumulator =
   discard  # default is sufficient
 
 proc process(a: var Accumulator; input, highpassRate: float32;): float32 =
@@ -198,7 +198,7 @@ proc mixDc*(s: var Synth; dcLeft, dcRight: PcmF32; cycletime: uint32) =
 
 proc clear*(s: var Synth) =
   s.sampleOffset = 0
-  s.accums.fill(Accumulator.init)
+  s.accums.fill(initAccumulator())
   s.buffer.fill(0.0f)
 
 func samplerate*(s: Synth): int =
@@ -215,8 +215,7 @@ proc setBufferSize*(s: var Synth; samples: Natural) =
   s.buffer.setLen(frameIndex(samples + stepWidth))
   s.clear()
 
-func init*(_: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)
-          ): Synth =
+func initSynth*(samplerate = 44100; buffersize = Natural(0)): Synth =
   result = Synth(
     volumeStepLeft: 0.0f,
     volumeStepRight: 0.0f,
@@ -226,8 +225,8 @@ func init*(_: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)
     buffer: newSeq[Pcm](),
     sampleOffset: 0.0f,
     accums: [
-      Accumulator.init,
-      Accumulator.init
+      initAccumulator(),
+      initAccumulator()
     ]
   )
   result.`samplerate=`(samplerate)

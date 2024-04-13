@@ -15,7 +15,7 @@ when isMainModule:
   doAssert bloopMod.deserialize(strm) == frNone
   strm.close()
 
-  var config = WavConfig.init()
+  var config = initWavConfig()
   config.duration = songDuration(1)
   config.filename = outDir / "bloop-stereo.wav"
   bloopMod.exportWav(config)

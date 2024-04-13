@@ -8,7 +8,7 @@ template a(r: int, t: int, c: TrackSelect): PatternAnchor =
 block: # ========================================================== PatternClip
   const
     patternSize = 8
-    wholePattern = PatternSelection.init(
+    wholePattern = initPatternSelection(
       a(0, ChannelId.low.ord, low(TrackSelect)),
       a(patternSize - 1, ChannelId.high.ord, high(TrackSelect))
     )
@@ -67,7 +67,7 @@ block: # ========================================================== PatternClip
     test "save raises RangeDefect on invalid selection":
       proc mkInput(a1, a2: PatternAnchor, name: string): auto =
         (
-          data: PatternSelection.init(a1, a2),
+          data: initPatternSelection(a1, a2),
           name: name
         )
       const inputs = [
@@ -104,7 +104,7 @@ block: # ========================================================== PatternClip
       clip.save(
         song,
         0,
-        PatternSelection.init(
+        initPatternSelection(
           a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)
         )
       )
@@ -124,7 +124,7 @@ block: # ========================================================== PatternClip
     test "mix paste":
       var song = makeTestSong()
       # clip track 0
-      clip.save(song, 0, PatternSelection.init(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
+      clip.save(song, 0, initPatternSelection(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
       check clip.hasData()
 
       # mix paste at track 3 in pattern 1
@@ -173,7 +173,7 @@ block: # ===================================================== PatternSelection
   suite "PatternSelection":
   
     test "clamp":
-      const startingSelection = PatternSelection.init(a(0, 0, selNote), a(36, 1, selInstrument))
+      const startingSelection = initPatternSelection(a(0, 0, selNote), a(36, 1, selInstrument))
       var sel = startingSelection
 
       sel.clamp(64)
@@ -182,22 +182,22 @@ block: # ===================================================== PatternSelection
       sel.clamp(32)
       check:
         sel != startingSelection
-        sel == PatternSelection.init(a(0, 0, selNote), a(32, 1, selInstrument))
+        sel == initPatternSelection(a(0, 0, selNote), a(32, 1, selInstrument))
 
     test "translate":
-      const sample = PatternSelection.init(a(0, 0, selNote), a(1, 0, selEffect3))
+      const sample = initPatternSelection(a(0, 0, selNote), a(1, 0, selEffect3))
       var sel = sample
       sel.translate(1)
-      check sel == PatternSelection.init(a(1, 0, selNote), a(2, 0, selEffect3))
+      check sel == initPatternSelection(a(1, 0, selNote), a(2, 0, selEffect3))
       
       # check clamping when out of bounds
       sel = sample
       sel.translate(-100)
-      check sel == PatternSelection.init(a(0, 0, selNote), a(0, 0, selEffect3))
+      check sel == initPatternSelection(a(0, 0, selNote), a(0, 0, selEffect3))
 
       sel = sample
       sel.translate(300)
-      check sel == PatternSelection.init(a(high(ByteIndex), 0, selNote), a(high(ByteIndex), 0, selEffect3))
+      check sel == initPatternSelection(a(high(ByteIndex), 0, selNote), a(high(ByteIndex), 0, selEffect3))
 
     test "iter":
 
@@ -218,28 +218,28 @@ block: # ===================================================== PatternSelection
         ),
         TestData(
           name: "single column",
-          input: PatternSelection.init(a(1, 0, selNote), a(6, 0, selNote)),
+          input: initPatternSelection(a(1, 0, selNote), a(6, 0, selNote)),
           expectedRows: 1..6,
           expectedTracks: 0..0,
           expectedColumns: 1
         ),
         TestData(
           name: "multiple columns, single track",
-          input: PatternSelection.init(a(10, 3, selInstrument), a(1, 3, selEffect3)),
+          input: initPatternSelection(a(10, 3, selInstrument), a(1, 3, selEffect3)),
           expectedRows: 1..10,
           expectedTracks: 3..3,
           expectedColumns: 4
         ),
         TestData(
           name: "single column, multiple tracks",
-          input: PatternSelection.init(a(3, 1, selEffect2), a(3, 3, selEffect2)),
+          input: initPatternSelection(a(3, 1, selEffect2), a(3, 3, selEffect2)),
           expectedRows: 3..3,
           expectedTracks: 1..3,
           expectedColumns: 11
         ),
         TestData(
           name: "multiple columns, multiple tracks",
-          input: PatternSelection.init(a(1, 3, selEffect3), a(10, 1, selInstrument)),
+          input: initPatternSelection(a(1, 3, selEffect3), a(10, 1, selInstrument)),
           expectedRows: 1..10,
           expectedTracks: 1..3,
           expectedColumns: 14
@@ -264,7 +264,7 @@ block: # ===================================================== PatternSelection
       let
         first = a(10, 1, selInstrument)
         last = a(32, 2, selEffect2)
-        sel = PatternSelection.init(first, last)
+        sel = initPatternSelection(first, last)
       check:
         sel.contains(first)
         sel.contains(last)

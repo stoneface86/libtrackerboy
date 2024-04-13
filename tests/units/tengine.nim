@@ -68,9 +68,9 @@ type
     song*: ref Song
   
 
-func init(T: typedesc[EngineHarness]): EngineHarness =
+func initEngineHarness(): EngineHarness =
   result = EngineHarness(
-    engine: Engine.init(),
+    engine: initEngine(),
     instruments: initInstrumentTable(),
     song: newSong()
   )
@@ -432,7 +432,7 @@ block: # =========================================================== effects
         ]
         noiseBaseNote = noteColumn(NoiseNote.high - 11)
 
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
@@ -483,7 +483,7 @@ block: # =========================================================== effects
         toneNote2 = litNote("C-4")
         startFreq = lookupToneNote(startToneNote.value)
       
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
@@ -529,7 +529,7 @@ block: # =========================================================== effects
     #     discard
 
     test "Bxx":  # pattern goto
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.order.setLen(3)
@@ -554,7 +554,7 @@ block: # =========================================================== effects
           f.startedNewPattern
 
     test "C00":  # halt
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
@@ -572,7 +572,7 @@ block: # =========================================================== effects
         check f.halted
 
     test "Dxx":  # pattern skip
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.order = @[
@@ -597,7 +597,7 @@ block: # =========================================================== effects
           f.row == 32
 
     test "Fxx":  # set speed
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.editTrack(ch1, 0, track):
           track[4] = litTrackRow("... .. F40 ... ...")
@@ -621,7 +621,7 @@ block: # =========================================================== effects
       discard
 
     test "Gxx":  # note delay
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
 
       eh.setupSong(s):
         s.speed = Speed(0x20)
@@ -676,7 +676,7 @@ block: # =========================================================== effects
     #     discard
 
     test "L00":  # lock channel (music priority)
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editPattern(0, pat):
@@ -709,7 +709,7 @@ block: # =========================================================== effects
         testNote1Freq = lookupToneNote(toNote(C, 4))
         testNote2Freq = lookupToneNote(toNote(D, 6))
 
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       # 00 C-4 .. ... ; freq = testNote1Freq
       # 01 ... .. P80 ; freq = testNote1Freq
       # 02 ... .. P7F ; freq = testNote1Freq - 1
@@ -751,7 +751,7 @@ block: # =========================================================== effects
       const
         testNote = uint16(toNote(C, 4))
 
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch4, 0, track):
@@ -784,7 +784,7 @@ block: # =========================================================== effects
     #     discard
 
     test "V0x":  # set timbre
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
@@ -813,7 +813,7 @@ block: # =========================================================== effects
 block: # =========================================================== Engine
   suite "engine.Engine":
     setup:
-      var engine = Engine.init()
+      var engine = initEngine()
     
     test "play raises AssertionDefect on nil song":
       expect AssertionDefect:
@@ -834,7 +834,7 @@ block: # ========================================================== instruments
     testNote = 24
 
   func getHarness(): EngineHarness =
-    result = EngineHarness.init()
+    result = initEngineHarness()
     let id = result.instruments.add()
     result.setupSong(s):
       s.editTrack(ch1, 0, track):
@@ -933,7 +933,7 @@ block: # ============================================================= playback
   suite "engine.playback":
     
     test "empty pattern":
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.play()
       for i in 0..32:
         eh.step()
@@ -944,7 +944,7 @@ block: # ============================================================= playback
     test "speed timing":
       proc speedtest(expected: openarray[bool], speed: Speed) =
         const testAmount = 5
-        var eh = EngineHarness.init()
+        var eh = initEngineHarness()
         checkpoint "speed = " & $speed
         eh.song.speed = speed
         eh.play()
@@ -960,7 +960,7 @@ block: # ============================================================= playback
       speedtest([true, false, false, false, false, false], Speed(0x60))
 
     test "song looping":
-      var eh = EngineHarness.init()
+      var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.trackLen = 1

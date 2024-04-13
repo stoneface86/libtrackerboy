@@ -70,7 +70,7 @@ func dataSize(dir: DataDirectives): int =
   of dDw: sizeof(AsmWord)
   of dDl: sizeof(AsmLong)
 
-func init(T: typedesc[DataBuilder]; dir: DataDirectives): DataBuilder =
+func initDataBuilder(dir: DataDirectives): DataBuilder =
   ## Initialize a new DataBuilder for the given data directive.
   ##
   result.output = asmDataDirective(dir)
@@ -161,7 +161,7 @@ func asmEncode*[T: SomeAsmInt](data: openArray[T]): string =
   ## within 80 columns per line.
   ##
   const dir = getDataDirective(T)
-  var b = DataBuilder.init(dir)
+  var b = initDataBuilder(dir)
   for d in data:
     b.add(asmHexLiteral(d))
   result = b.output

@@ -106,8 +106,7 @@ func isEffect*(column: TrackSelect): bool =
   ##
   column >= selEffect1 and column <= selEffect3
 
-func init*(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn
-          ): PatternCursor =
+func initPatternCursor*(row, track: int; column: TrackColumn): PatternCursor =
   ## Creates a pattern cursor with the given coordinates
   ##
   result = PatternCursor(
@@ -170,8 +169,7 @@ func toSelect(column: TrackColumn): TrackSelect =
   of colEffectType2..colEffectParamLo2: selEffect2
   else: selEffect3
 
-func init*(T: typedesc[PatternSelection]; a: PatternAnchor; b = a
-          ): PatternSelection =
+func initPatternSelection*(a: PatternAnchor; b = a): PatternSelection =
   ## Create a pattern selection with the two boundary anchors `a` and `b`.
   ##
   result = PatternSelection(corners: [a, b])

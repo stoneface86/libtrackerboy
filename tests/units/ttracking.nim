@@ -191,7 +191,7 @@ suite "tracker.runtime":
     song.order.setLen(4)
     song.order[3] = [0u8, 0, 0, 1]
     song.editTrack(ch4, 1, track):
-      track[3].effects[0] = litEffect("B01") #Effect.init(etPatternGoto, 1)
+      track[3].effects[0] = litEffect("B01")
     
     check:
       runtime(song) == 16     # 4 + 4 + 4 + 4

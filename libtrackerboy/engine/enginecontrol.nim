@@ -160,7 +160,7 @@ proc setBit[T: SomeInteger](v: var T; bit: BitsRange[T]; val: bool) {.inline.} =
 
 # === Timer ===================================================================
 
-func init(T: typedesc[Timer]; speed: Speed): Timer =
+func initTimer(speed: Speed): Timer =
   result = Timer(
     period: speed.int,
     counter: 0
@@ -184,8 +184,7 @@ proc step(t: var Timer): bool =
 
 # === FrequencyControl ========================================================
 
-func init(T: typedesc[FrequencyControl]; bounds: FrequencyBounds
-         ): FrequencyControl =
+func initFrequencyControl(bounds: FrequencyBounds): FrequencyControl =
   result.bounds = bounds
 
 proc apply(fc: var FrequencyControl; op: Operation) {.raises: [].} =
@@ -377,10 +376,10 @@ proc step(r: var InstrumentRuntime): SequenceInput =
 
 # === TrackControl ============================================================
 
-func init(T: typedesc[TrackControl]; ch: ChannelId): TrackControl =
+func initTrackControl(ch: ChannelId): TrackControl =
   result = TrackControl(
     op: default(Operation),
-    fc: FrequencyControl.init(if ch == ch4: noiseFrequencyBounds else: toneFrequencyBounds),
+    fc: initFrequencyControl(if ch == ch4: noiseFrequencyBounds else: toneFrequencyBounds),
     envelope: if ch == ch3: 0 else: 0xF0,
     timbre: if ch == ch4: 0 else: 3,
     panning: 3
@@ -487,8 +486,8 @@ proc step(tc: var TrackControl; itable: InstrumentTable;
   else:
     result[0] = naOff
 
-func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-           orderNo, rowNo: int; patternRepeat: bool): MusicRuntime =
+func initMusicRuntime*(song: sink Immutable[ptr Song]; orderNo, rowNo: int;
+                       patternRepeat: bool): MusicRuntime =
   ## Initializes a MusicRuntime the given song, starting position and
   ## pattern repeat setting.
   ##
@@ -498,20 +497,20 @@ func init*(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
     orderCounter: orderNo,
     rowCounter: rowNo,
     patternRepeat: patternRepeat,
-    timer: Timer.init(song[].speed),
-    global: GlobalState.init(),
+    timer: initTimer(song[].speed),
+    global: initGlobalState(),
     unlocked: {},
     states: [
-      ChannelState.init,
-      ChannelState.init,
-      ChannelState.init,
-      ChannelState.init
+      initChannelState(),
+      initChannelState(),
+      initChannelState(),
+      initChannelState()
     ],
     trackControls: [
-      TrackControl.init(ch1),
-      TrackControl.init(ch2),
-      TrackControl.init(ch3),
-      TrackControl.init(ch4)
+      initTrackControl(ch1),
+      initTrackControl(ch2),
+      initTrackControl(ch3),
+      initTrackControl(ch4)
     ]
   )
 

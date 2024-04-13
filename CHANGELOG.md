@@ -6,8 +6,9 @@
 
 **Nim 2.0.0 is now required.**
 
+All init procs have been renamed, `init(T, ...)` -> `initT(...)`
+
 The API in the data module has been completely overhauled:
-- renamed all init procs, `init(T, ...)` -> `initT(...)`
 - removed types `EffectIndex`, `EffectColumns`
 - added consts `rangeSpeed`, `noLoopPoint`, `noteNone`, `instrumentNone` and
   `effectNone`

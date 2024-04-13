@@ -276,10 +276,10 @@ when isMainModule:
   import std/os
 
   const testSamplerate = 44100
-  var a = Apu.init(testSamplerate)
+  var a = initApu(testSamplerate)
   let outDir = getAppDir() / "apugen.d"
   outDir.createDir()
   
   for name, data in tests.fieldPairs:
-    var wav = WavWriter.init(outDir / ("apu_test_" & name & ".wav"), 2, testSamplerate)
+    var wav = initWavWriter(outDir / ("apu_test_" & name & ".wav"), 2, testSamplerate)
     runTest(data, a, wav)

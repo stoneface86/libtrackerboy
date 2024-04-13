@@ -14,7 +14,7 @@ ApuIo, and some utility calculation procs.
 This module provides an [Engine] type that handles the performance of a `Song`
 (and sound effects, in the future).
 
-To create an engine, initialize one with [init(typedesc[Engine])]. Then give
+To create an engine, initialize one with [initEngine]. Then give
 it a song to play via the [play] proc. Reference semantics are used so you
 will need a `ref Song` when playing it. Afterwards, you can call [step] to
 perform a single tick of the engine.
@@ -53,7 +53,8 @@ import
   ./engine/enginecontrol,
 
   ./private/hardware,
-  ./private/optionutils
+  ./private/optionutils,
+  ./private/utils
 
 import std/[options, times]
 
@@ -79,10 +80,10 @@ type
 
 {. push raises: [] .}
 
-func init*(T: typedesc[Engine]): Engine =
+func initEngine*(): Engine =
   ## Constructs a new Engine.
   ##
-  discard  # default init is sufficient
+  defaultInit(result)
 
 func isHalted*(e: Engine): bool =
   ## Determines if the current song being played has halted. If there is no
@@ -141,7 +142,7 @@ proc play*(e: var Engine; song: sink Immutable[ref Song];
 
   e.song = song
   e.musicRuntime = some(
-    MusicRuntime.init(
+    initMusicRuntime(
       cast[Immutable[ptr Song]](song),
       startAt.pattern,
       startAt.row,

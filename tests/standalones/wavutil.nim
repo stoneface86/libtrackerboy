@@ -1,12 +1,7 @@
 
-when NimMajor >= 2:
-  import std/cmdline
-else:
-  import std/os
+import std/[cmdline, exitprocs, os, streams, strutils]
 
-import std/[exitprocs, os, streams, strutils]
-
-import libtrackerboy/[data, engine, io]
+import libtrackerboy/[data, io]
 import libtrackerboy/exports/wav
 
 
@@ -25,7 +20,7 @@ proc main(): int =
     else:
       0
 
-  var srcMod = Module.init()
+  var srcMod = initModule()
   var strm = newFileStream(paramStr(1), fmRead)
   if strm == nil:
     stderr.write("error: could not open module\n")
@@ -40,13 +35,11 @@ proc main(): int =
   let outDir = getAppDir().joinPath("wavutil.d")
   outDir.createDir()
 
-  var config = WavConfig.init()
+  var config = initWavConfig()
   config.song = songIndex
   config.duration = songDuration(2)
   config.filename = outDir / "output.wav"
   srcMod.exportWav(config)
-
-
   
 when isMainModule:
   setProgramResult( main() )

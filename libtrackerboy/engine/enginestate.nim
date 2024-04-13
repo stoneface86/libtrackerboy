@@ -11,7 +11,8 @@ This module is part of the inner workings of the engine module.
 
 import
   ../common,
-  ../ir
+  ../ir,
+  ../private/utils
 
 import std/options
 
@@ -153,14 +154,14 @@ const
     ## Update all settings
     ##
 
-func init*(_: typedesc[ChannelState]): ChannelState =
+func initChannelState*(): ChannelState =
   ## Initialize a `ChannelState` with initial settings. Using this state as an
   ## initial value will guarentee that all settings will be updated on the
   ## first tick.
   ##
   ChannelState(envelope: 0xFFFF, timbre: 0xFF, panning: 0xFF, frequency: 0xFFFF)
 
-func init*(T: typedesc[GlobalState]): GlobalState =
+func initGlobalState*(): GlobalState =
   ## Initializes a `GlobalState` with initial settings.
   ##
-  discard
+  defaultInit(result)

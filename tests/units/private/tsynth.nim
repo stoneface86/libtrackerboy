@@ -26,7 +26,7 @@ test "highpass":
   # an impulse is mixed at time 0 and the signal generated should
   # decay to 0. Only the decay is tested, not the performance of the filter itself
 
-  var synth = Synth.init(samplerate, samplerate)
+  var synth = initSynth(samplerate, samplerate)
   # mix an impulse on the left channel
   synth.mixDc(1.0f, 0.0f, 0)
 
@@ -53,7 +53,7 @@ test "highpass":
 test "resampling":
   const samplerates = [11025, 22050, 44100, 88200]
 
-  var synth = Synth.init()
+  var synth = initSynth()
   var buf: seq[Pcm]
   for rate in samplerates:
     checkpoint "resample test @ " & $rate & " Hz"
@@ -80,7 +80,7 @@ test "mixing":
         time += 2
       result = true
 
-  var synth = Synth.init(samplerate, samplerate)
+  var synth = initSynth(samplerate, samplerate)
   synth.volumeStepLeft = 0.125f
   synth.volumeStepRight = 0.125f
   var bufleft, bufright, bufmiddle: seq[Pcm]

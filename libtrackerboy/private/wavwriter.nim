@@ -68,9 +68,8 @@ proc checkedWriteBuffer(f: File; buffer: pointer; buflen: int
   if f.writeBuffer(buffer, buflen) != buflen:
     raise newException(IOError, "could not write entire buffer")
 
-proc init*(_: typedesc[WavWriter]; filename: sink string;
-           channels, samplerate: int;
-          ): WavWriter {.raises: [IOError] .} =
+proc initWavWriter*(filename: sink string; channels, samplerate: int;
+                    ): WavWriter {.raises: [IOError] .} =
   result = WavWriter(
     file: open(filename, fmWrite),
     channels: channels,

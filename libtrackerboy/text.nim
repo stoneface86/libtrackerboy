@@ -62,8 +62,8 @@ type
     ## 
     ## Examples:
     ## * `...` represents `effectNone`
-    ## * `V03` represents `Effect.init(etSetTimbre, 3)`
-    ## * `C00` represents `Effect.init(etPatternHalt, 0)`
+    ## * `V03` represents `initEffect(etSetTimbre, 3)`
+    ## * `C00` represents `initEffect(etPatternHalt, 0)`
     ##
   
   TrackRowString* = FixedString[18]
