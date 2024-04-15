@@ -42,7 +42,7 @@ type
 
   Immutable*[T] = distinct T
     ## Wrapper type that forces immutability on T. Useful for `ref` or `ptr`
-    ## types. Accessing the source is done through the [] overload proc.
+    ## types. Accessing the source is done through the `[]` overload proc.
     ## Both value and ref semantics can be used. When the source is a `ref`
     ## or `ptr`, accessing the source will dereference the ref/ptr.
     ##

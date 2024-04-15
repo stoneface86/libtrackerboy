@@ -1,3 +1,8 @@
+##[
+
+Data model. Contains common data types used throughout the library.
+
+]##
 
 import
   ./common,

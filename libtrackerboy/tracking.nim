@@ -3,8 +3,8 @@
 Music tracking. Allows you to perform each tick of a Song and track its
 position, speed, and track operations.
 
-Originally this code was a part of [libtrackerboy/engine/enginecontrol], but
-has been decoupled so that it may be used for exporting routines.
+Originally this code was a part of the [enginecontrol](engine/enginecontrol.html)
+module, but has been decoupled so that it may be used for exporting routines.
 
 ]##
 
@@ -288,8 +288,7 @@ func isHalted*(t: Tracker): bool {.inline.} =
   not t.running
 
 func getOp*(t: Tracker; track: ChannelId): Operation =
-  ## Gets the last operation for the given track. The [statHasOp] flag will be
-  ## set in [TickOut] when a tick has new operation set for the track.
+  ## Gets the last operation for the given track.
   ##
   result = t.tracks[track].op
 

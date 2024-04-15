@@ -6,7 +6,7 @@ This module provides an exporter for exporting individual songs in a module to
 a WAV file. The song is played, the APU is emulated, and the resulting
 sound samples are written to an output WAV file.
 
-There are two ways of using this module: [oneminusshot] and [iterative].
+There are two ways of using this module: [one-shot] and [iterative].
 
 ## One-shot
 
@@ -16,9 +16,9 @@ generated in that proc alone according to the given configuration.
 ## Iterative
 
 Iterative mode is done by creating a [WavExporter] object and
-then calling the [process] proc repeatedly until [hasWork] is false. You can
-use the [progress] and [progressMax] procs to display overall progress of the
-export.
+then calling the [process] proc repeatedly until [hasWork] is false. You
+can use the [progress] and [progressMax] procs to display overall
+progress of the export.
 
 This mode is preferred for GUI applications, so that you can report progress
 to the user while the export is in process.
@@ -87,7 +87,7 @@ type
 
   WavExporter* = object
     ## WavExporter object for iterative mode. An exporter can be created via
-    ## the `init <#init,typedesc[WavExporter],Module,WavConfig>`_ proc.
+    ## [initWavExporter].
     ## 
     apu: Apu
     engine: Engine
@@ -121,8 +121,8 @@ proc initWavExporter*(module: Module; config: WavConfig
   ## Initializes a WavExporter for a given module and config. The output WAV
   ## file specified in `config` is created and ready to be filled with samples.
   ## 
-  ## The export can continue by calling `process <#process,WavExporter,Module>`_ repeatedly until
-  ## `hasWork <#hasWork,WavExporter>`_ returns `false`.
+  ## The export can continue by calling [process] repeatedly until
+  ## [hasWork] returns `false`.
   ## 
   ## An `IOError` will be raised if the output file could not be written to.
   ##
@@ -162,8 +162,8 @@ func hasWork*(ex: WavExporter): bool {. raises: [] .} =
 
 proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
   ## Processes a single frame and writes it to the destination WAV file. If the
-  ## exporter is finished this proc does nothing. Use
-  ## `hasWork <#hasWork,WavExporter>`_ to check before calling this proc.
+  ## exporter is finished this proc does nothing. Use [hasWork] to check before
+  ## calling this proc.
   ## 
   ## An `IOError` may be raised if any error occurred during writing to the
   ## output WAV file.
@@ -192,12 +192,12 @@ func progress*(ex: WavExporter): int {. raises: [] .} =
 
 func progressMax*(ex: WavExporter): int {. raises: [] .} =
   ## Gets a number representing the maximum of the values returned by
-  ## `progress <#progress,WavExporter>`_.
+  ## [progress].
   ## 
   ex.framesToRender
 
 proc batched*(config: WavConfig): seq[WavConfig] {. raises: [] .} =
-  ## Creates a sequence of WavConfigs where each channel in `config` gets its
+  ## Creates a sequence of [WavConfig]s where each channel in `config` gets its
   ## own output file. The filename in each of these configs gets a suffix added
   ## to the filename, ie `$name.ch$channel.$ext`.
   ## 

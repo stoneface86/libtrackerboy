@@ -1,16 +1,16 @@
 ##[
 
-Game Boy APU emulation. Provides an Apu object that can synthesize audio to
+Game Boy APU emulation. Provides an [Apu] object that can synthesize audio to
 an internal buffer when stepping for a given number of cycles. The emulated
 registers can be read/written to, which can be used along side a full Game
 Boy emulator, or to just generate audio when playing a module.
 
-See also
---------
+## See also
 
-`Pan Docs<https://gbdev.io/pandocs/Sound_Controller.html>`_ for details about
+[Pan Docs](https://gbdev.io/pandocs/Audio.html) for details about
 the hardware being emulated.
 
+.. importdoc:: apuio.nim
 
 ]##
 
@@ -105,7 +105,9 @@ type
     triggerIndex: int
 
   Apu* {.requiresInit.} = object
-    ## Game Boy APU emulator. Satisfies the `ApuIo<apuio.html#ApuIo>`_ concept.
+    ## Game Boy APU emulator. Satisfies the [ApuIo] concept.
+    ## - `autostep`: Number of cycles to execute before reading or writing to
+    ##               a register. Default is 16 cycles. Set this to 0 to disable.
     ## 
     ch1, ch2: PulseChannel
     ch3: WaveChannel
@@ -533,9 +535,9 @@ proc updateVolume(a: var Apu) =
   a.synth.volumeStepRight = a.rightVolume.float32 * a.volumeStep
 
 proc setVolume*(a: var Apu; gain: range[0.0f32..1.0f32]) =
-  ## Sets the volume level of `a` to the given linear gain value. The gain
+  ## Sets the volume level of the apu to the given linear gain value. The gain
   ## should range from 0.0f to 1.0f. The default volume level is a linear
-  ## value of 0.625f or about -4 dB
+  ## value of 0.625f or about -4 dB.
   ##
   runnableExamples:
     var a = initApu(44100)
@@ -550,8 +552,8 @@ proc setVolume*(a: var Apu; gain: range[0.0f32..1.0f32]) =
   a.updateVolume()
 
 proc setFramerate*(a: var Apu; framerate: float) =
-  ## Changes the size of frame to the given framerate. The APU must be reset
-  ## when changing the framerate.
+  ## Changes the apu's internal buffer size to match a single frame of the
+  ## given framerate. The APU must be reset when changing the framerate.
   ##
   a.framerate = framerate
   a.cyclesPerFrame = gbClockrate.float / framerate
@@ -559,11 +561,11 @@ proc setFramerate*(a: var Apu; framerate: float) =
   a.synth.setBufferSize((a.synth.samplerate.float / framerate).ceil.int + 1)
 
 func initApu*(samplerate: int; framerate = 59.7): Apu =
-  ## Initializes an Apu with the given samplerate and internal buffer size
+  ## Initializes an [Apu] with the given samplerate and internal buffer size
   ## that contains a single frame with the given framerate.
   ## `samplerate` and `framerate` are in Hz and must be greater than 0.
   ## 
-  ## The returned `Apu` is in its default, or hardware reset, state. The
+  ## The returned Apu is in its default, or hardware reset, state. The
   ## volume step is set to a default of 0.625f.
   ##
   runnableExamples:
@@ -672,10 +674,10 @@ proc runChannel[T: SomeChannel](a: var Apu; chno: int; ch: var T;
 
 
 proc run*(a: var Apu; cycles: uint32) =
-  ## Runs the apu `a` for a given number of cycles. The internal sample
-  ## buffer is updated with new samples from the run. Use
-  ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ afterwards to collect them for
-  ## processing, or `removeSamples<#removeSamples,Apu>`_ to discard them.
+  ## Runs the apu for a given number of cycles. The internal sample
+  ## buffer is updated with new samples from the run. Use [takeSamples] 
+  ## afterwards to collect them for processing, or [removeSamples] to discard
+  ## them.
   ##
 
   runnableExamples:
@@ -702,9 +704,9 @@ proc run*(a: var Apu; cycles: uint32) =
     a.time += toStep
 
 proc runToFrame*(a: var Apu) =
-  ## Runs the apu `a` for the required number of cycles to complete a frame.
-  ## The amount of cycles that is run is determined by `a`'s current time and
-  ## the framerate setting.
+  ## Runs the apu for the required number of cycles to complete a frame.
+  ## The amount of cycles that is run is determined by the Apu's current time
+  ## and the framerate setting.
   ##
   runnableExamples:
     var a = initApu(48000, 60.0)
@@ -724,7 +726,6 @@ template cannotAccessRegister(a: Apu; reg: uint8): bool =
   not a.enabled and reg < rNR52
 
 func readRegister*(a: var Apu; reg: uint8): uint8 =
-  ##
   ## Reads the register at address `reg`. This proc emulates the behavior of
   ## reading the memory-mapped registers on an actual Game Boy. Since some
   ## registers are write-only (ie frequency), attempting to read these
@@ -733,8 +734,7 @@ func readRegister*(a: var Apu; reg: uint8): uint8 =
   ## `reg` is the memory address of the register in the 0xFF00 page, so
   ## to read rNR10, 0xFF10, you would call this proc with `reg = 0x10u8`
   ## 
-  ## The read occurs at the apu's current timestep, `run` the apu beforehand
-  ## if you want the read to occur at a certain point in time.
+  ## The Apu is run for `a.autostep` cycles and then the read is performed.
   ## 
   ## The proc will return 0xFF for any invalid reg address.
   ## 
@@ -813,10 +813,11 @@ func readRegister*(a: var Apu; reg: uint8): uint8 =
 
 proc writeRegister*(a: var Apu; reg, value: uint8;) =
   ## Writes `value` to the apu's register at `reg` address. Like
-  ## `readRegister<#readRegister,Apu,uint8>`_, this proc emulates writing to
-  ## the Game Boy's memory-mapped APU registers. Writes to any unknown
-  ## address are ignored. Writes to read-only portions of registers are also
-  ## ignored. Like readRegister, the write occurs at the apu's current `time`.
+  ## [readRegister], this proc emulates writing to the Game Boy's memory-mapped
+  ## APU registers. Writes to any unknown address are ignored. Writes to
+  ## read-only portions of registers are also ignored. Like [readRegister], the
+  ## write occurs at the apu's current `time`, after stepping `a.autostep`
+  ## cycles.
   ##
   
   runnableExamples:
@@ -958,8 +959,8 @@ proc writeRegister*(a: var Apu; reg, value: uint8;) =
     discard
 
 func time*(a: Apu): uint32 =
-  ## Gets the apu's current time, in cycles. Calling `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
-  ## resets the time to 0.
+  ## Gets the apu's current time, in cycles. Calling [takeSamples] or
+  ## [removeSamples] resets the time to 0.
   ##
   runnableExamples:
     var a = initApu(44100)
@@ -974,8 +975,7 @@ func time*(a: Apu): uint32 =
 
 proc availableSamples*(a: Apu): int =
   ## Gets the amount of samples available in the buffer.
-  ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ will take this exact amount
-  ## of samples when called
+  ## [takeSamples] will take this exact amount of samples when called.
   ##
   a.synth.sampletime(a.time).int
 
@@ -987,25 +987,28 @@ proc takeSamples*(a: var Apu, buf: var seq[Pcm]) =
   ## Takes out the entire sample buffer and puts it into the given buf. The
   ## buf's len will be set to `a.availableSamples * 2` and will have the
   ## contents of the apu's sample buffer.
+  ## 
+  ## Afterwards, the Apu's sample buffer is cleared and its time is set to 0.
   ##
   a.takeOrRemove(buf.addr)
 
 proc removeSamples*(a: var Apu) =
-  ## Removes all samples in the sample buffer.
+  ## Removes all samples in the sample buffer. The Apu's sample buffer is
+  ## cleared and its time is set to 0.
   ##
   a.takeOrRemove(nil)
 
 proc setSamplerate*(a: var Apu; samplerate: int) =
   ## Sets the samplerate of the generated audio. The internal sample buffer
-  ## is left untouched, so it is recommended you call `takeSamples<#takeSamples,Apu,seq[Pcm]>`_
-  ## beforehand.
+  ## is left untouched, so it is recommended you call [takeSamples] or
+  ## [removeSamples] beforehand.
   ##
   a.synth.samplerate = samplerate
 
 proc setBufferSize*(a: var Apu; samples: int) =
   ## Sets the apu's internal buffer to the given number of samples. This will
   ## destroy the contents of the buffer so it is recommended you call
-  ## `takeSamples<#takeSamples,Apu,seq[Pcm]>`_ first.
+  ## [takeSamples] first.
   ##
   a.synth.setBufferSize(samples)
   a.time = 0
@@ -1059,7 +1062,7 @@ func channelVolume*(a: Apu; chno: ChannelId): int =
 
 func channelMix*(a: Apu; chno: ChannelId): MixMode =
   ## Gets the current mix mode for the given channel. Provided as an alternative
-  ## to reading ar51.
+  ## to reading `ar51`.
   ##
   runnableExamples:
     var a = initApu(44100)

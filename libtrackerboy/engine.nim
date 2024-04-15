@@ -1,6 +1,8 @@
 ##[
 
 .. importdoc:: apuio.nim
+.. importdoc:: data.nim
+.. importdoc:: engine/enginestate.nim
 
 The engine module is responsible for playing a song from a module. Similar
 to a sound driver, the engine is stepped every frame and the APU's registers
@@ -11,8 +13,8 @@ ApuIo, and some utility calculation procs.
 
 ## Engine
 
-This module provides an [Engine] type that handles the performance of a `Song`
-(and sound effects, in the future).
+This module provides an [Engine object] type that handles the performance of a
+[Song] (and sound effects, in the future).
 
 To create an engine, initialize one with [initEngine]. Then give
 it a song to play via the [play] proc. Reference semantics are used so you
@@ -26,14 +28,6 @@ ones for diagnostics.
 
 The engine creates an [ApuOperation] every step. This object can be converted
 into register writes and then sent to an [ApuIo].
-
-## Runtime calculation and pathing
-
-There are also some utility procs for determining the runtime, in ticks, of
-a song, as well as the order of patterns it will go through (the path).
-
-Use any overload of the `runtime` procs to get a song's runtime. Use [getPath]
-to get a [SongPath] for a `Song`.
 
 ]##
 
