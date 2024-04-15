@@ -192,7 +192,7 @@
     <div id="tocRoot"></div>
     
     <p class="module-desc"><p>Music tracking. Allows you to perform each tick of a Song and track its position, speed, and track operations.</p>
-<p>Originally this code was a part of <a class="reference internal" href="#libtrackerboy/engine/enginecontrol">libtrackerboy/engine/enginecontrol</a>, but has been decoupled so that it may be used for exporting routines.</p>
+<p>Originally this code was a part of the <a class="reference external" href="engine/enginecontrol.html">enginecontrol</a> module, but has been decoupled so that it may be used for exporting routines.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -359,7 +359,7 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets the last operation for the given track. The <a class="reference internal" href="#statHasOp">statHasOp</a> flag will be set in <a class="reference internal" href="#TickOut">TickOut</a> when a tick has new operation set for the track. 
+    Gets the last operation for the given track. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L290" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L290" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -376,8 +376,8 @@
     <p>Determines the path, or the order in which patterns are visited when performing a song. The calculated <tt class="docutils literal"><span class="pre"><span class="Identifier">SongPath</span></span></tt> is returned for the given song, when starting at a specified pattern and row (default is the start of the song).</p>
 <p>If <tt class="docutils literal"><span class="pre"><span class="Identifier">startRow</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Identifier">startPattern</span></span></tt> are invalid positions for <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt>, then an empty SongPath is returned. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L507" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L507" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L506" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L506" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -389,8 +389,8 @@
   <dd>
     
     Halts the tracker. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L301" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L301" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L300" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L300" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -469,8 +469,8 @@
   <dd>
     
     Determines if a path is valid, or has one or more visits. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L502" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L502" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L501" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L501" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -483,8 +483,8 @@
   <dd>
     
     Change the tracker's current position in the song to the given one. If <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> is not a valid position, the song will halt. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L306" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L306" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L305" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L305" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -536,8 +536,8 @@
   <dd>
     
     Gets the runtime in frames when playing a song for a given time duration. The default framerate (DMG, 59.7 Hz) is used. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L495" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L495" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L494" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L494" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -547,8 +547,8 @@
   <dd>
     
     Gets the runtime in frames when playing a song for a given time duration. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L490" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L490" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L489" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L489" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -563,8 +563,8 @@
 <p>The minimum runtime of a song is 1 frame, since 1 frame is required to be stepped in order for a song to halt.</p>
 <p>A runtime of 0 will be returned if <tt class="docutils literal"><span class="pre"><span class="Identifier">pattern</span></span></tt> is greater than or equal to the song's order count or if <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> is greater than or equal to the song's track length. This means that the song cannot be played with these arguments and therefore has a runtime of 0 frames. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L448" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L448" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L447" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L447" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -576,8 +576,8 @@
   <dd>
     
     Gets the current playback Speed of the Tracker. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L296" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L296" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L295" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L295" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -600,8 +600,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L316" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L316" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/tracking.nim#L315" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/tracking.nim#L315" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -632,7 +632,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

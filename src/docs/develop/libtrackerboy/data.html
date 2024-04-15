@@ -225,7 +225,7 @@
   <li><a class="reference" href="#%5B%5D%2CSequence%2CByteIndex" title="`[]`(s: Sequence; i: ByteIndex): uint8">`[]`(s: Sequence; i: ByteIndex): uint8</a></li>
 <li><a class="reference" href="#%5B%5D%2CTrack%2CByteIndex" title="`[]`(t: Track; i: ByteIndex): TrackRow">`[]`(t: Track; i: ByteIndex): TrackRow</a></li>
 <li><a class="reference" href="#%5B%5D%2CTrack%2CByteIndex_2" title="`[]`(t: var Track; i: ByteIndex): var TrackRow">`[]`(t: var Track; i: ByteIndex): var TrackRow</a></li>
-<li><a class="reference" href="#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId" title="`[]`[T: SomeData](t: Table[T]; id: TableId): Immutable[ref T]">`[]`[T: SomeData](t: Table[T]; id: TableId): Immutable[ref T]</a></li>
+<li><a class="reference" href="#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId" title="`[]`[T: SomeData](t: Table[T]; id: TableId): iref[T]">`[]`[T: SomeData](t: Table[T]; id: TableId): iref[T]</a></li>
 <li><a class="reference" href="#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId_2" title="`[]`[T: SomeData](t: var Table[T]; id: TableId): ref T">`[]`[T: SomeData](t: var Table[T]; id: TableId): ref T</a></li>
 
 </ul>
@@ -281,7 +281,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">get
-  <li><a class="reference" href="#get%2CSongList%2CByteIndex" title="get(l: SongList; i: ByteIndex): Immutable[ref Song]">get(l: SongList; i: ByteIndex): Immutable[ref Song]</a></li>
+  <li><a class="reference" href="#get%2CSongList%2CByteIndex" title="get(l: SongList; i: ByteIndex): iref[Song]">get(l: SongList; i: ByteIndex): iref[Song]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">getPattern
@@ -547,7 +547,7 @@
     <summary><a class="reference reference-toplevel" href="#15" id="65">Iterators</a></summary>
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">items
-  <li><a class="reference" href="#items.i%2CSongList" title="items(l: SongList): Immutable[ref Song]">items(l: SongList): Immutable[ref Song]</a></li>
+  <li><a class="reference" href="#items.i%2CSongList" title="items(l: SongList): iref[Song]">items(l: SongList): iref[Song]</a></li>
 <li><a class="reference" href="#items.i%2CTrack" title="items(t: Track): TrackRow">items(t: Track): TrackRow</a></li>
 <li><a class="reference" href="#items.i%2CTrackView" title="items(t: TrackView): TrackRow">items(t: TrackView): TrackRow</a></li>
 <li><a class="reference" href="#items.i%2CTable%5BT%3A%20SomeData%5D" title="items[T: SomeData](t: Table[T]): TableId">items[T: SomeData](t: Table[T]): TableId</a></li>
@@ -588,7 +588,7 @@
     <summary><a class="reference reference-toplevel" href="#18" id="68">Templates</a></summary>
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">[]
-  <li><a class="reference" href="#%5B%5D.t%2CSongList%2CByteIndex" title="`[]`(l: SongList; i: ByteIndex): Immutable[ref Song]">`[]`(l: SongList; i: ByteIndex): Immutable[ref Song]</a></li>
+  <li><a class="reference" href="#%5B%5D.t%2CSongList%2CByteIndex" title="`[]`(l: SongList; i: ByteIndex): iref[Song]">`[]`(l: SongList; i: ByteIndex): iref[Song]</a></li>
 <li><a class="reference" href="#%5B%5D.t%2CTrackView%2CByteIndex" title="`[]`(t: TrackView; i: ByteIndex): TrackRow">`[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
 
 </ul>
@@ -647,7 +647,7 @@
 
     <div id="tocRoot"></div>
     
-    <p class="module-desc"></p>
+    <p class="module-desc">Data model. Contains common data types used throughout the library.</p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
   <dl class="item">
@@ -668,8 +668,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">param</span></span></tt>: Effect parameter byte, only needed for certain effects.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L178" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L178" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L183" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L183" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -701,8 +701,8 @@
   <dd>
     
     Enumeration for all available effects. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L151" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L151" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L156" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L156" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -711,8 +711,8 @@
   <dd>
     
     Array containing an amount for each channel, that determines how many effect columns should be shown to the user. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L277" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L277" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L282" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L282" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -721,8 +721,8 @@
   <dd>
     
     Fixed-length string of 32 characters, used for artist information. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L350" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L350" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L355" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L355" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -739,8 +739,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">sequences</span></span></tt>: A <a class="reference internal nimdoc" title="object Sequence" href="#Sequence">Sequence</a> for each <a class="reference internal nimdoc" title="enum SequenceKind" href="#SequenceKind">SequenceKind</a>.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L78" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L78" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L83" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L83" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -749,8 +749,8 @@
   <dd>
     
     Column in a <a class="reference internal nimdoc" title="object TrackRow" href="#TrackRow">TrackRow</a> that contains an optional instrument to use. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L147" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L147" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L152" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L152" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -759,8 +759,8 @@
   <dd>
     
     Container for <a class="reference internal nimdoc" title="object Instrument" href="#Instrument">Instrument</a>. Up to 64 Instruments can be stored in this table and is addressable via a <a class="reference internal nimdoc" title="type TableId" href="#TableId">TableId</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L125" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L125" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L130" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L130" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -775,8 +775,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">index</span></span></tt>: the index to loop back to</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L46" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L46" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L51" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L51" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -802,8 +802,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">tickrate</span></span></tt>: The <a class="reference internal nimdoc" title="object Tickrate" href="#Tickrate">Tickrate</a> used by all songs in the module.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L358" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L358" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L363" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L363" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -812,8 +812,8 @@
   <dd>
     
     Type class for an individual component of a module. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L354" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L354" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L359" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L359" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -822,8 +822,8 @@
   <dd>
     
     Column in a <a class="reference internal nimdoc" title="object TrackRow" href="#TrackRow">TrackRow</a> that contains the an optional note value. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L143" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L143" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L148" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L148" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -832,8 +832,8 @@
   <dd>
     
     An Order is a sequence of OrderRows, that determine the layout of a Song. Each Order must have at least 1 row and have no more than 256 rows. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L209" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L209" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L214" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L214" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -842,8 +842,8 @@
   <dd>
     
     Subrange of valid lengths, or number of order rows, for an <a class="reference internal nimdoc" title="type Order" href="#Order">Order</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L215" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L215" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L220" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L220" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -852,8 +852,8 @@
   <dd>
     
     An OrderRow is a set of TrackIds, one for each channel. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L205" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L205" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L210" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L210" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -862,8 +862,8 @@
   <dd>
     
     A pattern is a composition of multiple <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>s, one for each channel. Patterns are mutable. For immutable patterns use <a class="reference internal nimdoc" title="type PatternView" href="#PatternView">PatternView</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L252" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L252" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L257" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L257" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -872,8 +872,8 @@
   <dd>
     
     A full row in a pattern is a <a class="reference internal nimdoc" title="object TrackRow" href="#TrackRow">TrackRow</a> for each track/channel. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L197" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L197" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L202" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L202" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -882,8 +882,8 @@
   <dd>
     
     View-only version of <a class="reference internal nimdoc" title="type Pattern" href="#Pattern">Pattern</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L257" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L257" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L262" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L262" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -898,8 +898,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">data</span></span></tt>: The sequence's data, a list of bytes.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L65" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L65" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L70" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L70" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -913,8 +913,8 @@
   <dd>
     
     Enumeration for the kinds of parameters a sequence can operate on. An <tt class="docutils literal"><span class="pre"><span class="Identifier">Instrument</span></span></tt> has a <tt class="docutils literal"><span class="pre"><span class="Identifier">Sequence</span></span></tt> for each one of these kinds. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L55" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L55" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L60" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L60" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -923,8 +923,8 @@
   <dd>
     
     Range of valid lengths for a <a class="reference internal nimdoc" title="object Sequence" href="#Sequence">Sequence</a>'s data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L74" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L74" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L79" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L79" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -933,8 +933,8 @@
   <dd>
     
     Type class for data stored in a module data table. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L110" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L110" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L115" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L115" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -943,8 +943,8 @@
   <dd>
     
     Type class for all pattern types. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L261" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L261" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L266" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L266" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -953,8 +953,8 @@
   <dd>
     
     Type class for a module data table. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L135" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L135" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L140" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L140" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -963,8 +963,8 @@
   <dd>
     
     Type class of all track types 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L248" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L248" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L253" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L253" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -990,8 +990,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">tickrate</span></span></tt>: Tickrate override for this song. If not set, then the module's tickrate should be used instead.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L300" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L300" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L305" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L305" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1001,8 +1001,8 @@
   <dd>
     
     Container for songs. Songs stored in this container are references, like <a class="reference internal nimdoc" title="type InstrumentTable" href="#InstrumentTable">InstrumentTable</a> and <a class="reference internal nimdoc" title="type WaveformTable" href="#WaveformTable">WaveformTable</a>. A valid SongList contains 1-256 songs. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L343" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L343" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L348" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L348" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1017,8 +1017,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> - The index of the row to start at.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L326" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L326" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L331" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L331" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1033,8 +1033,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">rows</span></span></tt> - The amount of rows from <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> included in the span.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L334" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L334" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L339" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L339" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1043,8 +1043,8 @@
   <dd>
     
     Value that indicates the playback speed of a <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>. This value is in units of ticks per row, and is in fixed-point format Q4.4. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L41" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L41" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L46" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L46" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1056,8 +1056,8 @@
   <dd>
     
     Enumeration for types of systems the module is for. The system determines the vblank interval, or tick rate, of the engine. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L24" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L24" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L29" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L29" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1066,8 +1066,8 @@
   <dd>
     
     Integer ID type for items in an InstrumentTable or WaveformTable. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L106" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L106" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L111" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L111" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1082,8 +1082,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">customFramerate</span></span></tt>: Custom tick rate to use for <tt class="docutils literal"><span class="pre"><span class="Identifier">systemCustom</span></span></tt>.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L32" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L32" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L37" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L37" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1095,8 +1095,8 @@
     <p>Pattern data for a single track. A track can store up to 256 rows. The data is stored using ref semantics, so assigning a track from another track will result in a shallow copy. Use the initTrack proc to deep copy a track if needed. A Track is invalid if it was default initialized, or if its internal data ref is <tt class="docutils literal"><span class="pre"><span class="Keyword">nil</span></span></tt>. Use isValid() to check for validity.</p>
 <p>Regarding mutability, all <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt> objects are mutable. If you need immutable access, use <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackView</span></span></tt>. A <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt> can be converted to a <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackView</span></span></tt> at no cost, but the opposite is not true. Converting a <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackView</span></span></tt> to a <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt> will result in a deep copy of the <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackView</span></span></tt>'s data being made. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L225" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L225" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L230" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L230" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1105,8 +1105,8 @@
   <dd>
     
     Integer ID type that refers a <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a> in an <a class="reference internal nimdoc" title="type OrderRow" href="#OrderRow">OrderRow</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L201" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L201" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L206" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L206" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1115,8 +1115,8 @@
   <dd>
     
     Subrange of valid lengths, or number of track rows, for a <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L219" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L219" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L224" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L224" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1133,8 +1133,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">effects</span></span></tt>: 3 available <a class="reference internal nimdoc" title="object Effect" href="#Effect">Effect</a> columns.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L187" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L187" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L192" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L192" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1144,8 +1144,8 @@
   <dd>
     
     Same as <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>, but only provides immutable access to the track data. Mutable access can be acquired by converting the view to a Track via the initTrack overload, while making a deep copy of the data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L241" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L241" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L246" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L246" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1154,8 +1154,8 @@
   <dd>
     
     Waveform data. A waveform consists of 16 bytes, with each byte containing 2 4-bit PCM samples. The first sample is the upper nibble of the byte, with the second being the lower nibble. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L92" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L92" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L97" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L97" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1170,8 +1170,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">data</span></span></tt>: The waveform's data.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L98" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L98" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L103" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L103" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1180,8 +1180,8 @@
   <dd>
     
     Container for <a class="reference internal nimdoc" title="object Waveform" href="#Waveform">Waveform</a>. Up to 64 Waveforms can be stored in this table and is addressable via a <a class="reference internal nimdoc" title="type TableId" href="#TableId">TableId</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L130" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L130" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L135" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L135" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1196,8 +1196,8 @@
   <dd>
     
     Default rowsPerBeat setting for new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>s. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L283" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L283" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L288" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L288" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1206,8 +1206,8 @@
   <dd>
     
     Default rowsPerMeasure setting for new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>s. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L287" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L287" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L292" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L292" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1216,8 +1216,8 @@
   <dd>
     
     Default speed setting for new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>s. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L291" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L291" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L296" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L296" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1226,8 +1226,8 @@
   <dd>
     
     Default tickrate setting for a <a class="reference internal nimdoc" title="object Module" href="#Module">Module</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L380" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L380" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L385" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L385" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1236,8 +1236,8 @@
   <dd>
     
     Default trackLen setting for new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>s. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L295" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L295" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L300" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L300" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1247,8 +1247,8 @@
   <dd>
     
     Array that maps an <a class="reference internal nimdoc" title="enum EffectCmd" href="#EffectCmd">EffectCmd</a> to a <tt class="docutils literal"><span class="pre"><span class="Identifier">char</span></span></tt>. Each effect is represented by a letter or number as its type when displayed in a tracker. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L407" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L407" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L412" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L412" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1257,8 +1257,8 @@
   <dd>
     
     Effect column value for an unset effect. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">default</span><span class="Punctuation">(</span><span class="Identifier">Effect</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L403" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L403" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L408" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L408" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1267,8 +1267,8 @@
   <dd>
     
     Instrument column value for an unset column. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">default</span><span class="Punctuation">(</span><span class="Identifier">InstrumentColumn</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L399" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L399" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L404" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L404" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1277,8 +1277,8 @@
   <dd>
     
     Indicates that a sequence ends at the last value, or does not loop. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L392" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L392" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L397" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L397" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1287,8 +1287,8 @@
   <dd>
     
     Note column value for an unset column. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">default</span><span class="Punctuation">(</span><span class="Identifier">NoteColumn</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L396" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L396" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L401" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L401" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1297,8 +1297,8 @@
   <dd>
     
     Valid range of <a class="reference internal nimdoc" title="type Speed" href="#Speed">Speed</a> values. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L388" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L388" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L393" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L393" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1307,8 +1307,8 @@
   <dd>
     
     Unit speed, or a <a class="reference internal nimdoc" title="type Speed" href="#Speed">Speed</a> that is 1.0 ticks per row. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L384" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L384" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L389" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L389" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1324,8 +1324,8 @@
   <dd>
     
     Stringify an instrument column. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L810" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L810" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L815" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L815" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1334,8 +1334,8 @@
   <dd>
     
     Stringify a note column. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L805" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L805" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L810" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L810" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1344,8 +1344,8 @@
   <dd>
     
     Stringify a position, formated as <tt class="docutils literal"><span class="pre"><span class="Identifier">pattern</span><span class="Punctuation">:</span><span class="Identifier">row</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1368" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1368" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1373" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1373" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1354,8 +1354,8 @@
   <dd>
     
     Stringify a song for debug purposes. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1144" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1144" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1149" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1149" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1364,8 +1364,8 @@
   <dd>
     
     Stringify a <a class="reference internal nimdoc" title="type Speed" href="#Speed">Speed</a>. The string returned is the speed's value in hexadecimal prefixed with '$'. Since the value is in Q4.4 format, the first hex is the integral part and the second is the fractional part. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L453" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L453" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L458" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L458" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1374,8 +1374,8 @@
   <dd>
     
     Stringify a span, formatted as <tt class="docutils literal"><span class="pre"><span class="Identifier">pattern</span><span class="Punctuation">:</span><span class="Identifier">row</span><span class="Operator">+</span><span class="Identifier">rows</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1407" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1407" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1412" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1412" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1387,8 +1387,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L462" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L462" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L467" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L467" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1400,8 +1400,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L463" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L463" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L468" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L468" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1413,8 +1413,8 @@
   <dd>
     
     Determine if two instruments are <strong>functionally</strong> equivalent. Informational data of the instruments are not tested. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L555" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L555" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L560" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L560" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1423,8 +1423,8 @@
   <dd>
     
     Equality test for two tables. Uses deep equality checking. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L743" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L743" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L748" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L748" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1433,8 +1433,8 @@
   <dd>
     
     Equality test two <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>s. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1136" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1136" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1141" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1141" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1443,8 +1443,8 @@
   <dd>
     
     Determines if two waveforms are <strong>functionally</strong> equivalent, or if they have the same wave data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L569" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L569" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L574" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L574" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1454,8 +1454,8 @@
   <dd>
     
     Test if two instrument columns are equivalent. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L819" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L819" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L824" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L824" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1464,8 +1464,8 @@
   <dd>
     
     Test if two note columns are equivalent. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L815" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L815" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L820" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L820" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1474,8 +1474,8 @@
   <dd>
     
     Equality test for <a class="reference internal nimdoc" title="object SongList" href="#SongList">SongList</a>. Each song in both lists are checked for deep equality. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1416" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1416" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1421" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1421" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1484,8 +1484,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L461" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L461" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L466" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L466" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1494,8 +1494,8 @@
   <dd>
     
     Equality test two <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>s. The tracks are equal if they have same len and data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L936" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L936" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L941" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L941" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1508,8 +1508,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1085" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1085" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1090" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1090" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1522,8 +1522,8 @@
   <dd>
     
     Gets the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th element in the sequence. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">[</span><span class="Identifier">i</span><span class="Punctuation">]</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L520" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L520" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L525" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L525" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1532,8 +1532,8 @@
   <dd>
     
     Gets the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th row in the track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L971" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L971" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L976" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L976" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1543,18 +1543,18 @@
   <dd>
     
     Gets the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th row in the track, allowing mutations. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L977" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L977" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L982" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L982" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="[],Table[T: SomeData],TableId">
-  <dt><pre><span class="Keyword">func</span> <a href="#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="data.html#SomeData"><span class="Identifier">SomeData</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="data.html#TableId"><span class="Identifier">TableId</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="data.html#SomeData"><span class="Identifier">SomeData</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="data.html#TableId"><span class="Identifier">TableId</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Gets an immutable ref of the item with the given id or <tt class="docutils literal"><span class="pre"><span class="Keyword">nil</span></span></tt> if there is no item with that id. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L644" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L644" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L649" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L649" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1563,8 +1563,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L650" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L650" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L655" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L655" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1577,8 +1577,8 @@
   <dd>
     
     Sets the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th element in the sequence to the given <tt class="docutils literal"><span class="pre"><span class="Identifier">val</span></span></tt>. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">[</span><span class="Identifier">i</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="Identifier">val</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L525" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L525" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L530" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L530" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1588,8 +1588,8 @@
   <dd>
     
     Replaces the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th row in the track with the given one. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L983" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L983" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L988" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L988" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1601,8 +1601,8 @@
   <dd>
     
     Adds a new item to the table using the next available id. If the table is at capacity, an <tt class="docutils literal"><span class="pre"><span class="Identifier">AssertionDefect</span></span></tt> will be raised. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L663" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L663" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L668" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L668" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1611,8 +1611,8 @@
   <dd>
     
     Adds a new item using the given id. An <tt class="docutils literal"><span class="pre"><span class="Identifier">AssertionDefect</span></span></tt> will be raised if the table is at capacity, or if the id is already in use. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L670" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L670" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L675" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L675" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1624,8 +1624,8 @@
   <dd>
     
     Gets a <a class="reference internal nimdoc" title="type PatternRow" href="#PatternRow">PatternRow</a> at the given index, using all tracks in the pattern. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1069" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1069" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1074" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1074" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1637,8 +1637,8 @@
   <dd>
     
     Adds a new track for each track id in the song's order, if it has not been added yet. After calling this proc, <a class="reference internal nimdoc" title="proc getTrackView(s: Song; ch: ChannelId; track: TrackId): TrackView" href="#getTrackView,Song,ChannelId,TrackId">getTrackView</a> will always return a valid <a class="reference internal nimdoc" title="object TrackView" href="#TrackView">TrackView</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1174" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1174" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1179" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1179" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1650,8 +1650,8 @@
   <dd>
     
     Get the span's range of rows as a slice 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1391" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1391" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1396" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1396" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1663,8 +1663,8 @@
   <dd>
     
     Maximum number of items that can be stored in a Table. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L639" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L639" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L644" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L644" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1676,8 +1676,8 @@
   <dd>
     
     Determines if the table contains an item with the <tt class="docutils literal"><span class="pre"><span class="Identifier">id</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L634" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L634" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L639" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L639" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1690,8 +1690,8 @@
   <dd>
     
     Access the song list's data for manipulation. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1471" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1471" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1476" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1476" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1701,8 +1701,8 @@
   <dd>
     
     Access the track's data, as a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">TrackRow</span><span class="Punctuation">]</span></span></tt>. Track must be valid! 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L962" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L962" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L967" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L967" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1714,8 +1714,8 @@
   <dd>
     
     Adds a copy of the item with the given id, using the next available id. An <tt class="docutils literal"><span class="pre"><span class="Identifier">AssertionDefect</span></span></tt> is raised if the item to copy does not exist, or if the table is at capacity. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L677" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L677" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L682" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L682" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1727,8 +1727,8 @@
   <dd>
     
     Get a <tt class="docutils literal"><span class="pre"><span class="Identifier">char</span></span></tt> representation for the given effect command value. For any unrecognized effect, <tt class="docutils literal"><span class="pre"><span class="Operator">?</span></span></tt> is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L772" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L772" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L777" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L777" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1741,8 +1741,8 @@
   <dd>
     
     Gets the <a class="reference internal nimdoc" title="object Tickrate" href="#Tickrate">Tickrate</a> to be used for performance of this song. If a tickrate was set for this song, that one is returned, otherwise, <tt class="docutils literal"><span class="pre"><span class="Identifier">defaultRate</span></span></tt> is. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1235" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1235" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1240" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1240" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1755,8 +1755,8 @@
   <dd>
     
     Calculate the closest speed value for the given <tt class="docutils literal"><span class="pre"><span class="Identifier">tempo</span></span></tt>, in beats per minute, and <tt class="docutils literal"><span class="pre"><span class="Identifier">framerate</span></span></tt> in hertz. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1241" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1241" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1246" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1246" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1764,13 +1764,13 @@
 </div>
 <div id="get-procs-all">
   <div id="get,SongList,ByteIndex">
-  <dt><pre><span class="Keyword">func</span> <a href="#get%2CSongList%2CByteIndex"><span class="Identifier">get</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">func</span> <a href="#get%2CSongList%2CByteIndex"><span class="Identifier">get</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Gets an immutable reference to the song at the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th index in the list. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1439" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1439" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1444" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1444" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1783,8 +1783,8 @@
   <dd>
     
     Gets a <a class="reference internal nimdoc" title="type Pattern" href="#Pattern">Pattern</a>, or an array of <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>s for each channel in the pattern at the given index in the song's order. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1203" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1203" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1208" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1208" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1797,8 +1797,8 @@
   <dd>
     
     Gets a view of the pattern data for the given order index. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1196" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1196" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1201" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1201" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1811,8 +1811,8 @@
   <dd>
     
     Gets a row of data from the specified track. If the track does not exist, an empty row is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1216" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1216" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1221" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1221" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1822,8 +1822,8 @@
   <dd>
     
     Gets a row of data from the pattern specified by <tt class="docutils literal"><span class="pre"><span class="Identifier">orderNo</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1211" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1211" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1216" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1216" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1836,8 +1836,8 @@
   <dd>
     
     Gets the tickrate for the given song id. The tickrate returned will be the song's tickrate override if set, otherwise it will be the module's tickrate. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1533" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1533" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1538" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1538" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1850,8 +1850,8 @@
   <dd>
     
     Gets the track for the given channel and track id. If no such track existed, an empty one is added to the song. The returned track can be edited and its changes will persist in the song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1189" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1189" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1194" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1194" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1864,8 +1864,8 @@
   <dd>
     
     Gets a view of the track for the given channel and track id. An invalid view will be returned if the requested track does not exist. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1183" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1183" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1188" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1188" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1877,8 +1877,8 @@
   <dd>
     
     Test if the instrument column is set, or has a value. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L842" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L842" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L847" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L847" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1887,8 +1887,8 @@
   <dd>
     
     Test if the note column is set, or has a value. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L838" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L838" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L843" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L843" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1900,8 +1900,8 @@
   <dd>
     
     Calculate a hash code for an instrument. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L550" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L550" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L555" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L555" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1910,8 +1910,8 @@
   <dd>
     
     Calculates a hash code for a Waveform. Only the waveform's wave data is used when calculating the hash. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L575" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L575" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L580" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L580" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1923,8 +1923,8 @@
   <dd>
     
     Converts the given tickrate to a rate in hertz. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L440" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L440" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L445" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L445" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1937,8 +1937,8 @@
   <dd>
     
     Initialize an Effect column with the given command and parameter. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L751" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L751" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L756" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L756" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1950,8 +1950,8 @@
   <dd>
     
     Initialize an <a class="reference internal nimdoc" title="object Instrument" href="#Instrument">Instrument</a>. Default initialization is used, so the instrument's channel is ch1, and all its sequences are empty. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L544" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L544" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L549" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L549" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1963,8 +1963,8 @@
   <dd>
     
     Initialize an empty <a class="reference internal nimdoc" title="type InstrumentTable" href="#InstrumentTable">InstrumentTable</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L624" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L624" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L629" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L629" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1976,8 +1976,8 @@
   <dd>
     
     Creates an empty <a class="reference internal nimdoc" title="object LoopPoint" href="#LoopPoint">LoopPoint</a>, or one that indicates there is no loop. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L502" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L502" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L507" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L507" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1986,8 +1986,8 @@
   <dd>
     
     Creates a <a class="reference internal nimdoc" title="object LoopPoint" href="#LoopPoint">LoopPoint</a> that defines a loop to the given index. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L497" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L497" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L502" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L502" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2005,8 +2005,8 @@
 <li>version information with the current application version and file revision.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1491" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1491" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1496" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1496" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2018,8 +2018,8 @@
   <dd>
     
     Initializes a default Order. The default Order contains one row with all track ids set to 0. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L901" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L901" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L906" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L906" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2032,8 +2032,8 @@
   <dd>
     
     Initialize an <a class="reference internal nimdoc" title="type OrderRow" href="#OrderRow">OrderRow</a> with the given track ids for each channel. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L891" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L891" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L896" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L896" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2046,8 +2046,8 @@
   <dd>
     
     Creates a sequence with an optional loop point and data. <tt class="docutils literal"><span class="pre"><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt> must be &lt;= 256! 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L507" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L507" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L512" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L512" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2059,8 +2059,8 @@
   <dd>
     
     Initialize a new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>. The returned song is set with default settings. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1125" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1125" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1130" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1130" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2073,8 +2073,8 @@
   <dd>
     
     Create a <a class="reference internal nimdoc" title="object SongList" href="#SongList">SongList</a> with the given number of songs. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1426" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1426" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1431" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1431" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2086,8 +2086,8 @@
   <dd>
     
     Initialize a <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a> with the given length. All rows in the returned Track are empty. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L942" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L942" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L947" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L947" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2096,8 +2096,8 @@
   <dd>
     
     Initialize a <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a> by deep copying the <a class="reference internal nimdoc" title="object TrackView" href="#TrackView">TrackView</a>. The track returned has the same data as the view, but can now be mutated. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L948" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L948" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L953" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L953" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2111,8 +2111,8 @@
   <dd>
     
     Initialize a <a class="reference internal nimdoc" title="object TrackRow" href="#TrackRow">TrackRow</a> with the given columns. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L864" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L864" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L869" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L869" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2125,8 +2125,8 @@
   <dd>
     
     Initialize a <a class="reference internal nimdoc" title="object TrackView" href="#TrackView">TrackView</a> from the given <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>. Same as <a class="reference internal nimdoc" title="converter toView (2 overloads)" href="#toView-converters-all">toView</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1030" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1030" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1035" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1035" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2138,8 +2138,8 @@
   <dd>
     
     Initialize a <a class="reference internal nimdoc" title="object Waveform" href="#Waveform">Waveform</a>. The returned Waveform's wave data is cleared, or each sample is set to 0. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L563" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L563" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L568" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L568" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2151,8 +2151,8 @@
   <dd>
     
     Initialize an empty <a class="reference internal nimdoc" title="type WaveformTable" href="#WaveformTable">WaveformTable</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L629" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L629" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L634" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L634" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2165,8 +2165,8 @@
   <dd>
     
     Initialize an instrument column with the given instrument id. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L833" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L833" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L838" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L838" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2178,8 +2178,8 @@
   <dd>
     
     Determine if the row is empty, or has all columns unset. Prefer this function over <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span> <span class="Operator">==</span> <span class="Identifier">default</span><span class="Punctuation">(</span><span class="Identifier">TrackRow</span><span class="Punctuation">)</span></span></tt> for performance. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L882" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L882" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L887" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L887" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2191,8 +2191,8 @@
   <dd>
     
     Determines if the song list is valid, or contains 1-256 songs. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1434" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1434" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1439" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1439" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2201,8 +2201,8 @@
   <dd>
     
     Determines if the module is valid. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1510" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1510" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1515" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1515" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2211,8 +2211,8 @@
   <dd>
     
     Determines if the order is valid. A valid order only has <tt class="docutils literal"><span class="pre"><span class="FloatNumber">1.</span><span class="Operator">.</span><span class="DecNumber">256</span></span></tt> rows. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L907" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L907" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L912" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L912" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2221,8 +2221,8 @@
   <dd>
     
     Determine if the sequence is valid. Valid sequences have no more than 256 elements. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L514" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L514" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L519" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L519" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2231,8 +2231,8 @@
   <dd>
     
     Determine if the speed is valid. Valid speeds are within the range of <a class="reference internal nimdoc" title="const rangeSpeed" href="#rangeSpeed">rangeSpeed</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L465" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L465" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L470" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L470" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2241,8 +2241,8 @@
   <dd>
     
     Determine if <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt> was properly initialized. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1149" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1149" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1154" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1154" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2251,8 +2251,8 @@
   <dd>
     
     Determines if <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> is a valid position in the song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1360" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1360" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1365" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1365" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2262,8 +2262,8 @@
   <dd>
     
     Determines if <tt class="docutils literal"><span class="pre"><span class="Identifier">span</span></span></tt> is a valid span in the song. A span is valid if its starting position is valid and if its range of rows is within <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="Punctuation">(</span><span class="Identifier">song</span><span class="Operator">.</span><span class="Identifier">trackLen</span><span class="Operator">-</span><span class="DecNumber">1</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1396" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1396" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1401" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1401" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2272,8 +2272,8 @@
   <dd>
     
     Determines if the track is valid, or if the track has a reference to the track data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L956" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L956" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L961" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L961" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2285,8 +2285,8 @@
   <dd>
     
     Gets the length of the song list, or the number of songs it contains. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1449" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1449" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1454" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1454" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2295,8 +2295,8 @@
   <dd>
     
     Gets the length of the sequence. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L537" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L537" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L542" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L542" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2305,8 +2305,8 @@
   <dd>
     
     Gets the length, or number of rows contained in this Track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1005" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1005" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1010" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1010" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2315,8 +2315,8 @@
   <dd>
     
     Gets the len, or number of items present in the table. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L694" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L694" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L699" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L699" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2329,8 +2329,8 @@
   <dd>
     
     Gets a mutable reference to the song at the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th index in the list. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1444" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1444" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1449" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1449" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2342,8 +2342,8 @@
   <dd>
     
     Creates a ref of a new <a class="reference internal nimdoc" title="object Module" href="#Module">Module</a>. The returned module has the same initialization procedure as <a class="reference internal nimdoc" title="proc initModule(): Module" href="#initModule">initModule</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1503" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1503" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1508" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1508" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2355,8 +2355,8 @@
   <dd>
     
     Create a ref to a new <a class="reference internal nimdoc" title="object Song" href="#Song">Song</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1130" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1130" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1135" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1135" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2368,8 +2368,8 @@
   <dd>
     
     Queries the next available id using a starting position. If no available id was found, <tt class="docutils literal"><span class="pre"><span class="Identifier">none</span><span class="Punctuation">(</span><span class="Identifier">TableId</span><span class="Punctuation">)</span></span></tt> is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L706" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L706" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L711" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L711" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2381,8 +2381,8 @@
   <dd>
     
     Gets the id that will be used next by the <tt class="docutils literal"><span class="pre"><span class="Identifier">add</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">duplicate</span></span></tt> procs This id is always the lowest one available, so removing an item may lower it. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L699" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L699" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L704" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L704" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2394,8 +2394,8 @@
   <dd>
     
     Finds an OrderRow with each of its track ids being the lowest one that has not been used in the entire order. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L912" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L912" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L917" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L917" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2408,8 +2408,8 @@
   <dd>
     
     Initialize a note column with the given note index. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L823" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L823" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L828" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L828" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2419,8 +2419,8 @@
   <dd>
     
     Initialize a note column using a note and octave pair. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L828" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L828" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L833" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L833" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2432,8 +2432,8 @@
   <dd>
     
     Gets the number of patterns in the song, or <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span><span class="Operator">.</span><span class="Identifier">order</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1267" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1267" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1272" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1272" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2443,8 +2443,8 @@
   <dd>
     
     Gets the length, in rows, of a pattern taking effects into consideration. If no pattern jump/halt effect is used then the track length is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1341" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1341" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1346" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1346" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2456,8 +2456,8 @@
   <dd>
     
     Removes the item at the given id. An <tt class="docutils literal"><span class="pre"><span class="Identifier">AssertionDefect</span></span></tt> is raised if the item does not exist. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L687" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L687" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L692" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L692" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2469,8 +2469,8 @@
   <dd>
     
     Removes all tracks for each channel in the song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1154" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1154" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1159" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1159" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2482,8 +2482,8 @@
   <dd>
     
     Removes all tracks whose IDs are not listed in the song's order. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1159" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1159" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1164" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1164" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2495,8 +2495,8 @@
   <dd>
     
     Gets the file revision major the module was deserialized from. Initialized modules will have this set to <tt class="docutils literal"><span class="pre"><span class="Identifier">fileMajor</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1521" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1521" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1526" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1526" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2508,8 +2508,8 @@
   <dd>
     
     Gets the file revision minor the module was deserialized from. Initialized modules will have this set to <tt class="docutils literal"><span class="pre"><span class="Identifier">fileMinor</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1527" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1527" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1532" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1532" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2522,8 +2522,8 @@
   <dd>
     
     Sets the length of the Sequence <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span></span></tt> to the given <tt class="docutils literal"><span class="pre"><span class="Identifier">len</span></span></tt>. Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">setLen</span><span class="Punctuation">(</span><span class="Identifier">len</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L531" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L531" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L536" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L536" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2532,8 +2532,8 @@
   <dd>
     
     Sets the length of the Track to a new value. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1011" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1011" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1016" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1016" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2545,8 +2545,8 @@
   <dd>
     
     Determines if the given effect command will shorten the runtime length of a pattern by either halting the song or jumping to a new pattern. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L756" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L756" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L761" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L761" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2559,8 +2559,8 @@
   <dd>
     
     Creates a song position with the given coordinates. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1355" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1355" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1360" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1360" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2573,8 +2573,8 @@
   <dd>
     
     Create a span with the given pattern and range of rows. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1383" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1383" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1388" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1388" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2584,8 +2584,8 @@
   <dd>
     
     Create a span from a position, with optional amount of rows to specify the span's range. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1377" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1377" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1382" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1382" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2597,8 +2597,8 @@
   <dd>
     
     Calculate the tempo, in beats per minute, of the song when performing at the given framerate. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1247" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1247" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1252" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1252" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2608,8 +2608,8 @@
   <dd>
     
     Calculates the tempo, in beats per minute, from a speed, in ticks per row. <tt class="docutils literal"><span class="pre"><span class="Identifier">rowsPerBeat</span></span></tt> is the number of rows in the pattern that make a single beat. <tt class="docutils literal"><span class="pre"><span class="Identifier">framerate</span></span></tt> is the update rate of music playback, in hertz. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L483" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L483" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L488" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L488" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2619,8 +2619,8 @@
   <dd>
     
     Convenience overload for converting a <a class="reference internal nimdoc" title="type Speed" href="#Speed">Speed</a> to a tempo. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L490" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L490" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L495" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L495" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2632,8 +2632,8 @@
   <dd>
     
     Converts a uint8 to an EffectCmd enum safely. etNoEffect is returned if x is not in the range of EffectCmd. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L762" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L762" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L767" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L767" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2645,8 +2645,8 @@
   <dd>
     
     Converts a fixed point speed to floating point. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L471" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L471" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L476" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L476" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2659,8 +2659,8 @@
   <dd>
     
     Convert the instrument column to an Option. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L858" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L858" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L863" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L863" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2670,8 +2670,8 @@
   <dd>
     
     Convert the note column to an Option. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L854" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L854" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L859" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L859" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2683,8 +2683,8 @@
   <dd>
     
     Converts a floating point speed value to fixed point. The result is clamped within the bounds of valid speed values. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L476" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L476" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L481" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L481" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2696,8 +2696,8 @@
   <dd>
     
     Gets the total number of rows that are non-empty. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1017" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1017" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1022" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1022" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2709,8 +2709,8 @@
   <dd>
     
     Gets the total number of tracks from all channels in this song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1230" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1230" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1235" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1235" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2722,8 +2722,8 @@
   <dd>
     
     Gets the track length, or the number of rows each <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a> in this song has. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1253" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1253" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1258" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1258" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2735,8 +2735,8 @@
   <dd>
     
     Sets the track length for all existing <a class="reference internal nimdoc" title="object Track" href="#Track">Track</a>s in this song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1259" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1259" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1264" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1264" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2748,8 +2748,8 @@
   <dd>
     
     Gets a set of Ids that refer to unique data. This proc can be used to deduplicate the table's data when exporting the module. The Id chosen in the result for any set of duplicates encountered is the lowest one in the set. Ie, a Table with data set for Ids 0, 1 and 2 with equivalent data, has a uniqueIds set of <tt class="docutils literal"><span class="pre"><span class="Punctuation">{</span> <span class="FloatNumber">0.</span><span class="Identifier">TableId</span> <span class="Punctuation">}</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L715" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L715" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L720" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L720" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2762,8 +2762,8 @@
   <dd>
     
     Get the value of the set instrument column. Do not use for unset columns! 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L850" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L850" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L855" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L855" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2772,8 +2772,8 @@
   <dd>
     
     Get the value of the set note column. Do not use for unset columns! 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L846" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L846" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L851" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L851" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2785,8 +2785,8 @@
   <dd>
     
     Gets the version information that created this module. Initialized modules will have this set to <tt class="docutils literal"><span class="pre"><span class="Identifier">appVersion</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1515" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1515" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1520" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1520" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2800,13 +2800,12 @@
   <dl class="item">
     <div id="items-iterators-all">
   <div id="items.i,SongList">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CSongList"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CSongList"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Iterate all songs in the list, as immutable references. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1459" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1459" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1464" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1464" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2815,8 +2814,8 @@
   <dd>
     
     Convenience iterator for iterating every row in the track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L994" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L994" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L999" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L999" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2825,8 +2824,8 @@
   <dd>
     
     Iterates all rows in the view's track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1040" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1040" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1045" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1045" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2835,8 +2834,8 @@
   <dd>
     
     Iterates all items in the table, via their id, in ascending order. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L653" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L653" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L658" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L658" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2848,8 +2847,8 @@
   <dd>
     
     Iterate all songs in the list, allowing mutations to song data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1465" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1465" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1470" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1470" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2858,8 +2857,8 @@
   <dd>
     
     Convenience iterator for iterating every row in the track, allowing mutations. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L999" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L999" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1004" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1004" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2872,8 +2871,8 @@
   <dd>
     
     Iterates all of tracks contained in this song for a channel, yielding their id. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1222" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1222" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1227" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1227" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2892,8 +2891,8 @@
   <dd>
     
     Implicit conversion of a <tt class="docutils literal"><span class="pre"><span class="Identifier">string</span></span></tt> to an <tt class="docutils literal"><span class="pre"><span class="Identifier">InfoString</span></span></tt>. Only the first 32 characters of <tt class="docutils literal"><span class="pre"><span class="Identifier">str</span></span></tt> are copied if <tt class="docutils literal"><span class="pre"><span class="Identifier">str</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt> is greater than 32. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1542" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1542" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1547" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1547" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2905,8 +2904,8 @@
   <dd>
     
     Converts a <a class="reference internal nimdoc" title="type Pattern" href="#Pattern">Pattern</a> to a <a class="reference internal nimdoc" title="type PatternView" href="#PatternView">PatternView</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1063" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1063" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1068" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1068" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2916,8 +2915,8 @@
   <dd>
     
     Convert a Track to a TrackView. This is a converter so that you can pass <tt class="docutils literal"><span class="pre"><span class="Identifier">Track</span></span></tt> objects to any proc taking a <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackView</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1024" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1024" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1029" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1029" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2931,12 +2930,12 @@
   <dl class="item">
     <div id="[]-templates-all">
   <div id="[].t,SongList,ByteIndex">
-  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2CSongList%2CByteIndex"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2CSongList%2CByteIndex"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">l</span><span class="Other">:</span> <a href="data.html#SongList"><span class="Identifier">SongList</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span></pre></dt>
   <dd>
     
     Sugar for <tt class="docutils literal"><span class="pre"><span class="Identifier">l</span><span class="Operator">.</span><span class="Identifier">get</span><span class="Punctuation">(</span><span class="Identifier">i</span><span class="Punctuation">)</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1454" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1454" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1459" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1459" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2945,8 +2944,8 @@
   <dd>
     
     Gets the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th row in the view's track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1035" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1035" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1040" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1040" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2969,8 +2968,8 @@
 <span class="Identifier">song</span><span class="Operator">.</span><span class="Identifier">viewPattern</span><span class="Punctuation">(</span><span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="Identifier">pattern</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">pattern</span><span class="Punctuation">[</span><span class="Identifier">ch1</span><span class="Punctuation">]</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">note</span> <span class="Operator">==</span> <span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">pattern</span><span class="Punctuation">[</span><span class="Identifier">ch2</span><span class="Punctuation">]</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">effects</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Identifier">initEffect</span><span class="Punctuation">(</span><span class="Identifier">ecTuning</span><span class="Punctuation">,</span> <span class="HexNumber">0x82</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1305" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1305" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1310" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1310" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -2991,8 +2990,8 @@
 <span class="Identifier">song</span><span class="Operator">.</span><span class="Identifier">viewTrack</span><span class="Punctuation">(</span><span class="Identifier">ch3</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="Identifier">track</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">track</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">note</span> <span class="Operator">==</span> <span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">track</span><span class="Punctuation">[</span><span class="DecNumber">4</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">instrument</span> <span class="Operator">==</span> <span class="Identifier">instrumentColumn</span><span class="Punctuation">(</span><span class="DecNumber">0</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1272" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1272" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1277" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1277" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3004,8 +3003,8 @@
   <dd>
     
     Checks if this view's track is valid. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1046" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1046" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1051" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1051" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3017,8 +3016,8 @@
   <dd>
     
     Get the len, or number of rows, for this view's track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1051" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1051" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1056" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1056" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3030,8 +3029,8 @@
   <dd>
     
     Sugar for <a class="reference internal nimdoc" title="proc initOrderRow(id1 = 0'u8; id2 = 0'u8; id3 = 0'u8; id4 = 0'u8): OrderRow" href="#initOrderRow,uint8,uint8,uint8,uint8">initOrderRow</a> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L896" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L896" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L901" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L901" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3043,8 +3042,8 @@
   <dd>
     
     Counts the total number of rows that are non-empty for this view's track. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1056" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1056" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1061" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1061" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3058,8 +3057,8 @@
     
     Sugar for <a class="reference internal nimdoc" title="proc initTrackRow(note = noteNone; instrument = instrumentNone; e1 = effectNone;
              e2 = effectNone; e3 = effectNone): TrackRow" href="#initTrackRow">initTrackRow</a> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L875" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L875" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L880" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L880" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3074,8 +3073,8 @@
 <p>Same as <a class="reference internal nimdoc" title="template viewTrack(s: Song; ch: ChannelId; trackId: TrackId; trackVar, body: untyped)" href="#viewTrack.t,Song,ChannelId,TrackId,untyped,untyped">viewTrack</a> if any track in the pattern does not exist, an invalid one will take its place.</p>
 <p>See the example in <a class="reference internal nimdoc" title="template editPattern(s: var Song; orderNo: ByteIndex; patternVar, body: untyped)" href="#editPattern.t,Song,ByteIndex,untyped,untyped">editPattern</a> for example usage. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1326" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1326" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1331" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1331" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3091,8 +3090,8 @@
 <p>If the track does not exist, then <tt class="docutils literal"><span class="pre"><span class="Identifier">value</span></span></tt> will refer to an invalid track, or a track with 0 rows.</p>
 <p>See the example in <a class="reference internal nimdoc" title="template editTrack(s: var Song; ch: ChannelId; trackId: TrackId; trackVar, body: untyped)" href="#editTrack.t,Song,ChannelId,TrackId,untyped,untyped">editTrack</a> for example usage. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1290" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1290" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/data.nim#L1295" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/data.nim#L1295" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -3104,7 +3103,7 @@
 <div class="section" id="19">
   <h1><a class="toc-backref" href="#19">Exports</a></h1>
   <dl class="item">
-    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>
+    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#iptr"><span class="Identifier">iptr</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,iref[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#==.t,,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,ptr.T,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],ref.T"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,iptr[T],iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#iref"><span class="Identifier">iref</span></a>, <a href="common.html#==.t,iptr[T],ptr.T"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#==.t,iref[T],"><span class="Identifier">==</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#isNil.t,iptr[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#==.t,ref.T,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ref.T"><span class="Identifier">immutable</span></a>, <a href="common.html#==.t,,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iptr[T],"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ptr.T"><span class="Identifier">immutable</span></a>, <a href="common.html#[].t,iptr[T]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,iref[T]"><span class="Identifier">[]</span></a>
   </dl>
 </div>
 
@@ -3114,7 +3113,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:34 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

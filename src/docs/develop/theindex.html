@@ -48,13 +48,25 @@
           </ul></dd>
 <dt><a name="%60%3D%3D%60" href="#%60%3D%3D%60"><span>`==`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="common: template `==`[T: ptr | ref](lhs: nil.typeof; rhs: Immutable[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2C%2CImmutable%5BT%3A%20ptr%20or%20ref%5D">common: template `==`[T: ptr | ref](lhs: nil.typeof; rhs: Immutable[T]): bool</a></li>
+          data-doc-search-tag="common: template `==`[T](x: typeOf(nil); y: iptr[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2C%2Ciptr%5BT%5D">common: template `==`[T](x: typeOf(nil); y: iptr[T]): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="common: template `==`[T](a, b: Immutable[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2CImmutable%5BT%5D%2CImmutable%5BT%5D">common: template `==`[T](a, b: Immutable[T]): bool</a></li>
+          data-doc-search-tag="common: template `==`[T](x: typeOf(nil); y: iref[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2C%2Ciref%5BT%5D">common: template `==`[T](x: typeOf(nil); y: iref[T]): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="common: template `==`[T](i: Immutable[T]; rhs: T): bool" href="libtrackerboy/common.html#%3D%3D.t%2CImmutable%5BT%5D%2CT">common: template `==`[T](i: Immutable[T]; rhs: T): bool</a></li>
+          data-doc-search-tag="common: template `==`[T](x: iptr[T]; y: typeOf(nil)): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciptr%5BT%5D%2C">common: template `==`[T](x: iptr[T]; y: typeOf(nil)): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="common: template `==`[T](lhs: T; i: Immutable[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2CT%2CImmutable%5BT%5D">common: template `==`[T](lhs: T; i: Immutable[T]): bool</a></li>
+          data-doc-search-tag="common: template `==`[T](x, y: iptr[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciptr%5BT%5D%2Ciptr%5BT%5D">common: template `==`[T](x, y: iptr[T]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x: iptr[T]; y: ptr T): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciptr%5BT%5D%2Cptr.T">common: template `==`[T](x: iptr[T]; y: ptr T): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x: iref[T]; y: typeOf(nil)): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciref%5BT%5D%2C">common: template `==`[T](x: iref[T]; y: typeOf(nil)): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x, y: iref[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciref%5BT%5D%2Ciref%5BT%5D">common: template `==`[T](x, y: iref[T]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x: iref[T]; y: ref T): bool" href="libtrackerboy/common.html#%3D%3D.t%2Ciref%5BT%5D%2Cref.T">common: template `==`[T](x: iref[T]; y: ref T): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x: ptr T; y: iptr[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2Cptr.T%2Ciptr%5BT%5D">common: template `==`[T](x: ptr T; y: iptr[T]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template `==`[T](x: ref T; y: iref[T]): bool" href="libtrackerboy/common.html#%3D%3D.t%2Cref.T%2Ciref%5BT%5D">common: template `==`[T](x: ref T; y: iref[T]): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc `==`(a, b: Instrument): bool" href="libtrackerboy/data.html#%3D%3D%2CInstrument%2CInstrument">data: proc `==`(a, b: Instrument): bool</a></li>
           <li><a class="reference external"
@@ -98,13 +110,13 @@
 <li><a class="reference external"
           data-doc-search-tag="common: template `[]`[N, T](s: FixedSeq[N, T]; i: int): T" href="libtrackerboy/common.html#%5B%5D.t%2CFixedSeq%5BN%2CT%5D%2Cint">common: template `[]`[N, T](s: FixedSeq[N, T]; i: int): T</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="common: template `[]`[T](i: Immutable[[type node]]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2CImmutable%5B%5D">common: template `[]`[T](i: Immutable[[type node]]): lent T</a></li>
+          data-doc-search-tag="common: template `[]`[T](x: iptr[T]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2Ciptr%5BT%5D">common: template `[]`[T](x: iptr[T]): lent T</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="common: template `[]`[T: not ptr | ref](i: Immutable[T]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2CImmutable%5BT%3A%20not%20ptr%20or%20ref%5D">common: template `[]`[T: not ptr | ref](i: Immutable[T]): lent T</a></li>
+          data-doc-search-tag="common: template `[]`[T](x: iref[T]): lent T" href="libtrackerboy/common.html#%5B%5D.t%2Ciref%5BT%5D">common: template `[]`[T](x: iref[T]): lent T</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc `[]`(s: Sequence; i: ByteIndex): uint8" href="libtrackerboy/data.html#%5B%5D%2CSequence%2CByteIndex">data: proc `[]`(s: Sequence; i: ByteIndex): uint8</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: proc `[]`[T: SomeData](t: Table[T]; id: TableId): Immutable[ref T]" href="libtrackerboy/data.html#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: proc `[]`[T: SomeData](t: Table[T]; id: TableId): Immutable[ref T]</a></li>
+          data-doc-search-tag="data: proc `[]`[T: SomeData](t: Table[T]; id: TableId): iref[T]" href="libtrackerboy/data.html#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId">data: proc `[]`[T: SomeData](t: Table[T]; id: TableId): iref[T]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc `[]`[T: SomeData](t: var Table[T]; id: TableId): ref T" href="libtrackerboy/data.html#%5B%5D%2CTable%5BT%3A%20SomeData%5D%2CTableId_2">data: proc `[]`[T: SomeData](t: var Table[T]; id: TableId): ref T</a></li>
           <li><a class="reference external"
@@ -112,7 +124,7 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc `[]`(t: var Track; i: ByteIndex): var TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrack%2CByteIndex_2">data: proc `[]`(t: var Track; i: ByteIndex): var TrackRow</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template `[]`(l: SongList; i: ByteIndex): Immutable[ref Song]" href="libtrackerboy/data.html#%5B%5D.t%2CSongList%2CByteIndex">data: template `[]`(l: SongList; i: ByteIndex): Immutable[ref Song]</a></li>
+          data-doc-search-tag="data: template `[]`(l: SongList; i: ByteIndex): iref[Song]" href="libtrackerboy/data.html#%5B%5D.t%2CSongList%2CByteIndex">data: template `[]`(l: SongList; i: ByteIndex): iref[Song]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: template `[]`(t: TrackView; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D.t%2CTrackView%2CByteIndex">data: template `[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
           <li><a class="reference external"
@@ -498,7 +510,7 @@
           </ul></dd>
 <dt><a name="currentSong" href="#currentSong"><span>currentSong:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="engine: proc currentSong(e: Engine): Immutable[ref Song]" href="libtrackerboy/engine.html#currentSong%2CEngine">engine: proc currentSong(e: Engine): Immutable[ref Song]</a></li>
+          data-doc-search-tag="engine: proc currentSong(e: Engine): iref[Song]" href="libtrackerboy/engine.html#currentSong%2CEngine">engine: proc currentSong(e: Engine): iref[Song]</a></li>
           </ul></dd>
 <dt><a name="currentState" href="#currentState"><span>currentState:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -902,7 +914,7 @@
           </ul></dd>
 <dt><a name="get" href="#get"><span>get:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: proc get(l: SongList; i: ByteIndex): Immutable[ref Song]" href="libtrackerboy/data.html#get%2CSongList%2CByteIndex">data: proc get(l: SongList; i: ByteIndex): Immutable[ref Song]</a></li>
+          data-doc-search-tag="data: proc get(l: SongList; i: ByteIndex): iref[Song]" href="libtrackerboy/data.html#get%2CSongList%2CByteIndex">data: proc get(l: SongList; i: ByteIndex): iref[Song]</a></li>
           </ul></dd>
 <dt><a name="getLocked" href="#getLocked"><span>getLocked:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1016,45 +1028,23 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc hertz(t: Tickrate): float" href="libtrackerboy/data.html#hertz%2CTickrate">data: proc hertz(t: Tickrate): float</a></li>
           </ul></dd>
-<dt><a name="Immutable" href="#Immutable"><span>Immutable:</span></a></dt><dd><ul class="simple">
+<dt><a name="immutable" href="#immutable"><span>immutable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="common: type Immutable" href="libtrackerboy/common.html#Immutable">common: type Immutable</a></li>
+          data-doc-search-tag="common: template immutable[T](x: ptr T): iptr[T]" href="libtrackerboy/common.html#immutable.t%2Cptr.T">common: template immutable[T](x: ptr T): iptr[T]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template immutable[T](x: ref T): iref[T]" href="libtrackerboy/common.html#immutable.t%2Cref.T">common: template immutable[T](x: ref T): iref[T]</a></li>
           </ul></dd>
 <dt><a name="InfoString" href="#InfoString"><span>InfoString:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: type InfoString" href="libtrackerboy/data.html#InfoString">data: type InfoString</a></li>
           </ul></dd>
-<dt><a name="init" href="#init"><span>init:</span></a></dt><dd><ul class="simple">
+<dt><a name="initApu" href="#initApu"><span>initApu:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="apu: proc init(__1711276754: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu" href="libtrackerboy/apu.html#init%2Ctypedesc%5BApu%5D%2Cint%2Cfloat">apu: proc init(__1711276754: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="editing: proc init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn">editing: proc init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection" href="libtrackerboy/editing.html#init%2Ctypedesc%5BPatternSelection%5D%2CPatternAnchor">editing: proc init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="engine: proc init(T: typedesc[Engine]): Engine" href="libtrackerboy/engine.html#init%2Ctypedesc%5BEngine%5D">engine: proc init(T: typedesc[Engine]): Engine</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime" href="libtrackerboy/engine/enginecontrol.html#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bptr.Song%5D%2Cint%2Cint%2Cbool">enginecontrol: proc init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState" href="libtrackerboy/engine/enginestate.html#init%2Ctypedesc%5BChannelState%5D">enginestate: proc init(__2046820417: typedesc[ChannelState]): ChannelState</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="enginestate: proc init(T: typedesc[GlobalState]): GlobalState" href="libtrackerboy/engine/enginestate.html#init%2Ctypedesc%5BGlobalState%5D">enginestate: proc init(T: typedesc[GlobalState]): GlobalState</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="wav: proc init(T: typedesc[WavConfig]): WavConfig" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavConfig%5D">wav: proc init(T: typedesc[WavConfig]): WavConfig</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="wav: proc init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter" href="libtrackerboy/exports/wav.html#init%2Ctypedesc%5BWavExporter%5D%2CModule%2CWavConfig">wav: proc init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="ioblocks: proc init(T: typedesc[InputBlock]; stream: Stream): InputBlock" href="libtrackerboy/private/ioblocks.html#init%2Ctypedesc%5BInputBlock%5D%2CStream">ioblocks: proc init(T: typedesc[InputBlock]; stream: Stream): InputBlock</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="ioblocks: proc init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock" href="libtrackerboy/private/ioblocks.html#init%2Ctypedesc%5BOutputBlock%5D%2CStream">ioblocks: proc init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="synth: proc init(__1761608413: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth" href="libtrackerboy/private/synth.html#init%2Ctypedesc%5BSynth%5D%2Cint">synth: proc init(__1761608413: typedesc[Synth]; samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="wavwriter: proc init(__2332033066: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint">wavwriter: proc init(__2332033066: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter</a></li>
+          data-doc-search-tag="apu: proc initApu(samplerate: int; framerate = 59.7): Apu" href="libtrackerboy/apu.html#initApu%2Cint%2Cfloat">apu: proc initApu(samplerate: int; framerate = 59.7): Apu</a></li>
+          </ul></dd>
+<dt><a name="initChannelState" href="#initChannelState"><span>initChannelState:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginestate: proc initChannelState(): ChannelState" href="libtrackerboy/engine/enginestate.html#initChannelState">enginestate: proc initChannelState(): ChannelState</a></li>
           </ul></dd>
 <dt><a name="initCounter" href="#initCounter"><span>initCounter:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1063,6 +1053,18 @@
 <dt><a name="initEffect" href="#initEffect"><span>initEffect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initEffect(cmd = ecNoEffect; param = 0'u8): Effect" href="libtrackerboy/data.html#initEffect%2Cuint8">data: proc initEffect(cmd = ecNoEffect; param = 0'u8): Effect</a></li>
+          </ul></dd>
+<dt><a name="initEngine" href="#initEngine"><span>initEngine:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="engine: proc initEngine(): Engine" href="libtrackerboy/engine.html#initEngine">engine: proc initEngine(): Engine</a></li>
+          </ul></dd>
+<dt><a name="initGlobalState" href="#initGlobalState"><span>initGlobalState:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginestate: proc initGlobalState(): GlobalState" href="libtrackerboy/engine/enginestate.html#initGlobalState">enginestate: proc initGlobalState(): GlobalState</a></li>
+          </ul></dd>
+<dt><a name="initInputBlock" href="#initInputBlock"><span>initInputBlock:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ioblocks: proc initInputBlock(stream: Stream): InputBlock" href="libtrackerboy/private/ioblocks.html#initInputBlock%2CStream">ioblocks: proc initInputBlock(stream: Stream): InputBlock</a></li>
           </ul></dd>
 <dt><a name="initInstrument" href="#initInstrument"><span>initInstrument:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1082,6 +1084,10 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc initModule(): Module" href="libtrackerboy/data.html#initModule">data: proc initModule(): Module</a></li>
           </ul></dd>
+<dt><a name="initMusicRuntime" href="#initMusicRuntime"><span>initMusicRuntime:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="enginecontrol: proc initMusicRuntime(song: iptr[Song]; orderNo, rowNo: int; patternRepeat: bool): MusicRuntime" href="libtrackerboy/engine/enginecontrol.html#initMusicRuntime%2Ciptr%5BSong%5D%2Cint%2Cint%2Cbool">enginecontrol: proc initMusicRuntime(song: iptr[Song]; orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
+          </ul></dd>
 <dt><a name="initOrder" href="#initOrder"><span>initOrder:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initOrder(): Order" href="libtrackerboy/data.html#initOrder">data: proc initOrder(): Order</a></li>
@@ -1089,6 +1095,18 @@
 <dt><a name="initOrderRow" href="#initOrderRow"><span>initOrderRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initOrderRow(id1 = 0'u8; id2 = 0'u8; id3 = 0'u8; id4 = 0'u8): OrderRow" href="libtrackerboy/data.html#initOrderRow%2Cuint8%2Cuint8%2Cuint8%2Cuint8">data: proc initOrderRow(id1 = 0'u8; id2 = 0'u8; id3 = 0'u8; id4 = 0'u8): OrderRow</a></li>
+          </ul></dd>
+<dt><a name="initOutputBlock" href="#initOutputBlock"><span>initOutputBlock:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ioblocks: proc initOutputBlock(stream: Stream): OutputBlock" href="libtrackerboy/private/ioblocks.html#initOutputBlock%2CStream">ioblocks: proc initOutputBlock(stream: Stream): OutputBlock</a></li>
+          </ul></dd>
+<dt><a name="initPatternCursor" href="#initPatternCursor"><span>initPatternCursor:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc initPatternCursor(row, track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#initPatternCursor%2Cint%2Cint%2CTrackColumn">editing: proc initPatternCursor(row, track: int; column: TrackColumn): PatternCursor</a></li>
+          </ul></dd>
+<dt><a name="initPatternSelection" href="#initPatternSelection"><span>initPatternSelection:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc initPatternSelection(a: PatternAnchor; b = a): PatternSelection" href="libtrackerboy/editing.html#initPatternSelection%2CPatternAnchor">editing: proc initPatternSelection(a: PatternAnchor; b = a): PatternSelection</a></li>
           </ul></dd>
 <dt><a name="initSequence" href="#initSequence"><span>initSequence:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1101,6 +1119,10 @@
 <dt><a name="initSongList" href="#initSongList"><span>initSongList:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initSongList(len = PositiveByte(1)): SongList" href="libtrackerboy/data.html#initSongList">data: proc initSongList(len = PositiveByte(1)): SongList</a></li>
+          </ul></dd>
+<dt><a name="initSynth" href="#initSynth"><span>initSynth:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="synth: proc initSynth(samplerate = 44100; buffersize = Natural(0)): Synth" href="libtrackerboy/private/synth.html#initSynth%2Cint">synth: proc initSynth(samplerate = 44100; buffersize = Natural(0)): Synth</a></li>
           </ul></dd>
 <dt><a name="initTrack" href="#initTrack"><span>initTrack:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1124,6 +1146,10 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc initTrackView(track: sink Track): TrackView" href="libtrackerboy/data.html#initTrackView%2CsinkTrack">data: proc initTrackView(track: sink Track): TrackView</a></li>
           </ul></dd>
+<dt><a name="initWavConfig" href="#initWavConfig"><span>initWavConfig:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: proc initWavConfig(): WavConfig" href="libtrackerboy/exports/wav.html#initWavConfig">wav: proc initWavConfig(): WavConfig</a></li>
+          </ul></dd>
 <dt><a name="initWaveform" href="#initWaveform"><span>initWaveform:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initWaveform(): Waveform" href="libtrackerboy/data.html#initWaveform">data: proc initWaveform(): Waveform</a></li>
@@ -1131,6 +1157,14 @@
 <dt><a name="initWaveformTable" href="#initWaveformTable"><span>initWaveformTable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc initWaveformTable(): WaveformTable" href="libtrackerboy/data.html#initWaveformTable">data: proc initWaveformTable(): WaveformTable</a></li>
+          </ul></dd>
+<dt><a name="initWavExporter" href="#initWavExporter"><span>initWavExporter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wav: proc initWavExporter(module: Module; config: WavConfig): WavExporter" href="libtrackerboy/exports/wav.html#initWavExporter%2CModule%2CWavConfig">wav: proc initWavExporter(module: Module; config: WavConfig): WavExporter</a></li>
+          </ul></dd>
+<dt><a name="initWavWriter" href="#initWavWriter"><span>initWavWriter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="wavwriter: proc initWavWriter(filename: sink string; channels, samplerate: int): WavWriter" href="libtrackerboy/private/wavwriter.html#initWavWriter%2Csinkstring%2Cint%2Cint">wavwriter: proc initWavWriter(filename: sink string; channels, samplerate: int): WavWriter</a></li>
           </ul></dd>
 <dt><a name="InputBlock" href="#InputBlock"><span>InputBlock:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1164,6 +1198,14 @@
 <li><a class="reference external"
           data-doc-search-tag="text: proc instrumentText(instrument: InstrumentColumn): InstrumentString" href="libtrackerboy/text.html#instrumentText%2CInstrumentColumn">text: proc instrumentText(instrument: InstrumentColumn): InstrumentString</a></li>
           </ul></dd>
+<dt><a name="iptr" href="#iptr"><span>iptr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="common: type iptr" href="libtrackerboy/common.html#iptr">common: type iptr</a></li>
+          </ul></dd>
+<dt><a name="iref" href="#iref"><span>iref:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="common: type iref" href="libtrackerboy/common.html#iref">common: type iref</a></li>
+          </ul></dd>
 <dt><a name="isEffect" href="#isEffect"><span>isEffect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: proc isEffect(column: TrackSelect): bool" href="libtrackerboy/editing.html#isEffect%2CTrackSelect">editing: proc isEffect(column: TrackSelect): bool</a></li>
@@ -1194,7 +1236,9 @@
           </ul></dd>
 <dt><a name="isNil" href="#isNil"><span>isNil:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="common: template isNil[T](i: Immutable[[type node]]): bool" href="libtrackerboy/common.html#isNil.t%2CImmutable%5B%5D">common: template isNil[T](i: Immutable[[type node]]): bool</a></li>
+          data-doc-search-tag="common: template isNil[T](x: iptr[T]): bool" href="libtrackerboy/common.html#isNil.t%2Ciptr%5BT%5D">common: template isNil[T](x: iptr[T]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="common: template isNil[T](x: iref[T]): bool" href="libtrackerboy/common.html#isNil.t%2Ciref%5BT%5D">common: template isNil[T](x: iref[T]): bool</a></li>
           </ul></dd>
 <dt><a name="isNoop" href="#isNoop"><span>isNoop:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1234,7 +1278,7 @@
 <li><a class="reference external"
           data-doc-search-tag="common: iterator items[N, T](s: FixedSeq[N, T]): T" href="libtrackerboy/common.html#items.i%2CFixedSeq%5BN%2CT%5D">common: iterator items[N, T](s: FixedSeq[N, T]): T</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: iterator items(l: SongList): Immutable[ref Song]" href="libtrackerboy/data.html#items.i%2CSongList">data: iterator items(l: SongList): Immutable[ref Song]</a></li>
+          data-doc-search-tag="data: iterator items(l: SongList): iref[Song]" href="libtrackerboy/data.html#items.i%2CSongList">data: iterator items(l: SongList): iref[Song]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: iterator items[T: SomeData](t: Table[T]): TableId" href="libtrackerboy/data.html#items.i%2CTable%5BT%3A%20SomeData%5D">data: iterator items[T: SomeData](t: Table[T]): TableId</a></li>
           <li><a class="reference external"
@@ -1724,7 +1768,7 @@
           </ul></dd>
 <dt><a name="play" href="#play"><span>play:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="engine: proc play(e: var Engine; song: sink Immutable[ref Song]; startAt = default(SongPos))" href="libtrackerboy/engine.html#play%2CEngine%2CsinkImmutable%5Bref.Song%5D">engine: proc play(e: var Engine; song: sink Immutable[ref Song]; startAt = default(SongPos))</a></li>
+          data-doc-search-tag="engine: proc play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))" href="libtrackerboy/engine.html#play%2CEngine%2Csinkiref%5BSong%5D">engine: proc play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))</a></li>
           </ul></dd>
 <dt><a name="pos" href="#pos"><span>pos:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2224,10 +2268,6 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc toFloat(speed: Speed): float" href="libtrackerboy/data.html#toFloat%2CSpeed">data: proc toFloat(speed: Speed): float</a></li>
           </ul></dd>
-<dt><a name="toImmutable" href="#toImmutable"><span>toImmutable:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="common: template toImmutable[T](s: T): Immutable[T]" href="libtrackerboy/common.html#toImmutable.t%2CT">common: template toImmutable[T](s: T): Immutable[T]</a></li>
-          </ul></dd>
 <dt><a name="toInfoString" href="#toInfoString"><span>toInfoString:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: converter toInfoString(str: string): InfoString" href="libtrackerboy/data.html#toInfoString.c%2Cstring">data: converter toInfoString(str: string): InfoString</a></li>
@@ -2548,7 +2588,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:06 UTC</small>
       </div>
     </div>
   </div>

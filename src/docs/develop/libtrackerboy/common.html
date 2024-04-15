@@ -60,7 +60,8 @@
   len*: int ## The length of the seq, or the number of items added to it. Must be in
             ## range `0..N`.
             ##">FixedSeq</a></li>
-<li><a class="reference" href="#Immutable" title="Immutable[T] = distinct T">Immutable</a></li>
+<li><a class="reference" href="#iptr" title="iptr[T] = distinct ptr T">iptr</a></li>
+<li><a class="reference" href="#iref" title="iref[T] = distinct ref T">iref</a></li>
 <li><a class="reference" href="#Pcm" title="Pcm = PcmF32">Pcm</a></li>
 <li><a class="reference" href="#PcmF32" title="PcmF32 = float32">PcmF32</a></li>
 <li><a class="reference" href="#PositiveByte" title="PositiveByte = range[1 .. 256]">PositiveByte</a></li>
@@ -99,28 +100,36 @@
     <summary><a class="reference reference-toplevel" href="#18" id="68">Templates</a></summary>
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">==
-  <li><a class="reference" href="#%3D%3D.t%2C%2CImmutable%5BT%3A%20ptr%20or%20ref%5D" title="`==`[T: ptr | ref](lhs: nil.typeof; rhs: Immutable[T]): bool">`==`[T: ptr | ref](lhs: nil.typeof; rhs: Immutable[T]): bool</a></li>
-<li><a class="reference" href="#%3D%3D.t%2CImmutable%5BT%5D%2CImmutable%5BT%5D" title="`==`[T](a, b: Immutable[T]): bool">`==`[T](a, b: Immutable[T]): bool</a></li>
-<li><a class="reference" href="#%3D%3D.t%2CImmutable%5BT%5D%2CT" title="`==`[T](i: Immutable[T]; rhs: T): bool">`==`[T](i: Immutable[T]; rhs: T): bool</a></li>
-<li><a class="reference" href="#%3D%3D.t%2CT%2CImmutable%5BT%5D" title="`==`[T](lhs: T; i: Immutable[T]): bool">`==`[T](lhs: T; i: Immutable[T]): bool</a></li>
+  <li><a class="reference" href="#%3D%3D.t%2Ciptr%5BT%5D%2Ciptr%5BT%5D" title="`==`[T](x, y: iptr[T]): bool">`==`[T](x, y: iptr[T]): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Ciref%5BT%5D%2Ciref%5BT%5D" title="`==`[T](x, y: iref[T]): bool">`==`[T](x, y: iref[T]): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Ciptr%5BT%5D%2Cptr.T" title="`==`[T](x: iptr[T]; y: ptr T): bool">`==`[T](x: iptr[T]; y: ptr T): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Ciptr%5BT%5D%2C" title="`==`[T](x: iptr[T]; y: typeOf(nil)): bool">`==`[T](x: iptr[T]; y: typeOf(nil)): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Ciref%5BT%5D%2Cref.T" title="`==`[T](x: iref[T]; y: ref T): bool">`==`[T](x: iref[T]; y: ref T): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Ciref%5BT%5D%2C" title="`==`[T](x: iref[T]; y: typeOf(nil)): bool">`==`[T](x: iref[T]; y: typeOf(nil)): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Cptr.T%2Ciptr%5BT%5D" title="`==`[T](x: ptr T; y: iptr[T]): bool">`==`[T](x: ptr T; y: iptr[T]): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2Cref.T%2Ciref%5BT%5D" title="`==`[T](x: ref T; y: iref[T]): bool">`==`[T](x: ref T; y: iref[T]): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2C%2Ciptr%5BT%5D" title="`==`[T](x: typeOf(nil); y: iptr[T]): bool">`==`[T](x: typeOf(nil); y: iptr[T]): bool</a></li>
+<li><a class="reference" href="#%3D%3D.t%2C%2Ciref%5BT%5D" title="`==`[T](x: typeOf(nil); y: iref[T]): bool">`==`[T](x: typeOf(nil); y: iref[T]): bool</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">[]
   <li><a class="reference" href="#%5B%5D.t%2CFixedSeq%5BN%2CT%5D%2Cint" title="`[]`[N, T](s: FixedSeq[N, T]; i: int): T">`[]`[N, T](s: FixedSeq[N, T]; i: int): T</a></li>
-<li><a class="reference" href="#%5B%5D.t%2CImmutable%5BT%3A%20not%20ptr%20or%20ref%5D" title="`[]`[T: not ptr | ref](i: Immutable[T]): lent T">`[]`[T: not ptr | ref](i: Immutable[T]): lent T</a></li>
-<li><a class="reference" href="#%5B%5D.t%2CImmutable%5B%5D" title="`[]`[T](i: Immutable[[type node]]): lent T">`[]`[T](i: Immutable[[type node]]): lent T</a></li>
+<li><a class="reference" href="#%5B%5D.t%2Ciptr%5BT%5D" title="`[]`[T](x: iptr[T]): lent T">`[]`[T](x: iptr[T]): lent T</a></li>
+<li><a class="reference" href="#%5B%5D.t%2Ciref%5BT%5D" title="`[]`[T](x: iref[T]): lent T">`[]`[T](x: iref[T]): lent T</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">capacity
   <li><a class="reference" href="#capacity.t" title="capacity[N, T](s: FixedSeq[N, T] | typedesc[FixedSeq[N, T]]): int">capacity[N, T](s: FixedSeq[N, T] | typedesc[FixedSeq[N, T]]): int</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">isNil
-  <li><a class="reference" href="#isNil.t%2CImmutable%5B%5D" title="isNil[T](i: Immutable[[type node]]): bool">isNil[T](i: Immutable[[type node]]): bool</a></li>
+<ul class="simple nested-toc-section">immutable
+  <li><a class="reference" href="#immutable.t%2Cptr.T" title="immutable[T](x: ptr T): iptr[T]">immutable[T](x: ptr T): iptr[T]</a></li>
+<li><a class="reference" href="#immutable.t%2Cref.T" title="immutable[T](x: ref T): iref[T]">immutable[T](x: ref T): iref[T]</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">toImmutable
-  <li><a class="reference" href="#toImmutable.t%2CT" title="toImmutable[T](s: T): Immutable[T]">toImmutable[T](s: T): Immutable[T]</a></li>
+<ul class="simple nested-toc-section">isNil
+  <li><a class="reference" href="#isNil.t%2Ciptr%5BT%5D" title="isNil[T](x: iptr[T]): bool">isNil[T](x: iptr[T]): bool</a></li>
+<li><a class="reference" href="#isNil.t%2Ciref%5BT%5D" title="isNil[T](x: iref[T]): bool">isNil[T](x: iref[T]): bool</a></li>
 
 </ul>
 
@@ -173,16 +182,26 @@
   <dd>
     
     Provides a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span></span></tt>-like data structure that only has a fixed capacity, <tt class="docutils literal"><span class="pre"><span class="Identifier">N</span></span></tt>. Useful when you have a fixed number of items to store but you want to convenience of a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span></span></tt> with <tt class="docutils literal"><span class="pre"><span class="Identifier">array</span></span></tt> style storage. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L50" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L50" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-<div id="Immutable">
-  <dt><pre><a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">T</span></pre></dt>
+<div id="iptr">
+  <dt><pre><a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Keyword">ptr</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
-    Wrapper type that forces immutability on T. Useful for <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt> types. Accessing the source is done through the <a class="reference internal" href="#"></a> overload proc. Both value and ref semantics can be used. When the source is a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt>, accessing the source will dereference the ref/ptr. 
+    Immutable pointer type. Like <a class="reference internal nimdoc" title="type iref" href="#iref">iref</a>, this is a wrapper for <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span> <span class="Identifier">T</span></span></tt> that only allows immutable access to the referenced data. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L48" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L48" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="iref">
+  <dt><pre><a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Keyword">ref</span> <span class="Identifier">T</span></pre></dt>
+  <dd>
+    
+    Immutable reference type. This is a wrapper for a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span> <span class="Identifier">T</span></span></tt> that only allows immutable access to the referenced data. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L43" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L43" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -241,8 +260,8 @@
   <dd>
     
     Adds an item to the end of the quick list. An error will occur the list is at maximum capacity. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L119" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L144" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L144" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -260,8 +279,8 @@
   <dd>
     
     Iterates all items in the FixedSeq. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L136" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L136" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L161" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L161" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -274,43 +293,103 @@
   <h1><a class="toc-backref" href="#18">Templates</a></h1>
   <dl class="item">
     <div id="==-templates-all">
-  <div id="==.t,,Immutable[T: ptr or ref]">
-  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2C%2CImmutable%5BT%3A%20ptr%20or%20ref%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Operator">|</span> <span class="Keyword">ref</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">lhs</span><span class="Other">:</span> <span class="Keyword">nil</span><span class="Other">.</span><span class="Identifier">typeof</span><span class="Other">;</span> <span class="Identifier">rhs</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <div id="==.t,iptr[T],iptr[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciptr%5BT%5D%2Ciptr%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">rhs</span><span class="Operator">.</span><span class="Identifier">isNil</span><span class="Punctuation">(</span><span class="Punctuation">)</span></span></tt> 
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L87" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L87" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,iref[T],iref[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciref%5BT%5D%2Ciref%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L84" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L84" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,iptr[T],ptr.T">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciptr%5BT%5D%2Cptr.T"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L99" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L99" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,iptr[T],">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciptr%5BT%5D%2C"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">typeOf</span><span class="Other">(</span><span class="Keyword">nil</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L111" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L111" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,iref[T],ref.T">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciref%5BT%5D%2Cref.T"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L96" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L96" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,iref[T],">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Ciref%5BT%5D%2C"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">typeOf</span><span class="Other">(</span><span class="Keyword">nil</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L108" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L108" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-<div id="==.t,Immutable[T],Immutable[T]">
-  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2CImmutable%5BT%5D%2CImmutable%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<div id="==.t,ptr.T,iptr[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Cptr.T%2Ciptr%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Test if the two immutables are equivalent. This just calls the <tt class="docutils literal"><span class="pre"><span class="Operator">==</span></span></tt> proc for T. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L113" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L113" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-<div id="==.t,Immutable[T],T">
-  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2CImmutable%5BT%5D%2CT"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">rhs</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<div id="==.t,ref.T,iref[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2Cref.T%2Ciref%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Test if the Immutable's source is equivalent to the given value 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L98" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L98" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L90" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L90" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-<div id="==.t,T,Immutable[T]">
-  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2CT%2CImmutable%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">lhs</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<div id="==.t,,iptr[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2C%2Ciptr%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">typeOf</span><span class="Other">(</span><span class="Keyword">nil</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Same as <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span> <span class="Operator">==</span> <span class="Identifier">lhs</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L103" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L103" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L117" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L117" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="==.t,,iref[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%3D%3D.t%2C%2Ciref%5BT%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">typeOf</span><span class="Other">(</span><span class="Keyword">nil</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L114" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L114" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -322,39 +401,39 @@
   <dd>
     
     Access the <tt class="docutils literal"><span class="pre"><span class="Identifier">i</span></span></tt>th element in the FixedSeq. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L156" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L156" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="[].t,iptr[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2Ciptr%5BT%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">lent</span> <span class="Identifier">T</span></pre></dt>
+  <dd>
+    
+    Dereference the <a class="reference internal nimdoc" title="type iptr" href="#iptr">iptr</a>. 
+<p><strong class="examples_text">Example:</strong></p>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">x</span> <span class="Operator">=</span> <span class="DecNumber">2</span>
+<span class="Keyword">let</span> <span class="Identifier">ptrX</span> <span class="Operator">=</span> <span class="Identifier">immutable</span><span class="Punctuation">(</span><span class="Keyword">addr</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
+<span class="Identifier">assert</span> <span class="Identifier">ptrX</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="DecNumber">2</span>
+<span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">compiles</span><span class="Punctuation">(</span><span class="Identifier">ptrX</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L131" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L131" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-<div id="[].t,Immutable[T: not ptr or ref]">
-  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2CImmutable%5BT%3A%20not%20ptr%20or%20ref%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">not</span> <span class="Keyword">ptr</span> <span class="Operator">|</span> <span class="Keyword">ref</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">lent</span> <span class="Identifier">T</span></pre></dt>
+<div id="[].t,iref[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2Ciref%5BT%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">lent</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
-    Access the Immutable's value source. 
-<p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">myval</span> <span class="Operator">=</span> <span class="DecNumber">2</span>
-<span class="Keyword">let</span> <span class="Identifier">immutableVal</span> <span class="Operator">=</span> <span class="Identifier">myval</span><span class="Operator">.</span><span class="Identifier">toImmutable</span>
-<span class="Identifier">assert</span> <span class="Identifier">immutableVal</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Identifier">myval</span>
-<span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">compiles</span><span class="Punctuation">(</span><span class="Identifier">immutableVal</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L83" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L83" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
-
-  </dd>
-</div>
-<div id="[].t,Immutable[]">
-  <dt><pre><span class="Keyword">template</span> <a href="#%5B%5D.t%2CImmutable%5B%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span>[type node]<span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">lent</span> <span class="Identifier">T</span></pre></dt>
-  <dd>
-    
-    Access the Immutable's ref/ptr source. The source is dereferenced and is returned. 
+    Dereference the <a class="reference internal nimdoc" title="type iref" href="#iref">iref</a>. 
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">myref</span> <span class="Operator">=</span> <span class="Identifier">new</span><span class="Punctuation">(</span><span class="Identifier">int</span><span class="Punctuation">)</span>
 <span class="Identifier">myref</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">2</span>
-<span class="Keyword">let</span> <span class="Identifier">immutableRef</span> <span class="Operator">=</span> <span class="Identifier">myref</span><span class="Operator">.</span><span class="Identifier">toImmutable</span>
-<span class="Identifier">assert</span> <span class="Identifier">immutableRef</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Identifier">myref</span><span class="Punctuation">[</span><span class="Punctuation">]</span>
+<span class="Keyword">let</span> <span class="Identifier">immutableRef</span> <span class="Operator">=</span> <span class="Identifier">immutable</span><span class="Punctuation">(</span><span class="Identifier">myref</span><span class="Punctuation">)</span>
+<span class="Identifier">assert</span> <span class="Identifier">immutableRef</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="DecNumber">2</span>
 <span class="Identifier">assert</span> <span class="Keyword">not</span> <span class="Identifier">compiles</span><span class="Punctuation">(</span><span class="Identifier">immutableRef</span><span class="Punctuation">[</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L71" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L71" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L120" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L120" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -366,34 +445,54 @@
   <dd>
     
     Gets the capacity, or <tt class="docutils literal"><span class="pre"><span class="Identifier">q</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Operator">.</span><span class="Identifier">len</span></span></tt>, of this FixedSeq. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L126" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L126" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L151" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L151" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+
+</div>
+<div id="immutable-templates-all">
+  <div id="immutable.t,ptr.T">
+  <dt><pre><span class="Keyword">template</span> <a href="#immutable.t%2Cptr.T"><span class="Identifier">immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    Converts a <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt> to an <a class="reference internal nimdoc" title="type iptr" href="#iptr">iptr</a>, an immutable ptr. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L79" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L79" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+
+  </dd>
+</div>
+<div id="immutable.t,ref.T">
+  <dt><pre><span class="Keyword">template</span> <a href="#immutable.t%2Cref.T"><span class="Identifier">immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    Converts a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span></span></tt> to an <a class="reference internal nimdoc" title="type iref" href="#iref">iref</a>, an immutable ref. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L74" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L74" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
 <div id="isNil-templates-all">
-  <div id="isNil.t,Immutable[]">
-  <dt><pre><span class="Keyword">template</span> <a href="#isNil.t%2CImmutable%5B%5D"><span class="Identifier">isNil</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">i</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span>[type node]<span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <div id="isNil.t,iptr[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#isNil.t%2Ciptr%5BT%5D"><span class="Identifier">isNil</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Test if the Immutable source is nil. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L93" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L105" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L105" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
-
-</div>
-<div id="toImmutable-templates-all">
-  <div id="toImmutable.t,T">
-  <dt><pre><span class="Keyword">template</span> <a href="#toImmutable.t%2CT"><span class="Identifier">toImmutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<div id="isNil.t,iref[T]">
+  <dt><pre><span class="Keyword">template</span> <a href="#isNil.t%2Ciref%5BT%5D"><span class="Identifier">isNil</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
-    Converts a value to an Immutable. Note that a copy of the value might be made. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L63" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L63" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/common.nim#L102" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/common.nim#L102" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -409,7 +508,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:32 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:03 UTC</small>
       </div>
     </div>
   </div>

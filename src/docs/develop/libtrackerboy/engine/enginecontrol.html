@@ -79,10 +79,8 @@
   <li><a class="reference" href="#halt%2CMusicRuntime%2CApuOperation" title="halt(r: var MusicRuntime; op: var ApuOperation)">halt(r: var MusicRuntime; op: var ApuOperation)</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bptr.Song%5D%2Cint%2Cint%2Cbool" title="init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime">init(T: typedesc[MusicRuntime]; song: sink Immutable[ptr Song];
-     orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
+<ul class="simple nested-toc-section">initMusicRuntime
+  <li><a class="reference" href="#initMusicRuntime%2Ciptr%5BSong%5D%2Cint%2Cint%2Cbool" title="initMusicRuntime(song: iptr[Song]; orderNo, rowNo: int; patternRepeat: bool): MusicRuntime">initMusicRuntime(song: iptr[Song]; orderNo, rowNo: int; patternRepeat: bool): MusicRuntime</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">isLocked
@@ -180,8 +178,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L685" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L685" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L684" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L684" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -194,8 +192,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L682" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L682" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L681" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L681" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -208,8 +206,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L700" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L700" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L699" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L699" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -222,22 +220,22 @@
   <dd>
     
     Halts performance of the song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L526" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L526" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L525" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L525" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[MusicRuntime],sinkImmutable[ptr.Song],int,int,bool">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BMusicRuntime%5D%2CsinkImmutable%5Bptr.Song%5D%2Cint%2Cint%2Cbool"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="enginecontrol.html#MusicRuntime"><span class="Identifier">MusicRuntime</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">song</span><span class="Other">:</span> <span class="Identifier">sink</span> <a href="../common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ptr</span> <a href="../data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span>
-          <span class="Identifier">orderNo</span><span class="Other">,</span> <span class="Identifier">rowNo</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">patternRepeat</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <a href="enginecontrol.html#MusicRuntime"><span class="Identifier">MusicRuntime</span></a></pre></dt>
+<div id="initMusicRuntime-procs-all">
+  <div id="initMusicRuntime,iptr[Song],int,int,bool">
+  <dt><pre><span class="Keyword">func</span> <a href="#initMusicRuntime%2Ciptr%5BSong%5D%2Cint%2Cint%2Cbool"><span class="Identifier">initMusicRuntime</span></a><span class="Other">(</span><span class="Identifier">song</span><span class="Other">:</span> <a href="../common.html#iptr"><span class="Identifier">iptr</span></a><span class="Other">[</span><a href="../data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">orderNo</span><span class="Other">,</span> <span class="Identifier">rowNo</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">patternRepeat</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <a href="enginecontrol.html#MusicRuntime"><span class="Identifier">MusicRuntime</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Initializes a MusicRuntime the given song, starting position and pattern repeat setting. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L490" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L490" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L489" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L489" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -250,8 +248,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L697" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L697" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L696" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L696" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -264,8 +262,8 @@
   <dd>
     
     Jump to a given pattern in the order. The pattern will play at this pattern on the next call to step, at row 0. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L532" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L532" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L531" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L531" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -278,8 +276,8 @@
   <dd>
     
     Lock a channel for music playback. The resulting ApuOperation will be stored into <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>. If <tt class="docutils literal"><span class="pre"><span class="Identifier">chno</span></span></tt> is already locked then this proc does nothing, and leaves <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt> unchanged. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L539" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L539" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L538" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L538" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -291,8 +289,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L679" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L679" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L678" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L678" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -306,8 +304,8 @@
   <dd>
     
     Steps the runtime for 1 frame or tick. Returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> if the runtime halted or is currently halted. Afterwards, the <tt class="docutils literal"><span class="pre"><span class="Identifier">frame</span></span></tt> variable will be updated with the details of the tick that was just stepped. Also, <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt> will be updated with the necessary changes to the Apu as a result of this tick. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L571" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L571" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L570" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L570" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -320,8 +318,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L691" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L691" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L690" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L690" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -334,8 +332,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L694" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L694" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L693" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L693" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -348,8 +346,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L688" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L688" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L687" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L687" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -362,8 +360,8 @@
   <dd>
     
     Unlocks a channel for custom use. The runtime will no longer send updates to this channel. The resulting <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuOperation</span></span></tt> will be stored into <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>. If <tt class="docutils literal"><span class="pre"><span class="Identifier">chno</span></span></tt> is already unlocked then this proc does nothing, and leaves <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt> unchanged. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L552" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L552" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginecontrol.nim#L551" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginecontrol.nim#L551" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -379,7 +377,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

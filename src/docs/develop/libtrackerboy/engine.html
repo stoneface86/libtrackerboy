@@ -49,7 +49,6 @@
     <ul class="simple simple-toc" id="toc-list">
   <ul class="simple"><li><a class="reference" id="engine_toc" href="#engine">Engine</a></li>
 <li><a class="reference" id="apuio-interface_toc" href="#apuio-interface">ApuIo interface</a></li>
-<li><a class="reference" id="runtime-calculation-and-pathing_toc" href="#runtime-calculation-and-pathing">Runtime calculation and pathing</a></li>
 </ul><li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
 </li>
@@ -79,7 +78,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">currentSong
-  <li><a class="reference" href="#currentSong%2CEngine" title="currentSong(e: Engine): Immutable[ref Song]">currentSong(e: Engine): Immutable[ref Song]</a></li>
+  <li><a class="reference" href="#currentSong%2CEngine" title="currentSong(e: Engine): iref[Song]">currentSong(e: Engine): iref[Song]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">currentState
@@ -106,8 +105,8 @@
   <li><a class="reference" href="#halt%2CEngine" title="halt(e: var Engine)">halt(e: var Engine)</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BEngine%5D" title="init(T: typedesc[Engine]): Engine">init(T: typedesc[Engine]): Engine</a></li>
+<ul class="simple nested-toc-section">initEngine
+  <li><a class="reference" href="#initEngine" title="initEngine(): Engine">initEngine(): Engine</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">isHalted
@@ -127,7 +126,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">play
-  <li><a class="reference" href="#play%2CEngine%2CsinkImmutable%5Bref.Song%5D" title="play(e: var Engine; song: sink Immutable[ref Song]; startAt = default(SongPos))">play(e: var Engine; song: sink Immutable[ref Song]; startAt = default(SongPos))</a></li>
+  <li><a class="reference" href="#play%2CEngine%2Csinkiref%5BSong%5D" title="play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))">play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">reset
@@ -176,19 +175,16 @@
     <p class="module-desc"><p>The engine module is responsible for playing a song from a module. Similar to a sound driver, the engine is stepped every frame and the APU's registers are updated in order to play music.</p>
 <p>There are three parts to this module: the engine itself, interfacing with an ApuIo, and some utility calculation procs.</p>
 
-<h2><a class="toc-backref" id="engine" href="#engine">Engine</a></h2><p>This module provides an <a class="reference internal" href="#engine">Engine</a> type that handles the performance of a <tt class="docutils literal"><span class="pre"><span class="Identifier">Song</span></span></tt> (and sound effects, in the future).</p>
-<p>To create an engine, initialize one with <a class="reference internal nimdoc" title="proc init(T: typedesc[Engine]): Engine" href="#init,typedesc[Engine]">init(typedesc[Engine])</a>. Then give it a song to play via the <a class="reference internal nimdoc" title="proc play(e: var Engine; song: sink Immutable[ref Song]; startAt = default(SongPos))" href="#play,Engine,sinkImmutable[ref.Song]">play</a> proc. Reference semantics are used so you will need a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span> <span class="Identifier">Song</span></span></tt> when playing it. Afterwards, you can call <a class="reference internal nimdoc" title="proc step(e: var Engine; itable: InstrumentTable)" href="#step,Engine,InstrumentTable">step</a> to perform a single tick of the engine.</p>
+<h2><a class="toc-backref" id="engine" href="#engine">Engine</a></h2><p>This module provides an <a class="reference internal nimdoc" title="object Engine" href="#Engine">Engine object</a> type that handles the performance of a <a class="reference external" href="./data.html#Song">data: Song</a> (and sound effects, in the future).</p>
+<p>To create an engine, initialize one with <a class="reference internal nimdoc" title="proc initEngine(): Engine" href="#initEngine">initEngine</a>. Then give it a song to play via the <a class="reference internal nimdoc" title="proc play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))" href="#play,Engine,sinkiref[Song]">play</a> proc. Reference semantics are used so you will need a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span> <span class="Identifier">Song</span></span></tt> when playing it. Afterwards, you can call <a class="reference internal nimdoc" title="proc step(e: var Engine; itable: InstrumentTable)" href="#step,Engine,InstrumentTable">step</a> to perform a single tick of the engine.</p>
 <p>There are also other procs for controlling playback, as well as informational ones for diagnostics.</p>
 
-<h2><a class="toc-backref" id="apuio-interface" href="#apuio-interface">ApuIo interface</a></h2><p>The engine creates an <a class="reference internal" href="#ApuOperation">ApuOperation</a> every step. This object can be converted into register writes and then sent to an <a class="reference external" href="./apuio.html#ApuIo">apuio: ApuIo</a>.</p>
-
-<h2><a class="toc-backref" id="runtime-calculation-and-pathing" href="#runtime-calculation-and-pathing">Runtime calculation and pathing</a></h2><p>There are also some utility procs for determining the runtime, in ticks, of a song, as well as the order of patterns it will go through (the path).</p>
-<p>Use any overload of the <tt class="docutils literal"><span class="pre"><span class="Identifier">runtime</span></span></tt> procs to get a song's runtime. Use <a class="reference internal" href="#getPath">getPath</a> to get a <a class="reference internal" href="#SongPath">SongPath</a> for a <tt class="docutils literal"><span class="pre"><span class="Identifier">Song</span></span></tt>.</p>
+<h2><a class="toc-backref" id="apuio-interface" href="#apuio-interface">ApuIo interface</a></h2><p>The engine creates an <a class="reference external" href="engine/enginestate.html#ApuOperation">enginestate: ApuOperation</a> every step. This object can be converted into register writes and then sent to an <a class="reference external" href="./apuio.html#ApuIo">apuio: ApuIo</a>.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
   <dl class="item">
-    <a class="reference external" href="apuio.html">apuio</a>, <a class="reference external" href="common.html">common</a>, <a class="reference external" href="data.html">data</a>, <a class="reference external" href="engine/apucontrol.html">engine/apucontrol</a>, <a class="reference external" href="engine/enginestate.html">engine/enginestate</a>, <a class="reference external" href="engine/enginecontrol.html">engine/enginecontrol</a>, <a class="reference external" href="private/hardware.html">private/hardware</a>, <a class="reference external" href="private/optionutils.html">private/optionutils</a>
+    <a class="reference external" href="apuio.html">apuio</a>, <a class="reference external" href="common.html">common</a>, <a class="reference external" href="data.html">data</a>, <a class="reference external" href="engine/apucontrol.html">engine/apucontrol</a>, <a class="reference external" href="engine/enginestate.html">engine/enginestate</a>, <a class="reference external" href="engine/enginecontrol.html">engine/enginecontrol</a>, <a class="reference external" href="private/hardware.html">private/hardware</a>, <a class="reference external" href="private/optionutils.html">private/optionutils</a>, <a class="reference external" href="private/utils.html">private/utils</a>
   </dl>
 </div>
 <div class="section" id="7">
@@ -200,8 +196,8 @@
   <dd>
     
     Music/Sfx engine. Plays a Song, creating an ApuOperation that can be applied to an ApuIo object. The Engine does not interface with an ApuIo object directly, in order to reduce coupling and code duplication. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L66" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L66" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L61" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L61" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -217,8 +213,8 @@
   <dd>
     
     Applys an ApuOperation to an ApuIo, by performing the register writes specified in <tt class="docutils literal"><span class="pre"><span class="Identifier">op</span></span></tt>. <tt class="docutils literal"><span class="pre"><span class="Identifier">wt</span></span></tt> is the waveform table to use for CH3 when setting waveforms. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L252" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L252" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L247" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L247" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -230,8 +226,8 @@
   <dd>
     
     Gets the current frame, or the current state, of the Engine 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L170" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L170" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L165" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L165" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -244,8 +240,8 @@
   <dd>
     
     Gets the current note, as a note index, being played for the given channel. <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt> is returned if no music is playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L197" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L197" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L192" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L192" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -253,13 +249,12 @@
 </div>
 <div id="currentSong-procs-all">
   <div id="currentSong,Engine">
-  <dt><pre><span class="Keyword">func</span> <a href="#currentSong%2CEngine"><span class="Identifier">currentSong</span></a><span class="Other">(</span><span class="Identifier">e</span><span class="Other">:</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#currentSong%2CEngine"><span class="Identifier">currentSong</span></a><span class="Other">(</span><span class="Identifier">e</span><span class="Other">:</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">)</span><span class="Other">:</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Gets the current song that is playing, <tt class="docutils literal"><span class="pre"><span class="Keyword">nil</span></span></tt> is returned if there is no song playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L175" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L175" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L170" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L170" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -272,8 +267,8 @@
   <dd>
     
     Gets the current channel state of the given channel. An empty channel state is returned if no music is playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L190" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L190" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L185" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L185" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -285,8 +280,8 @@
   <dd>
     
     Gets a set of the engine's locked channels. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L236" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L236" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L231" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L231" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -299,8 +294,8 @@
   <dd>
     
     Gets the track's current envelope setting, for the given channel. The envelope setting is either a volume envelope value or a waveform id. <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span><span class="Identifier">u8</span></span></tt> is returned if no music is playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L216" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L216" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L211" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L211" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -313,8 +308,8 @@
   <dd>
     
     Gets the track's current panning setting, for the given channel. Panning ranges in value from 0-3. <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span><span class="Identifier">u8</span></span></tt> is returned if no music is playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L223" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L223" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L218" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L218" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -327,8 +322,8 @@
   <dd>
     
     Gets the track's current timbre setting, for the given channel. Timbre is a channel-specific setting that ranges in value from 0-3. <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span><span class="Identifier">u8</span></span></tt> is returned if no music is playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L209" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L209" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L204" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L204" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -340,21 +335,21 @@
   <dd>
     
     Halts the engine, or forces the current song to halt. Function does nothing if there is no music currently playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L111" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L111" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L106" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L106" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[Engine]">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BEngine%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="initEngine-procs-all">
+  <div id="initEngine">
+  <dt><pre><span class="Keyword">func</span> <a href="#initEngine"><span class="Identifier">initEngine</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Constructs a new Engine. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L82" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L82" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L77" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L77" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -366,8 +361,8 @@
   <dd>
     
     Determines if the current song being played has halted. If there is no song playing, <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L87" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L87" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L82" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L82" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -380,8 +375,8 @@
   <dd>
     
     Check if a channel is locked for music playback by the engine. <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> is returned if <tt class="docutils literal"><span class="pre"><span class="Identifier">chno</span></span></tt> is locked, <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt> when unlocked. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L229" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L229" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L224" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L224" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -393,8 +388,8 @@
   <dd>
     
     Jump to the given pattern in the currently playing song. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L106" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L106" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L101" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L101" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -406,24 +401,24 @@
   <dd>
     
     Locks the given channel for music playback. Function does nothing if there is no music currently playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L93" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L88" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L88" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
 <div id="play-procs-all">
-  <div id="play,Engine,sinkImmutable[ref.Song]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#play%2CEngine%2CsinkImmutable%5Bref.Song%5D"><span class="Identifier">play</span></a><span class="Other">(</span><span class="Identifier">e</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">;</span> <span class="Identifier">song</span><span class="Other">:</span> <span class="Identifier">sink</span> <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a><span class="Other">[</span><span class="Keyword">ref</span> <a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span>
-          <span class="Identifier">startAt</span> <span class="Other">=</span> <span class="Identifier">default</span><span class="Other">(</span><a href="data.html#SongPos"><span class="Identifier">SongPos</span></a><span class="Other">)</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <div id="play,Engine,sinkiref[Song]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#play%2CEngine%2Csinkiref%5BSong%5D"><span class="Identifier">play</span></a><span class="Other">(</span><span class="Identifier">e</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="engine.html#Engine"><span class="Identifier">Engine</span></a><span class="Other">;</span> <span class="Identifier">song</span><span class="Other">:</span> <span class="Identifier">sink</span> <a href="common.html#iref"><span class="Identifier">iref</span></a><span class="Other">[</span><a href="data.html#Song"><span class="Identifier">Song</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">startAt</span> <span class="Other">=</span> <span class="Identifier">default</span><span class="Other">(</span><a href="data.html#SongPos"><span class="Identifier">SongPos</span></a><span class="Other">)</span><span class="Other">)</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     <p>Sets the engine to begin playback of the given song. <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt> must not be <tt class="docutils literal"><span class="pre"><span class="Keyword">nil</span></span></tt>. By default, the engine will play the song from the start, or pattern 0, row 0. You can override this position via the <tt class="docutils literal"><span class="pre"><span class="Identifier">pattern</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">row</span></span></tt> parameters. An IndexDefect will be raised if these parameters are out of bounds for the given <tt class="docutils literal"><span class="pre"><span class="Identifier">song</span></span></tt>.</p>
 <p>Afterwards, the song can be played by calling <tt class="docutils literal"><span class="pre"><span class="Identifier">step</span></span></tt> periodically. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L125" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L125" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L120" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L120" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -435,8 +430,8 @@
   <dd>
     
     Resets the engine to default state. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L117" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L117" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L112" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L112" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -448,8 +443,8 @@
   <dd>
     
     Performs the necessary APU writes to allow for music playback with the engine. This proc should only need to be called once on an Apu. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L244" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L244" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L239" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L239" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -462,8 +457,8 @@
   <dd>
     
     Steps for a single frame or &quot;ticks&quot; the engine. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L154" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L154" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L149" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L149" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -476,8 +471,8 @@
   <dd>
     
     Convenience proc that calls <tt class="docutils literal"><span class="pre"><span class="Identifier">e</span><span class="Operator">.</span><span class="Identifier">step</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">apu</span><span class="Operator">.</span><span class="Identifier">apply</span></span></tt> in one go. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L261" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L261" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L256" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L256" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -490,8 +485,8 @@
   <dd>
     
     Takes out the operation to be applied to an ApuIo. Should be called after <tt class="docutils literal"><span class="pre"><span class="Identifier">step</span></span></tt> to apply register writes to an Apu. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L181" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L181" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L176" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L176" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -503,8 +498,8 @@
   <dd>
     
     Unlocks the given channel, music will no longer play on this channel. Use <tt class="docutils literal"><span class="pre"><span class="Identifier">lock</span></span></tt> to restore music playback. Function does nothing if there is no music currently playing. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L99" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L99" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine.nim#L94" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine.nim#L94" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -516,7 +511,7 @@
 <div class="section" id="19">
   <h1><a class="toc-backref" href="#19">Exports</a></h1>
   <dl class="item">
-    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>, <a href="data.html#Module"><span class="Identifier">Module</span></a>, <a href="data.html#Song"><span class="Identifier">Song</span></a>, <a href="data.html#SongPos"><span class="Identifier">SongPos</span></a>, <a href="apuio.html#ApuIo"><span class="Identifier">ApuIo</span></a>, <a href="engine/enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a>
+    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#iptr"><span class="Identifier">iptr</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,iref[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#==.t,,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,ptr.T,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],ref.T"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,iptr[T],iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#iref"><span class="Identifier">iref</span></a>, <a href="common.html#==.t,iptr[T],ptr.T"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#==.t,iref[T],"><span class="Identifier">==</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#isNil.t,iptr[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#==.t,ref.T,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ref.T"><span class="Identifier">immutable</span></a>, <a href="common.html#==.t,,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iptr[T],"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ptr.T"><span class="Identifier">immutable</span></a>, <a href="common.html#[].t,iptr[T]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,iref[T]"><span class="Identifier">[]</span></a>, <a href="data.html#Module"><span class="Identifier">Module</span></a>, <a href="data.html#Song"><span class="Identifier">Song</span></a>, <a href="data.html#SongPos"><span class="Identifier">SongPos</span></a>, <a href="apuio.html#ApuIo"><span class="Identifier">ApuIo</span></a>, <a href="engine/enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a>
   </dl>
 </div>
 
@@ -526,7 +521,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

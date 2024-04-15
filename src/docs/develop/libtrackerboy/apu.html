@@ -47,8 +47,8 @@
       </select>
     </div>
     <ul class="simple simple-toc" id="toc-list">
-  <li><a class="reference" id="see-also_toc" href="#see-also">See also</a></li>
-<li>
+  <ul class="simple"><li><a class="reference" id="see-also_toc" href="#see-also">See also</a></li>
+</ul><li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
 </li>
 <li>
@@ -81,8 +81,8 @@
   <li><a class="reference" href="#channelVolume%2CApu%2CChannelId" title="channelVolume(a: Apu; chno: ChannelId): int">channelVolume(a: Apu; chno: ChannelId): int</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BApu%5D%2Cint%2Cfloat" title="init(__1711276754: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu">init(__1711276754: typedesc[Apu]; samplerate: int; framerate = 59.7): Apu</a></li>
+<ul class="simple nested-toc-section">initApu
+  <li><a class="reference" href="#initApu%2Cint%2Cfloat" title="initApu(samplerate: int; framerate = 59.7): Apu">initApu(samplerate: int; framerate = 59.7): Apu</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">readRegister
@@ -150,8 +150,8 @@
 
     <div id="tocRoot"></div>
     
-    <p class="module-desc">Game Boy APU emulation. Provides an Apu object that can synthesize audio to an internal buffer when stepping for a given number of cycles. The emulated registers can be read/written to, which can be used along side a full Game Boy emulator, or to just generate audio when playing a module.
-<h1><a class="toc-backref" id="see-also" href="#see-also">See also</a></h1><p><a class="reference external" href="https://gbdev.io/pandocs/Sound_Controller.html">Pan Docs</a> for details about the hardware being emulated.</p>
+    <p class="module-desc">Game Boy APU emulation. Provides an <a class="reference internal nimdoc" title="object Apu" href="#Apu">Apu</a> object that can synthesize audio to an internal buffer when stepping for a given number of cycles. The emulated registers can be read/written to, which can be used along side a full Game Boy emulator, or to just generate audio when playing a module.
+<h2><a class="toc-backref" id="see-also" href="#see-also">See also</a></h2><p><a class="reference external" href="https://gbdev.io/pandocs/Audio.html">Pan Docs</a> for details about the hardware being emulated.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -168,7 +168,9 @@
   </pre></dt>
   <dd>
     
-    Game Boy APU emulator. Satisfies the <a class="reference external" href="apuio.html#ApuIo">ApuIo</a> concept. 
+    Game Boy APU emulator. Satisfies the <a class="reference external" href="./apuio.html#ApuIo">apuio: ApuIo</a> concept.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">autostep</span></span></tt>: Number of cycles to execute before reading or writing to a register. Default is 16 cycles. Set this to 0 to disable.</li>
+</ul>
+
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L107" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L107" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -185,9 +187,9 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#availableSamples%2CApu"><span class="Identifier">availableSamples</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets the amount of samples available in the buffer. <a class="reference external" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> will take this exact amount of samples when called 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L975" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L975" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Gets the amount of samples available in the buffer. <a class="reference internal nimdoc" title="proc takeSamples(a: var Apu; buf: var seq[Pcm])" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> will take this exact amount of samples when called. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L976" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L976" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -201,10 +203,10 @@
     
     Gets the current frequency setting for the channel, for diagnostic purposes. Channels 1-3 will result in a value from 0 to 2047. Channel 4 will result in the contents of its NR43 register. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelFrequency</span><span class="Punctuation">(</span><span class="Identifier">ch2</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">0</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1013" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1013" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1016" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1016" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -216,17 +218,17 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets the current mix mode for the given channel. Provided as an alternative to reading ar51. 
+    Gets the current mix mode for the given channel. Provided as an alternative to reading <tt class="docutils literal"><span class="pre"><span class="Identifier">ar51</span></span></tt>. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x26</span><span class="Punctuation">,</span> <span class="HexNumber">0x80</span><span class="Punctuation">)</span>         <span class="Comment"># NR52 &lt;- 0x80</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x25</span><span class="Punctuation">,</span> <span class="BinNumber">0b00110101</span><span class="Punctuation">)</span>   <span class="Comment"># NR51 &lt;- 0x35</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelMix</span><span class="Punctuation">(</span><span class="Identifier">ch1</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">mixMiddle</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelMix</span><span class="Punctuation">(</span><span class="Identifier">ch2</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">mixRight</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelMix</span><span class="Punctuation">(</span><span class="Identifier">ch3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">mixLeft</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelMix</span><span class="Punctuation">(</span><span class="Identifier">ch4</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">mixMute</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1060" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1060" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1063" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1063" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -240,7 +242,7 @@
     
     Returns a number from 0 to 15 resprenting the current volume level of the channel. For channels with an enevelope, this level is the current volume of the envelope. For the Wave channel, this value is the maximum possible determined by the wave volume setting (NR32). 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelVolume</span><span class="Punctuation">(</span><span class="Identifier">ch1</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">0</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelVolume</span><span class="Punctuation">(</span><span class="Identifier">ch3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">0</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x26</span><span class="Punctuation">,</span> <span class="HexNumber">0x80</span><span class="Punctuation">)</span>  <span class="Comment"># NR52 &lt;- 0x80</span>
@@ -249,26 +251,26 @@
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x1C</span><span class="Punctuation">,</span> <span class="HexNumber">0x20</span><span class="Punctuation">)</span>  <span class="Comment"># NR32 &lt;- 0x20</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelVolume</span><span class="Punctuation">(</span><span class="Identifier">ch1</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0xD</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">channelVolume</span><span class="Punctuation">(</span><span class="Identifier">ch3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0xF</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1027" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1027" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1030" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1030" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[Apu],int,float">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BApu%5D%2Cint%2Cfloat"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">__1711276754</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">samplerate</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">framerate</span> <span class="Other">=</span> <span class="FloatNumber">59.7</span><span class="Other">)</span><span class="Other">:</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="initApu-procs-all">
+  <div id="initApu,int,float">
+  <dt><pre><span class="Keyword">func</span> <a href="#initApu%2Cint%2Cfloat"><span class="Identifier">initApu</span></a><span class="Other">(</span><span class="Identifier">samplerate</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">framerate</span> <span class="Other">=</span> <span class="FloatNumber">59.7</span><span class="Other">)</span><span class="Other">:</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    <p>Initializes an Apu with the given samplerate and internal buffer size that contains a single frame with the given framerate. <tt class="docutils literal"><span class="pre"><span class="Identifier">samplerate</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">framerate</span></span></tt> are in Hz and must be greater than 0.</p>
-<p>The returned <tt class="docutils literal"><span class="pre"><span class="Identifier">Apu</span></span></tt> is in its default, or hardware reset, state. The volume step is set to a default of 0.625f. </p>
+    <p>Initializes an <a class="reference internal nimdoc" title="object Apu" href="#Apu">Apu</a> with the given samplerate and internal buffer size that contains a single frame with the given framerate. <tt class="docutils literal"><span class="pre"><span class="Identifier">samplerate</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">framerate</span></span></tt> are in Hz and must be greater than 0.</p>
+<p>The returned Apu is in its default, or hardware reset, state. The volume step is set to a default of 0.625f. </p>
 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">24000</span><span class="Punctuation">,</span> <span class="FloatNumber">60.0</span><span class="Punctuation">)</span> <span class="Comment"># 24000 Hz samplerate with a 60 Hz framerate</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L561" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L561" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">24000</span><span class="Punctuation">,</span> <span class="FloatNumber">60.0</span><span class="Punctuation">)</span> <span class="Comment"># 24000 Hz samplerate with a 60 Hz framerate</span></pre>
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L563" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L563" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -282,17 +284,17 @@
     
     <p>Reads the register at address <tt class="docutils literal"><span class="pre"><span class="Identifier">reg</span></span></tt>. This proc emulates the behavior of reading the memory-mapped registers on an actual Game Boy. Since some registers are write-only (ie frequency), attempting to read these registers will result in their bits being read back as all 1s.</p>
 <p><tt class="docutils literal"><span class="pre"><span class="Identifier">reg</span></span></tt> is the memory address of the register in the 0xFF00 page, so to read rNR10, 0xFF10, you would call this proc with <tt class="docutils literal"><span class="pre"><span class="Identifier">reg</span> <span class="Operator">=</span> <span class="HexNumber">0x10</span><span class="Identifier">u8</span></span></tt></p>
-<p>The read occurs at the apu's current timestep, <tt class="docutils literal"><span class="pre"><span class="Identifier">run</span></span></tt> the apu beforehand if you want the read to occur at a certain point in time.</p>
+<p>The Apu is run for <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">autostep</span></span></tt> cycles and then the read is performed.</p>
 <p>The proc will return 0xFF for any invalid reg address. </p>
 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Comment"># sound is OFF, all reads should result in 0xFF</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">readRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x10</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0xFF</span><span class="Identifier">u8</span>
 <span class="Comment"># NR52 should be 0x70</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">readRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x26</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0x70</span><span class="Identifier">u8</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L726" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L726" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L728" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L728" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -303,9 +305,9 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#removeSamples%2CApu"><span class="Identifier">removeSamples</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Removes all samples in the sample buffer. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L993" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L993" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Removes all samples in the sample buffer. The Apu's sample buffer is cleared and its time is set to 0. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L995" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L995" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -318,15 +320,15 @@
     
     Resets the apu to its initial state. Should behave similarly to a hardware reset. The internal sample buffer is also cleared. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x26</span><span class="Punctuation">,</span> <span class="HexNumber">0x80</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x12</span><span class="Punctuation">,</span> <span class="HexNumber">0xF2</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">readRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x12</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0xF2</span><span class="Identifier">u8</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">reset</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">readRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x12</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0xFF</span><span class="Identifier">u8</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">availableSamples</span> <span class="Operator">==</span> <span class="DecNumber">0</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L595" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L595" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L597" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L597" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -337,17 +339,17 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#run%2CApu%2Cuint32"><span class="Identifier">run</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">;</span> <span class="Identifier">cycles</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Runs the apu <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> for a given number of cycles. The internal sample buffer is updated with new samples from the run. Use <a class="reference external" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> afterwards to collect them for processing, or <a class="reference external" href="#removeSamples,Apu">removeSamples</a> to discard them. 
+    Runs the apu for a given number of cycles. The internal sample buffer is updated with new samples from the run. Use <a class="reference internal nimdoc" title="proc takeSamples(a: var Apu; buf: var seq[Pcm])" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> afterwards to collect them for processing, or <a class="reference internal nimdoc" title="proc removeSamples(a: var Apu)" href="#removeSamples,Apu">removeSamples</a> to discard them. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">,</span> <span class="FloatNumber">1.0</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">,</span> <span class="FloatNumber">1.0</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">run</span><span class="Punctuation">(</span><span class="DecNumber">4194304</span><span class="Punctuation">)</span> <span class="Comment"># 1 second</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">availableSamples</span> <span class="Operator">==</span> <span class="DecNumber">44100</span>
 <span class="Comment"># another call to run will overrun the buffer</span>
 <span class="Comment"># to empty the buffer do either:</span>
 <span class="Comment">#  a.takeSamples(buffer)</span>
 <span class="Comment">#  a.removeSamples()</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L674" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L674" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L676" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L676" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -358,17 +360,17 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#runToFrame%2CApu"><span class="Identifier">runToFrame</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Runs the apu <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> for the required number of cycles to complete a frame. The amount of cycles that is run is determined by <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt>'s current time and the framerate setting. 
+    Runs the apu for the required number of cycles to complete a frame. The amount of cycles that is run is determined by the Apu's current time and the framerate setting. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">48000</span><span class="Punctuation">,</span> <span class="FloatNumber">60.0</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">48000</span><span class="Punctuation">,</span> <span class="FloatNumber">60.0</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">runToFrame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Comment"># there are 800 samples in a frame</span>
 <span class="Comment"># and 69905.06 cycles in a frame</span>
 <span class="Comment"># so we step 69905 cycles which results in 799 samples instead</span>
 <span class="Comment"># (eventually there will be one frame with 800 samples)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">availableSamples</span> <span class="Operator">==</span> <span class="DecNumber">799</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L704" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L704" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L706" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L706" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -379,9 +381,9 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#setBufferSize%2CApu%2Cint"><span class="Identifier">setBufferSize</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">;</span> <span class="Identifier">samples</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Sets the apu's internal buffer to the given number of samples. This will destroy the contents of the buffer so it is recommended you call <a class="reference external" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> first. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1005" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1005" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Sets the apu's internal buffer to the given number of samples. This will destroy the contents of the buffer so it is recommended you call <a class="reference internal nimdoc" title="proc takeSamples(a: var Apu; buf: var seq[Pcm])" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> first. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1008" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1008" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -393,9 +395,9 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Changes the size of frame to the given framerate. The APU must be reset when changing the framerate. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L552" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L552" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Changes the apu's internal buffer size to match a single frame of the given framerate. The APU must be reset when changing the framerate. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L554" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L554" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -407,9 +409,9 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Sets the samplerate of the generated audio. The internal sample buffer is left untouched, so it is recommended you call <a class="reference external" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> beforehand. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L998" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L998" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Sets the samplerate of the generated audio. The internal sample buffer is left untouched, so it is recommended you call <a class="reference internal nimdoc" title="proc takeSamples(a: var Apu; buf: var seq[Pcm])" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> or <a class="reference internal nimdoc" title="proc removeSamples(a: var Apu)" href="#removeSamples,Apu">removeSamples</a> beforehand. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L1001" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L1001" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -421,12 +423,12 @@
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Sets the volume level of <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> to the given linear gain value. The gain should range from 0.0f to 1.0f. The default volume level is a linear value of 0.625f or about -4 dB 
+    Sets the volume level of the apu to the given linear gain value. The gain should range from 0.0f to 1.0f. The default volume level is a linear value of 0.625f or about -4 dB. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">setVolume</span><span class="Punctuation">(</span><span class="FloatNumber">0.5</span><span class="Identifier">f</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L535" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L535" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L537" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L537" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -438,7 +440,9 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Takes out the entire sample buffer and puts it into the given buf. The buf's len will be set to <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">availableSamples</span> <span class="Operator">*</span> <span class="DecNumber">2</span></span></tt> and will have the contents of the apu's sample buffer. 
+    <p>Takes out the entire sample buffer and puts it into the given buf. The buf's len will be set to <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">availableSamples</span> <span class="Operator">*</span> <span class="DecNumber">2</span></span></tt> and will have the contents of the apu's sample buffer.</p>
+<p>Afterwards, the Apu's sample buffer is cleared and its time is set to 0. </p>
+
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L986" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L986" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -451,9 +455,9 @@
   <dt><pre><span class="Keyword">func</span> <a href="#time%2CApu"><span class="Identifier">time</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="apu.html#Apu"><span class="Identifier">Apu</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint32</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets the apu's current time, in cycles. Calling <a class="reference external" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> resets the time to 0. 
+    Gets the apu's current time, in cycles. Calling <a class="reference internal nimdoc" title="proc takeSamples(a: var Apu; buf: var seq[Pcm])" href="#takeSamples,Apu,seq[Pcm]">takeSamples</a> or <a class="reference internal nimdoc" title="proc removeSamples(a: var Apu)" href="#removeSamples,Apu">removeSamples</a> resets the time to 0. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">time</span> <span class="Operator">==</span> <span class="DecNumber">0</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">run</span><span class="Punctuation">(</span><span class="DecNumber">1000</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">time</span> <span class="Operator">==</span> <span class="DecNumber">1000</span>
@@ -461,8 +465,8 @@
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">time</span> <span class="Operator">==</span> <span class="DecNumber">1100</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">removeSamples</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">time</span> <span class="Operator">==</span> <span class="DecNumber">0</span>      <span class="Comment"># takeSamples will also reset time to 0</span></pre>
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L960" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L960" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/apu.nim#L961" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/apu.nim#L961" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -474,9 +478,9 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Writes <tt class="docutils literal"><span class="pre"><span class="Identifier">value</span></span></tt> to the apu's register at <tt class="docutils literal"><span class="pre"><span class="Identifier">reg</span></span></tt> address. Like <a class="reference external" href="#readRegister,Apu,uint8">readRegister</a>, this proc emulates writing to the Game Boy's memory-mapped APU registers. Writes to any unknown address are ignored. Writes to read-only portions of registers are also ignored. Like readRegister, the write occurs at the apu's current <tt class="docutils literal"><span class="pre"><span class="Identifier">time</span></span></tt>. 
+    Writes <tt class="docutils literal"><span class="pre"><span class="Identifier">value</span></span></tt> to the apu's register at <tt class="docutils literal"><span class="pre"><span class="Identifier">reg</span></span></tt> address. Like <a class="reference internal nimdoc" title="proc readRegister(a: var Apu; reg: uint8): uint8" href="#readRegister,Apu,uint8">readRegister</a>, this proc emulates writing to the Game Boy's memory-mapped APU registers. Writes to any unknown address are ignored. Writes to read-only portions of registers are also ignored. Like <a class="reference internal nimdoc" title="proc readRegister(a: var Apu; reg: uint8): uint8" href="#readRegister,Apu,uint8">readRegister</a>, the write occurs at the apu's current <tt class="docutils literal"><span class="pre"><span class="Identifier">time</span></span></tt>, after stepping <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">autostep</span></span></tt> cycles. 
 <p><strong class="examples_text">Example:</strong></p>
-<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">Apu</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="Identifier">initApu</span><span class="Punctuation">(</span><span class="DecNumber">44100</span><span class="Punctuation">)</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x12</span><span class="Punctuation">,</span> <span class="HexNumber">0xC0</span><span class="Punctuation">)</span> <span class="Comment"># APU is off, write is ignored</span>
 <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">writeRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x26</span><span class="Punctuation">,</span> <span class="HexNumber">0x80</span><span class="Punctuation">)</span> <span class="Comment"># turn APU on</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">readRegister</span><span class="Punctuation">(</span><span class="HexNumber">0x12</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="HexNumber">0x00</span>
@@ -496,7 +500,7 @@
 <div class="section" id="19">
   <h1><a class="toc-backref" href="#19">Exports</a></h1>
   <dl class="item">
-    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>, <a href="private/synth.html#MixMode"><span class="Identifier">MixMode</span></a>, <a href="private/synth.html#pansLeft,MixMode"><span class="Identifier">pansLeft</span></a>, <a href="private/synth.html#pansRight,MixMode"><span class="Identifier">pansRight</span></a>
+    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#iptr"><span class="Identifier">iptr</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,iref[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#==.t,,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,ptr.T,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],ref.T"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,iptr[T],iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#iref"><span class="Identifier">iref</span></a>, <a href="common.html#==.t,iptr[T],ptr.T"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#==.t,iref[T],"><span class="Identifier">==</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#isNil.t,iptr[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#==.t,ref.T,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ref.T"><span class="Identifier">immutable</span></a>, <a href="common.html#==.t,,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iptr[T],"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ptr.T"><span class="Identifier">immutable</span></a>, <a href="common.html#[].t,iptr[T]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,iref[T]"><span class="Identifier">[]</span></a>, <a href="private/synth.html#MixMode"><span class="Identifier">MixMode</span></a>, <a href="private/synth.html#pansLeft,MixMode"><span class="Identifier">pansLeft</span></a>, <a href="private/synth.html#pansRight,MixMode"><span class="Identifier">pansRight</span></a>
   </dl>
 </div>
 
@@ -506,7 +510,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:03 UTC</small>
       </div>
     </div>
   </div>

@@ -75,10 +75,8 @@
   <li><a class="reference" href="#closeImpl%2CWavWriter" title="closeImpl(w: WavWriter): void">closeImpl(w: WavWriter): void</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint" title="init(__2332033066: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter">init(__2332033066: typedesc[WavWriter]; filename: sink string;
-     channels, samplerate: int): WavWriter</a></li>
+<ul class="simple nested-toc-section">initWavWriter
+  <li><a class="reference" href="#initWavWriter%2Csinkstring%2Cint%2Cint" title="initWavWriter(filename: sink string; channels, samplerate: int): WavWriter">initWavWriter(filename: sink string; channels, samplerate: int): WavWriter</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">write
@@ -152,8 +150,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/wavwriter.nim#L139" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/wavwriter.nim#L139" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/wavwriter.nim#L138" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/wavwriter.nim#L138" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -173,10 +171,10 @@
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[WavWriter],sinkstring,int,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#init%2Ctypedesc%5BWavWriter%5D%2Csinkstring%2Cint%2Cint"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Operator">__2332033066</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="wavwriter.html#WavWriter"><span class="Identifier">WavWriter</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">sink</span> <span class="Identifier">string</span><span class="Other">;</span>
-          <span class="Identifier">channels</span><span class="Other">,</span> <span class="Identifier">samplerate</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="wavwriter.html#WavWriter"><span class="Identifier">WavWriter</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="initWavWriter-procs-all">
+  <div id="initWavWriter,sinkstring,int,int">
+  <dt><pre><span class="Keyword">proc</span> <a href="#initWavWriter%2Csinkstring%2Cint%2Cint"><span class="Identifier">initWavWriter</span></a><span class="Other">(</span><span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">sink</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">channels</span><span class="Other">,</span> <span class="Identifier">samplerate</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="wavwriter.html#WavWriter"><span class="Identifier">WavWriter</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -194,8 +192,8 @@
   <dd>
     
     
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/wavwriter.nim#L146" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/wavwriter.nim#L146" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/private/wavwriter.nim#L145" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/private/wavwriter.nim#L145" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -217,7 +215,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

@@ -75,9 +75,12 @@
   <li><a class="reference" href="#finish%2COutputBlock" title="finish(b: var OutputBlock)">finish(b: var OutputBlock)</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BInputBlock%5D%2CStream" title="init(T: typedesc[InputBlock]; stream: Stream): InputBlock">init(T: typedesc[InputBlock]; stream: Stream): InputBlock</a></li>
-<li><a class="reference" href="#init%2Ctypedesc%5BOutputBlock%5D%2CStream" title="init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock">init(T: typedesc[OutputBlock]; stream: Stream): OutputBlock</a></li>
+<ul class="simple nested-toc-section">initInputBlock
+  <li><a class="reference" href="#initInputBlock%2CStream" title="initInputBlock(stream: Stream): InputBlock">initInputBlock(stream: Stream): InputBlock</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">initOutputBlock
+  <li><a class="reference" href="#initOutputBlock%2CStream" title="initOutputBlock(stream: Stream): OutputBlock">initOutputBlock(stream: Stream): OutputBlock</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">isFinished
@@ -224,9 +227,10 @@
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[InputBlock],Stream">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BInputBlock%5D%2CStream"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="ioblocks.html#InputBlock"><span class="Identifier">InputBlock</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stream</span><span class="Other">:</span> <span class="Identifier">Stream</span><span class="Other">)</span><span class="Other">:</span> <a href="ioblocks.html#InputBlock"><span class="Identifier">InputBlock</span></a></pre></dt>
+<div id="initInputBlock-procs-all">
+  <div id="initInputBlock,Stream">
+  <dt><pre><span class="Keyword">func</span> <a href="#initInputBlock%2CStream"><span class="Identifier">initInputBlock</span></a><span class="Other">(</span><span class="Identifier">stream</span><span class="Other">:</span> <span class="Identifier">Stream</span><span class="Other">)</span><span class="Other">:</span> <a href="ioblocks.html#InputBlock"><span class="Identifier">InputBlock</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -235,8 +239,12 @@
 
   </dd>
 </div>
-<div id="init,typedesc[OutputBlock],Stream">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BOutputBlock%5D%2CStream"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="ioblocks.html#OutputBlock"><span class="Identifier">OutputBlock</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stream</span><span class="Other">:</span> <span class="Identifier">Stream</span><span class="Other">)</span><span class="Other">:</span> <a href="ioblocks.html#OutputBlock"><span class="Identifier">OutputBlock</span></a></pre></dt>
+
+</div>
+<div id="initOutputBlock-procs-all">
+  <div id="initOutputBlock,Stream">
+  <dt><pre><span class="Keyword">func</span> <a href="#initOutputBlock%2CStream"><span class="Identifier">initOutputBlock</span></a><span class="Other">(</span><span class="Identifier">stream</span><span class="Other">:</span> <span class="Identifier">Stream</span><span class="Other">)</span><span class="Other">:</span> <a href="ioblocks.html#OutputBlock"><span class="Identifier">OutputBlock</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -371,7 +379,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

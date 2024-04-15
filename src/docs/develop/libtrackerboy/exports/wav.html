@@ -91,9 +91,12 @@
   <li><a class="reference" href="#hasWork%2CWavExporter" title="hasWork(ex: WavExporter): bool">hasWork(ex: WavExporter): bool</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BWavConfig%5D" title="init(T: typedesc[WavConfig]): WavConfig">init(T: typedesc[WavConfig]): WavConfig</a></li>
-<li><a class="reference" href="#init%2Ctypedesc%5BWavExporter%5D%2CModule%2CWavConfig" title="init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter">init(T: typedesc[WavExporter]; module: Module; config: WavConfig): WavExporter</a></li>
+<ul class="simple nested-toc-section">initWavConfig
+  <li><a class="reference" href="#initWavConfig" title="initWavConfig(): WavConfig">initWavConfig(): WavConfig</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">initWavExporter
+  <li><a class="reference" href="#initWavExporter%2CModule%2CWavConfig" title="initWavExporter(module: Module; config: WavConfig): WavExporter">initWavExporter(module: Module; config: WavConfig): WavExporter</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">process
@@ -129,17 +132,17 @@
     
     <p class="module-desc"><p>WAV file export.</p>
 <p>This module provides an exporter for exporting individual songs in a module to a WAV file. The song is played, the APU is emulated, and the resulting sound samples are written to an output WAV file.</p>
-<p>There are two ways of using this module: <a class="reference internal" href="#oneminusshot">oneminusshot</a> and <a class="reference internal" href="#iterative">iterative</a>.</p>
+<p>There are two ways of using this module: <a class="reference internal" href="#oneminusshot">one-shot</a> and <a class="reference internal" href="#iterative">iterative</a>.</p>
 
 <h2><a class="toc-backref" id="oneminusshot" href="#oneminusshot">One-shot</a></h2><p>One-shot mode is done by just calling the <a class="reference internal nimdoc" title="proc exportWav(module: Module; config: WavConfig)" href="#exportWav,Module,WavConfig">exportWav</a> proc. The WAV file is generated in that proc alone according to the given configuration.</p>
 
-<h2><a class="toc-backref" id="iterative" href="#iterative">Iterative</a></h2><p>Iterative mode is done by creating a <a class="reference internal nimdoc" title="object WavExporter" href="#WavExporter">WavExporter</a> object and then calling the <a class="reference external" href="#process,WavExporter,Module">process</a> proc repeatedly until <a class="reference external" href="#hasWork,WavExporter">hasWork</a> is false. You can use the <a class="reference external" href="#progress,WavExporter">progress</a> and <a class="reference internal nimdoc" title="proc progressMax(ex: WavExporter): int" href="#progressMax,WavExporter">progressMax</a> procs to display overall progress of the export.</p>
+<h2><a class="toc-backref" id="iterative" href="#iterative">Iterative</a></h2><p>Iterative mode is done by creating a <a class="reference internal nimdoc" title="object WavExporter" href="#WavExporter">WavExporter</a> object and then calling the <a class="reference internal nimdoc" title="proc process(ex: var WavExporter; module: Module)" href="#process,WavExporter,Module">process</a> proc repeatedly until <a class="reference internal nimdoc" title="proc hasWork(ex: WavExporter): bool" href="#hasWork,WavExporter">hasWork</a> is false. You can use the <a class="reference internal nimdoc" title="proc progress(ex: WavExporter): int" href="#progress,WavExporter">progress</a> and <a class="reference internal nimdoc" title="proc progressMax(ex: WavExporter): int" href="#progressMax,WavExporter">progressMax</a> procs to display overall progress of the export.</p>
 <p>This mode is preferred for GUI applications, so that you can report progress to the user while the export is in process.</p>
 <p>Example:</p>
 <p><pre class="listing">
-<span class="Keyword">var</span> <span class="Identifier">config</span> <span class="Operator">=</span> <span class="Identifier">WavConfig</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Keyword">var</span> <span class="Identifier">config</span> <span class="Operator">=</span> <span class="Identifier">initWavConfig</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">config</span><span class="Operator">.</span><span class="Identifier">filename</span> <span class="Operator">=</span> <span class="StringLit">&quot;out.wav&quot;</span>
-<span class="Keyword">var</span> <span class="Identifier">ex</span> <span class="Operator">=</span> <span class="Identifier">WavExporter</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="Identifier">module</span><span class="Punctuation">,</span> <span class="Identifier">config</span><span class="Punctuation">)</span>
+<span class="Keyword">var</span> <span class="Identifier">ex</span> <span class="Operator">=</span> <span class="Identifier">initWavExporter</span><span class="Punctuation">(</span><span class="Identifier">module</span><span class="Punctuation">,</span> <span class="Identifier">config</span><span class="Punctuation">)</span>
 <span class="Comment"># progressBar.setMax(ex.progressMax)</span>
 <span class="Keyword">while</span> <span class="Identifier">ex</span><span class="Operator">.</span><span class="Identifier">hasWork</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Comment"># progressBar.setValue(ex.progress)</span>
@@ -206,7 +209,7 @@
   </pre></dt>
   <dd>
     
-    WavExporter object for iterative mode. An exporter can be created via the <a class="reference external" href="#init,typedesc[WavExporter],Module,WavConfig">init</a> proc. 
+    WavExporter object for iterative mode. An exporter can be created via <a class="reference internal nimdoc" title="proc initWavExporter(module: Module; config: WavConfig): WavExporter" href="#initWavExporter,Module,WavConfig">initWavExporter</a>. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L88" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L88" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -224,7 +227,7 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    <p>Creates a sequence of WavConfigs where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">.$</span><span class="Identifier">ext</span></span></tt>.</p>
+    <p>Creates a sequence of <a class="reference internal nimdoc" title="object WavConfig" href="#WavConfig">WavConfig</a>s where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">.$</span><span class="Identifier">ext</span></span></tt>.</p>
 <p>Use this when exporting each channel separately is desired. </p>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L199" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -263,9 +266,9 @@
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[WavConfig]">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BWavConfig%5D"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a></pre></dt>
+<div id="initWavConfig-procs-all">
+  <div id="initWavConfig">
+  <dt><pre><span class="Keyword">func</span> <a href="#initWavConfig"><span class="Identifier">initWavConfig</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Initializes a WavConfig with default settings. 
@@ -274,13 +277,16 @@
 
   </dd>
 </div>
-<div id="init,typedesc[WavExporter],Module,WavConfig">
-  <dt><pre><span class="Keyword">proc</span> <a href="#init%2Ctypedesc%5BWavExporter%5D%2CModule%2CWavConfig"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="wav.html#WavExporter"><span class="Identifier">WavExporter</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">module</span><span class="Other">:</span> <a href="../data.html#Module"><span class="Identifier">Module</span></a><span class="Other">;</span> <span class="Identifier">config</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wav.html#WavExporter"><span class="Identifier">WavExporter</span></a> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span></span>.}</pre></dt>
+
+</div>
+<div id="initWavExporter-procs-all">
+  <div id="initWavExporter,Module,WavConfig">
+  <dt><pre><span class="Keyword">proc</span> <a href="#initWavExporter%2CModule%2CWavConfig"><span class="Identifier">initWavExporter</span></a><span class="Other">(</span><span class="Identifier">module</span><span class="Other">:</span> <a href="../data.html#Module"><span class="Identifier">Module</span></a><span class="Other">;</span> <span class="Identifier">config</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wav.html#WavExporter"><span class="Identifier">WavExporter</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     <p>Initializes a WavExporter for a given module and config. The output WAV file specified in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> is created and ready to be filled with samples.</p>
-<p>The export can continue by calling <a class="reference external" href="#process,WavExporter,Module">process</a> repeatedly until <a class="reference external" href="#hasWork,WavExporter">hasWork</a> returns <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt>.</p>
+<p>The export can continue by calling <a class="reference internal nimdoc" title="proc process(ex: var WavExporter; module: Module)" href="#process,WavExporter,Module">process</a> repeatedly until <a class="reference internal nimdoc" title="proc hasWork(ex: WavExporter): bool" href="#hasWork,WavExporter">hasWork</a> returns <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt>.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> will be raised if the output file could not be written to. </p>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -296,7 +302,7 @@
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    <p>Processes a single frame and writes it to the destination WAV file. If the exporter is finished this proc does nothing. Use <a class="reference external" href="#hasWork,WavExporter">hasWork</a> to check before calling this proc.</p>
+    <p>Processes a single frame and writes it to the destination WAV file. If the exporter is finished this proc does nothing. Use <a class="reference internal nimdoc" title="proc hasWork(ex: WavExporter): bool" href="#hasWork,WavExporter">hasWork</a> to check before calling this proc.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if any error occurred during writing to the output WAV file. </p>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L163" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -324,7 +330,7 @@
   <dt><pre><span class="Keyword">func</span> <a href="#progressMax%2CWavExporter"><span class="Identifier">progressMax</span></a><span class="Other">(</span><span class="Identifier">ex</span><span class="Other">:</span> <a href="wav.html#WavExporter"><span class="Identifier">WavExporter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Gets a number representing the maximum of the values returned by <a class="reference external" href="#progress,WavExporter">progress</a>. 
+    Gets a number representing the maximum of the values returned by <a class="reference internal nimdoc" title="proc progress(ex: WavExporter): int" href="#progress,WavExporter">progress</a>. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L193" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L193" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -367,7 +373,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>

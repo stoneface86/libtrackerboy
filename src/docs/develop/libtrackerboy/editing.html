@@ -116,9 +116,12 @@
   <li><a class="reference" href="#hasData%2CPatternClip" title="hasData(c: PatternClip): bool">hasData(c: PatternClip): bool</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">init
-  <li><a class="reference" href="#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn" title="init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor">init(T: typedesc[PatternCursor]; row, track: int; column: TrackColumn): PatternCursor</a></li>
-<li><a class="reference" href="#init%2Ctypedesc%5BPatternSelection%5D%2CPatternAnchor" title="init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection">init(T: typedesc[PatternSelection]; a: PatternAnchor; b = a): PatternSelection</a></li>
+<ul class="simple nested-toc-section">initPatternCursor
+  <li><a class="reference" href="#initPatternCursor%2Cint%2Cint%2CTrackColumn" title="initPatternCursor(row, track: int; column: TrackColumn): PatternCursor">initPatternCursor(row, track: int; column: TrackColumn): PatternCursor</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">initPatternSelection
+  <li><a class="reference" href="#initPatternSelection%2CPatternAnchor" title="initPatternSelection(a: PatternAnchor; b = a): PatternSelection">initPatternSelection(a: PatternAnchor; b = a): PatternSelection</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">isEffect
@@ -312,8 +315,8 @@
   <dd>
     
     Clamp the selection to not exceed the given maximum number of rows. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L185" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L185" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L183" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L183" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -326,8 +329,8 @@
   <dd>
     
     Get a column iterator for a track 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L134" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L134" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L133" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L133" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -340,8 +343,8 @@
   <dd>
     
     Convert a column iterator to a slice of columns 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L147" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L147" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L146" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L146" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -354,8 +357,8 @@
   <dd>
     
     Determine if a selection, <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span></span></tt>, contains an anchor, <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L216" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L216" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L214" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L214" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -367,8 +370,8 @@
   <dd>
     
     Convert a column to its corresponding effect number. 0 is returned for non-effect columns. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L157" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L157" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L156" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L156" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -381,8 +384,8 @@
   <dd>
     
     Determine if the column iterator contains the given column 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L152" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L152" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L151" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L151" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -394,17 +397,17 @@
   <dd>
     
     Determines if this clip contains pattern data that can be pasted 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L290" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L290" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L288" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L288" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
-<div id="init-procs-all">
-  <div id="init,typedesc[PatternCursor],int,int,TrackColumn">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BPatternCursor%5D%2Cint%2Cint%2CTrackColumn"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="editing.html#PatternCursor"><span class="Identifier">PatternCursor</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">row</span><span class="Other">,</span> <span class="Identifier">track</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">column</span><span class="Other">:</span> <a href="editing.html#TrackColumn"><span class="Identifier">TrackColumn</span></a><span class="Other">)</span><span class="Other">:</span> <a href="editing.html#PatternCursor"><span class="Identifier">PatternCursor</span></a> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="initPatternCursor-procs-all">
+  <div id="initPatternCursor,int,int,TrackColumn">
+  <dt><pre><span class="Keyword">func</span> <a href="#initPatternCursor%2Cint%2Cint%2CTrackColumn"><span class="Identifier">initPatternCursor</span></a><span class="Other">(</span><span class="Identifier">row</span><span class="Other">,</span> <span class="Identifier">track</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">column</span><span class="Other">:</span> <a href="editing.html#TrackColumn"><span class="Identifier">TrackColumn</span></a><span class="Other">)</span><span class="Other">:</span> <a href="editing.html#PatternCursor"><span class="Identifier">PatternCursor</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Creates a pattern cursor with the given coordinates 
@@ -413,14 +416,17 @@
 
   </dd>
 </div>
-<div id="init,typedesc[PatternSelection],PatternAnchor">
-  <dt><pre><span class="Keyword">func</span> <a href="#init%2Ctypedesc%5BPatternSelection%5D%2CPatternAnchor"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="editing.html#PatternSelection"><span class="Identifier">PatternSelection</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <a href="editing.html#PatternAnchor"><span class="Identifier">PatternAnchor</span></a><span class="Other">;</span> <span class="Identifier">b</span> <span class="Other">=</span> <span class="Identifier">a</span><span class="Other">)</span><span class="Other">:</span> <a href="editing.html#PatternSelection"><span class="Identifier">PatternSelection</span></a> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+
+</div>
+<div id="initPatternSelection-procs-all">
+  <div id="initPatternSelection,PatternAnchor">
+  <dt><pre><span class="Keyword">func</span> <a href="#initPatternSelection%2CPatternAnchor"><span class="Identifier">initPatternSelection</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="editing.html#PatternAnchor"><span class="Identifier">PatternAnchor</span></a><span class="Other">;</span> <span class="Identifier">b</span> <span class="Other">=</span> <span class="Identifier">a</span><span class="Other">)</span><span class="Other">:</span> <a href="editing.html#PatternSelection"><span class="Identifier">PatternSelection</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Create a pattern selection with the two boundary anchors <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">b</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L173" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L173" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L172" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L172" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -446,8 +452,8 @@
   <dd>
     
     Determine if a pattern selection has valid coordinates, for a pattern of a given number of <tt class="docutils literal"><span class="pre"><span class="Identifier">rows</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L191" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L191" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L189" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L189" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -459,8 +465,8 @@
   <dd>
     
     Gets a pattern iterator for a selection. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L197" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L197" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L195" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L195" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -473,8 +479,8 @@
   <dd>
     
     Adjust the selection such that an anchor, <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt>, is contained within it. The selection is kept as is if <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> is already contained. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L228" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L228" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L226" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L226" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -487,8 +493,8 @@
   <dd>
     
     Pastes or copies the clip's stored data into a song's pattern. <tt class="docutils literal"><span class="pre"><span class="Identifier">order</span></span></tt> is the index in the song order of the pattern to paste into. <tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> is the position to insert the data at. When <tt class="docutils literal"><span class="pre"><span class="Identifier">mix</span></span></tt> is <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt>, the clipped data will be mixed in with the source data, where only the empty columns in the source are overwritten with the clip data. When <tt class="docutils literal"><span class="pre"><span class="Identifier">mix</span></span></tt> is <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt>, overwrite paste is used, which simply overwrites the source pattern's data with the clip's data. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L430" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L430" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L428" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L428" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -501,8 +507,8 @@
   <dd>
     
     Restores previously clipped data at its original location. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L442" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L442" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L440" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L440" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -514,8 +520,8 @@
   <dd>
     
     Convert a pattern iterator to a slice of rows 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L124" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L124" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L123" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L123" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -530,8 +536,8 @@
     <p>Saves a portion of pattern data in the given song to a clip. The <tt class="docutils literal"><span class="pre"><span class="Identifier">order</span></span></tt> is the index in the song order to use as the pattern data source. <tt class="docutils literal"><span class="pre"><span class="Identifier">region</span></span></tt> is the location and amount of data to clip.</p>
 <p>A RangeDefect will be raised if <tt class="docutils literal"><span class="pre"><span class="Identifier">region</span></span></tt> is not a valid selection for a pattern in the song. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L303" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L303" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L301" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L301" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -544,8 +550,8 @@
   <dd>
     
     Gets the region of the clipped data as a pattern selection. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L295" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L295" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L293" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L293" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -558,8 +564,8 @@
   <dd>
     
     Convert a pattern anchor to a cursor. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L253" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L253" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L251" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L251" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -571,8 +577,8 @@
   <dd>
     
     Convert a pattern iterator to a slice of tracks 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L129" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L129" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L128" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L128" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -585,8 +591,8 @@
   <dd>
     
     Translate the section by a given number of rows. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L179" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L179" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/editing.nim#L177" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/editing.nim#L177" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -598,7 +604,7 @@
 <div class="section" id="19">
   <h1><a class="toc-backref" href="#19">Exports</a></h1>
   <dl class="item">
-    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,Immutable[]"><span class="Identifier">isNil</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,,Immutable[T: ptr or ref]"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,T,Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,Immutable[T],Immutable[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#==.t,Immutable[T],T"><span class="Identifier">==</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#Immutable"><span class="Identifier">Immutable</span></a>, <a href="common.html#toImmutable.t,T"><span class="Identifier">toImmutable</span></a>, <a href="common.html#[].t,Immutable[]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,Immutable[T: not ptr or ref]"><span class="Identifier">[]</span></a>
+    <a href="common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="common.html#iptr"><span class="Identifier">iptr</span></a>, <a href="common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="common.html#isNil.t,iref[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#==.t,,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="common.html#==.t,ptr.T,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],ref.T"><span class="Identifier">==</span></a>, <a href="common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="common.html#==.t,iptr[T],iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#iref"><span class="Identifier">iref</span></a>, <a href="common.html#==.t,iptr[T],ptr.T"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iref[T],iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="common.html#==.t,iref[T],"><span class="Identifier">==</span></a>, <a href="common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="common.html#isNil.t,iptr[T]"><span class="Identifier">isNil</span></a>, <a href="common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="common.html#==.t,ref.T,iref[T]"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ref.T"><span class="Identifier">immutable</span></a>, <a href="common.html#==.t,,iptr[T]"><span class="Identifier">==</span></a>, <a href="common.html#==.t,iptr[T],"><span class="Identifier">==</span></a>, <a href="common.html#immutable.t,ptr.T"><span class="Identifier">immutable</span></a>, <a href="common.html#[].t,iptr[T]"><span class="Identifier">[]</span></a>, <a href="common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="common.html#[].t,iref[T]"><span class="Identifier">[]</span></a>
   </dl>
 </div>
 
@@ -608,7 +614,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-13 20:22:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:05 UTC</small>
       </div>
     </div>
   </div>
