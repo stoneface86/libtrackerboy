@@ -76,7 +76,7 @@ func initEngineHarness(): EngineHarness =
   )
 
 proc play(e: var EngineHarness; order = 0; row = 0) =
-  e.engine.play(e.song.toImmutable, songPos(order, row))
+  e.engine.play(e.song.immutable, songPos(order, row))
 
 func currentState(e: EngineHarness, chno: ChannelId): ChannelState =
   e.engine.currentState(chno)
@@ -817,17 +817,17 @@ block: # =========================================================== Engine
     
     test "play raises AssertionDefect on nil song":
       expect AssertionDefect:
-        engine.play(toImmutable[ref Song](nil))
+        engine.play(iref[Song](nil))
 
     test "play raises IndexDefect on invalid pattern index":
       var song = newSong()
       expect IndexDefect:
-        engine.play(song.toImmutable, songPos(song.order.len))
+        engine.play(song.immutable, songPos(song.order.len))
 
     test "play raises IndexDefect on invalid row index":
       var song = newSong()
       expect IndexDefect:
-        engine.play(song.toImmutable, songPos(0, song[].trackLen))
+        engine.play(song.immutable, songPos(0, song[].trackLen))
 
 block: # ========================================================== instruments
   const

@@ -2,11 +2,15 @@
 
 ## Unreleased
 
-## Important
+### Important
 
 **Nim 2.0.0 is now required.**
 
 All init procs have been renamed, `init(T, ...)` -> `initT(...)`
+
+`Immutable[ref T]` has been replaced by `iref[T]`
+`Immutable[ptr T]` has been replaced by `iptr[T]`
+Renamed `toImmutable` -> `immutable`
 
 The API in the data module has been completely overhauled:
 - removed types `EffectIndex`, `EffectColumns`
@@ -77,6 +81,7 @@ The API in the data module has been completely overhauled:
   - add proc `isValid`
 
 ### Added
+ - (common) `iref[T]` and `iptr[T]` (these replace `Immutable[T]`)
  - (common) `FixedSeq[N, T]` type for a seq-like container of fixed capacity.
  - (common) `Tristate` enum
  - (ir) `==` operator overload for `RowIr`
@@ -101,10 +106,11 @@ The API in the data module has been completely overhauled:
  - (note) `note`
 
 ### Removed
+ - (common) `MixMode` type and related procs.
+ - (common) `Immutable[T]` type and related procs.
  - (data) `$` procs for `Sequence` and `WaveData` types. Use text module instead.
  - (data) `parseSequence` proc, use text module instead.
  - (data) `parseWave` proc, use text module instead.
- - (common) `MixMode` type and related procs.
  - (ir) `SongPath` and `PatternVisit` types.
 
 ## [0.8.3] - 2023-11-08

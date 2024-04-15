@@ -51,7 +51,7 @@ type
   InstrumentRuntime = object
     ## Performs an instrument by enumerating all of its sequences.
     ##
-    instrument: Immutable[ref Instrument]
+    instrument: iref[Instrument]
       ## A reference to the Instrument to perform. Use `nil` for no instrument.
       ## 
     sequenceCounters: array[SequenceKind, int]
@@ -116,7 +116,7 @@ type
     period, counter: int
 
   MusicRuntime* = object
-    song: Immutable[ptr Song]
+    song: iptr[Song]
     halted: bool
     orderCounter: int
     rowCounter: int
@@ -351,8 +351,8 @@ proc step(fc: var FrequencyControl; arpIn, pitchIn: Option[uint8];): uint16 =
 proc reset(r: var InstrumentRuntime) =
   r.sequenceCounters = default(r.sequenceCounters.type)
 
-proc setInstrument(r: var InstrumentRuntime; i: sink Immutable[ref Instrument]
-                  ) =
+proc setInstrument(r: var InstrumentRuntime; i: sink iref[Instrument]
+                   ) =
   r.instrument = i
   r.reset()
 
@@ -486,7 +486,7 @@ proc step(tc: var TrackControl; itable: InstrumentTable;
   else:
     result[0] = naOff
 
-func initMusicRuntime*(song: sink Immutable[ptr Song]; orderNo, rowNo: int;
+func initMusicRuntime*(song: iptr[Song]; orderNo, rowNo: int;
                        patternRepeat: bool): MusicRuntime =
   ## Initializes a MusicRuntime the given song, starting position and
   ## pattern repeat setting.

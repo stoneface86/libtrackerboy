@@ -4,40 +4,36 @@ import libtrackerboy/common
 
 import std/sequtils
 
-suite "Immutable[T]":
+suite "iref[T]":
 
   type T = int
 
   test "default is nil when T is ref":
-    var iref: Immutable[ref T]
+    var iref: iref[T]
     check:
       iref.isNil
       iref == nil
       nil == iref
 
-  test "default Immutable[T] == default(T)":
-    var ival: Immutable[T]
-    check:
-      ival[] == default(T)
-
-  test "access when T is ref":
-    
-    var ref1: ref T
-    new(ref1)
-
-    var iref = ref1.toImmutable
-    check:
-      iref[] == default(T)
-      iref == ref1
-      ref1 == iref
+  test "dereferencing":
+    var
+      mref = new(T)
+      iref = immutable(mref)
+    mref[] = 2
+    check iref[] == 2
 
   test "equality":
-    var x = 2
+    var x = new(int)
     let
-      a = x.toImmutable
-      b = x.toImmutable
+      a = immutable(x)
+      b = immutable(x)
     check:
       a == b
+      b == a
+      a == x
+      x == a
+      b == x
+      x == b
 
 suite "FixedSeq[N, T]":
 

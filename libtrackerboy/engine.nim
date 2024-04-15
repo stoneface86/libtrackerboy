@@ -64,7 +64,7 @@ type
     ## an ApuIo object directly, in order to reduce coupling and code
     ## duplication.
     ## 
-    song: Immutable[ref Song]
+    song: iref[Song]
     musicRuntime: Option[MusicRuntime]
     #sfxRuntime...
     time: int
@@ -117,7 +117,7 @@ proc reset*(e: var Engine) =
   e.time = 0
   e.apuOp = ApuOperation.default
 
-proc play*(e: var Engine; song: sink Immutable[ref Song];
+proc play*(e: var Engine; song: sink iref[Song];
            startAt = default(SongPos)) =
   ## Sets the engine to begin playback of the given song. `song` must not be
   ## `nil`. By default, the engine will play the song from the start, or
@@ -137,7 +137,7 @@ proc play*(e: var Engine; song: sink Immutable[ref Song];
   e.song = song
   e.musicRuntime = some(
     initMusicRuntime(
-      cast[Immutable[ptr Song]](song),
+      cast[iptr[Song]](song),
       startAt.pattern,
       startAt.row,
       e.patternRepeat
@@ -167,7 +167,7 @@ func currentFrame*(e: Engine): EngineFrame =
   ##
   result = e.frame
 
-func currentSong*(e: Engine): Immutable[ref Song] =
+func currentSong*(e: Engine): iref[Song] =
   ## Gets the current song that is playing, `nil` is returned if there is
   ## no song playing.
   ## 

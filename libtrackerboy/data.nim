@@ -646,11 +646,11 @@ proc capacity*(t: SomeTable): static[int] =
   ##
   result = tableCapacity
 
-func `[]`*[T: SomeData](t: Table[T]; id: TableId): Immutable[ref T] =
+func `[]`*[T: SomeData](t: Table[T]; id: TableId): iref[T] =
   ## Gets an immutable ref of the item with the given id or `nil` if there
   ## is no item with that id.
   ##
-  result = toImmutable(t.data[id].src)
+  result = immutable(t.data[id].src)
 
 func `[]`*[T: SomeData](t: var Table[T]; id: TableId): ref T =
   result = t.data[id].src
@@ -1441,10 +1441,10 @@ func isValid*(l: SongList): bool =
   ##
   result = l.data.len in 1..256
 
-func get*(l: SongList; i: ByteIndex): Immutable[ref Song] =
+func get*(l: SongList; i: ByteIndex): iref[Song] =
   ## Gets an immutable reference to the song at the `i`th index in the list.
   ##
-  result = toImmutable(l.data[i])
+  result = immutable(l.data[i])
 
 proc mget*(l: var SongList; i: ByteIndex): ref Song =
   ## Gets a mutable reference to the song at the `i`th index in the list.
@@ -1456,16 +1456,16 @@ func len*(l: SongList): int {.inline.} =
   ##
   result = l.data.len
 
-template `[]`*(l: SongList; i: ByteIndex): Immutable[ref Song] =
+template `[]`*(l: SongList; i: ByteIndex): iref[Song] =
   ## Sugar for `l.get(i)`.
   ##
   get(l, i)
 
-iterator items*(l: SongList): Immutable[ref Song] =
+iterator items*(l: SongList): iref[Song] =
   ## Iterate all songs in the list, as immutable references.
   ##
   for s in l.data:
-    yield toImmutable(s)
+    yield immutable(s)
 
 iterator mitems*(l: var SongList): ref Song =
   ## Iterate all songs in the list, allowing mutations to song data.

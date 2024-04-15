@@ -40,11 +40,14 @@ type
     ## Positive type using the range of a uint8 (1-256)
     ##
 
-  Immutable*[T] = distinct T
-    ## Wrapper type that forces immutability on T. Useful for `ref` or `ptr`
-    ## types. Accessing the source is done through the `[]` overload proc.
-    ## Both value and ref semantics can be used. When the source is a `ref`
-    ## or `ptr`, accessing the source will dereference the ref/ptr.
+  iref*[T] = distinct ref T
+    ## Immutable reference type. This is a wrapper for a `ref T` that only
+    ## allows immutable access to the referenced data.
+    ##
+
+  iptr*[T] = distinct ptr T
+    ## Immutable pointer type. Like [iref], this is a wrapper for `ptr T` that
+    ## only allows immutable access to the referenced data.
     ##
 
   FixedSeq*[N: static int; T] = object
@@ -60,61 +63,83 @@ type
       ## range `0..N`.
       ##
 
-template toImmutable*[T](s: T): Immutable[T] =
-  ## Converts a value to an Immutable. Note that a copy of the value might
-  ## be made.
+# iref
+
+template get[T](x: iref[T]): ref T =
+  cast[ref T](x)
+
+template get[T](x: iptr[T]): ptr T =
+  cast[ptr T](x)
+
+template immutable*[T](x: ref T): iref[T] =
+  ## Converts a `ref` to an [iref], an immutable ref.
   ##
-  Immutable[T](s)
+  iref[T](x)
 
-template getType[T](_: Immutable[T]): untyped = T
+template immutable*[T](x: ptr T): iptr[T] =
+  ## Converts a `ptr` to an [iptr], an immutable ptr.
+  ##
+  iptr[T](x)
 
-template `[]`*[T](i: Immutable[(ptr T) or (ref T)]): lent T =
-  ## Access the Immutable's ref/ptr source. The source is dereferenced and
-  ## is returned.
+template `==`*[T](x, y: iref[T]; ): bool =
+  `==`(get(x), get(y))
+
+template `==`*[T](x, y: iptr[T]; ): bool =
+  `==`(get(x), get(y))
+
+template `==`*[T](x: ref T; y: iref[T]): bool =
+  `==`(x, get(y))
+
+template `==`*[T](x: ptr T; y: iptr[T]): bool =
+  `==`(x, get(y))
+
+template `==`*[T](x: iref[T]; y: ref T): bool =
+  `==`(y, x)
+
+template `==`*[T](x: iptr[T]; y: ptr T): bool =
+  `==`(y, x)
+
+template isNil*[T](x: iref[T]): bool =
+  isNil(get(x))
+
+template isNil*[T](x: iptr[T]): bool =
+  isNil(get(x))
+
+template `==`*[T](x: iref[T]; y: typeOf(nil)): bool =
+  isNil(get(x))
+
+template `==`*[T](x: iptr[T]; y: typeOf(nil)): bool =
+  isNil(get(x))
+
+template `==`*[T](x: typeOf(nil); y: iref[T]): bool =
+  isNil(get(y))
+
+template `==`*[T](x: typeOf(nil); y: iptr[T]): bool =
+  isNil(get(y))
+
+template `[]`*[T](x: iref[T]): lent T =
+  ## Dereference the [iref].
   ##
   runnableExamples:
     let myref = new(int)
     myref[] = 2
-    let immutableRef = myref.toImmutable
-    assert immutableRef[] == myref[]
+    let immutableRef = immutable(myref)
+    assert immutableRef[] == 2
     assert not compiles(immutableRef[] = 3)
-  cast[getType(i)](i)[]
+  get(x)[]
 
-template `[]`*[T: not ptr|ref](i: Immutable[T]): lent T =
-  ## Access the Immutable's value source.
+template `[]`*[T](x: iptr[T]): lent T =
+  ## Dereference the [iptr].
   ##
   runnableExamples:
-    let myval = 2
-    let immutableVal = myval.toImmutable
-    assert immutableVal[] == myval
-    assert not compiles(immutableVal[] = 3)
-  cast[T](i)
+    var x = 2
+    let ptrX = immutable(addr(x))
+    assert ptrX[] == 2
+    assert not compiles(ptrX[] = 3)
+  get(x)[]
 
-template isNil*[T](i: Immutable[(ptr T) or (ref T)]): bool =
-  ## Test if the Immutable source is nil.
-  ##
-  cast[getType(i)](i).isNil
 
-template `==`*[T](i: Immutable[T]; rhs: T): bool =
-  ## Test if the Immutable's source is equivalent to the given value
-  ##
-  cast[T](i) == rhs
-
-template `==`*[T](lhs: T; i: Immutable[T]): bool =
-  ## Same as `i == lhs`
-  ##
-  i == lhs
-
-template `==`*[T: ptr|ref](lhs: nil.typeof; rhs: Immutable[T]): bool =
-  ## Same as `rhs.isNil()`
-  ##
-  rhs == lhs
-
-template `==`*[T](a, b: Immutable[T]; ): bool =
-  ## Test if the two immutables are equivalent. This just calls the `==` proc
-  ## for T.
-  ## 
-  cast[T](a) == cast[T](b)
+# FixedSeq
 
 proc add*[N, T](s: var FixedSeq[N, T]; item: sink T) =
   ## Adds an item to the end of the quick list. An error will occur the list is
