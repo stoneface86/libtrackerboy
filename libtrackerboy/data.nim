@@ -950,13 +950,19 @@ proc initTrack*(len: TrackLen): Track =
   ##
   result = Track(data: newTrackData(len))
 
+func clone*(t: Track): Track =
+  ## Creates a clone of the given track. The returned track has its own copy
+  ## of `t`'s data, assuming `t` is valid.
+  ##
+  if t.data != nil:
+    result.data = new(TrackData)
+    result.data[] = t.data[]
+
 func initTrack*(view: TrackView): Track =
   ## Initialize a [Track] by deep copying the [TrackView]. The track
-  ## returned has the same data as the view, but can now be mutated.
+  ## returned has its own copy of the view's data.
   ##
-  if view.src.data != nil:
-    result.data = new(TrackData)
-    result.data[] = view.src.data[]
+  result = clone(view.src)
 
 func isValid*(t: Track): bool {.inline.} =
   ## Determines if the track is valid, or if the track has a reference to
@@ -1008,13 +1014,14 @@ iterator mitems*(t: var Track): var TrackRow =
   itemsImpl(t, mitems)
 
 func len*(t: Track): int =
-  ## Gets the length, or number of rows contained in this Track.
+  ## Gets the length, or number of rows contained in this Track. Invalid
+  ## tracks always have a length of 0.
   ##
   if t.isValid():
     result = t.data[].len
 
 proc setLen*(t: var Track; len: TrackLen) =
-  ## Sets the length of the Track to a new value.
+  ## Sets the length of the Track to a new value. The track must be valid!
   ##
   assertValid(t)
   t.data[].setLen(len)
@@ -1027,13 +1034,18 @@ func totalRows*(t: Track): int =
       inc result
 
 converter toView*(t: sink Track): TrackView {.inline.} =
-  ## Convert a Track to a TrackView. This is a converter so that you can pass
-  ## `Track` objects to any proc taking a `TrackView`.
+  ## Convert a [Track] to a [TrackView]. This is a converter so that you can pass
+  ## [Track] objects to any proc taking a [TrackView].
   ##
   result = TrackView(src: t)
 
+func clone*(t: TrackView): TrackView =
+  ## Clones the view. The returned view refers to a clone of `t`'s source.
+  ##
+  result.src = clone(t.src)
+
 func initTrackView*(track: sink Track): TrackView {.inline.} =
-  ## Initialize a [TrackView] from the given [Track]. Same as [toView].
+  ## Initialize a [TrackView] that views the given [Track]. Same as [toView].
   ##
   result = toView(track)
 
@@ -1071,11 +1083,24 @@ converter toView*(p: Pattern): PatternView =
   for ch, t in pairs(p):
     result[ch] = toView(t)
 
+func initPattern*(view: PatternView): Pattern =
+  ## Creates a [Pattern] from the given view. The returned pattern is made up
+  ## of clones of the view's tracks.
+  ##
+  for ch, t in pairs(view):
+    result[ch] = initTrack(t)
+
 func all*(p: SomePattern; i: ByteIndex): PatternRow =
   ## Gets a [PatternRow] at the given index, using all tracks in the pattern.
   ##
   for ch, t in pairs(p):
     result[ch] = t[i]
+
+func clone*[T: SomePattern](p: T): T =
+  ## Clones a [Pattern] or [PatternView].
+  ##
+  for ch, t in pairs(p):
+    result[ch] = clone(t)
 
 # Song ========================================================================
 

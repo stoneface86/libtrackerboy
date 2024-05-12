@@ -4,13 +4,11 @@
 
 ### Important
 
-**Nim 2.0.0 is now required.**
-
-All init procs have been renamed, `init(T, ...)` -> `initT(...)`
-
-`Immutable[ref T]` has been replaced by `iref[T]`
-`Immutable[ptr T]` has been replaced by `iptr[T]`
-Renamed `toImmutable` -> `immutable`
+- **Nim 2.0.0 is now required.**
+- All init procs have been renamed, `init(T, ...)` -> `initT(...)`
+- `Immutable[ref T]` has been replaced by `iref[T]`
+- `Immutable[ptr T]` has been replaced by `iptr[T]`
+- Renamed `toImmutable` -> `immutable`
 
 The API in the data module has been completely overhauled:
 - removed types `EffectIndex`, `EffectColumns`
@@ -101,6 +99,7 @@ The API in the data module has been completely overhauled:
  - modules `apucontrol`, `enginecontrol` and `enginestate` are no longer
    private and are now located in `libtrackerboy/engine`
  - (engine) `play` proc signature takes a `SongPos` instead of two ints
+ - (editing) completely rewritten, safer and easier to use.
 
 ### Deprecated
  - (note) `note`
@@ -112,6 +111,7 @@ The API in the data module has been completely overhauled:
  - (data) `parseSequence` proc, use text module instead.
  - (data) `parseWave` proc, use text module instead.
  - (ir) `SongPath` and `PatternVisit` types.
+ - (editing) `PatternIter`, `ColumnIter` types
 
 ## [0.8.3] - 2023-11-08
 

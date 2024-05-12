@@ -2,287 +2,262 @@
 import unittest2
 import libtrackerboy/[data, editing, text]
 
-template a(r: int, t: int, c: TrackSelect): PatternAnchor =
-  PatternAnchor(row: r, track: t, column: c)
+template pa(row, track: int; select: TrackSelect): PatternAnchor =
+  initPatternAnchor(row, track, select)
 
-block: # ========================================================== PatternClip
+template ps(rows, tracks: Slice[int]; selects: Slice[TrackSelect]): PatternSelection =
+  initPatternSelection(rows, tracks, selects)
+
+test "toSelect":
+  check:
+    colNote.toSelect() == selNote
+    colInstrumentHi.toSelect() == selInstrument
+    colInstrumentLo.toSelect() == selInstrument
+    colEffectType1.toSelect() == selEffect1
+    colEffectParamHi1.toSelect() == selEffect1
+    colEffectParamLo1.toSelect() == selEffect1
+    colEffectType2.toSelect() == selEffect2
+    colEffectParamHi2.toSelect() == selEffect2
+    colEffectParamLo2.toSelect() == selEffect2
+    colEffectType3.toSelect() == selEffect3
+    colEffectParamHi3.toSelect() == selEffect3
+    colEffectParamLo3.toSelect() == selEffect3
+
+test "effectNumber":
+  check:
+    effectNumber(selNote) == 0
+    effectNumber(selInstrument) == 0
+    effectNumber(selEffect1) == 0
+    effectNumber(selEffect2) == 1
+    effectNumber(selEffect3) == 2
+
+test "isEffect":
+  check:
+    not isEffect(selNote)
+    not isEffect(selInstrument)
+    isEffect(selEffect1)
+    isEffect(selEffect2)
+    isEffect(selEffect3)
+
+suite "PatternSelection":
   const
-    patternSize = 8
-    wholePattern = initPatternSelection(
-      a(0, ChannelId.low.ord, low(TrackSelect)),
-      a(patternSize - 1, ChannelId.high.ord, high(TrackSelect))
-    )
-
-  proc makeTestSong(): Song =
-    result = initSong()
-    # sample pattern data (patterns 0 and 1)
-    #      ch1          ch2          ch3          ch4
-    # 00 | G-5 00 ... | ... .. ... | ... .. ... | G-6 01 ... |
-    # 01 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-    # 02 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
-    # 03 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-    # 04 | B-5 00 ... | ... .. ... | ... .. ... | G-6 02 ... |
-    # 05 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-    # 06 | ... .. ... | ... .. ... | ... .. ... | G-6 01 G03 |
-    # 07 | ... .. ... | ... .. ... | ... .. ... | ... .. ... |
-    # pattern 2 is empty
-    result.trackLen = patternSize
-    result.order = @[
-      orow(0, 0, 0, 0),
-      orow(1, 1, 1, 1),
-      orow(2, 2, 2, 2)
-    ]
-    for i in 0..1:
-      result.editPattern(i, pattern):
-        ###### CH1 #########################################
-        pattern[ch1][0] = litTrackRow("G-5 00 ... ... ...")
-        # 01
-        # 02
-        # 03
-        pattern[ch1][4] = litTrackRow("B-5 00 ... ... ...")
-        # 05
-        # 06
-        # 07
-        ###### CH4 #########################################
-        pattern[ch4][0] = litTrackRow("G-6 01 ... ... ...")
-        # 01
-        pattern[ch4][2] = litTrackRow("G-6 01 G03 ... ...")
-        # 03
-        pattern[ch4][4] = litTrackRow("G-6 02 ... ... ...")
-        # 05
-        pattern[ch4][6] = litTrackRow("G-6 01 G03 ... ...")
-        # 07        
-    result.editPattern(2, pattern):
-      discard
-
-
-  suite "PatternClip":
-
-    setup:
-      var clip: PatternClip
-
-    test "has no data on init":
-      check not clip.hasData()
-
-    test "save raises RangeDefect on invalid selection":
-      proc mkInput(a1, a2: PatternAnchor, name: string): auto =
-        (
-          data: initPatternSelection(a1, a2),
-          name: name
-        )
-      const inputs = [
-        mkInput(a(-1, 0, selNote), a(4, 0, selNote), "negative row index"),
-        mkInput(a(1, 0, selNote), a(patternSize, 0, selNote), "row exceeds pattern"),
-        mkInput(a(0, 2, selInstrument), a(4, -2, selNote), "negative track index"),
-        mkInput(a(0, ChannelId.high.ord + 2, selEffect1), a(0, 0, selEffect2), "track exceeds pattern")
-      ]
-      var song = makeTestSong()
-      for input in inputs:
-        checkpoint input.name
-        expect RangeDefect:
-          clip.save(song, 0, input.data)
-
-    
-    test "persistance":
-      var song = makeTestSong()
-      clip.save(song, 0, wholePattern)
-      check clip.hasData()
-
-      # restore the clip to a new pattern
-      clip.restore(song, 2)
-      song.viewPattern(0, p0):
-        song.viewPattern(2, p1):
-          check:
-            p0[ch1] == p1[ch1]
-            p0[ch2] == p1[ch2]
-            p0[ch3] == p1[ch3]
-            p0[ch4] == p1[ch4]
-
-    test "overwrite paste":
-      # clip all of track1
-      var song = makeTestSong()
-      clip.save(
-        song,
-        0,
-        initPatternSelection(
-          a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)
-        )
-      )
-      check clip.hasData()
-
-      # paste at Track 3 (CH4)
-      clip.paste(song, 1, PatternCursor(row: 0, track: 3, column: colNote), false)
-
-      song.viewPattern(0, p0):
-        song.viewPattern(1, p1):
-          check:
-            p0[ch1] == p1[ch1]
-            p0[ch2] == p1[ch2]
-            p0[ch3] == p1[ch3]
-            p1[ch1] == p1[ch4]
-
-    test "mix paste":
-      var song = makeTestSong()
-      # clip track 0
-      clip.save(song, 0, initPatternSelection(a(0, 0, selNote), a(patternSize - 1, 0, selEffect3)))
-      check clip.hasData()
-
-      # mix paste at track 3 in pattern 1
-      # should be no change to the pattern
-      clip.paste(song, 1, PatternCursor(row: 0, track: 3, column: colNote), true)
-
-      song.viewPattern(0, p0):
-        song.viewPattern(1, p1):
-          check:
-            p0[ch1] == p1[ch1]
-            p0[ch2] == p1[ch2]
-            p0[ch3] == p1[ch3]
-            p0[ch4] == p1[ch4]
-
-      # now mix paste at row 1:
-      # 00 ... | G-6 01 ... |     ... | G-6 01 ... |
-      # 01 ... | ... .. ... |     ... | G-5 00 ... |
-      # 02 ... | G-6 01 G03 |     ... | G-6 01 G03 |
-      # 03 ... | ... .. ... |  => ... | ... .. ... |
-      # 04 ... | G-6 02 ... |     ... | G-6 02 ... |
-      # 05 ... | ... .. ... |     ... | B-5 00 ... |
-      # 06 ... | G-6 01 G03 |     ... | G-6 01 G03 |
-      # 07 ... | ... .. ... |     ... | ... .. ... |
-      clip.paste(song, 1, PatternCursor(row: 1, track: 3, column: colNote), true)
-
-      proc makeExpected(): Track =
-        result = initTrack(patternSize)
-        result[0] = litTrackRow("G-6 01 ... ... ...")
-        result[1] = litTrackRow("G-5 00 ... ... ...")
-        result[2] = litTrackRow("G-6 01 G03 ... ...")
-        result[4] = litTrackRow("G-6 02 ... ... ...")
-        result[5] = litTrackRow("B-5 00 ... ... ...")
-        result[6] = litTrackRow("G-6 01 G03 ... ...")
-
-      song.viewPattern(0, p0):
-        song.viewPattern(1, p1):
-          check:
-            # these tracks should remain unchanged
-            p0[ch1] == p1[ch1]
-            p0[ch2] == p1[ch2]
-            p0[ch3] == p1[ch3]
-            # check that the mix works
-            p1[ch4] == initTrackView(makeExpected())
-
-block: # ===================================================== PatternSelection
-  suite "PatternSelection":
+    a1 = pa(10, 0, selNote)
+    a2 = pa(20, 1, selInstrument)
   
-    test "clamp":
-      const startingSelection = initPatternSelection(a(0, 0, selNote), a(36, 1, selInstrument))
-      var sel = startingSelection
+  test "initPatternSelection: anchor order does not matter":
+    check:
+      initPatternSelection(a1, a2) == initPatternSelection(a2, a1)
 
-      sel.clamp(64)
-      check sel == startingSelection
+  test "initPatternSelection correctness":
+    check:
+      initPatternSelection(a1, a2) == ps(10..20, 0..1, selNote..selInstrument)
 
-      sel.clamp(32)
-      check:
-        sel != startingSelection
-        sel == initPatternSelection(a(0, 0, selNote), a(32, 1, selInstrument))
+  test "trackSelects":
+    let
+      oneTrack = ps(0..7, 1..1, selInstrument..selEffect1)
+      multipleTracks = ps(0..7, 1..3, selInstrument..selEffect1)
+    check:
+      oneTrack.trackSelects(0) == selNote..selEffect3 # track is not in selection
+      oneTrack.trackSelects(1) == selInstrument..selEffect1
+      oneTrack.trackSelects(2) == selNote..selEffect3 # track is not in selection
+      oneTrack.trackSelects(3) == selNote..selEffect3 # track is not in selection
+      multipleTracks.trackSelects(0) == selNote..selEffect3 # track is not in selection
+      multipleTracks.trackSelects(1) == selInstrument..selEffect3
+      multipleTracks.trackSelects(2) == selNote..selEffect3
+      multipleTracks.trackSelects(3) == selNote..selEffect1
 
-    test "translate":
-      const sample = initPatternSelection(a(0, 0, selNote), a(1, 0, selEffect3))
-      var sel = sample
-      sel.translate(1)
-      check sel == initPatternSelection(a(1, 0, selNote), a(2, 0, selEffect3))
+  test "clamped":
+    check:
+      clamped(ps(-12..100, -2..0, selEffect1..selEffect1)) == ps(0..100, 0..0, selNote..selEffect1)
+      clamped(ps(60..70, 1..2, selEffect1..selEffect3), 64) == ps(60..63, 1..2, selEffect1..selEffect3)
+      clamped(noSelection) == noSelection
+      clamped(ps(-12 .. -1, 0..0, selNote..selNote)) == noSelection
+      clamped(ps(1..4, 5..6, selEffect1..selEffect3)) == noSelection
+
+  test "contains":
+    let
+      s1 = ps(0..7, 2..2, selEffect1..selEffect3)
+      s2 = ps(10..17, 0..1, selNote..selNote)
+    check:
+      pa(2, 2, selEffect2) in s1
+      pa(8, 2, selEffect1) notin s1
+      pa(2, 3, selEffect1) notin s1
+      pa(4, 2, selNote) notin s1
+      pa(11, 0, selEffect3) in s2
+      pa(11, 1, selEffect3) notin s2
+
+  test "moved":
+    let
+      s1 = ps(32..50, 2..3, selNote..selInstrument)
+      s2 = ps(10..11, 1..1, selEffect1..selEffect1)
+    check:
+      s1.moved(pa(32, 2, selNote)) == s1
+      s1.moved(pa(32, 2, selEffect3)) == s1
+      s1.moved(pa(100, 3, selNote)) == ps(100..118, 3..4, selNote..selInstrument)
+      s2.moved(pa(20, 0, selEffect3)) == ps(20..21, 0..0, selEffect3..selEffect3)
+
+  test "gitFit":
+    check:
+      getFit(noSelection, 4) == nothing
+      getFit(ps(0..3, 0..3, selNote..selEffect3), 4) == whole
+      getFit(ps(0..5, 0..3, selNote..selEffect3), 4) == partial
+      getFit(ps(-23..3, 0..3, selNote..selEffect3), 4) == partial
+      getFit(ps(3..0, 0..3, selNote..selEffect3), 4) == nothing
+      getFit(ps(0..0, 2..1, selNote..selNote), 4) == nothing
+      getFit(ps(0..0, 1..1, selEffect1..selNote), 4) == nothing
+      getFit(ps(0..0, -1..0, selNote..selNote), 4) == partial
+      getFit(ps(1..1, 2..4, selInstrument..selEffect1), 4) == partial
+
+block:
+
+  const
+    row1 = litTrackRow("D-4 01 V02 EF1 P82")
+    row2 = litTrackRow("C-2 .. ... G04 ...")
+
+  test "overwrite paste":
+    var row = row1
+    row.paste(selNote..selEffect1, default(TrackRow), overwrite)
+    check row == litTrackRow("... .. ... EF1 P82")
+    row = row1
+    row.paste(selEffect3..selEffect3, default(TrackRow), overwrite)
+    check row == litTrackRow("D-4 01 V02 EF1 ...")
+
+  test "mix paste":
+    var row = row1
+    row.paste(selNote..selEffect3, default(TrackRow), mix)
+    check row == row1
+    row = row2
+    row.paste(selNote..selEffect3, row1, mix)
+    check row == litTrackRow("C-2 01 V02 G04 P82")
+
+import std/macros
+
+func buildImpl(track, body: NimNode;): NimNode {.compileTime.} =
+  expectKind(body, nnkStmtList)
+  let builder = newStmtList()
+  for node in body:
+    expectKind(node, nnkCall)
+    expectLen(node, 2)
+    let
+      rowno = node[0]
+      rowdata = node[1]
+    expectKind(rowno, nnkIntLit)
+    expectKind(rowdata, nnkStmtList)
+    expectLen(rowdata, 1)
+    let rowstr = rowdata[0]
+    expectKind(rowstr, nnkStrLit)
+    builder.add quote do:
+      t[`rowno`] = litTrackRow(`rowstr`)
+  result = quote do:
+    block:
+      var t {.inject.} = `track`
+      `builder`
+
+macro build(track: var Track; body) =
+  result = buildImpl(track, body)
+
+template buildTrack(trackLen: TrackLen; body): Track =
+  block:
+    var res = initTrack(trackLen)
+    build(res, body)
+    res
+
+template checkPatternsEqual(p1, p2: SomePattern;): bool =
+  let areEqual = p1 == p2
+  check areEqual
+
+const 
+  testPatternLen = 4
+  testRowCh1 = litTrackRow("A-4 00 000 001 023")
+  testRowCh2 = litTrackRow("B-4 01 101 100 102")
+  testRowCh3 = litTrackRow("C-4 02 20A 206 310")
+  testRowCh4 = litTrackRow("D-4 03 312 300 320")
+
+func blankPattern(): Pattern =
+  for t in mitems(result):
+    t = initTrack(testPatternLen)
+
+func emptyClip(trackLen: TrackLen; region: PatternSelection): PatternClip =
+  result.save(default(PatternView), trackLen, region)
+
+suite "PatternClip":
+
+  let 
+    testPattern = block:
+      var res = blankPattern()
+      for i in 0..<testPatternLen:
+        res[ch1][i] = testRowCh1
+        res[ch2][i] = testRowCh2
+        res[ch3][i] = testRowCh3
+        res[ch4][i] = testRowCh4
+      toView(res)
+    
+
+  setup:
+    var clip: PatternClip
+
+  test "default has no data":
+    check not clip.hasData()
+
+  test "save invalid region has no data":
+    clip.save(default(PatternView), 8, ps(-23..0, 1..100, selNote..selNote))
+    check not clip.hasData()
+  
+  test "save":
+    clip.save(testPattern, testPatternLen, ps(0..3, 0..0, selNote..selEffect3))
+    check clip.data().len() == 4 # 1 track, 4 rows
+    clip.save(testPattern, testPatternLen, ps(0..2, 0..1, selNote..selNote))
+    check clip.data().len() == 6 # 2 tracks, 3 rows
+
+  test "paste - whole":
+    clip = emptyClip(testPatternLen, ps(0..3, 0..0, selNote..selEffect3))
+    var pattern = initPattern(testPattern)
+    clip.paste(pattern, testPatternLen, pa(0, 0, selNote))
+    check:
+      pattern[ch1].totalRows() == 0
+      pattern[ch2].toView() == testPattern[ch2]
+      pattern[ch3].toView() == testPattern[ch3]
+      pattern[ch4].toView() == testPattern[ch4]
       
-      # check clamping when out of bounds
-      sel = sample
-      sel.translate(-100)
-      check sel == initPatternSelection(a(0, 0, selNote), a(0, 0, selEffect3))
+    # clip.paste(pattern, testPatternLen, pa(2, 0, selNote), mix)
+    # check:
+    #   pattern[ch1][0] == pattern[ch2][0]
+    #   pattern[ch1][1].isEmpty()
+    #   pattern[ch2][2] == pattern[ch2][0]
+    #   pattern[ch1][3].isEmpty()
+    #   pattern[ch1][0] == pattern[ch2][0]
+    #   pattern[ch1][1].isEmpty()
+    #   pattern[ch2][2] == pattern[ch2][0]
+    #   pattern[ch1][3].isEmpty()
 
-      sel = sample
-      sel.translate(300)
-      check sel == initPatternSelection(a(high(ByteIndex), 0, selNote), a(high(ByteIndex), 0, selEffect3))
+  test "paste partial 1":
+    # +-------+
+    # | paste |
+    # |   +---|-------------
+    # +---|---+
+    #     |  pattern
+    clip = emptyClip(testPatternLen, ps(0..3, 2..3, selNote..selEffect3))
+    var pattern = initPattern(testPattern)
+    clip.paste(pattern, testPatternLen, pa(-2, -1, selNote))
+    check:
+      pattern[ch1].totalRows() == 2
+      pattern[ch2].toView() == testPattern[ch2]
+      pattern[ch3].toView() == testPattern[ch3]
+      pattern[ch4].toView() == testPattern[ch4]
 
-    test "iter":
-
-      type TestData = object
-        name: string
-        input: PatternSelection
-        expectedRows: Slice[int]
-        expectedTracks: Slice[int]
-        expectedColumns: int
-
-      const tests = [
-        TestData(
-          name: "empty",
-          input: default(PatternSelection),
-          expectedRows: 0..0,
-          expectedTracks: 0..0,
-          expectedColumns: 1
-        ),
-        TestData(
-          name: "single column",
-          input: initPatternSelection(a(1, 0, selNote), a(6, 0, selNote)),
-          expectedRows: 1..6,
-          expectedTracks: 0..0,
-          expectedColumns: 1
-        ),
-        TestData(
-          name: "multiple columns, single track",
-          input: initPatternSelection(a(10, 3, selInstrument), a(1, 3, selEffect3)),
-          expectedRows: 1..10,
-          expectedTracks: 3..3,
-          expectedColumns: 4
-        ),
-        TestData(
-          name: "single column, multiple tracks",
-          input: initPatternSelection(a(3, 1, selEffect2), a(3, 3, selEffect2)),
-          expectedRows: 3..3,
-          expectedTracks: 1..3,
-          expectedColumns: 11
-        ),
-        TestData(
-          name: "multiple columns, multiple tracks",
-          input: initPatternSelection(a(1, 3, selEffect3), a(10, 1, selInstrument)),
-          expectedRows: 1..10,
-          expectedTracks: 1..3,
-          expectedColumns: 14
-        )
-      ]
-      
-      for testcase in tests:
-        checkpoint testcase.name
-        var iter = testcase.input.iter()
-        check iter.rows() == testcase.expectedRows
-        check iter.tracks() == testcase.expectedTracks
-        var columnCount = 0
-        for track in iter.tracks():
-          let columnIter = iter.columnIter(track)
-          for column in TrackSelect:
-            if columnIter.hasColumn(column):
-              inc columnCount
-
-        check columnCount == testcase.expectedColumns
-
-    test "contains":
-      let
-        first = a(10, 1, selInstrument)
-        last = a(32, 2, selEffect2)
-        sel = initPatternSelection(first, last)
-      check:
-        sel.contains(first)
-        sel.contains(last)
-        sel.contains(a(16, 1, selEffect1))
-        not sel.contains(a(9, 1, selInstrument))
-        not sel.contains(a(36, 1, selInstrument))
-        not sel.contains(a(16, 1, selNote))
-        not sel.contains(a(16, 2, selEffect3))
-
-static:
-  assert not isEffect(selNote)
-  assert not isEffect(selInstrument)
-  assert isEffect(selEffect1)
-  assert isEffect(selEffect2)
-  assert isEffect(selEffect3)
-
-  assert selNote.effectNumber == 0
-  assert selInstrument.effectNumber == 0
-  assert selEffect1.effectNumber == 0
-  assert selEffect2.effectNumber == 1
-  assert selEffect3.effectNumber == 2
+  test "paste partial 2":
+    #          |
+    #  pattern |
+    #     +----|-----+
+    # ----|----+     |
+    #     |    paste |
+    #     +----------+
+    # paste should only modify where "pattern" and "paste" intersect
+    clip = emptyClip(testPatternLen, ps(0..1, 0..1, selNote..selNote))
+    var pattern = initPattern(testPattern)
+    clip.paste(pattern, testPatternLen, pa(2, 3, selNote))
+    check:
+      pattern[ch1].toView() == testPattern[ch1]
+      pattern[ch2].toView() == testPattern[ch2]
+      pattern[ch3].toView() == testPattern[ch3]
+      pattern[ch4].totalRows() == 2

@@ -1,33 +1,19 @@
 ##[
 
-Module for editing pattern data.
+Procs for editing module data.
 
 ]##
 
-import 
+import
   ./common,
   ./data
 
-import std/options
-
-export common
-
-#
-# Iterating selections:
-#
-# let iter = selection.iter()
-# 
-# for row in iter.rows():
-#   for track in iter.tracks():
-#     let columnIter = iter.columnIter(track)
-#     for column in TrackSelect:
-#       if columnIter.hasColumn(column):
-#         <do something for this column>
-#
+export ByteIndex, ChannelId
 
 type
   TrackColumn* = enum
     ## Enum of columns within a track
+    ##
     colNote             ## The note
     colInstrumentHi     ## The high-nibble of instrument
     colInstrumentLo     ## The low-nibble of instrument
@@ -49,117 +35,72 @@ type
     selEffect1          ## Effect no 1
     selEffect2          ## Effect no 2
     selEffect3          ## Effect no 3
-  
-  PatternCursorBase[T: TrackColumn|TrackSelect] = object
+
+  PatternCursor* = object
+    ## A position inside a pattern.
+    ##
     row*: int
-      ## The row coordinate (0-[1..255])
     track*: int
-      ## The track coordinate (0-3)
-    column*: T
-      ## The column coordinate within a track
+    column*: TrackColumn
 
-  PatternCursor* = PatternCursorBase[TrackColumn]
-    ## Object representating a cursor's position in a pattern.
+  PatternAnchor* = object
+    ## A position inside a pattern similiar to [PatternCursor], except that
+    ## it uses [TrackSelect] as the column coordinate. Two anchors are needed
+    ## to make a [PatternSelection], which are the starting and ending corners
+    ## of a selection.
     ##
-
-  PatternAnchor* = PatternCursorBase[TrackSelect]
-    ## Similar to a `PatternCursor` but differs in that its column member is a
-    ## `TrackSelect` instead of `TrackColumn`. An anchor is used for specifying
-    ## a boundary corner of a pattern selection.
-    ##
+    row*: int
+    track*: int
+    select*: TrackSelect
 
   PatternSelection* = object
-    ## A selection within a pattern. The region is determined from two corner
-    ## anchors, which can be either top-left + bottom-right or top-right +
-    ## bottom-left in any order. A normalized selection has the first corner
-    ## top-left and the second bottom-right.
+    ## A selection is a span of rows, tracks and selects within a pattern.
+    ## Visual representation of a selection is equivalent to a rectangle, with
+    ## the rows being the y coordinates, and the tracks, selects as the x
+    ## coordinates.
+    ##  - `rows`: The starting and ending row of the selection.
+    ##  - `tracks`: The starting and ending track of the selection.
+    ##  - `selects`: The starting and ending column of the selection.
     ##
-    corners: array[2, PatternAnchor]
-  
-  PatternIter* = PatternSelection
-    ## Iterator object for iterating through a selection. Note this is the same
-    ## type as a pattern selection, but will have its corners normalized for
-    ## easy iteration.
-    ##
+    rows*: Slice[int]
+    tracks*: Slice[int]
+    selects*: Slice[TrackSelect]
 
-  ColumnIter* = object
-    ## Iterator object for iterating the selectable columns within a track.
+  SelectionFit* = enum
+    ## Enum of possible fits, or how much the selection actually selects in a
+    ## pattern. Use this to check for validity.
     ##
-    columnStart*, columnEnd*: TrackSelect
+    nothing ## nothing is selected: selection is invalid or out of bounds
+    partial ## some of the selection fits the pattern
+    whole   ## all of the selection fits within the pattern
 
   PatternClip* = object
     ## A partial copy of pattern data that can be pasted elsewhere.
     ##
-    data: seq[byte]
+    data: seq[TrackRow]
     location: PatternSelection
+
+  PasteMode* = enum
+    ## Modes of operation when pasting pattern data.
+    ##  - `overwrite`: default, source data overwrites destination data.
+    ##  - `mix`: Source data is only pasted when the destination column is
+    ##           empty. In other words, the pasted data mixes with the existing
+    ##           data at the destination.
+    ##
+    overwrite
+    mix
+
+const
+  validTracks = ord(low(ChannelId))..ord(high(ChannelId))
+
+func clamp(i: int; R: typedesc[SomeOrdinal]): R =
+  result = R(clamp(i, ord(low(R)), ord(high(R))))
 
 {. push raises: [] .}
 
-template first(p: PatternSelection|PatternIter): PatternAnchor =
-  p.corners[0]
+# TrackColumn =================================================================
 
-template last(p: PatternSelection|PatternIter): PatternAnchor =
-  p.corners[1]
-
-func isEffect*(column: TrackSelect): bool =
-  ## Determines if `column` is an effect column
-  ##
-  column >= selEffect1 and column <= selEffect3
-
-func initPatternCursor*(row, track: int; column: TrackColumn): PatternCursor =
-  ## Creates a pattern cursor with the given coordinates
-  ##
-  result = PatternCursor(
-    row: row,
-    track: track,
-    column: column
-  )
-
-func isValid(c: PatternCursor|PatternAnchor; rows: int): bool =
-  ## Determine if a cursor or anchor has valid coordinates
-  ##
-  c.row >= 0 and c.row < rows and c.track >= ChannelId.low.ord and c.track <= ChannelId.high.ord
-
-func rows*(i: PatternIter): Slice[int] =
-  ## Convert a pattern iterator to a slice of rows
-  ##
-  result = i.first.row..i.last.row
-
-func tracks*(i: PatternIter): Slice[int] =
-  ## Convert a pattern iterator to a slice of tracks
-  ##
-  result = i.first.track..i.last.track
-
-func columnIter*(i: PatternIter; track: int): ColumnIter =
-  ## Get a column iterator for a track
-  ##
-  if track == i.first.track:
-    result.columnStart = i.first.column
-  else:
-    result.columnStart = low(TrackSelect)
-
-  if track == i.last.track:
-    result.columnEnd = i.last.column
-  else:
-    result.columnEnd = high(TrackSelect)
-
-func columns*(i: ColumnIter): Slice[TrackSelect] =
-  ## Convert a column iterator to a slice of columns
-  ##
-  result = i.columnStart..i.columnEnd
-
-func hasColumn*(i: ColumnIter; col: TrackSelect): bool =
-  ## Determine if the column iterator contains the given column
-  ##
-  col >= i.columnStart and col <= i.columnEnd
-
-func effectNumber*(column: TrackSelect): int =
-  ## Convert a column to its corresponding effect number. 0 is returned
-  ## for non-effect columns.
-  ##
-  result = max(column.int - selEffect1.int, 0)
-
-func toSelect(column: TrackColumn): TrackSelect =
+func toSelect*(column: TrackColumn): TrackSelect =
   ## Convert a column to a selectable column.
   ##
   result = case column
@@ -169,121 +110,267 @@ func toSelect(column: TrackColumn): TrackSelect =
   of colEffectType2..colEffectParamLo2: selEffect2
   else: selEffect3
 
-func initPatternSelection*(a: PatternAnchor; b = a): PatternSelection =
-  ## Create a pattern selection with the two boundary anchors `a` and `b`.
+# TrackSelect =================================================================
+
+func effectNumber*(column: TrackSelect): int =
+  ## Gets the effect index of the select. `0` is returned If `column` is not an
+  ## effect.
   ##
-  result = PatternSelection(corners: [a, b])
+  result = clamp(ord(column) - ord(selEffect1), 0, 2)
 
-proc translate*(s: var PatternSelection; rows: int) =
-  ## Translate the section by a given number of rows.
+func isEffect*(column: TrackSelect): bool =
+  ## Determines if `column` is an effect column
   ##
-  for anchor in s.corners.mitems:
-    anchor.row = clamp(anchor.row.int + rows, low(ByteIndex), high(ByteIndex))
+  result = column in selEffect1..selEffect3
 
-proc clamp*(s: var PatternSelection; maxRows: ByteIndex) =
-  ## Clamp the selection to not exceed the given maximum number of rows.
+# PatternCursor ===============================================================
+
+func isValid(row, track: int; trackLen: TrackLen): bool =
+  result = row in 0..(trackLen-1) and track in ord(low(ChannelId))..ord(high(ChannelId))
+
+func initPatternCursor*(row, track: int; column: TrackColumn): PatternCursor =
+  ## Creates a [PatternCursor] with the given coordinates.
   ##
-  for anchor in s.corners.mitems:
-    anchor.row = clamp(anchor.row, low(ByteIndex), maxRows)
-
-func isValid*(s: PatternSelection; rows: TrackLen): bool =
-  ## Determine if a pattern selection has valid coordinates, for a pattern of
-  ## a given number of `rows`.
-  ##
-  s.first.isValid(rows) and s.last.isValid(rows)
-
-func iter*(s: PatternSelection): PatternIter =
-  ## Gets a pattern iterator for a selection.
-  ##
-  result.corners = s.corners
-
-  # normalize the corners such that corner[0] <= corner[1]
-
-  template first(): untyped = result.first
-  template last(): untyped = result.last
-
-  if first.row > last.row:
-    swap(first.row, last.row)
-
-  if first.track > last.track:
-    swap(first.track, last.track)
-    swap(first.column, last.column)
-  elif first.track == last.track and first.column > last.column:
-    swap(first.column, last.column)
-
-func contains*(s: PatternSelection; pos: PatternAnchor): bool =
-  ## Determine if a selection, `s`, contains an anchor, `pos`.
-  ## 
-  let iter = s.iter()
-  template toAbsolute(track: int, col: TrackSelect): int =
-    track.int * (high(TrackSelect).int + 1) + col.int
-  let absStart = toAbsolute(iter.first.track, iter.first.column)
-  let absEnd = toAbsolute(iter.last.track, iter.last.column)
-  let absCol = toAbsolute(pos.track, pos.column)
-  result = pos.row >= iter.first.row and pos.row <= iter.last.row and
-       absCol >= absStart and absCol <= absEnd
-
-proc moveTo*(s: var PatternSelection; pos: PatternAnchor) =
-  ## Adjust the selection such that an anchor, `pos`, is contained within it.
-  ## The selection is kept as is if `pos` is already contained.
-  ##
-  let iter = s.iter()
-  s.corners = iter.corners
-
-  # move to row
-  s.first.row = pos.row
-  s.last.row = pos.row + iter.last.row - iter.first.row
-
-  # if the selection is just effects, we can move it to another effect column
-  # otherwise, we can only move by tracks
-  if iter.first.track == iter.last.track:
-    # within the same track
-    if iter.first.column.isEffect():
-      # only effects are selected, move by column
-      let begin = max(selEffect1, pos.column)
-      s.first.column = begin
-      s.last.column = (begin.int + (iter.last.column.int - iter.first.column.int)).TrackSelect
-  
-  # move to track
-  s.first.track = pos.track
-  s.last.track = max(ChannelId.high.ord.int, pos.track + iter.last.track - iter.first.track)
+  result = PatternCursor(row: row, track: track, column: column)
 
 func toAnchor*(c: PatternCursor): PatternAnchor =
-  ## Convert a pattern anchor to a cursor.
+  ## Convert a cursor to an anchor.
   ##
   result = PatternAnchor(
     row: c.row,
     track: c.track,
-    column: c.column.toSelect()
+    select: c.column.toSelect()
   )
 
-proc columnToOffset(column: TrackSelect): Natural =
-  case column:
-  of selNote:
-    result = offsetOf(TrackRow, note)
-  of selInstrument:
-    result = offsetOf(TrackRow, instrument)
-  of selEffect1:
-    result = offsetOf(TrackRow, effects)
-  of selEffect2:
-    result = offsetOf(TrackRow, effects) + sizeof(Effect)
-  of selEffect3:
-    result = offsetOf(TrackRow, effects) + (sizeof(Effect) * 2)
+func isValid*(c: PatternCursor; trackLen: TrackLen): bool =
+  ## Determine if the cursor has valid coordinates for the given track len.
+  ##
+  result = isValid(c.row, c.track, trackLen)
 
-proc columnToLength(column: TrackSelect): Natural =
-  if column == high(TrackSelect):
-    result = sizeof(TrackRow)
+# PatternAnchor ===============================================================
+
+func initPatternAnchor*(row, track: int; select: TrackSelect): PatternAnchor =
+  ## Creates a [PatternAnchor] with the given coordinates.
+  ##
+  result = PatternAnchor(row: row, track: track, select: select)
+
+func isValid*(a: PatternAnchor; trackLen: TrackLen): bool =
+  ## Determine if the anchor has valid coordinates for the given track len.
+  ##
+  result = isValid(a.row, a.track, trackLen)
+
+# PatternSelection ============================================================
+
+const
+  noSelection* = PatternSelection(rows: 0 .. -1, tracks: 0 .. -1)
+    ## Constant for a selection that has no selection whatsoever.
+    ##
+
+
+template top(s: PatternSelection): int = s.rows.a
+template `top=`(s: var PatternSelection; val: int) = s.rows.a = val
+template bottom(s: PatternSelection): int = s.rows.b
+template `bottom=`(s: var PatternSelection; val: int) = s.rows.b = val
+template left(s: PatternSelection): int = s.tracks.a
+template `left=`(s: var PatternSelection; val: int) = s.tracks.a = val
+template right(s: PatternSelection): int = s.tracks.b
+template `right=`(s: var PatternSelection; val: int) = s.tracks.b = val
+template leftSelect(s: PatternSelection): TrackSelect = s.selects.a
+template `leftSelect=`(s: var PatternSelection; val: TrackSelect) = s.selects.a = val
+template rightSelect(s: PatternSelection): TrackSelect = s.selects.b
+template `rightSelect=`(s: var PatternSelection; val: TrackSelect) = s.selects.b = val
+
+func initPatternSelection*(rows, tracks: Slice[int];
+                           selects: Slice[TrackSelect];
+                           ): PatternSelection =
+  ## Create a pattern selection with the given boundaries.
+  ##
+  result = PatternSelection(rows: rows, tracks: tracks, selects: selects)
+
+func initPatternSelection*(a: PatternAnchor; b = a): PatternSelection =
+  ## Create a pattern selection from the two boundary anchors `a` and `b`.
+  ##
+  if a.row <= b.row:
+    result.rows = a.row..b.row
   else:
-    result = columnToOffset(succ column)
+    result.rows = b.row..a.row
+  
+  if a.track <= b.track:
+    result.tracks = a.track..b.track
+    result.selects = a.select..b.select
+  else:
+    result.tracks = b.track..a.track
+    result.selects = b.select..a.select
 
-proc rowLength(iter: PatternIter): Natural =
-  # full tracks
-  result = sizeof(TrackRow) * (iter.last.track - iter.first.track).int
+func trackSelects*(s: PatternSelection; track: int): Slice[TrackSelect] =
+  ## Gets the starting and ending selects within a single track of a pattern
+  ## selection.
+  ## 
+  ## If the given track is not in the selection's span of tracks, then all
+  ## columns are selected.
+  ##
+  if track == s.left:
+    result.a = s.leftSelect
+  else:
+    result.a = low(TrackSelect)
+  if track == s.right:
+    result.b = s.rightSelect
+  else:
+    result.b = high(TrackSelect)
 
-  # first track partial
-  result += columnToLength(iter.last.column)
-  # last track partial
-  result -= columnToOffset(iter.first.column)
+func getFit*(s: PatternSelection; rows: TrackLen): SelectionFit =
+  ## Determine the fit for a selection in a pattern of the given size.
+  ##
+  const 
+    nselects = len(low(TrackSelect)..high(TrackSelect))
+    maxRight = ((validTracks.b + 1) * nselects) - 1
+  
+  if s.top > s.bottom:
+    # selection is not normal
+    return nothing
+  
+  let
+    normalLeft = s.left * nselects + ord(s.leftSelect)
+    normalRight = s.right * nselects + ord(s.rightSelect)
+  
+  if normalLeft > normalRight:
+    # selection is not normal
+    return nothing
+  
+  if s.bottom < 0 or s.top >= rows or normalRight < 0 or normalLeft > maxRight:
+    # entire selection is out of bounds
+    return nothing
+  if s.top < 0 or normalLeft < 0 or s.bottom >= rows or normalRight > maxRight:
+    # one of the coordinates is out of bounds
+    return partial
+  else:
+    return whole
+
+func hasOnlyEffects*(s: PatternSelection): bool =
+  ## Determine if a selection contains only effect columns.
+  ##
+  result = s.left == s.right and s.leftSelect.isEffect()
+
+func contains*(s: PatternSelection; pos: PatternAnchor): bool =
+  ## Determine if a selection, `s`, contains an anchor, `pos`.
+  ##
+  if pos.row notin s.rows:
+    return false
+  if pos.track notin s.tracks:
+    return false
+  if pos.track == s.left and pos.select < s.leftSelect:
+    return false
+  if pos.track == s.right and pos.select > s.rightSelect:
+    return false
+  result = true
+
+func clamped*(s: PatternSelection; trackLen = TrackLen(256)): PatternSelection =
+  ## Calculates a new selection that is clamped in order to be a valid selection
+  ## for a pattern of the given length. If the selection does not intersect the
+  ## pattern region whatsoever, [noSelection] is returned.
+  ## 
+  case s.getFit(trackLen)
+  of nothing:
+    result = noSelection
+  of partial:
+    result.top = max(0, s.top)
+    result.bottom = min(trackLen - 1, s.bottom)
+    
+    if s.left < validTracks.a:
+      result.left = validTracks.a
+      result.leftSelect = low(TrackSelect)
+    else:
+      result.left = s.left
+      result.leftSelect = s.leftSelect
+    
+    if s.right > validTracks.b:
+      result.right = validTracks.b
+      result.rightSelect = high(TrackSelect)
+    else:
+      result.right = s.right
+      result.rightSelect = s.rightSelect
+  of whole:
+    # no clamping needed
+    result = s
+
+func moved*(s: PatternSelection; pos: PatternAnchor): PatternSelection =
+  ## Calculates a new selection by moving `s` to start at `pos`. The resulting
+  ## selection may be invalid.
+  ##
+  result.top = pos.row
+  result.bottom = pos.row + s.bottom - s.top
+  result.left = pos.track
+  result.right = pos.track + s.right - s.left
+  if pos.select.isEffect() and s.hasOnlyEffects():
+    # move by effects
+    let 
+      diff = int(s.rightSelect) - int(s.leftSelect)
+      begin = max(selEffect1, pos.select)
+    result.leftSelect = begin
+    result.rightSelect = TrackSelect( min(int(begin) + diff, int(high(TrackSelect))) )
+  else:
+    result.selects = s.selects
+
+func pos*(s: PatternSelection): PatternAnchor =
+  ## Gets the starting position of the selection, as an anchor
+  ##
+  result = initPatternAnchor(s.top, s.left, s.leftSelect)
+
+# PatternClip =================================================================
+
+proc paste*(dest: var TrackRow; selected: Slice[TrackSelect]; src: TrackRow; 
+            mode = overwrite) =
+  ## Copies the selected columns from `src` onto `dest`, using the given paste
+  ## mode. See [PasteMode] for more details on the possible modes.
+  ##
+  let alwaysPaste = mode == overwrite
+  for select in selected:
+    case select
+    of selNote:
+      if alwaysPaste or not dest.note.has:
+        dest.note = src.note
+    of selInstrument:
+      if alwaysPaste or not dest.instrument.has:
+        dest.instrument = src.instrument
+    of selEffect1..selEffect3:
+      let num = effectNumber(select)
+      if alwaysPaste or dest.effects[num].cmd == 0:
+        dest.effects[num] = src.effects[num]
+
+proc save*(c: var PatternClip; pattern: PatternView; trackLen: TrackLen;
+           region: PatternSelection) =
+  ## Saves a portion of pattern data in the given song to a clip. 
+  ## 
+  ## - `pattern`: the pattern data to save from, invalid tracks are accepted.
+  ## - `trackLen`: the length of the pattern, in rows.
+  ## - `region`: is the selected region in the pattern to save.
+  ## 
+  ## If the region's fit is not `whole`, then nothing will be saved. See
+  ## [SelectionFit] and [getFit] for more details.
+  ##
+  c.data.setLen(0)
+  if region.getFit(trackLen) == whole:  
+    c.location = region
+    for track in region.tracks:
+      let view = pattern[ChannelId(track)]
+      if view.isValid():
+        for row in region.rows:
+          c.data.add(view[row])
+      else:
+        # invalid track, add empty rows
+        c.data.setLen(c.data.len() + region.rows.len())
+  else:
+    c.location = noSelection
+
+proc initPatternClip*(pattern: PatternView; trackLen: TrackLen; 
+                      region: PatternSelection
+                      ): PatternClip =
+  ## Creates a [PatternClip] of the requested data from the song.
+  ## 
+  ## See [save].
+  ##
+  result.save(pattern, trackLen, region)
+
 
 func hasData*(c: PatternClip): bool =
   ## Determines if this clip contains pattern data that can be pasted
@@ -293,153 +380,69 @@ func hasData*(c: PatternClip): bool =
 func selection*(c: PatternClip): PatternSelection =
   ## Gets the region of the clipped data as a pattern selection.
   ##
-  c.location
+  result = c.location
 
-template offsetInto[T](src: ptr T, offset: Natural): pointer =
-  cast[ptr array[T.sizeof, byte]](src)[][offset].addr
+func data*(c: PatternClip): lent seq[TrackRow] =
+  ## Access the clip's data buffer. The data is stored in the order specified
+  ## by the clip's selection, from left-to-right (first track to last track)
+  ## and top-to-bottom (first row to last row).
+  ##
+  result = c.data
 
-proc save*(c: var PatternClip; song: Song; order: ByteIndex;
-           region: PatternSelection) =
-  ## Saves a portion of pattern data in the given song to a clip. The `order`
-  ## is the index in the song order to use as the pattern data source. `region`
-  ## is the location and amount of data to clip.
+type
+  PasteAux = object
+    # Auxillary data needed by paste
+    selection: PatternSelection
+      # destination region of the paste, clamped to fit within the bounds of
+      # the pattern
+    srcBufRowsPerTrack: int
+      # number of rows per track in the clip's data buffer
+      # add this to the buffer position to advance to the next track
+    srcBufStart: int
+      # starting position of the clip's data buffer when reading data to paste.
+
+func getAux(src: PatternSelection; pos: PatternAnchor; trackLen: TrackLen): PasteAux =
+  result.selection = src.moved(pos).clamped(trackLen)
+  if result.selection.getFit(trackLen) != nothing:
+    result.srcBufRowsPerTrack = src.rows.len()
+    if result.selection.left < validTracks.a:
+      result.srcBufStart = -(result.selection.left) * result.srcBufRowsPerTrack
+    if result.selection.top < 0:
+      result.srcBufStart -= result.selection.top
+      
+proc paste*(c: PatternClip; pattern: var Pattern; trackLen: TrackLen;
+            pos: PatternAnchor; mode = overwrite) =
+  ## Pastes or copies the clip's stored data into a pattern at the given
+  ## starting position.
   ## 
-  ## A RangeDefect will be raised if `region` is not a valid selection for
-  ## a pattern in the song.
+  ## `mode` determines how the data is copied over, see [PasteMode] for details.
+  ## 
+  ## If the clip does not have any data then this proc does nothing. Any
+  ## invalid track in the pattern will be ignored.
   ##
+  if c.hasData():
+    let aux = getAux(c.location, pos, trackLen)
+    # check if a paste is possible at this position
+    if aux.srcBufRowsPerTrack > 0:
+      var bufPos = aux.srcBufStart
+      
+      for track in aux.selection.tracks:
+        let nextPos = bufPos + aux.srcBufRowsPerTrack
+        var data = pattern[ChannelId(track)]
 
-  if not region.isValid(song.trackLen):
-    raise newException(RangeDefect, "selection is not in range of the pattern")
+        if data.isValid():
+          let selected = aux.selection.trackSelects(track)
+          for row in aux.selection.rows:
+            paste(data[row], selected, c.data[bufPos], mode)
+            inc bufPos
 
-  c.location = region
-  let iter = region.iter()
+        bufPos = nextPos
 
-  let rowlen = rowLength(iter)
-  let seqsize = rowlen * (iter.last.row - iter.first.row + 1)
-  assert seqsize > 0
-  c.data.setLen(seqsize)
 
-  song.viewPattern(order, pattern):
-    var bufIndex = 0
-    for track in iter.tracks():
-      let columnIter = iter.columnIter(track)
-      let offset = columnToOffset(columnIter.columnStart)
-      let length = columnToLength(columnIter.columnEnd) - offset
-
-      # assert that we won't read past the bounds of a TrackRow
-      assert offset + length <= sizeof(TrackRow)
-      # assert that we're actually reading something
-      assert length > 0
-
-      var bufIndexInTrack = bufIndex
-      for row in iter.rows():
-        var src = pattern[track.ChannelId][row]
-        copyMem(
-          c.data[bufIndexInTrack].addr,
-          # convert the source row to an array of bytes, then take its
-          # address from the offset
-          offsetInto(src.addr, offset),
-          length
-        )
-        bufIndexInTrack += rowlen
-
-      # advance to the next track
-      bufIndex += length
-
-proc pasteImpl(c: PatternClip; song: var Song; order: ByteIndex;
-               pos: Option[PatternAnchor]; mix: bool) =
-
-  var iter = c.location.iter()
-  let rowlen = rowLength(iter)
-  var bufIndex = 0
-
-  if pos.isSome():
-    let tracksize = song.trackLen
-    # when pos is set, we are pasting at a given location
-
-    # determine the region we are pasting data to
-    var destRegion = c.location
-    destRegion.moveTo(pos.get())
-    # update the iterator
-    iter = destRegion.iter()
-    # check the rows
-    if iter.first.row < 0:
-      if iter.last.row < 0:
-        return # destination is out of bounds, nothing to paste
-      bufIndex = rowlen * -iter.first.row # skip these rows
-      iter.first.row = 0
-    elif iter.first.row >= tracksize:
-      return # out of bounds, nothing to paste
-    iter.last.row = min(tracksize - 1, iter.last.row)
-    if iter.last.track < ChannelId.low.ord or iter.first.track > ChannelId.high.ord:
-      return
-    iter.first.track = max(iter.first.track, ChannelId.low.ord)
-    iter.last.track = min(iter.last.track, ChannelId.high.ord)
-
-  proc paster(c: PatternClip; song: var Song; order: ByteIndex;
-              mix: static[bool]) =
-    song.editPattern(order, pattern):
-      for track in iter.tracks():
-        let columnIter = iter.columnIter(track)
-        let offset = columnToOffset(columnIter.columnStart)
-        let length = columnToLength(columnIter.columnEnd) - offset
-
-        assert offset + length <= TrackRow.sizeof
-        assert length > 0
-
-        var bufIndexInTrack = bufIndex
-        for row in iter.rows():
-          let rowdata = pattern[track.ChannelId][row].addr
-          when mix:
-            # mix paste, only empty columns will be pasted data from clip
-            # create a (partial) TrackRow from the clip data
-            var src: TrackRow
-            copyMem(
-              offsetInto(src.addr, offset),
-              c.data[bufIndexInTrack].unsafeAddr,  # unsafeAddr because c.data is immutable
-              length
-            )
-            if columnIter.hasColumn(selNote) and rowdata.note == noteNone:
-              rowdata.note = src.note
-            if columnIter.hasColumn(selInstrument) and rowdata.instrument == instrumentNone:
-              rowdata.instrument = src.instrument
-            for effectCol in selEffect1..selEffect3:
-              if columnIter.hasColumn(effectCol):
-                let effno = effectCol.effectNumber()
-                if rowdata.effects[effno].cmd == ecNoEffect.uint8:
-                  rowdata.effects[effno] = src.effects[effno]
-          else:
-            # overwrite paste, copy clip data to destination track row
-            copyMem(
-              offsetInto(rowdata, offset),
-              c.data[bufIndexInTrack].unsafeAddr,
-              length
-            )
-          # advance to next row
-          bufIndexInTrack += rowlen
-
-        # advance to next track
-        bufIndex += length
-  if mix:
-    paster(c, song, order, true)
-  else:
-    paster(c, song, order, false)
-
-proc paste*(c: PatternClip; song: var Song; order: ByteIndex;
-            pos: PatternCursor; mix = false) =
-  ## Pastes or copies the clip's stored data into a song's pattern. `order` is
-  ## the index in the song order of the pattern to paste into. `pos` is the
-  ## position to insert the data at. When `mix` is `true`, the clipped data
-  ## will be mixed in with the source data, where only the empty columns in the
-  ## source are overwritten with the clip data. When `mix` is `false`, overwrite
-  ## paste is used, which simply overwrites the source pattern's data with the
-  ## clip's data.
-  ##
-  c.pasteImpl(song, order, some(pos.toAnchor()), mix)
-
-proc restore*(c: PatternClip; song: var Song; order: ByteIndex) =
+proc restore*(c: PatternClip; pattern: var Pattern; trackLen: TrackLen) =
   ## Restores previously clipped data at its original location.
   ##
-  c.pasteImpl(song, order, none[PatternAnchor](), false)
+  c.paste(pattern, trackLen, c.location.pos(), overwrite)
 
-{. pop .}
+{. pop .} # raises
+
