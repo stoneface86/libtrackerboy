@@ -228,9 +228,9 @@ type
   TrackData = seq[TrackRow]
 
   Track* = object
-    ## Pattern data for a single track. A track can store up to 256 rows.
+    ## Pattern data for a single track. A track stores a fixed number of rows.
     ## The data is stored using ref semantics, so assigning a track from
-    ## another track will result in a shallow copy. Use the initTrack proc to
+    ## another track will result in a shallow copy. Use the [clone] proc to
     ## deep copy a track if needed. A Track is invalid if it was default
     ## initialized, or if its internal data ref is `nil`. Use isValid() to
     ## check for validity.
@@ -243,12 +243,11 @@ type
     ## 
     data: ref TrackData
   
-  TrackView* = object
+  TrackView* = distinct Track
     ## Same as [Track], but only provides immutable access to the track data.
     ## Mutable access can be acquired by converting the view to a Track via
     ## the initTrack overload, while making a deep copy of the data.
     ##
-    src: Track
   
   SomeTrack* = Track | TrackView
     ## Type class of all track types
@@ -962,7 +961,7 @@ func initTrack*(view: TrackView): Track =
   ## Initialize a [Track] by deep copying the [TrackView]. The track
   ## returned has its own copy of the view's data.
   ##
-  result = clone(view.src)
+  result = clone(Track(view))
 
 func isValid*(t: Track): bool {.inline.} =
   ## Determines if the track is valid, or if the track has a reference to
@@ -971,7 +970,9 @@ func isValid*(t: Track): bool {.inline.} =
   result = t.data != nil
 
 func data*(t: Track): lent seq[TrackRow] {.inline.} =
-  ## Access the track's data, as a `seq[TrackRow]`. Track must be valid!
+  ## Access the track's data, as a `seq[TrackRow]`.
+  ## 
+  ## The track must be valid or an `AssertDefect` will be raised.
   ##
   assertValid(t)
   result = t.data[]
@@ -980,7 +981,8 @@ template get(t: Track; i: ByteIndex): auto =
   t.data[][i]
 
 func `[]`*(t: Track; i: ByteIndex): TrackRow =
-  ## Gets the `i`th row in the track.
+  ## Gets the `i`th row in the track. If the track is invalid an empty row is
+  ## returned.
   ##
   if t.isValid():
     result = get(t, i)
@@ -988,11 +990,15 @@ func `[]`*(t: Track; i: ByteIndex): TrackRow =
 func `[]`*(t: var Track; i: ByteIndex): var TrackRow =
   ## Gets the `i`th row in the track, allowing mutations.
   ##
+  ## The track must be valid or an `AssertDefect` will be raised.
+  ##
   assertValid(t)
   result = get(t, i)
 
 proc `[]=`*(t: var Track; i: ByteIndex; v: TrackRow) =
   ## Replaces the `i`th row in the track with the given one.
+  ## 
+  ## The track must be valid or an `AssertDefect` will be raised.
   ##
   assertValid(t)
   get(t, i) = v
@@ -1020,12 +1026,6 @@ func len*(t: Track): int =
   if t.isValid():
     result = t.data[].len
 
-proc setLen*(t: var Track; len: TrackLen) =
-  ## Sets the length of the Track to a new value. The track must be valid!
-  ##
-  assertValid(t)
-  t.data[].setLen(len)
-
 func totalRows*(t: Track): int =
   ## Gets the total number of rows that are non-empty.
   ##
@@ -1037,43 +1037,20 @@ converter toView*(t: sink Track): TrackView {.inline.} =
   ## Convert a [Track] to a [TrackView]. This is a converter so that you can pass
   ## [Track] objects to any proc taking a [TrackView].
   ##
-  result = TrackView(src: t)
-
-func clone*(t: TrackView): TrackView =
-  ## Clones the view. The returned view refers to a clone of `t`'s source.
-  ##
-  result.src = clone(t.src)
+  result = TrackView(t)
 
 func initTrackView*(track: sink Track): TrackView {.inline.} =
   ## Initialize a [TrackView] that views the given [Track]. Same as [toView].
   ##
   result = toView(track)
 
-template `[]`*(t: TrackView; i: ByteIndex): TrackRow =
-  ## Gets the `i`th row in the view's track.
-  ##
-  t.src[i]
-
-iterator items*(t: TrackView): TrackRow =
-  ## Iterates all rows in the view's track.
-  ##
-  for i in t.src:
-    yield i
-
-template isValid*(t: TrackView): bool =
-  ## Checks if this view's track is valid.
-  ##
-  t.src.isValid()
-
-template len*(t: TrackView): int =
-  ## Get the len, or number of rows, for this view's track.
-  ##
-  t.src.len
-
-template totalRows*(t: TrackView): int =
-  ## Counts the total number of rows that are non-empty for this view's track.
-  ##
-  t.src.totalRows()
+func `==`*(x, y: TrackView; ): bool {.borrow.}
+func `[]`*(t: TrackView; i: ByteIndex): TrackRow {.borrow.}
+func clone*(t: TrackView): TrackView {.borrow.}
+iterator items*(t: TrackView): TrackRow {.borrow.}
+func isValid*(t: TrackView): bool {.borrow.}
+func len*(t: TrackView): int {.borrow.}
+func totalRows*(t: TrackView): int {.borrow.}
 
 # Pattern, PatternView ========================================================
 

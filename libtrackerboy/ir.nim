@@ -415,10 +415,8 @@ proc setFromIr*(track: var Track; ir: TrackIr): bool =
   ## Sets the given track's row data using the given ir data. This proc does
   ## not clear the track beforehand for optimization purposes, ensure that
   ## `track` is an empty one first before calling this function.
-  if not track.isValid():
+  if track.len != ir.srcLen:
     track = initTrack(ir.srcLen)
-  else:
-    track.setLen(ir.srcLen)
 
   for rowNo, rowOp in ir.ops:
     let conv = toTrackRow(rowOp)
