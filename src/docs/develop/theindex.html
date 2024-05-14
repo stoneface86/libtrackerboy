@@ -12,10 +12,10 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="nimdoc.out.css?v=2.0.2">
+<link rel="stylesheet" type="text/css" href="nimdoc.out.css?v=2.0.4">
 
 <!-- JS -->
-<script type="text/javascript" src="dochack.js?v=2.0.2"></script>
+<script type="text/javascript" src="dochack.js?v=2.0.4"></script>
 </head>
 <body>
   <div class="document" id="documentId">
@@ -84,6 +84,8 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc `==`(x, y: Track): bool" href="libtrackerboy/data.html#%3D%3D%2CTrack%2CTrack">data: proc `==`(x, y: Track): bool</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="data: proc `==`(x, y: TrackView): bool" href="libtrackerboy/data.html#%3D%3D%2CTrackView%2CTrackView">data: proc `==`(x, y: TrackView): bool</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="data: proc `==`(a, b: Waveform): bool" href="libtrackerboy/data.html#%3D%3D%2CWaveform%2CWaveform">data: proc `==`(a, b: Waveform): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="ir: proc `==`(a, b: RowIr): bool" href="libtrackerboy/ir.html#%3D%3D%2CRowIr%2CRowIr">ir: proc `==`(a, b: RowIr): bool</a></li>
@@ -124,9 +126,9 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc `[]`(t: var Track; i: ByteIndex): var TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrack%2CByteIndex_2">data: proc `[]`(t: var Track; i: ByteIndex): var TrackRow</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template `[]`(l: SongList; i: ByteIndex): iref[Song]" href="libtrackerboy/data.html#%5B%5D.t%2CSongList%2CByteIndex">data: template `[]`(l: SongList; i: ByteIndex): iref[Song]</a></li>
+          data-doc-search-tag="data: proc `[]`(t: TrackView; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D%2CTrackView%2CByteIndex">data: proc `[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template `[]`(t: TrackView; i: ByteIndex): TrackRow" href="libtrackerboy/data.html#%5B%5D.t%2CTrackView%2CByteIndex">data: template `[]`(t: TrackView; i: ByteIndex): TrackRow</a></li>
+          data-doc-search-tag="data: template `[]`(l: SongList; i: ByteIndex): iref[Song]" href="libtrackerboy/data.html#%5B%5D.t%2CSongList%2CByteIndex">data: template `[]`(l: SongList; i: ByteIndex): iref[Song]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="ir: template `[]`(op: Operation; flag: OperationSetting): uint8" href="libtrackerboy/ir.html#%5B%5D.t%2COperation%2COperationSetting">ir: template `[]`(op: Operation; flag: OperationSetting): uint8</a></li>
           </ul></dd>
@@ -384,9 +386,9 @@
 <li><a class="reference external"
           data-doc-search-tag="apu: proc channelVolume(a: Apu; chno: ChannelId): int" href="libtrackerboy/apu.html#channelVolume%2CApu%2CChannelId">apu: proc channelVolume(a: Apu; chno: ChannelId): int</a></li>
           </ul></dd>
-<dt><a name="clamp" href="#clamp"><span>clamp:</span></a></dt><dd><ul class="simple">
+<dt><a name="clamped" href="#clamped"><span>clamped:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: proc clamp(s: var PatternSelection; maxRows: ByteIndex)" href="libtrackerboy/editing.html#clamp%2CPatternSelection%2CByteIndex">editing: proc clamp(s: var PatternSelection; maxRows: ByteIndex)</a></li>
+          data-doc-search-tag="editing: proc clamped(s: PatternSelection; trackLen = TrackLen(256)): PatternSelection" href="libtrackerboy/editing.html#clamped%2CPatternSelection">editing: proc clamped(s: PatternSelection; trackLen = TrackLen(256)): PatternSelection</a></li>
           </ul></dd>
 <dt><a name="clear" href="#clear"><span>clear:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -398,6 +400,12 @@
           </ul></dd>
 <dt><a name="clone" href="#clone"><span>clone:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="data: proc clone[T: SomePattern](p: T): T" href="libtrackerboy/data.html#clone%2CT">data: proc clone[T: SomePattern](p: T): T</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: proc clone(t: Track): Track" href="libtrackerboy/data.html#clone%2CTrack">data: proc clone(t: Track): Track</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="data: proc clone(t: TrackView): TrackView" href="libtrackerboy/data.html#clone%2CTrackView">data: proc clone(t: TrackView): TrackView</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="utils: proc clone[T](x: ref T): ref T" href="libtrackerboy/private/utils.html#clone%2Cref.T">utils: proc clone[T](x: ref T): ref T</a></li>
           </ul></dd>
 <dt><a name="close" href="#close"><span>close:</span></a></dt><dd><ul class="simple">
@@ -455,18 +463,6 @@
 <dt><a name="colNote" href="#colNote"><span>colNote:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: TrackColumn.colNote" href="libtrackerboy/editing.html#colNote">editing: TrackColumn.colNote</a></li>
-          </ul></dd>
-<dt><a name="ColumnIter" href="#ColumnIter"><span>ColumnIter:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: object ColumnIter" href="libtrackerboy/editing.html#ColumnIter">editing: object ColumnIter</a></li>
-          </ul></dd>
-<dt><a name="columnIter" href="#columnIter"><span>columnIter:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc columnIter(i: PatternIter; track: int): ColumnIter" href="libtrackerboy/editing.html#columnIter%2CPatternSelection%2Cint">editing: proc columnIter(i: PatternIter; track: int): ColumnIter</a></li>
-          </ul></dd>
-<dt><a name="columns" href="#columns"><span>columns:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc columns(i: ColumnIter): Slice[TrackSelect]" href="libtrackerboy/editing.html#columns%2CColumnIter">editing: proc columns(i: ColumnIter): Slice[TrackSelect]</a></li>
           </ul></dd>
 <dt><a name="contains" href="#contains"><span>contains:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -535,6 +531,8 @@
           data-doc-search-tag="data: proc data(l: var SongList): var seq[ref Song]" href="libtrackerboy/data.html#data%2CSongList">data: proc data(l: var SongList): var seq[ref Song]</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc data(t: Track): lent seq[TrackRow]" href="libtrackerboy/data.html#data%2CTrack">data: proc data(t: Track): lent seq[TrackRow]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="editing: proc data(c: PatternClip): lent seq[TrackRow]" href="libtrackerboy/editing.html#data%2CPatternClip">editing: proc data(c: PatternClip): lent seq[TrackRow]</a></li>
           </ul></dd>
 <dt><a name="deepEquals" href="#deepEquals"><span>deepEquals:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -916,6 +914,10 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc get(l: SongList; i: ByteIndex): iref[Song]" href="libtrackerboy/data.html#get%2CSongList%2CByteIndex">data: proc get(l: SongList; i: ByteIndex): iref[Song]</a></li>
           </ul></dd>
+<dt><a name="getFit" href="#getFit"><span>getFit:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc getFit(s: PatternSelection; rows: TrackLen): SelectionFit" href="libtrackerboy/editing.html#getFit%2CPatternSelection%2CTrackLen">editing: proc getFit(s: PatternSelection; rows: TrackLen): SelectionFit</a></li>
+          </ul></dd>
 <dt><a name="getLocked" href="#getLocked"><span>getLocked:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="engine: proc getLocked(e: Engine): set[ChannelId]" href="libtrackerboy/engine.html#getLocked%2CEngine">engine: proc getLocked(e: Engine): set[ChannelId]</a></li>
@@ -1006,10 +1008,6 @@
 <li><a class="reference external"
           data-doc-search-tag="utils: proc hasAny[T](x, y: set[T]): bool" href="libtrackerboy/private/utils.html#hasAny%2Cset%5BT%5D%2Cset%5BT%5D">utils: proc hasAny[T](x, y: set[T]): bool</a></li>
           </ul></dd>
-<dt><a name="hasColumn" href="#hasColumn"><span>hasColumn:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc hasColumn(i: ColumnIter; col: TrackSelect): bool" href="libtrackerboy/editing.html#hasColumn%2CColumnIter%2CTrackSelect">editing: proc hasColumn(i: ColumnIter; col: TrackSelect): bool</a></li>
-          </ul></dd>
 <dt><a name="hasData" href="#hasData"><span>hasData:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: proc hasData(c: PatternClip): bool" href="libtrackerboy/editing.html#hasData%2CPatternClip">editing: proc hasData(c: PatternClip): bool</a></li>
@@ -1019,6 +1017,10 @@
           data-doc-search-tag="data: proc hash(i: Instrument): Hash" href="libtrackerboy/data.html#hash%2CInstrument">data: proc hash(i: Instrument): Hash</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: proc hash(w: Waveform): Hash" href="libtrackerboy/data.html#hash%2CWaveform">data: proc hash(w: Waveform): Hash</a></li>
+          </ul></dd>
+<dt><a name="hasOnlyEffects" href="#hasOnlyEffects"><span>hasOnlyEffects:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc hasOnlyEffects(s: PatternSelection): bool" href="libtrackerboy/editing.html#hasOnlyEffects%2CPatternSelection">editing: proc hasOnlyEffects(s: PatternSelection): bool</a></li>
           </ul></dd>
 <dt><a name="hasWork" href="#hasWork"><span>hasWork:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1100,6 +1102,20 @@
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: proc initOutputBlock(stream: Stream): OutputBlock" href="libtrackerboy/private/ioblocks.html#initOutputBlock%2CStream">ioblocks: proc initOutputBlock(stream: Stream): OutputBlock</a></li>
           </ul></dd>
+<dt><a name="initPattern" href="#initPattern"><span>initPattern:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="data: proc initPattern(view: PatternView): Pattern" href="libtrackerboy/data.html#initPattern%2CPatternView">data: proc initPattern(view: PatternView): Pattern</a></li>
+          </ul></dd>
+<dt><a name="initPatternAnchor" href="#initPatternAnchor"><span>initPatternAnchor:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc initPatternAnchor(row, track: int; select: TrackSelect): PatternAnchor" href="libtrackerboy/editing.html#initPatternAnchor%2Cint%2Cint%2CTrackSelect">editing: proc initPatternAnchor(row, track: int; select: TrackSelect): PatternAnchor</a></li>
+          </ul></dd>
+<dt><a name="initPatternClip" href="#initPatternClip"><span>initPatternClip:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc initPatternClip(pattern: PatternView; trackLen: TrackLen;
+                region: PatternSelection): PatternClip" href="libtrackerboy/editing.html#initPatternClip%2CPatternView%2CTrackLen%2CPatternSelection">editing: proc initPatternClip(pattern: PatternView; trackLen: TrackLen;
+                region: PatternSelection): PatternClip</a></li>
+          </ul></dd>
 <dt><a name="initPatternCursor" href="#initPatternCursor"><span>initPatternCursor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: proc initPatternCursor(row, track: int; column: TrackColumn): PatternCursor" href="libtrackerboy/editing.html#initPatternCursor%2Cint%2Cint%2CTrackColumn">editing: proc initPatternCursor(row, track: int; column: TrackColumn): PatternCursor</a></li>
@@ -1107,6 +1123,8 @@
 <dt><a name="initPatternSelection" href="#initPatternSelection"><span>initPatternSelection:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: proc initPatternSelection(a: PatternAnchor; b = a): PatternSelection" href="libtrackerboy/editing.html#initPatternSelection%2CPatternAnchor">editing: proc initPatternSelection(a: PatternAnchor; b = a): PatternSelection</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="editing: proc initPatternSelection(rows, tracks: Slice[int]; selects: Slice[TrackSelect]): PatternSelection" href="libtrackerboy/editing.html#initPatternSelection%2CSlice%5Bint%5D%2CSlice%5Bint%5D%2CSlice%5BTrackSelect%5D">editing: proc initPatternSelection(rows, tracks: Slice[int]; selects: Slice[TrackSelect]): PatternSelection</a></li>
           </ul></dd>
 <dt><a name="initSequence" href="#initSequence"><span>initSequence:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1268,9 +1286,11 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc isValid(t: Track): bool" href="libtrackerboy/data.html#isValid%2CTrack">data: proc isValid(t: Track): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template isValid(t: TrackView): bool" href="libtrackerboy/data.html#isValid.t%2CTrackView">data: template isValid(t: TrackView): bool</a></li>
+          data-doc-search-tag="data: proc isValid(t: TrackView): bool" href="libtrackerboy/data.html#isValid%2CTrackView">data: proc isValid(t: TrackView): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="editing: proc isValid(s: PatternSelection; rows: TrackLen): bool" href="libtrackerboy/editing.html#isValid%2CPatternSelection%2CTrackLen">editing: proc isValid(s: PatternSelection; rows: TrackLen): bool</a></li>
+          data-doc-search-tag="editing: proc isValid(a: PatternAnchor; trackLen: TrackLen): bool" href="libtrackerboy/editing.html#isValid%2CPatternAnchor%2CTrackLen">editing: proc isValid(a: PatternAnchor; trackLen: TrackLen): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="editing: proc isValid(c: PatternCursor; trackLen: TrackLen): bool" href="libtrackerboy/editing.html#isValid%2CPatternCursor%2CTrackLen">editing: proc isValid(c: PatternCursor; trackLen: TrackLen): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="tracking: proc isValid(p: SongPath): bool" href="libtrackerboy/tracking.html#isValid%2CSongPath">tracking: proc isValid(p: SongPath): bool</a></li>
           </ul></dd>
@@ -1285,10 +1305,6 @@
           data-doc-search-tag="data: iterator items(t: Track): TrackRow" href="libtrackerboy/data.html#items.i%2CTrack">data: iterator items(t: Track): TrackRow</a></li>
           <li><a class="reference external"
           data-doc-search-tag="data: iterator items(t: TrackView): TrackRow" href="libtrackerboy/data.html#items.i%2CTrackView">data: iterator items(t: TrackView): TrackRow</a></li>
-          </ul></dd>
-<dt><a name="iter" href="#iter"><span>iter:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc iter(s: PatternSelection): PatternIter" href="libtrackerboy/editing.html#iter%2CPatternSelection">editing: proc iter(s: PatternSelection): PatternIter</a></li>
           </ul></dd>
 <dt><a name="jump" href="#jump"><span>jump:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1308,7 +1324,7 @@
           <li><a class="reference external"
           data-doc-search-tag="data: proc len(t: Track): int" href="libtrackerboy/data.html#len%2CTrack">data: proc len(t: Track): int</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template len(t: TrackView): int" href="libtrackerboy/data.html#len.t%2CTrackView">data: template len(t: TrackView): int</a></li>
+          data-doc-search-tag="data: proc len(t: TrackView): int" href="libtrackerboy/data.html#len%2CTrackView">data: proc len(t: TrackView): int</a></li>
           <li><a class="reference external"
           data-doc-search-tag="ir: proc len(ir: TrackIr): int" href="libtrackerboy/ir.html#len%2CTrackIr">ir: proc len(ir: TrackIr): int</a></li>
           </ul></dd>
@@ -1378,6 +1394,8 @@
           </ul></dd>
 <dt><a name="mix" href="#mix"><span>mix:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="editing: PasteMode.mix" href="libtrackerboy/editing.html#mix">editing: PasteMode.mix</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="synth: proc mix(s: var Synth; mode: MixMode; delta: int8; cycletime: uint32)" href="libtrackerboy/private/synth.html#mix%2CSynth%2CMixMode%2Cint8%2Cuint32">synth: proc mix(s: var Synth; mode: MixMode; delta: int8; cycletime: uint32)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="synth: proc mix(s: var Synth; mode: static MixMode; delta: int8; cycletime: uint32)" href="libtrackerboy/private/synth.html#mix%2CSynth%2CstaticMixMode%2Cint8%2Cuint32">synth: proc mix(s: var Synth; mode: static MixMode; delta: int8; cycletime: uint32)</a></li>
@@ -1418,9 +1436,9 @@
 <li><a class="reference external"
           data-doc-search-tag="data: object ModulePrivate" href="libtrackerboy/private/data.html#ModulePrivate">data: object ModulePrivate</a></li>
           </ul></dd>
-<dt><a name="moveTo" href="#moveTo"><span>moveTo:</span></a></dt><dd><ul class="simple">
+<dt><a name="moved" href="#moved"><span>moved:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: proc moveTo(s: var PatternSelection; pos: PatternAnchor)" href="libtrackerboy/editing.html#moveTo%2CPatternSelection%2CPatternAnchor">editing: proc moveTo(s: var PatternSelection; pos: PatternAnchor)</a></li>
+          data-doc-search-tag="editing: proc moved(s: PatternSelection; pos: PatternAnchor): PatternSelection" href="libtrackerboy/editing.html#moved%2CPatternSelection%2CPatternAnchor">editing: proc moved(s: PatternSelection; pos: PatternAnchor): PatternSelection</a></li>
           </ul></dd>
 <dt><a name="MusicRuntime" href="#MusicRuntime"><span>MusicRuntime:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1457,6 +1475,10 @@
 <dt><a name="noLoopPoint" href="#noLoopPoint"><span>noLoopPoint:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: const noLoopPoint" href="libtrackerboy/data.html#noLoopPoint">data: const noLoopPoint</a></li>
+          </ul></dd>
+<dt><a name="noSelection" href="#noSelection"><span>noSelection:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: const noSelection" href="libtrackerboy/editing.html#noSelection">editing: const noSelection</a></li>
           </ul></dd>
 <dt><a name="NoteColumn" href="#NoteColumn"><span>NoteColumn:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1499,6 +1521,10 @@
 <dt><a name="noteText" href="#noteText"><span>noteText:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="text: proc noteText(note: NoteColumn; useFlats = false): NoteString" href="libtrackerboy/text.html#noteText%2CNoteColumn">text: proc noteText(note: NoteColumn; useFlats = false): NoteString</a></li>
+          </ul></dd>
+<dt><a name="nothing" href="#nothing"><span>nothing:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: SelectionFit.nothing" href="libtrackerboy/editing.html#nothing">editing: SelectionFit.nothing</a></li>
           </ul></dd>
 <dt><a name="noValueChar" href="#noValueChar"><span>noValueChar:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1636,6 +1662,10 @@
 <li><a class="reference external"
           data-doc-search-tag="ioblocks: object OutputBlock" href="libtrackerboy/private/ioblocks.html#OutputBlock">ioblocks: object OutputBlock</a></li>
           </ul></dd>
+<dt><a name="overwrite" href="#overwrite"><span>overwrite:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: PasteMode.overwrite" href="libtrackerboy/editing.html#overwrite">editing: PasteMode.overwrite</a></li>
+          </ul></dd>
 <dt><a name="pansLeft" href="#pansLeft"><span>pansLeft:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="synth: proc pansLeft(mode: MixMode): bool" href="libtrackerboy/private/synth.html#pansLeft%2CMixMode">synth: proc pansLeft(mode: MixMode): bool</a></li>
@@ -1690,11 +1720,23 @@
           <li><a class="reference external"
           data-doc-search-tag="text: proc parseWave(str: string): Option[WaveData]" href="libtrackerboy/text.html#parseWave%2Cstring">text: proc parseWave(str: string): Option[WaveData]</a></li>
           </ul></dd>
+<dt><a name="partial" href="#partial"><span>partial:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: SelectionFit.partial" href="libtrackerboy/editing.html#partial">editing: SelectionFit.partial</a></li>
+          </ul></dd>
 <dt><a name="paste" href="#paste"><span>paste:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: proc paste(c: PatternClip; song: var Song; order: ByteIndex; pos: PatternCursor;
-      mix = false)" href="libtrackerboy/editing.html#paste%2CPatternClip%2CSong%2CByteIndex%2CPatternCursor">editing: proc paste(c: PatternClip; song: var Song; order: ByteIndex; pos: PatternCursor;
-      mix = false)</a></li>
+          data-doc-search-tag="editing: proc paste(c: PatternClip; pattern: var Pattern; trackLen: TrackLen;
+      pos: PatternAnchor; mode = overwrite)" href="libtrackerboy/editing.html#paste%2CPatternClip%2CPattern%2CTrackLen%2CPatternAnchor">editing: proc paste(c: PatternClip; pattern: var Pattern; trackLen: TrackLen;
+      pos: PatternAnchor; mode = overwrite)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="editing: proc paste(dest: var TrackRow; selected: Slice[TrackSelect]; src: TrackRow;
+      mode = overwrite)" href="libtrackerboy/editing.html#paste%2CTrackRow%2CSlice%5BTrackSelect%5D%2CTrackRow">editing: proc paste(dest: var TrackRow; selected: Slice[TrackSelect]; src: TrackRow;
+      mode = overwrite)</a></li>
+          </ul></dd>
+<dt><a name="PasteMode" href="#PasteMode"><span>PasteMode:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: enum PasteMode" href="libtrackerboy/editing.html#PasteMode">editing: enum PasteMode</a></li>
           </ul></dd>
 <dt><a name="Pattern" href="#Pattern"><span>Pattern:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1702,7 +1744,7 @@
           </ul></dd>
 <dt><a name="PatternAnchor" href="#PatternAnchor"><span>PatternAnchor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: type PatternAnchor" href="libtrackerboy/editing.html#PatternAnchor">editing: type PatternAnchor</a></li>
+          data-doc-search-tag="editing: object PatternAnchor" href="libtrackerboy/editing.html#PatternAnchor">editing: object PatternAnchor</a></li>
           </ul></dd>
 <dt><a name="PatternClip" href="#PatternClip"><span>PatternClip:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1714,11 +1756,7 @@
           </ul></dd>
 <dt><a name="PatternCursor" href="#PatternCursor"><span>PatternCursor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: type PatternCursor" href="libtrackerboy/editing.html#PatternCursor">editing: type PatternCursor</a></li>
-          </ul></dd>
-<dt><a name="PatternIter" href="#PatternIter"><span>PatternIter:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: type PatternIter" href="libtrackerboy/editing.html#PatternIter">editing: type PatternIter</a></li>
+          data-doc-search-tag="editing: object PatternCursor" href="libtrackerboy/editing.html#PatternCursor">editing: object PatternCursor</a></li>
           </ul></dd>
 <dt><a name="patternLen" href="#patternLen"><span>patternLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1772,6 +1810,8 @@
           </ul></dd>
 <dt><a name="pos" href="#pos"><span>pos:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="editing: proc pos(s: PatternSelection): PatternAnchor" href="libtrackerboy/editing.html#pos%2CPatternSelection">editing: proc pos(s: PatternSelection): PatternAnchor</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="tracking: proc pos(t: Tracker): SongPos" href="libtrackerboy/tracking.html#pos%2CTracker">tracking: proc pos(t: Tracker): SongPos</a></li>
           </ul></dd>
 <dt><a name="PositiveByte" href="#PositiveByte"><span>PositiveByte:</span></a></dt><dd><ul class="simple">
@@ -1836,7 +1876,7 @@
           </ul></dd>
 <dt><a name="restore" href="#restore"><span>restore:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: proc restore(c: PatternClip; song: var Song; order: ByteIndex)" href="libtrackerboy/editing.html#restore%2CPatternClip%2CSong%2CByteIndex">editing: proc restore(c: PatternClip; song: var Song; order: ByteIndex)</a></li>
+          data-doc-search-tag="editing: proc restore(c: PatternClip; pattern: var Pattern; trackLen: TrackLen)" href="libtrackerboy/editing.html#restore%2CPatternClip%2CPattern%2CTrackLen">editing: proc restore(c: PatternClip; pattern: var Pattern; trackLen: TrackLen)</a></li>
           </ul></dd>
 <dt><a name="restRowIr" href="#restRowIr"><span>restRowIr:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1950,10 +1990,6 @@
 <li><a class="reference external"
           data-doc-search-tag="ir: enum RowIrKind" href="libtrackerboy/ir.html#RowIrKind">ir: enum RowIrKind</a></li>
           </ul></dd>
-<dt><a name="rows" href="#rows"><span>rows:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc rows(i: PatternIter): Slice[int]" href="libtrackerboy/editing.html#rows%2CPatternSelection">editing: proc rows(i: PatternIter): Slice[int]</a></li>
-          </ul></dd>
 <dt><a name="run" href="#run"><span>run:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="apu: proc run(a: var Apu; cycles: uint32)" href="libtrackerboy/apu.html#run%2CApu%2Cuint32">apu: proc run(a: var Apu; cycles: uint32)</a></li>
@@ -1990,11 +2026,17 @@
           </ul></dd>
 <dt><a name="save" href="#save"><span>save:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="editing: proc save(c: var PatternClip; song: Song; order: ByteIndex; region: PatternSelection)" href="libtrackerboy/editing.html#save%2CPatternClip%2CSong%2CByteIndex%2CPatternSelection">editing: proc save(c: var PatternClip; song: Song; order: ByteIndex; region: PatternSelection)</a></li>
+          data-doc-search-tag="editing: proc save(c: var PatternClip; pattern: PatternView; trackLen: TrackLen;
+     region: PatternSelection)" href="libtrackerboy/editing.html#save%2CPatternClip%2CPatternView%2CTrackLen%2CPatternSelection">editing: proc save(c: var PatternClip; pattern: PatternView; trackLen: TrackLen;
+     region: PatternSelection)</a></li>
           </ul></dd>
 <dt><a name="selection" href="#selection"><span>selection:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: proc selection(c: PatternClip): PatternSelection" href="libtrackerboy/editing.html#selection%2CPatternClip">editing: proc selection(c: PatternClip): PatternSelection</a></li>
+          </ul></dd>
+<dt><a name="SelectionFit" href="#SelectionFit"><span>SelectionFit:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: enum SelectionFit" href="libtrackerboy/editing.html#SelectionFit">editing: enum SelectionFit</a></li>
           </ul></dd>
 <dt><a name="selEffect1" href="#selEffect1"><span>selEffect1:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2059,8 +2101,6 @@
 <dt><a name="setLen" href="#setLen"><span>setLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc setLen(s: var Sequence; len: SequenceLen)" href="libtrackerboy/data.html#setLen%2CSequence%2CSequenceLen">data: proc setLen(s: var Sequence; len: SequenceLen)</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="data: proc setLen(t: var Track; len: TrackLen)" href="libtrackerboy/data.html#setLen%2CTrack%2CTrackLen">data: proc setLen(t: var Track; len: TrackLen)</a></li>
           </ul></dd>
 <dt><a name="setSamplerate" href="#setSamplerate"><span>setSamplerate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2312,6 +2352,10 @@
 <li><a class="reference external"
           data-doc-search-tag="notes: proc toPair(index: NoteIndex): NotePair" href="libtrackerboy/notes.html#toPair%2CNoteIndex">notes: proc toPair(index: NoteIndex): NotePair</a></li>
           </ul></dd>
+<dt><a name="toSelect" href="#toSelect"><span>toSelect:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc toSelect(column: TrackColumn): TrackSelect" href="libtrackerboy/editing.html#toSelect%2CTrackColumn">editing: proc toSelect(column: TrackColumn): TrackSelect</a></li>
+          </ul></dd>
 <dt><a name="toSpeed" href="#toSpeed"><span>toSpeed:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="data: proc toSpeed(speed: float): Speed" href="libtrackerboy/data.html#toSpeed%2Cfloat">data: proc toSpeed(speed: float): Speed</a></li>
@@ -2320,7 +2364,7 @@
 <li><a class="reference external"
           data-doc-search-tag="data: proc totalRows(t: Track): int" href="libtrackerboy/data.html#totalRows%2CTrack">data: proc totalRows(t: Track): int</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="data: template totalRows(t: TrackView): int" href="libtrackerboy/data.html#totalRows.t%2CTrackView">data: template totalRows(t: TrackView): int</a></li>
+          data-doc-search-tag="data: proc totalRows(t: TrackView): int" href="libtrackerboy/data.html#totalRows%2CTrackView">data: proc totalRows(t: TrackView): int</a></li>
           </ul></dd>
 <dt><a name="totalTracks" href="#totalTracks"><span>totalTracks:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2406,13 +2450,13 @@
 <li><a class="reference external"
           data-doc-search-tag="text: proc trackRowText(row: TrackRow; useFlats = false): TrackRowString" href="libtrackerboy/text.html#trackRowText%2CTrackRow">text: proc trackRowText(row: TrackRow; useFlats = false): TrackRowString</a></li>
           </ul></dd>
-<dt><a name="tracks" href="#tracks"><span>tracks:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc tracks(i: PatternIter): Slice[int]" href="libtrackerboy/editing.html#tracks%2CPatternSelection">editing: proc tracks(i: PatternIter): Slice[int]</a></li>
-          </ul></dd>
 <dt><a name="TrackSelect" href="#TrackSelect"><span>TrackSelect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="editing: enum TrackSelect" href="libtrackerboy/editing.html#TrackSelect">editing: enum TrackSelect</a></li>
+          </ul></dd>
+<dt><a name="trackSelects" href="#trackSelects"><span>trackSelects:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: proc trackSelects(s: PatternSelection; track: int): Slice[TrackSelect]" href="libtrackerboy/editing.html#trackSelects%2CPatternSelection%2Cint">editing: proc trackSelects(s: PatternSelection; track: int): Slice[TrackSelect]</a></li>
           </ul></dd>
 <dt><a name="trackTimbre" href="#trackTimbre"><span>trackTimbre:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2420,11 +2464,7 @@
           </ul></dd>
 <dt><a name="TrackView" href="#TrackView"><span>TrackView:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="data: object TrackView" href="libtrackerboy/data.html#TrackView">data: object TrackView</a></li>
-          </ul></dd>
-<dt><a name="translate" href="#translate"><span>translate:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="editing: proc translate(s: var PatternSelection; rows: int)" href="libtrackerboy/editing.html#translate%2CPatternSelection%2Cint">editing: proc translate(s: var PatternSelection; rows: int)</a></li>
+          data-doc-search-tag="data: type TrackView" href="libtrackerboy/data.html#TrackView">data: type TrackView</a></li>
           </ul></dd>
 <dt><a name="triOff" href="#triOff"><span>triOff:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2560,6 +2600,10 @@
 <li><a class="reference external"
           data-doc-search-tag="wavwriter: object WavWriter" href="libtrackerboy/private/wavwriter.html#WavWriter">wavwriter: object WavWriter</a></li>
           </ul></dd>
+<dt><a name="whole" href="#whole"><span>whole:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="editing: SelectionFit.whole" href="libtrackerboy/editing.html#whole">editing: SelectionFit.whole</a></li>
+          </ul></dd>
 <dt><a name="willCorrect" href="#willCorrect"><span>willCorrect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="endian: const willCorrect" href="libtrackerboy/private/endian.html#willCorrect">endian: const willCorrect</a></li>
@@ -2588,7 +2632,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-04-15 04:56:06 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-14 17:23:34 UTC</small>
       </div>
     </div>
   </div>
