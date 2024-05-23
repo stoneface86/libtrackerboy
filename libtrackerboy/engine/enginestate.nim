@@ -10,37 +10,31 @@ This module is part of the inner workings of the engine module.
 
 
 import
+  std/[options],
   ../common,
-  ../ir,
-  ../private/utils
+  ../data,
+  ../tracking
 
-import std/options
+export
+  options,
+  common,
+  data,
+  tracking
 
 type
   EngineFrame* = object
     ## Informational data about the current engine frame being stepped.
     ## 
-    halted*: bool
-      ## Indicates if the song has halted
+    status*: TrackerStatus
+      ## Current status of the music tracker.
       ##
-    startedNewRow*: bool
-      ## Indicates if this frame is the first of a new row being stepped.
-      ##
-    startedNewPattern*: bool
-      ## Indicates if this frame is the first step of a new pattern.
-      ##
-    speed*: uint8
+    speed*: Speed
       ## Current playback speed, in Q4.4 format.
       ##
     time*: int
       ## time index of the frame
       ##
-    order*: int
-      ## Current pattern index
-      ##
-    row*: int
-      ## Current row index
-      ##
+    pos*: SongPos
 
   UpdateFlag* = enum
     ## Flags to indicate which part of the state has changed, and needs to be
@@ -106,34 +100,6 @@ type
     of caShutdown:
       discard
 
-  GlobalState* = object
-    ## State of the music runtime that is accessible by all tracks.
-    ##
-    patternCommand*: PatternCommand
-      ## The pattern command to execute on the next tick
-      ##
-    patternCommandParam*: uint8
-      ## Argument to `patternCommand`
-      ##
-    panning*: array[ChannelId, uint8]
-      ## Channel panning settings
-      ##
-    speed*: uint8
-      ## Set this to change the speed on the next tick. Set to `0u8` to keep
-      ## the speed as is.
-      ##
-    sweep*: Option[uint8]
-      ## When set, the sweep register will be written to next tick with
-      ## this value.
-      ##
-    volume*: Option[uint8]
-      ## When set, the global volume register will be written to next tick with
-      ## this value.
-      ##
-    halt*: bool
-      ## Set this to `true` to stop music playback.
-      ## 
-
   ApuOperation* = object
     ## An operation or modification to be made to an `ApuIo` object.
     ## Stepping the `Engine` results in an `ApuOperation`
@@ -150,7 +116,7 @@ type
     #lengthTable: array[ChannelId, Option[uint8]]
 
 const
-  ufAll* = {UpdateFlag.low..UpdateFlag.high}
+  updateAll* = {UpdateFlag.low..UpdateFlag.high}
     ## Update all settings
     ##
 
@@ -161,7 +127,3 @@ func initChannelState*(): ChannelState =
   ##
   ChannelState(envelope: 0xFFFF, timbre: 0xFF, panning: 0xFF, frequency: 0xFFFF)
 
-func initGlobalState*(): GlobalState =
-  ## Initializes a `GlobalState` with initial settings.
-  ##
-  defaultInit(result)

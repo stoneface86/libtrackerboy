@@ -38,14 +38,17 @@ while ex.hasWork():
 ]##
 
 
-import 
+import
+  std/[os, times],
   ../apu,
   ../data,
   ../engine,
   ../private/wavwriter,
   ../tracking
 
-import std/os
+export
+  times,
+  data
 
 type
 
@@ -169,7 +172,7 @@ proc process*(ex: var WavExporter; module: Module) {. raises: [IOError] .} =
   ## output WAV file.
   ## 
   if ex.hasWork():
-    ex.engine.stepAndApply(module.instruments, module.waveforms, ex.apu)
+    ex.engine.tickAndApply(module.instruments, module.waveforms, ex.apu)
     ex.apu.runToFrame()
     ex.apu.takeSamples(ex.buf)
     if ex.isMono:

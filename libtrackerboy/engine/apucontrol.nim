@@ -9,15 +9,14 @@ This module is part of the inner workings of the engine module.
 
 ]##
 
-import 
+import
+  std/[bitops, options],
   ./enginestate,
   ../private/hardware,
   ../private/utils,
   ../common,
   ../data,
   ../notes
-
-import std/[bitops, options]
 
 type
   ApuWrite* = tuple[regaddr, value: uint8]
@@ -146,7 +145,7 @@ proc getChannelWrites(chno: static ChannelId; wt: WaveformTable;
     clearChannel(chno, list)
 
 func getWrites*(op: ApuOperation, wt: WaveformTable, nr51: uint8
-               ): ApuWriteList =
+                ): ApuWriteList =
   ## Gets the list of writes needed for a given operation.
   ## * `op`: the operation
   ## * `wt`: the waveform table to use

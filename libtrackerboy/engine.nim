@@ -5,11 +5,11 @@
 .. importdoc:: engine/enginestate.nim
 
 The engine module is responsible for playing a song from a module. Similar
-to a sound driver, the engine is stepped every frame and the APU's registers
-are updated in order to play music.
+to a sound driver, the engine is "ticked" or iterated for a single frame and
+the APU's registers are updated in order to play music.
 
-There are three parts to this module: the engine itself, interfacing with an
-ApuIo, and some utility calculation procs.
+There are two parts to this module: the engine itself and interfacing with an
+ApuIo.
 
 ## Engine
 
@@ -26,36 +26,28 @@ ones for diagnostics.
 
 ## ApuIo interface
 
-The engine creates an [ApuOperation] every step. This object can be converted
+The engine creates an [ApuOperation] every tick. This object can be converted
 into register writes and then sent to an [ApuIo].
 
 ]##
 
-# common abbrievations
-# fc - frequency control
-# tc - track control
-# mr - music runtime
-# chno - channel number
-
 import
+  std/[setutils],
+
   ./apuio,
   ./common,
   ./data,
-
   ./engine/apucontrol,
   ./engine/enginestate,
   ./engine/enginecontrol,
-
   ./private/hardware,
-  ./private/optionutils,
   ./private/utils
 
-import std/[options, times]
-
-export common, times
-export Module, Song, SongPos    # data
-export ApuIo                    # apuio
-export EngineFrame              # enginestate
+export
+  apuio,
+  common,
+  data,
+  enginestate
 
 type
   Engine* = object
@@ -65,11 +57,11 @@ type
     ## duplication.
     ## 
     song: iref[Song]
-    musicRuntime: Option[MusicRuntime]
+    musicRuntime: MusicRuntime
     #sfxRuntime...
+    unlocked: set[ChannelId]
     time: int
     patternRepeat: bool
-    frame: EngineFrame
     apuOp: ApuOperation
 
 {. push raises: [] .}
@@ -79,160 +71,166 @@ func initEngine*(): Engine =
   ##
   defaultInit(result)
 
+func isPlaying*(e: Engine): bool = 
+  ## Determine if the engine is playing music, or if it contains a [Song].
+  ##
+  result = e.song != nil
+
 func isHalted*(e: Engine): bool =
   ## Determines if the current song being played has halted. If there is no
   ## song playing, `true` is returned.
   ##
-  e.musicRuntime.isNone() or e.frame.halted
+  result = e.song.isNil() or e.musicRuntime.status() == tsHalted
+
+func isLocked*(e: Engine; chno: ChannelId): bool =
+  ## Check if a channel is locked for music playback by the engine. `true` is
+  ## returned if `chno` is locked, `false` when unlocked.
+  ##
+  result = chno notin e.unlocked
+
+func locked*(e: Engine): set[ChannelId] =
+  ## Gets a set of the engine's locked channels. This is just the complement
+  ## of `e.getUnlocked()`.
+  ##
+  result = complement(e.unlocked)
+
+func unlocked*(e: Engine): set[ChannelId] {.inline.} =
+  ## Gets a set of the engine's unlocked channels.
+  ##
+  result = e.unlocked
 
 proc lock*(e: var Engine; chno: ChannelId) =
   ## Locks the given channel for music playback. Function does nothing if
   ## there is no music currently playing.
   ##
-  withSome e.musicRuntime, lock(chno, e.apuOp)
+  if chno in e.unlocked:
+    e.unlocked.excl(chno)
+    if e.isPlaying():
+      e.apuOp.updates[chno] = ChannelUpdate(
+        action: caUpdate,
+        flags: updateAll,
+        state: e.musicRuntime.trackState(chno)
+      )
 
 proc unlock*(e: var Engine; chno: ChannelId) =
   ## Unlocks the given channel, music will no longer play on this channel.
   ## Use `lock` to restore music playback. Function does nothing if there is
   ## no music currently playing.
   ##
-  withSome e.musicRuntime, unlock(chno, e.apuOp)
-
+  if chno notin e.unlocked:
+    e.unlocked.incl(chno)
+    e.apuOp.updates[chno] = ChannelUpdate(action: caShutdown)
+    
 proc jump*(e: var Engine; pattern: Natural) =
   ## Jump to the given pattern in the currently playing song.
   ##
-  withSome e.musicRuntime, jump(pattern)
+  if e.isPlaying():
+    e.musicRuntime.jump(e.song[], pattern)
 
 proc halt*(e: var Engine) =
   ## Halts the engine, or forces the current song to halt. Function does
   ## nothing if there is no music currently playing.
   ##
-  withSome e.musicRuntime, halt(e.apuOp)
+  if e.isPlaying():
+    e.musicRuntime.halt()
+    for ch in e.locked():
+      e.apuOp.updates[ch] = ChannelUpdate(action: caShutdown)
 
 proc reset*(e: var Engine) =
   ## Resets the engine to default state.
   ##
   e.song.reset()
-  e.musicRuntime = none(MusicRuntime)
+  reset(e.musicRuntime)
   e.time = 0
-  e.apuOp = ApuOperation.default
+  reset(e.apuOp)
 
-proc play*(e: var Engine; song: sink iref[Song];
-           startAt = default(SongPos)) =
+proc play*(e: var Engine; song: sink iref[Song]; startAt = default(SongPos)) =
   ## Sets the engine to begin playback of the given song. `song` must not be
-  ## `nil`. By default, the engine will play the song from the start, or
-  ## pattern 0, row 0. You can override this position via the `pattern` and
-  ## `row` parameters. An IndexDefect will be raised if these parameters are
-  ## out of bounds for the given `song`.
+  ## `nil`, otherwise an `AssertDefect` will be raised. By default, the engine
+  ## will play the song from the start, or pattern 0, row 0. You can override
+  ## this position via the `startAt` parameter. If `startAt` is an invalid
+  ## position then the engine will be halted.
   ## 
-  ## Afterwards, the song can be played by calling `step` periodically.
+  ## Afterwards, the song can be played by calling `tick` periodically.
   ## 
   doAssert not song.isNil, "song must not be nil!"
-  
-  if startAt.pattern >= song[].patternLen():
-    raise newException(IndexDefect, "invalid pattern index")
-  if startAt.row >= song[].trackLen():
-    raise newException(IndexDefect, "invalid row index")
 
   e.song = song
-  e.musicRuntime = some(
-    initMusicRuntime(
-      cast[iptr[Song]](song),
-      startAt.pattern,
-      startAt.row,
-      e.patternRepeat
-    )
-  )
-  e.frame = EngineFrame(startedNewPattern: true)
+  e.musicRuntime = initMusicRuntime(song[], startAt, e.patternRepeat)
   e.time = 0
 
-proc step*(e: var Engine; itable: InstrumentTable) =
-  ## Steps for a single frame or "ticks" the engine.
-  ## 
-  if e.musicRuntime.isSome():
-    e.frame.time = e.time
-    e.frame.halted = e.musicRuntime.get().step(
-      itable,
-      e.frame,
-      e.apuOp
-    )
-
-    if not e.frame.halted:
+proc tick*(e: var Engine; itable: InstrumentTable) =
+  ## Steps the engine for a single frame or 1 tick.
+  ##
+  if e.isPlaying():
+    let mresult = e.musicRuntime.tick(e.song[], itable, e.unlocked, e.apuOp)
+    for ch in mresult.locked:
+      e.lock(ch)
+    if not mresult.halted:
       inc e.time
-  else:
-    e.frame.halted = true
 
-func currentFrame*(e: Engine): EngineFrame =
+func frame*(e: Engine): EngineFrame =
   ## Gets the current frame, or the current state, of the Engine
   ##
-  result = e.frame
+  if e.isPlaying():
+    result.status = e.musicRuntime.status()
+    result.speed = e.musicRuntime.speed()
+    result.time = e.time - 1
+    result.pos = e.musicRuntime.pos()
 
-func currentSong*(e: Engine): iref[Song] =
+func song*(e: Engine): iref[Song] =
   ## Gets the current song that is playing, `nil` is returned if there is
   ## no song playing.
   ## 
-  e.song
+  result = e.song
 
 proc takeOperation*(e: var Engine): ApuOperation =
   ## Takes out the operation to be applied to an ApuIo. Should be called after
-  ## `step` to apply register writes to an Apu.
+  ## `tick` to apply register writes to an Apu.
   ##
   result = e.apuOp
-  e.apuOp = ApuOperation.default
+  reset(e.apuOp)
 
 # diagnostic functions
 
-func currentState*(e: Engine; chno: ChannelId): ChannelState =
-  ## Gets the current channel state of the given channel. An empty channel
-  ## state is returned if no music is playing.
-  ## 
-  onSome(e.musicRuntime):
-    result = it.currentState(chno)
-
-func currentNote*(e: Engine; chno: ChannelId): int =
+func note*(e: Engine; chno: ChannelId): int =
   ## Gets the current note, as a note index, being played for the given
   ## channel. `0` is returned if no music is playing.
   ## 
-  onSome(e.musicRuntime):
-    result = it.currentNote(chno)
+  if e.isPlaying():
+    result = int(e.musicRuntime.note(chno))
 
-template getTrackParameter(e: Engine; chno: ChannelId; param: untyped
-                          ): untyped =
-  onSome(e.musicRuntime):
-    result = `track param`(it, chno)
+template trackParameter(e: Engine; chno: ChannelId; param: untyped
+                           ): untyped =
+  if e.isPlaying():
+    result = `track param`(e.musicRuntime, chno)
 
-func getTrackTimbre*(e: Engine; chno: ChannelId): uint8 =
+func trackState*(e: Engine; chno: ChannelId): ChannelState =
+  ## Gets the current channel state of the given channel. An empty channel
+  ## state is returned if no music is playing.
+  ##
+  if e.isPlaying():
+    result = e.musicRuntime.trackState(chno)
+
+func trackTimbre*(e: Engine; chno: ChannelId): uint8 =
   ## Gets the track's current timbre setting, for the given channel. Timbre
   ## is a channel-specific setting that ranges in value from 0-3. `0u8` is
   ## returned if no music is playing.
   ## 
-  getTrackParameter(e, chno, timbre)
+  trackParameter(e, chno, timbre)
 
-func getTrackEnvelope*(e: Engine; chno: ChannelId): uint8 =
+func trackEnvelope*(e: Engine; chno: ChannelId): uint8 =
   ## Gets the track's current envelope setting, for the given channel. The
   ## envelope setting is either a volume envelope value or a waveform id.
   ## `0u8` is returned if no music is playing.
   ## 
-  getTrackParameter(e, chno, envelope)
+  trackParameter(e, chno, envelope)
 
-func getTrackPanning*(e: Engine; chno: ChannelId): uint8 =
+func trackPanning*(e: Engine; chno: ChannelId): uint8 =
   ## Gets the track's current panning setting, for the given channel. Panning
   ## ranges in value from 0-3. `0u8` is returned if no music is playing.
   ## 
-  getTrackParameter(e, chno, panning)
-
-func isLocked*(e: Engine; chno: ChannelId): bool =
-  ## Check if a channel is locked for music playback by the engine. `true` is
-  ## returned if `chno` is locked, `false` when unlocked.
-  ##
-  onSome(e.musicRuntime):
-    result = it.isLocked(chno)
-
-func getLocked*(e: Engine): set[ChannelId] =
-  ## Gets a set of the engine's locked channels.
-  ##
-  onSome(e.musicRuntime):
-    result = it.getLocked()
+  trackParameter(e, chno, panning)
 
 # Apu stuff ===================================================================
 
@@ -250,14 +248,15 @@ proc apply*(apu: var ApuIo; op: ApuOperation; wt: WaveformTable) =
   ## setting waveforms.
   ## 
   mixin getWrites, items
-  for reg, val in getWrites(op, wt, apu.readRegister(rNR51)).items:
+  for reg, val in items(getWrites(op, wt, apu.readRegister(rNR51))):
     apu.writeRegister(reg, val)
 
-proc stepAndApply*(e: var Engine; itable: InstrumentTable;
-                   wtable: WaveformTable; apu: var ApuIo) =
-  ## Convenience proc that calls `e.step` and `apu.apply` in one go.
+proc tickAndApply*(e: var Engine; itable: InstrumentTable;
+                   wtable: WaveformTable; apu: var ApuIo
+                   ) =
+  ## Convenience proc that calls `e.tick` and `apu.apply` in one go.
   ##
-  e.step(itable)
+  e.tick(itable)
   apu.apply(e.takeOperation(), wtable)
 
 {. pop .}

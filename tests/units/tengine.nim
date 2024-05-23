@@ -1,11 +1,10 @@
 
-import libtrackerboy/engine/[enginestate, apucontrol]
-import libtrackerboy/private/[hardware]
-import libtrackerboy/[data, engine, notes, text]
-
-import unittest2
-
-import std/[strformat, times]
+import
+  std/[strformat],
+  unittest2,
+  libtrackerboy/engine/[enginestate, apucontrol],
+  libtrackerboy/private/[hardware],
+  libtrackerboy/[engine, notes, text]
 
 func getSampleTable(): WaveformTable =
   result = initWaveformTable()
@@ -15,7 +14,9 @@ func getSampleTable(): WaveformTable =
 func `==`(a, b: ChannelUpdate): bool =
   if a.action == b.action:
     if a.action == caUpdate:
-      return a.state == b.state and a.flags == b.flags and a.trigger == b.trigger
+      return a.state == b.state and
+             a.flags == b.flags and
+             a.trigger == b.trigger
     else:
       return true
 
@@ -35,7 +36,8 @@ template mkCut(): ChannelUpdate =
 template mkShutdown(): ChannelUpdate =
   ChannelUpdate(action: caShutdown)
 
-template mkUpdate(s = ChannelState(), f: UpdateFlags = {}, t = false): ChannelUpdate =
+template mkUpdate(s = ChannelState(), f: UpdateFlags = {}, t = false
+                  ): ChannelUpdate =
   ChannelUpdate(
     action: caUpdate,
     state: s,
@@ -45,27 +47,23 @@ template mkUpdate(s = ChannelState(), f: UpdateFlags = {}, t = false): ChannelUp
 
 template mkUpdates(up1 = ChannelUpdate(); up2 = ChannelUpdate();
                    up3 = ChannelUpdate(); up4 = ChannelUpdate()
-                  ): array[ChannelId, ChannelUpdate] =
+                   ): array[ChannelId, ChannelUpdate] =
   [up1, up2, up3, up4]
 
-template mkOperation(u: array[ChannelId, ChannelUpdate], s = none(uint8), v = none(uint8)): ApuOperation =
+template mkOperation(u: array[ChannelId, ChannelUpdate], s = none(uint8),
+                     v = none(uint8)
+                     ): ApuOperation =
   ApuOperation(
     updates: u,
     sweep: s,
     volume: v
   )
 
-# proc stepRow(engine: var Engine, instruments: InstrumentTable) =
-#   while true:
-#     engine.step(instruments)
-#     if engine.currentFrame().startedNewRow:
-#       break
-
 type
   EngineHarness = object
-    engine*: Engine
-    instruments*: InstrumentTable
-    song*: ref Song
+    engine: Engine
+    instruments: InstrumentTable
+    song: ref Song
   
 
 func initEngineHarness(): EngineHarness =
@@ -78,54 +76,54 @@ func initEngineHarness(): EngineHarness =
 proc play(e: var EngineHarness; order = 0; row = 0) =
   e.engine.play(e.song.immutable, songPos(order, row))
 
-func currentState(e: EngineHarness, chno: ChannelId): ChannelState =
-  e.engine.currentState(chno)
+func trackState(e: EngineHarness, chno: ChannelId): ChannelState =
+  e.engine.trackState(chno)
 
-func currentFrame(e: EngineHarness): EngineFrame =
-  e.engine.currentFrame()
+func frame(e: EngineHarness): EngineFrame =
+  e.engine.frame()
 
-func currentFrequency(e: EngineHarness, chno: ChannelId): uint16 =
-  e.currentState(chno).frequency
+func frequency(e: EngineHarness, chno: ChannelId): uint16 =
+  e.trackState(chno).frequency
 
-func currentNote(e: EngineHarness, chno: ChannelId): int =
-  e.engine.currentNote(chno)
+func note(e: EngineHarness, chno: ChannelId): int =
+  e.engine.note(chno)
 
-proc step(e: var EngineHarness) =
-  e.engine.step(e.instruments)
+proc tick(e: var EngineHarness) =
+  e.engine.tick(e.instruments)
 
 proc stepRow(e: var EngineHarness) =
   while true:
-    e.step()
-    if e.currentFrame().startedNewRow:
+    e.tick()
+    if e.frame().status == tsNewRow:
       break
 
 proc frequencyTest(e: var EngineHarness, chno: ChannelId): uint16 =
-  e.step()
-  result = e.currentFrequency(chno)
+  e.tick()
+  result = e.frequency(chno)
 
 proc noteTest(e: var EngineHarness, chno: ChannelId): int =
-  e.step()
-  result = e.currentNote(chno)
+  e.tick()
+  result = e.note(chno)
 
 proc panningTest(e: var EngineHarness, chno: ChannelId): tuple[track, state: uint8] =
-  e.step()
+  e.tick()
   result = (
-    e.engine.getTrackPanning(chno),
-    e.currentState(chno).panning
+    e.engine.trackPanning(chno),
+    e.trackState(chno).panning
   )
 
 proc timbreTest(e: var EngineHarness, chno: ChannelId): tuple[track, state: uint8] =
-  e.step()
+  e.tick()
   result = (
-    e.engine.getTrackTimbre(chno),
-    e.currentState(chno).timbre
+    e.engine.trackTimbre(chno),
+    e.trackState(chno).timbre
   )
 
 proc envelopeTest(e: var EngineHarness, chno: ChannelId): tuple[track: uint8, state: uint16] =
-  e.step()
+  e.tick()
   result = (
-    e.engine.getTrackEnvelope(chno),
-    e.currentState(chno).envelope
+    e.engine.trackEnvelope(chno),
+    e.trackState(chno).envelope
   )
 
 template setupSong(e: var EngineHarness, songVar, body: untyped) =
@@ -133,20 +131,15 @@ template setupSong(e: var EngineHarness, songVar, body: untyped) =
     e.song[]
   body
 
-# template setupInstruments(e: var EngineHarness, instrumentsVar, body: untyped) =
-#   template instrumentsVar(): var InstrumentTable =
-#     e.instruments
-#   body
-
 template forCurrentFrame(e: EngineHarness, frameVar, body: untyped) =
   ## Sets `frameVar` to the engine's current frame for checking.
   block:
-    let frameVar {.inject.} = e.currentFrame()
+    let frameVar {.inject.} = e.frame()
     body
 
 template frameTest(e: var EngineHarness, frameVar, body: untyped) =
-  ## Utility template combines e.step() and e.forCurrentFrame(frameVar, body)
-  e.step()
+  ## Utility template combines e.tick() and e.forCurrentFrame(frameVar, body)
+  e.tick()
   forCurrentFrame(e, frameVar):
     body
 
@@ -364,7 +357,7 @@ block: # =========================================================== apucontrol
           mkShutdown(),   # +5
           mkUpdate(
             mkState(0x432, 0, 3, 3),
-            ufAll
+            updateAll
           ),              # 1 + 16 + 1 + 3 = 21
           mkShutdown()    # +5
         ),
@@ -541,35 +534,37 @@ block: # =========================================================== effects
       eh.play()
       
       eh.frameTest(f):
-        check f.order == 0
+        check f.pos.pattern == 0
       
       eh.frameTest(f):
         check:
-          f.order == 1
-          f.startedNewPattern
+          f.pos.pattern == 1
+          f.status == tsNewPattern
 
       eh.frameTest(f):
         check:
-          f.order == 2
-          f.startedNewPattern
+          f.pos.pattern == 2
+          f.status == tsNewPattern
 
     test "C00":  # halt
       var eh = initEngineHarness()
       eh.setupSong(s):
         s.speed = unitSpeed
         s.editTrack(ch1, 0, track):
-          track[0] = litTrackRow("... .. C00 ... ...")
+          track[1] = litTrackRow("... .. C00 ... ...")
       eh.play()
 
       # halt effect occurs here
       eh.frameTest(f):
-        check not f.halted
+        check f.status != tsHalted
       # halt takes effect before the start of a new row
       eh.frameTest(f):
-        check f.halted
-      # check that we are still halted after repeated calls to step
+        check f.status == tsHalted
+      # check that we are still halted after repeated calls to tick
       eh.frameTest(f):
-        check f.halted
+        check f.status == tsHalted
+      eh.frameTest(f):
+        check f.status == tsHalted
 
     test "Dxx":  # pattern skip
       var eh = initEngineHarness()
@@ -586,15 +581,15 @@ block: # =========================================================== effects
 
       eh.play()
       eh.frameTest(f):
-        check f.order == 0
+        check f.pos.pattern == 0
       eh.frameTest(f):
         check:
-          f.order == 1
-          f.row == 10
+          f.pos.pattern == 1
+          f.pos.row == 10
       eh.frameTest(f):
         check:
-          f.order == 0
-          f.row == 32
+          f.pos.pattern == 0
+          f.pos.row == 32
 
     test "Fxx":  # set speed
       var eh = initEngineHarness()
@@ -606,16 +601,16 @@ block: # =========================================================== effects
       eh.play()
       for i in 0..<4:
         eh.stepRow()
-        check eh.currentFrame().speed == uint8(defaultSpeed)
+        check eh.frame().speed == defaultSpeed
       
       eh.stepRow()
-      check eh.currentFrame().speed == 0x40u8
+      check eh.frame().speed == Speed(0x40)
       
       eh.stepRow()
-      check eh.currentFrame().speed == 0x40u8 # speed should be unchanged
+      check eh.frame().speed == Speed(0x40) # speed should be unchanged
       
       eh.stepRow()
-      check eh.currentFrame().speed == 0x40u8 # speed should be unchanged
+      check eh.frame().speed == Speed(0x40) # speed should be unchanged
 
     test "Exx":  # set envelope
       discard
@@ -690,19 +685,19 @@ block: # =========================================================== effects
       for ch in ChannelId:
         eh.engine.unlock(ch)
 
-      check eh.engine.getLocked() == {}
+      check eh.engine.locked() == {}
       
-      eh.step()
-      check eh.engine.getLocked() == { ch1 }
+      eh.tick()
+      check eh.engine.locked() == { ch1 }
 
-      eh.step()
-      check eh.engine.getLocked() == { ch1..ch2 }
+      eh.tick()
+      check eh.engine.locked() == { ch1..ch2 }
 
-      eh.step()
-      check eh.engine.getLocked() == { ch1..ch3 }
+      eh.tick()
+      check eh.engine.locked() == { ch1..ch3 }
 
-      eh.step()
-      check eh.engine.getLocked() == { ch1..ch4 }
+      eh.tick()
+      check eh.engine.locked() == { ch1..ch4 }
 
     test "Pxx (tone)":  # fine tuning
       const
@@ -819,15 +814,15 @@ block: # =========================================================== Engine
       expect AssertionDefect:
         engine.play(iref[Song](nil))
 
-    test "play raises IndexDefect on invalid pattern index":
+    test "play starts halted on invalid pattern index":
       var song = newSong()
-      expect IndexDefect:
-        engine.play(song.immutable, songPos(song.order.len))
+      engine.play(song.immutable, songPos(song.order.len))
+      check engine.isHalted()
 
-    test "play raises IndexDefect on invalid row index":
+    test "play starts halted on invalid row index":
       var song = newSong()
-      expect IndexDefect:
-        engine.play(song.immutable, songPos(0, song[].trackLen))
+      engine.play(song.immutable, songPos(0, song[].trackLen))
+      check engine.isHalted()
 
 block: # ========================================================== instruments
   const
@@ -935,29 +930,29 @@ block: # ============================================================= playback
     test "empty pattern":
       var eh = initEngineHarness()
       eh.play()
-      for i in 0..32:
-        eh.step()
-        check:
-          eh.engine.takeOperation() == ApuOperation.default
-          eh.currentFrame().time == i
+      let timeCheck = block:
+        var passed = true
+        for i in 0..32:
+          eh.tick()
+          if eh.engine.takeOperation() != default(ApuOperation) or
+             eh.frame().time != i:
+            passed = false
+            break
+        passed
+      check timeCheck
 
     test "speed timing":
-      proc speedtest(expected: openarray[bool], speed: Speed) =
-        const testAmount = 5
-        var eh = initEngineHarness()
-        checkpoint "speed = " & $speed
+      var eh = initEngineHarness()
+      proc speedtest(eh: var EngineHarness; speed: Speed; ticks: int): seq[TrackerStatus] =
         eh.song.speed = speed
         eh.play()
-        for i in 0..<testAmount:
-          for startedNewRow in expected:
-            eh.frameTest(f):
-              check:
-                f.speed == uint8(speed)
-                f.startedNewRow == startedNewRow
-
-      speedtest([true],  Speed(0x10))
-      speedtest([true, false, false, true, false], Speed(0x28))
-      speedtest([true, false, false, false, false, false], Speed(0x60))
+        for i in 0..<ticks:
+          eh.frameTest(f):
+            result.add(f.status)
+      check:
+        speedtest(eh, Speed(0x10), 3) == @[tsNewRow, tsNewRow, tsNewRow]
+        speedtest(eh, Speed(0x28), 6) == @[tsNewRow, tsSteady, tsSteady, tsNewRow, tsSteady, tsNewRow]
+        speedtest(eh, Speed(0x60), 7) == @[tsNewRow, tsSteady, tsSteady, tsSteady, tsSteady, tsSteady, tsNewRow]
 
     test "song looping":
       var eh = initEngineHarness()
@@ -967,16 +962,16 @@ block: # ============================================================= playback
         s.order.setLen(3)
       eh.play()
       eh.frameTest(f):
-        check f.order == 0
+        check f.pos.pattern == 0
       eh.frameTest(f):
         check:
-          f.order == 1
-          f.startedNewPattern
+          f.pos.pattern == 1
+          f.status == tsNewPattern
       eh.frameTest(f):
         check:
-          f.order == 2
-          f.startedNewPattern
+          f.pos.pattern == 2
+          f.status == tsNewPattern
       eh.frameTest(f):
         check:
-          f.order == 0
-          f.startedNewPattern
+          f.pos.pattern == 0
+          f.status == tsNewPattern

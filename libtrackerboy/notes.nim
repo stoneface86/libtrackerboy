@@ -5,6 +5,14 @@ Types and procs for dealing with music notes and also note-to-frequency lookup.
 ]##
 
 type
+  NoteType* = enum
+    ## Enum of the possible note kinds: 
+    ## - tone: playable on channels 1, 2 and 3
+    ## - noise: playable on channel 4
+    ##
+    tone
+    noise
+
   ToneNote* = range[0..83]
     ## Note index range for a tone note (Tone notes are played on channels
     ## 1, 2 and 3). A tone note ranges from octaves 2 to 8, with C-2 being
