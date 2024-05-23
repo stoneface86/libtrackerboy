@@ -120,6 +120,9 @@
     </ul>
   </details>
 </li>
+<li>
+  <a class="reference reference-toplevel" href="#19" id="69">Exports</a>
+</li>
 
 </ul>
 
@@ -174,8 +177,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">timeAmount</span></span></tt>: Amount of time to play the song for.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L52" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L52" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L55" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L55" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -199,8 +202,8 @@
             false, or stereo sound.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L67" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L67" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L70" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L70" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -210,8 +213,8 @@
   <dd>
     
     WavExporter object for iterative mode. An exporter can be created via <a class="reference internal nimdoc" title="proc initWavExporter(module: Module; config: WavConfig): WavExporter" href="#initWavExporter,Module,WavConfig">initWavExporter</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L88" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L88" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L91" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L91" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -230,8 +233,8 @@
     <p>Creates a sequence of <a class="reference internal nimdoc" title="object WavConfig" href="#WavConfig">WavConfig</a>s where each channel in <tt class="docutils literal"><span class="pre"><span class="Identifier">config</span></span></tt> gets its own output file. The filename in each of these configs gets a suffix added to the filename, ie <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">name</span><span class="Operator">.</span><span class="Identifier">ch</span><span class="Operator">$</span><span class="Identifier">channel</span><span class="Operator">.$</span><span class="Identifier">ext</span></span></tt>.</p>
 <p>Use this when exporting each channel separately is desired. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L199" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L199" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L202" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L202" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -240,14 +243,14 @@
 <div id="exportWav-procs-all">
   <div id="exportWav,Module,WavConfig">
   <dt><pre><span class="Keyword">proc</span> <a href="#exportWav%2CModule%2CWavConfig"><span class="Identifier">exportWav</span></a><span class="Other">(</span><span class="Identifier">module</span><span class="Other">:</span> <a href="../data.html#Module"><span class="Identifier">Module</span></a><span class="Other">;</span> <span class="Identifier">config</span><span class="Other">:</span> <a href="wav.html#WavConfig"><span class="Identifier">WavConfig</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     <p>Exports a song in module to WAV using the given config.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if the output WAV file could not be written to. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L219" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L219" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L222" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L222" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -259,8 +262,8 @@
   <dd>
     
     Returns <tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> if the exporter still has work to do, <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt> otherwise. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L158" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L158" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L161" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L161" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -272,8 +275,8 @@
   <dd>
     
     Initializes a WavConfig with default settings. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L110" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L110" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L113" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L113" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -289,8 +292,8 @@
 <p>The export can continue by calling <a class="reference internal nimdoc" title="proc process(ex: var WavExporter; module: Module)" href="#process,WavExporter,Module">process</a> repeatedly until <a class="reference internal nimdoc" title="proc hasWork(ex: WavExporter): bool" href="#hasWork,WavExporter">hasWork</a> returns <tt class="docutils literal"><span class="pre"><span class="Identifier">false</span></span></tt>.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> will be raised if the output file could not be written to. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L119" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L122" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L122" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -299,14 +302,14 @@
 <div id="process-procs-all">
   <div id="process,WavExporter,Module">
   <dt><pre><span class="Keyword">proc</span> <a href="#process%2CWavExporter%2CModule"><span class="Identifier">process</span></a><span class="Other">(</span><span class="Identifier">ex</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="wav.html#WavExporter"><span class="Identifier">WavExporter</span></a><span class="Other">;</span> <span class="Identifier">module</span><span class="Other">:</span> <a href="../data.html#Module"><span class="Identifier">Module</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     <p>Processes a single frame and writes it to the destination WAV file. If the exporter is finished this proc does nothing. Use <a class="reference internal nimdoc" title="proc hasWork(ex: WavExporter): bool" href="#hasWork,WavExporter">hasWork</a> to check before calling this proc.</p>
 <p>An <tt class="docutils literal"><span class="pre"><span class="Identifier">IOError</span></span></tt> may be raised if any error occurred during writing to the output WAV file. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L163" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L163" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L166" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L166" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -318,8 +321,8 @@
   <dd>
     
     Gets a number representing the total overall progress made towards the export. The number returned will be in the range <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="Identifier">ex</span><span class="Operator">.</span><span class="Identifier">progressMax</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L187" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L187" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L190" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L190" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -331,8 +334,8 @@
   <dd>
     
     Gets a number representing the maximum of the values returned by <a class="reference internal nimdoc" title="proc progress(ex: WavExporter): int" href="#progress,WavExporter">progress</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L193" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L193" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L196" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L196" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -345,8 +348,8 @@
   <dd>
     
     Initializes a song duration with the given number of loops. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L100" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L100" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L103" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L103" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -356,14 +359,20 @@
   <dd>
     
     Initializes a song duration with the given time amount 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L105" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L105" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/exports/wav.nim#L108" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/exports/wav.nim#L108" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 
 </div>
 
+  </dl>
+</div>
+<div class="section" id="19">
+  <h1><a class="toc-backref" href="#19">Exports</a></h1>
+  <dl class="item">
+    <a href="../data.html#initTrackRow"><span class="Identifier">initTrackRow</span></a>, <a href="../data.html#clone,TrackView"><span class="Identifier">clone</span></a>, <a href="../common.html#iptr"><span class="Identifier">iptr</span></a>, <a href="../data.html#clone,T"><span class="Identifier">clone</span></a>, <a href="../data.html#isValid,Order"><span class="Identifier">isValid</span></a>, <a href="../data.html#isValid,Speed"><span class="Identifier">isValid</span></a>, <a href="../common.html#capacity.t"><span class="Identifier">capacity</span></a>, <a href="../data.html#trow.t"><span class="Identifier">trow</span></a>, <a href="../common.html#==.t,ref.T,iref[T]"><span class="Identifier">==</span></a>, <a href="../common.html#PcmF32"><span class="Identifier">PcmF32</span></a>, <a href="../data.html#[]=,Track,ByteIndex,TrackRow"><span class="Identifier">[]=</span></a>, <a href="../data.html#SomeTable"><span class="Identifier">SomeTable</span></a>, <a href="../data.html#orow.t,uint8,uint8,uint8,uint8"><span class="Identifier">orow</span></a>, <a href="../data.html#TrackId"><span class="Identifier">TrackId</span></a>, <a href="../data.html#ModulePiece"><span class="Identifier">ModulePiece</span></a>, <a href="../data.html#hash,Instrument"><span class="Identifier">hash</span></a>, <a href="../common.html#iref"><span class="Identifier">iref</span></a>, <a href="../data.html#Track"><span class="Identifier">Track</span></a>, <a href="../data.html#initTrackView,sinkTrack"><span class="Identifier">initTrackView</span></a>, <a href="../common.html#==.t,iptr[T],"><span class="Identifier">==</span></a>, <a href="../data.html#initPattern,PatternView"><span class="Identifier">initPattern</span></a>, <a href="../data.html#nextUnused,Order"><span class="Identifier">nextUnused</span></a>, <a href="../data.html#initSongList"><span class="Identifier">initSongList</span></a>, <a href="../data.html#toOption,NoteColumn"><span class="Identifier">toOption</span></a>, <a href="../data.html#defaultSpeed"><span class="Identifier">defaultSpeed</span></a>, <a href="../data.html#viewTrack.t,Song,ChannelId,TrackId,untyped,untyped"><span class="Identifier">viewTrack</span></a>, <a href="../data.html#toEffectCmd,uint8"><span class="Identifier">toEffectCmd</span></a>, <a href="../data.html#duplicate,Table[T: SomeData],TableId"><span class="Identifier">duplicate</span></a>, <a href="../data.html#editTrack.t,Song,ChannelId,TrackId,untyped,untyped"><span class="Identifier">editTrack</span></a>, <a href="../data.html#getPatternView,Song,ByteIndex"><span class="Identifier">getPatternView</span></a>, <a href="../data.html#shortensPattern,EffectCmd"><span class="Identifier">shortensPattern</span></a>, <a href="../data.html#==,SomeTable,SomeTable"><span class="Identifier">==</span></a>, <a href="../data.html#noteNone"><span class="Identifier">noteNone</span></a>, <a href="../data.html#totalRows,TrackView"><span class="Identifier">totalRows</span></a>, <a href="../data.html#InstrumentTable"><span class="Identifier">InstrumentTable</span></a>, <a href="../common.html#==.t,,iptr[T]"><span class="Identifier">==</span></a>, <a href="../data.html#SongSpan"><span class="Identifier">SongSpan</span></a>, <a href="../data.html#==,TrackView,TrackView"><span class="Identifier">==</span></a>, <a href="../common.html#isNil.t,iref[T]"><span class="Identifier">isNil</span></a>, <a href="../data.html#[],Track,ByteIndex"><span class="Identifier">[]</span></a>, <a href="../data.html#<=,Speed,Speed"><span class="Identifier">&lt;=</span></a>, <a href="../data.html#data,SongList"><span class="Identifier">data</span></a>, <a href="../data.html#data,Track"><span class="Identifier">data</span></a>, <a href="../data.html#==,Waveform,Waveform"><span class="Identifier">==</span></a>, <a href="../data.html#all,SomePattern,ByteIndex"><span class="Identifier">all</span></a>, <a href="../data.html#WaveData"><span class="Identifier">WaveData</span></a>, <a href="../data.html#initInstrument"><span class="Identifier">initInstrument</span></a>, <a href="../data.html#hash,Waveform"><span class="Identifier">hash</span></a>, <a href="../data.html#initModule"><span class="Identifier">initModule</span></a>, <a href="../data.html#SomeData"><span class="Identifier">SomeData</span></a>, <a href="../common.html#add,FixedSeq[N,T],sinkT"><span class="Identifier">add</span></a>, <a href="../common.html#==.t,iref[T],ref.T"><span class="Identifier">==</span></a>, <a href="../data.html#instrumentNone"><span class="Identifier">instrumentNone</span></a>, <a href="../data.html#capacity,SomeTable"><span class="Identifier">capacity</span></a>, <a href="../data.html#editPattern.t,Song,ByteIndex,untyped,untyped"><span class="Identifier">editPattern</span></a>, <a href="../data.html#NoteColumn"><span class="Identifier">NoteColumn</span></a>, <a href="../data.html#len,SongList"><span class="Identifier">len</span></a>, <a href="../data.html#defaultRpb"><span class="Identifier">defaultRpb</span></a>, <a href="../data.html#len,TrackView"><span class="Identifier">len</span></a>, <a href="../data.html#trackLen=,Song,TrackLen"><span class="Identifier">trackLen=</span></a>, <a href="../data.html#newModule"><span class="Identifier">newModule</span></a>, <a href="../data.html#len,Track"><span class="Identifier">len</span></a>, <a href="../data.html#isValid,Song,SongPos"><span class="Identifier">isValid</span></a>, <a href="../data.html#isValid,Song,SongSpan"><span class="Identifier">isValid</span></a>, <a href="../data.html#has,NoteColumn"><span class="Identifier">has</span></a>, <a href="../data.html#initWaveformTable"><span class="Identifier">initWaveformTable</span></a>, <a href="../data.html#initWaveform"><span class="Identifier">initWaveform</span></a>, <a href="../data.html#items.i,SongList"><span class="Identifier">items</span></a>, <a href="../data.html#Pattern"><span class="Identifier">Pattern</span></a>, <a href="../data.html#[],TrackView,ByteIndex"><span class="Identifier">[]</span></a>, <a href="../common.html#ByteIndex"><span class="Identifier">ByteIndex</span></a>, <a href="../common.html#==.t,iptr[T],ptr.T"><span class="Identifier">==</span></a>, <a href="../data.html#Tickrate"><span class="Identifier">Tickrate</span></a>, <a href="../data.html#InstrumentColumn"><span class="Identifier">InstrumentColumn</span></a>, <a href="../data.html#initEffect,uint8"><span class="Identifier">initEffect</span></a>, <a href="../data.html#allocateTracks,Song"><span class="Identifier">allocateTracks</span></a>, <a href="../data.html#isValid,SongList"><span class="Identifier">isValid</span></a>, <a href="../data.html#getRow,Song,ByteIndex,ByteIndex"><span class="Identifier">getRow</span></a>, <a href="../data.html#[],Table[T: SomeData],TableId"><span class="Identifier">[]</span></a>, <a href="../data.html#initLoopPoint,uint8"><span class="Identifier">initLoopPoint</span></a>, <a href="../data.html#unitSpeed"><span class="Identifier">unitSpeed</span></a>, <a href="../data.html#value,NoteColumn"><span class="Identifier">value</span></a>, <a href="../data.html#asSlice,SongSpan"><span class="Identifier">asSlice</span></a>, <a href="../data.html#PatternView"><span class="Identifier">PatternView</span></a>, <a href="../data.html#OrderRow"><span class="Identifier">OrderRow</span></a>, <a href="../data.html#toOption,InstrumentColumn"><span class="Identifier">toOption</span></a>, <a href="../common.html#immutable.t,ptr.T"><span class="Identifier">immutable</span></a>, <a href="../data.html#isValid,Track"><span class="Identifier">isValid</span></a>, <a href="../data.html#Effect"><span class="Identifier">Effect</span></a>, <a href="../data.html#removeUnusedTracks,Song"><span class="Identifier">removeUnusedTracks</span></a>, <a href="../data.html#$,Speed"><span class="Identifier">$</span></a>, <a href="../data.html#effectNone"><span class="Identifier">effectNone</span></a>, <a href="../data.html#uniqueIds,Table[T: SomeData]"><span class="Identifier">uniqueIds</span></a>, <a href="../data.html#[]=,Sequence,ByteIndex,uint8"><span class="Identifier">[]=</span></a>, <a href="../data.html#[].t,SongList,ByteIndex"><span class="Identifier">[]</span></a>, <a href="../data.html#initTrack,TrackView"><span class="Identifier">initTrack</span></a>, <a href="../data.html#estimateSpeed,Song,float,float"><span class="Identifier">estimateSpeed</span></a>, <a href="../data.html#SongPos"><span class="Identifier">SongPos</span></a>, <a href="../data.html#<,Speed,Speed"><span class="Identifier">&lt;</span></a>, <a href="../data.html#initOrderRow,uint8,uint8,uint8,uint8"><span class="Identifier">initOrderRow</span></a>, <a href="../data.html#tempo,Song,float"><span class="Identifier">tempo</span></a>, <a href="../data.html#revisionMinor,Module"><span class="Identifier">revisionMinor</span></a>, <a href="../data.html#defaultTickrate"><span class="Identifier">defaultTickrate</span></a>, <a href="../data.html#=copy,TrackMap,TrackMap"><span class="Identifier">=copy</span></a>, <a href="../data.html#len,Table[T: SomeData]"><span class="Identifier">len</span></a>, <a href="../data.html#getTickrate,Module,ByteIndex"><span class="Identifier">getTickrate</span></a>, <a href="../data.html#items.i,TrackView"><span class="Identifier">items</span></a>, <a href="../data.html#[],Track,ByteIndex_2"><span class="Identifier">[]</span></a>, <a href="../data.html#has,InstrumentColumn"><span class="Identifier">has</span></a>, <a href="../data.html#$,InstrumentColumn"><span class="Identifier">$</span></a>, <a href="../data.html#noLoopPoint"><span class="Identifier">noLoopPoint</span></a>, <a href="../data.html#effectCharMap"><span class="Identifier">effectCharMap</span></a>, <a href="../data.html#SequenceKind"><span class="Identifier">SequenceKind</span></a>, <a href="../common.html#==.t,iref[T],iref[T]"><span class="Identifier">==</span></a>, <a href="../data.html#toSpeed,float"><span class="Identifier">toSpeed</span></a>, <a href="../data.html#tempo,float,PositiveByte,float"><span class="Identifier">tempo</span></a>, <a href="../data.html#instrumentColumn,TableId"><span class="Identifier">instrumentColumn</span></a>, <a href="../data.html#items.i,Track"><span class="Identifier">items</span></a>, <a href="../data.html#[],Table[T: SomeData],TableId_2"><span class="Identifier">[]</span></a>, <a href="../data.html#[],Sequence,ByteIndex"><span class="Identifier">[]</span></a>, <a href="../data.html#$,SongPos"><span class="Identifier">$</span></a>, <a href="../common.html#PositiveByte"><span class="Identifier">PositiveByte</span></a>, <a href="../data.html#effectiveTickrate,Song,Tickrate"><span class="Identifier">effectiveTickrate</span></a>, <a href="../data.html#toFloat,Speed"><span class="Identifier">toFloat</span></a>, <a href="../data.html#SongList"><span class="Identifier">SongList</span></a>, <a href="../data.html#clone,Track"><span class="Identifier">clone</span></a>, <a href="../data.html#Speed"><span class="Identifier">Speed</span></a>, <a href="../data.html#LoopPoint"><span class="Identifier">LoopPoint</span></a>, <a href="../common.html#Tristate"><span class="Identifier">Tristate</span></a>, <a href="../data.html#==,NoteColumn,NoteColumn"><span class="Identifier">==</span></a>, <a href="../data.html#mget,SongList,ByteIndex"><span class="Identifier">mget</span></a>, <a href="../data.html#OrderLen"><span class="Identifier">OrderLen</span></a>, <a href="../data.html#viewPattern.t,Song,ByteIndex,untyped,untyped"><span class="Identifier">viewPattern</span></a>, <a href="../data.html#getRow,Song,ChannelId,TrackId,ByteIndex"><span class="Identifier">getRow</span></a>, <a href="../data.html#songSpan,ByteIndex,ByteIndex,ByteIndex"><span class="Identifier">songSpan</span></a>, <a href="../common.html#[].t,iref[T]"><span class="Identifier">[]</span></a>, <a href="../data.html#TableId"><span class="Identifier">TableId</span></a>, <a href="../data.html#getTrackView,Song,ChannelId,TrackId"><span class="Identifier">getTrackView</span></a>, <a href="../data.html#patternLen,Song"><span class="Identifier">patternLen</span></a>, <a href="../data.html#Order"><span class="Identifier">Order</span></a>, <a href="../data.html#noteColumn,Letter,Octave"><span class="Identifier">noteColumn</span></a>, <a href="../data.html#==,Track,Track"><span class="Identifier">==</span></a>, <a href="../common.html#[].t,FixedSeq[N,T],int"><span class="Identifier">[]</span></a>, <a href="../data.html#==,InstrumentColumn,InstrumentColumn"><span class="Identifier">==</span></a>, <a href="../data.html#initTrack,TrackLen"><span class="Identifier">initTrack</span></a>, <a href="../data.html#items.i,Table[T: SomeData]"><span class="Identifier">items</span></a>, <a href="../data.html#trackIds.i,Song,ChannelId"><span class="Identifier">trackIds</span></a>, <a href="../data.html#totalRows,Track"><span class="Identifier">totalRows</span></a>, <a href="../common.html#Pcm"><span class="Identifier">Pcm</span></a>, <a href="../data.html#EffectCmd"><span class="Identifier">EffectCmd</span></a>, <a href="../data.html#totalTracks,Song"><span class="Identifier">totalTracks</span></a>, <a href="../data.html#==,Speed,Speed"><span class="Identifier">==</span></a>, <a href="../data.html#removeAllTracks,Song"><span class="Identifier">removeAllTracks</span></a>, <a href="../data.html#Instrument"><span class="Identifier">Instrument</span></a>, <a href="../data.html#defaultTrackLen"><span class="Identifier">defaultTrackLen</span></a>, <a href="../data.html#nextAvailableId,Table[T: SomeData]"><span class="Identifier">nextAvailableId</span></a>, <a href="../data.html#value,InstrumentColumn"><span class="Identifier">value</span></a>, <a href="../data.html#$,SongSpan"><span class="Identifier">$</span></a>, <a href="../data.html#next,Table[T: SomeData]"><span class="Identifier">next</span></a>, <a href="../data.html#$,NoteColumn"><span class="Identifier">$</span></a>, <a href="../data.html#trackLen,Song"><span class="Identifier">trackLen</span></a>, <a href="../data.html#==,Instrument,Instrument"><span class="Identifier">==</span></a>, <a href="../data.html#initSong"><span class="Identifier">initSong</span></a>, <a href="../data.html#mitems.i,SongList"><span class="Identifier">mitems</span></a>, <a href="../data.html#songSpan,SongPos,int"><span class="Identifier">songSpan</span></a>, <a href="../data.html#isEmpty,TrackRow"><span class="Identifier">isEmpty</span></a>, <a href="../data.html#==,SongList,SongList"><span class="Identifier">==</span></a>, <a href="../data.html#SomePattern"><span class="Identifier">SomePattern</span></a>, <a href="../data.html#effectCmdToChar,uint8"><span class="Identifier">effectCmdToChar</span></a>, <a href="../data.html#toInfoString.c,string"><span class="Identifier">toInfoString</span></a>, <a href="../common.html#immutable.t,ref.T"><span class="Identifier">immutable</span></a>, <a href="../data.html#mitems.i,Track"><span class="Identifier">mitems</span></a>, <a href="../data.html#==,Song,Song"><span class="Identifier">==</span></a>, <a href="../data.html#initLoopPoint"><span class="Identifier">initLoopPoint</span></a>, <a href="../data.html#System"><span class="Identifier">System</span></a>, <a href="../data.html#SequenceLen"><span class="Identifier">SequenceLen</span></a>, <a href="../common.html#isNil.t,iptr[T]"><span class="Identifier">isNil</span></a>, <a href="../data.html#isValid,TrackView"><span class="Identifier">isValid</span></a>, <a href="../data.html#isValid,Module"><span class="Identifier">isValid</span></a>, <a href="../data.html#TrackRow"><span class="Identifier">TrackRow</span></a>, <a href="../data.html#newSong"><span class="Identifier">newSong</span></a>, <a href="../data.html#initSequence,openArray[uint8]"><span class="Identifier">initSequence</span></a>, <a href="../data.html#defaultRpm"><span class="Identifier">defaultRpm</span></a>, <a href="../data.html#getPattern,Song,ByteIndex"><span class="Identifier">getPattern</span></a>, <a href="../data.html#WaveformTable"><span class="Identifier">WaveformTable</span></a>, <a href="../data.html#add,Table[T: SomeData],TableId"><span class="Identifier">add</span></a>, <a href="../data.html#isValid,Sequence"><span class="Identifier">isValid</span></a>, <a href="../data.html#contains,SomeTable,TableId"><span class="Identifier">contains</span></a>, <a href="../data.html#SomeTrack"><span class="Identifier">SomeTrack</span></a>, <a href="../data.html#remove,Table[T: SomeData],TableId"><span class="Identifier">remove</span></a>, <a href="../data.html#Waveform"><span class="Identifier">Waveform</span></a>, <a href="../data.html#initInstrumentTable"><span class="Identifier">initInstrumentTable</span></a>, <a href="../common.html#==.t,,iref[T]"><span class="Identifier">==</span></a>, <a href="../data.html#InfoString"><span class="Identifier">InfoString</span></a>, <a href="../data.html#isValid,Song"><span class="Identifier">isValid</span></a>, <a href="../data.html#$,Song"><span class="Identifier">$</span></a>, <a href="../data.html#EffectCounts"><span class="Identifier">EffectCounts</span></a>, <a href="../data.html#TrackLen"><span class="Identifier">TrackLen</span></a>, <a href="../common.html#==.t,iref[T],"><span class="Identifier">==</span></a>, <a href="../data.html#PatternRow"><span class="Identifier">PatternRow</span></a>, <a href="../data.html#toView.c,Pattern"><span class="Identifier">toView</span></a>, <a href="../data.html#setLen,Sequence,SequenceLen"><span class="Identifier">setLen</span></a>, <a href="../data.html#Module"><span class="Identifier">Module</span></a>, <a href="../common.html#==.t,ptr.T,iptr[T]"><span class="Identifier">==</span></a>, <a href="../data.html#tempo,Speed,PositiveByte,float"><span class="Identifier">tempo</span></a>, <a href="../data.html#getTrack,Song,ChannelId,TrackId"><span class="Identifier">getTrack</span></a>, <a href="../common.html#items.i,FixedSeq[N,T]"><span class="Identifier">items</span></a>, <a href="../data.html#Song"><span class="Identifier">Song</span></a>, <a href="../data.html#noteColumn,NoteRange"><span class="Identifier">noteColumn</span></a>, <a href="../common.html#[].t,iptr[T]"><span class="Identifier">[]</span></a>, <a href="../data.html#initOrder"><span class="Identifier">initOrder</span></a>, <a href="../data.html#version,Module"><span class="Identifier">version</span></a>, <a href="../data.html#len,Sequence"><span class="Identifier">len</span></a>, <a href="../data.html#Sequence"><span class="Identifier">Sequence</span></a>, <a href="../data.html#TrackView"><span class="Identifier">TrackView</span></a>, <a href="../data.html#rangeSpeed"><span class="Identifier">rangeSpeed</span></a>, <a href="../common.html#ChannelId"><span class="Identifier">ChannelId</span></a>, <a href="../data.html#add,Table[T: SomeData]"><span class="Identifier">add</span></a>, <a href="../data.html#hertz,Tickrate"><span class="Identifier">hertz</span></a>, <a href="../data.html#get,SongList,ByteIndex"><span class="Identifier">get</span></a>, <a href="../common.html#FixedSeq"><span class="Identifier">FixedSeq</span></a>, <a href="../data.html#toView.c,sinkTrack"><span class="Identifier">toView</span></a>, <a href="../common.html#==.t,iptr[T],iptr[T]"><span class="Identifier">==</span></a>, <a href="../data.html#patternLen,Song,ByteIndex"><span class="Identifier">patternLen</span></a>, <a href="../data.html#songPos_2"><span class="Identifier">songPos</span></a>, <a href="../data.html#revisionMajor,Module"><span class="Identifier">revisionMajor</span></a>
   </dl>
 </div>
 
@@ -373,7 +382,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-14 17:23:34 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-23 05:23:52 UTC</small>
       </div>
     </div>
   </div>
