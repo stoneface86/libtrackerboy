@@ -55,27 +55,19 @@
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#ApuOperation" title="ApuOperation = object
-  updates*: array[ChannelId, ChannelUpdate] ## A `ChannelUpdate` for each channel.
-                                            ## 
-  sweep*: Option[uint8] ## Write to the sweep register with this value when set.
-                        ## 
-  volume*: Option[uint8] ## Write to the global volume register with this value when set.
-                         ##">ApuOperation</a></li>
+  updates*: array[ChannelId, ChannelUpdate]
+  sweep*: Option[uint8]
+  volume*: Option[uint8]">ApuOperation</a></li>
 <li><a class="reference" href="#ChannelAction" title="ChannelAction = enum
   caNone,                   ## No action, do not update channel
   caUpdate,                 ## Update the channel by writing its registers
   caCut,                    ## Note stopped, turn DAC off
   caShutdown                 ## Channel was unlocked, zero the channel's registers">ChannelAction</a></li>
 <li><a class="reference" href="#ChannelState" title="ChannelState = object
-  envelope*: uint16 ## The envelope setting, `0..255`. Use `0xFFFF` to specify initial state.
-                    ## 
-  timbre*: uint8 ## The timbre setting, `0..3`. Use `0xFF` to specify initial state.
-                 ## 
-  panning*: uint8 ## The panning setting, `0..3`. Use `0xFF` to specify initial state.
-                  ## 
-  frequency*: uint16 ## The frequency setting, `0..2047`. Use `0xFFFF` to specify initial
-                     ## state.
-                     ##">ChannelState</a></li>
+  envelope*: uint16
+  timbre*: uint8
+  panning*: uint8
+  frequency*: uint16">ChannelState</a></li>
 <li><a class="reference" href="#ChannelUpdate" title="ChannelUpdate = object
   case action*: ChannelAction ## The action to take.
                               ## 
@@ -96,12 +88,9 @@
   of caShutdown:
       nil">ChannelUpdate</a></li>
 <li><a class="reference" href="#EngineFrame" title="EngineFrame = object
-  status*: TrackerStatus     ## Current status of the music tracker.
-                             ## 
-  speed*: Speed              ## Current playback speed, in Q4.4 format.
-                             ## 
-  time*: int                 ## time index of the frame
-                             ## 
+  status*: TrackerStatus
+  speed*: Speed
+  time*: int
   pos*: SongPos">EngineFrame</a></li>
 <li><a class="reference" href="#UpdateFlag" title="UpdateFlag = enum
   ufTimbre,                 ## Update timbre setting
@@ -162,18 +151,19 @@
   <dl class="item">
     <div id="ApuOperation">
   <dt><pre><a href="enginestate.html#ApuOperation"><span class="Identifier">ApuOperation</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">updates</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="Identifier">ChannelId</span><span class="Other">,</span> <a href="enginestate.html#ChannelUpdate"><span class="Identifier">ChannelUpdate</span></a><span class="Other">]</span> <span class="Comment">## A `ChannelUpdate` for each channel.</span>
-                                            <span class="Comment">## </span>
-  <span class="Identifier">sweep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span class="Comment">## Write to the sweep register with this value when set.</span>
-                        <span class="Comment">## </span>
-  <span class="Identifier">volume</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span class="Comment">## Write to the global volume register with this value when set.</span>
-                         <span class="Comment">## </span>
-  </pre></dt>
+  <span class="Identifier">updates</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="Identifier">ChannelId</span><span class="Other">,</span> <a href="enginestate.html#ChannelUpdate"><span class="Identifier">ChannelUpdate</span></a><span class="Other">]</span>
+  <span class="Identifier">sweep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
+  <span class="Identifier">volume</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
+</pre></dt>
   <dd>
     
-    An operation or modification to be made to an <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuIo</span></span></tt> object. Stepping the <tt class="docutils literal"><span class="pre"><span class="Identifier">Engine</span></span></tt> results in an <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuOperation</span></span></tt> 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L103" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L103" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    An operation or modification to be made to an <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuIo</span></span></tt> object. Stepping the <tt class="docutils literal"><span class="pre"><span class="Identifier">Engine</span></span></tt> results in an <tt class="docutils literal"><span class="pre"><span class="Identifier">ApuOperation</span></span></tt><ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">updates</span></span></tt> - A <a class="reference internal nimdoc" title="object ChannelUpdate" href="#ChannelUpdate">ChannelUpdate</a> for each channel.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">sweep</span></span></tt> - Write to the sweep register with this value when set.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">volume</span></span></tt> - Write to the global volume register with this value when set.</li>
+</ul>
+
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L100" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L100" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -186,28 +176,28 @@
   <dd>
     
     Specifies which action the channel should do when updating for a single tick. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L70" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L70" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L67" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L67" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="ChannelState">
   <dt><pre><a href="enginestate.html#ChannelState"><span class="Identifier">ChannelState</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">envelope</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint16</span> <span class="Comment">## The envelope setting, `0..255`. Use `0xFFFF` to specify initial state.</span>
-                    <span class="Comment">## </span>
-  <span class="Identifier">timbre</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span> <span class="Comment">## The timbre setting, `0..3`. Use `0xFF` to specify initial state.</span>
-                 <span class="Comment">## </span>
-  <span class="Identifier">panning</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span> <span class="Comment">## The panning setting, `0..3`. Use `0xFF` to specify initial state.</span>
-                  <span class="Comment">## </span>
-  <span class="Identifier">frequency</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint16</span> <span class="Comment">## The frequency setting, `0..2047`. Use `0xFFFF` to specify initial</span>
-                     <span class="Comment">## state.</span>
-                     <span class="Comment">## </span>
-  </pre></dt>
+  <span class="Identifier">envelope</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint16</span>
+  <span class="Identifier">timbre</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
+  <span class="Identifier">panning</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
+  <span class="Identifier">frequency</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint16</span>
+</pre></dt>
   <dd>
     
-    State of a channel 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L53" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L53" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    State of a channel.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">envelope</span></span></tt> - The envelope setting, <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="DecNumber">255</span></span></tt>. Use <tt class="docutils literal"><span class="pre"><span class="HexNumber">0xFFFF</span></span></tt> to specify initial state.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">timbre</span></span></tt> - The timbre setting, <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="DecNumber">3</span></span></tt>. Use <tt class="docutils literal"><span class="pre"><span class="HexNumber">0xFF</span></span></tt> to specify initial state.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">panning</span></span></tt> - The panning setting, <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="DecNumber">3</span></span></tt>. Use <tt class="docutils literal"><span class="pre"><span class="HexNumber">0xFF</span></span></tt> to specify initial state.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">frequency</span></span></tt> - The frequency setting, <tt class="docutils literal"><span class="pre"><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="DecNumber">2047</span></span></tt>. Use <tt class="docutils literal"><span class="pre"><span class="HexNumber">0xFFFF</span></span></tt> to specify initial state.</li>
+</ul>
+
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L51" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L51" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -236,24 +226,26 @@
   <dd>
     
     Object that determines how a channel should be updated for a single tick. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L79" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L79" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L76" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L76" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
 <div id="EngineFrame">
   <dt><pre><a href="enginestate.html#EngineFrame"><span class="Identifier">EngineFrame</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">status</span><span class="Operator">*</span><span class="Other">:</span> <a href="../tracking.html#TrackerStatus"><span class="Identifier">TrackerStatus</span></a>     <span class="Comment">## Current status of the music tracker.</span>
-                             <span class="Comment">## </span>
-  <span class="Identifier">speed</span><span class="Operator">*</span><span class="Other">:</span> <a href="../data.html#Speed"><span class="Identifier">Speed</span></a>              <span class="Comment">## Current playback speed, in Q4.4 format.</span>
-                             <span class="Comment">## </span>
-  <span class="Identifier">time</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                 <span class="Comment">## time index of the frame</span>
-                             <span class="Comment">## </span>
+  <span class="Identifier">status</span><span class="Operator">*</span><span class="Other">:</span> <a href="../tracking.html#TrackerStatus"><span class="Identifier">TrackerStatus</span></a>
+  <span class="Identifier">speed</span><span class="Operator">*</span><span class="Other">:</span> <a href="../data.html#Speed"><span class="Identifier">Speed</span></a>
+  <span class="Identifier">time</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
   <span class="Identifier">pos</span><span class="Operator">*</span><span class="Other">:</span> <a href="../data.html#SongPos"><span class="Identifier">SongPos</span></a>
 </pre></dt>
   <dd>
     
-    Informational data about the current engine frame being stepped. 
+    Informational data about the current engine frame being stepped.<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">status</span></span></tt> - current status of the music tracker.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">speed</span></span></tt> - current playback speed of the song.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">time</span></span></tt> - time index of the frame, first frame is <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">pos</span></span></tt> - current position in the song.</li>
+</ul>
+
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L25" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L25" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -268,8 +260,8 @@
   <dd>
     
     Flags to indicate which part of the state has changed, and needs to be updated in the channel's registers. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L39" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L39" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L37" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L37" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -278,8 +270,8 @@
   <dd>
     
     A set of update flags to indicate only the parts of the state that has changed. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L48" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L48" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L46" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L46" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -294,8 +286,8 @@
   <dd>
     
     Update all settings 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L119" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L119" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L114" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L114" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -310,9 +302,9 @@
   <dt><pre><span class="Keyword">func</span> <a href="#initChannelState"><span class="Identifier">initChannelState</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="enginestate.html#ChannelState"><span class="Identifier">ChannelState</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Initialize a <tt class="docutils literal"><span class="pre"><span class="Identifier">ChannelState</span></span></tt> with initial settings. Using this state as an initial value will guarentee that all settings will be updated on the first tick. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L123" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L123" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Initialize a <a class="reference internal nimdoc" title="object ChannelState" href="#ChannelState">ChannelState</a> with initial settings. Using this state as an initial value will guarentee that all settings will be updated on the first tick. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/enginestate.nim#L118" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/enginestate.nim#L118" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -334,7 +326,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-23 05:23:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-25 05:17:45 UTC</small>
       </div>
     </div>
   </div>

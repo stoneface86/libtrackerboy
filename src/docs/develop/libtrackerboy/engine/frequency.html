@@ -163,6 +163,7 @@
     
     <p class="module-desc"><p>Frequency effects and control.</p>
 <p>This module handles all frequency effects and related procedures regarding channel frequency.</p>
+<p>This module is part of the inner workings of the engine module, and has an <strong>unstable API</strong>.</p>
 </p>
     <div class="section" id="6">
   <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -179,10 +180,10 @@
   <dd>
     
     <p>Arpeggio modulator.</p>
-<p>Similates a chord by alternating between three notes each tick. Enable by calling <a class="reference internal" href="#setParam(var Arpeggio,uint8)">setParam(var Arpeggio,uint8)</a> with a nonzero parameter, then set the chord buffer via <a class="reference internal nimdoc" title="proc setChord(a: var Arpeggio; resolver: NoteResolver; baseNote: uint8)" href="#setChord,Arpeggio,NoteResolver,uint8">setChord</a>. The modulator can be stepped by calling <a class="reference internal" href="#tick(var Arpeggio)">tick(var Arpeggio)</a>, which returns the frequency for that tick. </p>
+<p>Similates a chord by alternating between three notes each tick. Enable by calling <a class="reference internal nimdoc" title="proc setParam (2 overloads)" href="#setParam-procs-all">setParam</a> with a nonzero parameter, then set the chord buffer via <a class="reference internal nimdoc" title="proc setChord(a: var Arpeggio; resolver: NoteResolver; baseNote: uint8)" href="#setChord,Arpeggio,NoteResolver,uint8">setChord</a>. The modulator can be stepped by calling <a class="reference internal nimdoc" title="proc tick (4 overloads)" href="#tick-procs-all">tick</a>, which returns the frequency for that tick. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L49" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L49" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L52" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L52" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -191,9 +192,9 @@
   </pre></dt>
   <dd>
     
-    Handles frequency calculation for a channel. For each tick, call <tt class="docutils literal"><span class="pre"><span class="Identifier">tick</span></span></tt> on this control to get the frequency. If the channel has an operation, set it first via <a class="reference internal nimdoc" title="proc setOperation(fc: var FrequencyControl; op: Operation)" href="#setOperation,FrequencyControl,Operation">setOperation</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L88" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L88" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    Handles frequency calculation for a channel. For each tick, call <a class="reference internal nimdoc" title="proc tick (4 overloads)" href="#tick-procs-all">tick</a> on this control to get the frequency. If the channel has an operation, set it first via <a class="reference internal nimdoc" title="proc setOperation(fc: var FrequencyControl; op: Operation)" href="#setOperation,FrequencyControl,Operation">setOperation</a>. 
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L91" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L91" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -209,8 +210,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">maxNote</span></span></tt>: Highest note value possible.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L20" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L20" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L23" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L23" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -220,10 +221,10 @@
   <dd>
     
     <p>Frequency slide modulator.</p>
-<p>Modulates a frequency by sliding <tt class="docutils literal"><span class="pre"><span class="Identifier">amount</span></span></tt> units towards the <tt class="docutils literal"><span class="pre"><span class="Identifier">target</span></span></tt> frequency. To use set the desired amount and target, then call <a class="reference internal" href="#tick(Slide,var uint16)">tick(Slide,var uint16)</a> which will modify the given frequency. </p>
+<p>Modulates a frequency by sliding <tt class="docutils literal"><span class="pre"><span class="Identifier">amount</span></span></tt> units towards the <tt class="docutils literal"><span class="pre"><span class="Identifier">target</span></span></tt> frequency. To use set the desired amount and target, then call <a class="reference internal nimdoc" title="proc tick (4 overloads)" href="#tick-procs-all">tick</a> which will modify the given frequency. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L62" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L62" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L65" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L65" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -235,10 +236,10 @@
     
     <p>Square vibrato generator.</p>
 <p>Generates a frequency offset that can be added to an existing frequency to give it a vibrato effect. This effect oscillates periodically between a negative <tt class="docutils literal"><span class="pre"><span class="Identifier">extent</span></span></tt> and a positive <tt class="docutils literal"><span class="pre"><span class="Identifier">extent</span></span></tt> every <tt class="docutils literal"><span class="pre"><span class="Identifier">period</span></span></tt> frames.</p>
-<p>To use set the period and extent via <a class="reference internal" href="#setParam(var Vibrato,uint8)">setParam(var Vibrato,uint8)</a>, and optionally set the <tt class="docutils literal"><span class="pre"><span class="Identifier">delay</span></span></tt>. Then to start generation, call <a class="reference internal" href="#trigger(var Vibrato)">trigger(var Vibrato)</a> and then call <a class="reference internal" href="#tick(var Vibrato)">tick(var Vibrato)</a> to get the current offset. </p>
+<p>To use set the period and extent via <a class="reference internal nimdoc" title="proc setParam (2 overloads)" href="#setParam-procs-all">setParam</a>, and optionally set the <tt class="docutils literal"><span class="pre"><span class="Identifier">delay</span></span></tt>. Then to start generation, call <a class="reference internal nimdoc" title="proc trigger(v: var Vibrato)" href="#trigger,Vibrato">trigger</a> and then call <a class="reference internal nimdoc" title="proc tick (4 overloads)" href="#tick-procs-all">tick</a> to get the current offset. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L30" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L30" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L33" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L33" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -253,8 +254,8 @@
   <dd>
     
     Default resolver for noise notes. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L109" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L109" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L112" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L112" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -263,8 +264,8 @@
   <dd>
     
     Default resolver for tone notes. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L102" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L102" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L105" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L105" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -281,8 +282,8 @@
   <dd>
     
     Clamps the frequency value to the bounds of this resolver. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L130" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L130" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L133" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L133" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -295,8 +296,8 @@
   <dd>
     
     Clamps the note value to the bounds of this resolver. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L135" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L135" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L138" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L138" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -309,8 +310,8 @@
   <dd>
     
     Gets the current frequency of the control. Note that this is not always the return value of the last call to <tt class="docutils literal"><span class="pre"><span class="Identifier">tick</span></span></tt>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L395" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L395" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L398" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L398" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -323,8 +324,8 @@
   <dd>
     
     Resolves a note to its frequency value. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L122" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L122" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L125" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L125" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -337,8 +338,8 @@
   <dd>
     
     Creates a <a class="reference internal nimdoc" title="object FrequencyControl" href="#FrequencyControl">FrequencyControl</a> with the given resolver. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L256" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L256" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L259" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L259" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -351,8 +352,8 @@
   <dd>
     
     Creates a <a class="reference internal nimdoc" title="object FrequencyControl" href="#FrequencyControl">FrequencyControl</a> with the default noise resolver, <a class="reference internal nimdoc" title="const noiseResolver" href="#noiseResolver">noiseResolver</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L267" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L267" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L270" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L270" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -365,8 +366,8 @@
   <dd>
     
     Creates a <a class="reference internal nimdoc" title="object FrequencyControl" href="#FrequencyControl">FrequencyControl</a> with the default tone resolver, <a class="reference internal nimdoc" title="const toneResolver" href="#toneResolver">toneResolver</a>. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L261" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L261" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L264" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L264" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -379,8 +380,8 @@
   <dd>
     
     Gets the current note of the control. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L385" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L385" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L388" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L388" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -393,8 +394,8 @@
   <dd>
     
     Sets the chord buffer for the arpeggio for the given base note. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L213" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L213" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L216" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L216" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -409,8 +410,8 @@
     <p>Sets an operation on this control, which will update the current note, frequency modulator, vibrato and others as needed.</p>
 <p>Call this before <tt class="docutils literal"><span class="pre"><span class="Identifier">tick</span></span></tt> for changes to effect that tick. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L273" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L273" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L276" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L276" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -423,8 +424,8 @@
   <dd>
     
     Set the parameters of the arpeggio. The upper nibble of the parameter contains the semitone offset from the base note for the second note in the chord. The lower nibble contains the offset for the third note. If both offsets are 0 (<tt class="docutils literal"><span class="pre"><span class="Identifier">effectParam</span></span></tt> = 0), then the arpeggio is disabled. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L201" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L201" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L204" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L204" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -434,8 +435,8 @@
   <dd>
     
     Set the parameters of the vibrato. The upper nibble of the parameter is the period, or the number of ticks per oscillation. The lower nibble is the extent, or magnitude of the offset amount. An extent of 0 will disable the vibrato. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L154" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L154" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L157" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L157" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -447,8 +448,8 @@
   <dd>
     
     Ticks the arpeggio 1 frame, the next frequency in the chord is returned. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L220" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L220" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L223" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L223" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -460,8 +461,8 @@
     <p>Step the control for 1 tick, with the given arpeggio and pitch sequence inputs. The calculated frequency for this tick is returned.</p>
 <p><tt class="docutils literal"><span class="pre"><span class="Identifier">arpIn</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">pitchIn</span></span></tt> should be the current values of an instrument's arpeggio and pitch sequences, if present. The control's modulator will be ignored if <tt class="docutils literal"><span class="pre"><span class="Identifier">arpIn</span></span></tt> is provided, as that frequency will be used instead. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L358" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L358" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L361" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L361" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -472,8 +473,8 @@
     <p>Ticks the slide 1 frame, by moving <tt class="docutils literal"><span class="pre"><span class="Identifier">freq</span></span></tt> towards the slide's target. <tt class="docutils literal"><span class="pre"><span class="Identifier">freq</span></span></tt> is left unchanged if it is already at the target.</p>
 <p><tt class="docutils literal"><span class="pre"><span class="Identifier">true</span></span></tt> is returned if <tt class="docutils literal"><span class="pre"><span class="Identifier">freq</span></span></tt> is at the target. </p>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L230" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L230" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L233" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L233" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -482,8 +483,8 @@
   <dd>
     
     Calculates the next offset value for the current tick. <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt> is returned if the vibrato is disabled. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L184" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L184" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L187" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L187" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -495,8 +496,8 @@
   <dd>
     
     Triggers or restarts the vibrato generator for a new note starting. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L176" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L176" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L179" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L179" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -509,8 +510,8 @@
   <dd>
     
     Gets the current tune offset of the control. 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L390" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L390" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L393" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L393" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -526,8 +527,8 @@
 <li><tt class="docutils literal"><span class="pre"><span class="HexNumber">0x7F</span></span></tt> is <tt class="docutils literal"><span class="pre"><span class="Operator">-</span><span class="DecNumber">1</span></span></tt>, resulting frequency is subtracted by 1 unit.</li>
 </ul>
 
-    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L140" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L140" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/engine/frequency.nim#L143" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/engine/frequency.nim#L143" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -549,7 +550,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-23 05:23:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-25 05:17:45 UTC</small>
       </div>
     </div>
   </div>

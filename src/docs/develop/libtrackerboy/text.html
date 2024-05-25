@@ -212,9 +212,9 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">EPP</span></span></tt>: a set effect where E is a character the determines the effect type, and PP is the effect's parameter in hexadecimal.</li>
 </ul>
 <p>Examples:</p>
-<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Operator">...</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">effectNone</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">V03</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">initEffect</span><span class="Punctuation">(</span><span class="Identifier">etSetTimbre</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">C00</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">initEffect</span><span class="Punctuation">(</span><span class="Identifier">etPatternHalt</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">)</span></span></tt></li>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;...&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">effectNone</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;V03&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">initEffect</span><span class="Punctuation">(</span><span class="Identifier">etSetTimbre</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;C00&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">initEffect</span><span class="Punctuation">(</span><span class="Identifier">etPatternHalt</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">)</span></span></tt></li>
 </ul>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/text.nim#L54" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -242,9 +242,9 @@
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">XX</span></span></tt>: a set instrument where <tt class="docutils literal"><span class="pre"><span class="Identifier">XX</span></span></tt> is the instrument id in hexadecimal.</li>
 </ul>
 <p>Examples:</p>
-<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Operator">..</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentNone</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="DecNumber">00</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentColumn</span><span class="Punctuation">(</span><span class="DecNumber">0</span><span class="Punctuation">)</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="DecNumber">12</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentColumn</span><span class="Punctuation">(</span><span class="DecNumber">18</span><span class="Punctuation">)</span></span></tt></li>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;..&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentNone</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;00&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentColumn</span><span class="Punctuation">(</span><span class="DecNumber">0</span><span class="Punctuation">)</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;12&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">instrumentColumn</span><span class="Punctuation">(</span><span class="DecNumber">18</span><span class="Punctuation">)</span></span></tt></li>
 </ul>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/text.nim#L40" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -259,14 +259,14 @@
     <p>Fixed string type that contains the textual version of a note column. This string will always contain 3 characters.</p>
 <p>The format of this string is one of the following:</p>
 <ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Operator">...</span></span></tt> : an unset column or no note.</li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">NSO</span></span></tt> : a set note where <tt class="docutils literal"><span class="pre"><span class="Identifier">N</span></span></tt> is the note letter from A to G. <tt class="docutils literal"><span class="pre"><span class="Identifier">S</span></span></tt> is a separator that indicates if the note is a natural, sharp or a flat. <tt class="docutils literal"><span class="pre"><span class="Operator">-</span></span></tt> is used for naturals, <tt class="docutils literal"><span class="pre"><span class="Comment">#</span></span></tt> is used for sharps and <tt class="docutils literal"><span class="pre"><span class="Identifier">b</span></span></tt> is used for flats. <tt class="docutils literal"><span class="pre"><span class="Identifier">O</span></span></tt> is the octave from 2 to 8.</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">NSO</span></span></tt> : a set note where <tt class="docutils literal"><span class="pre"><span class="Identifier">N</span></span></tt> is the note letter from A to G. <tt class="docutils literal"><span class="pre"><span class="Identifier">S</span></span></tt> is a separator that indicates if the note is a natural, sharp or a flat. <tt class="docutils literal"><span class="pre"><span class="CharLit">'-'</span></span></tt> is used for naturals, <tt class="docutils literal"><span class="pre"><span class="CharLit">'#'</span></span></tt> is used for sharps and <tt class="docutils literal"><span class="pre"><span class="CharLit">'b'</span></span></tt> is used for flats. <tt class="docutils literal"><span class="pre"><span class="Identifier">O</span></span></tt> is the octave from 2 to 8.</li>
 <li><tt class="docutils literal"><span class="pre"><span class="Operator">---</span></span></tt> : a set note containing a note cut.</li>
 </ul>
 <p>Examples:</p>
-<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Operator">...</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteNone</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">E</span><span class="Operator">-</span><span class="DecNumber">3</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">5</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="Identifier">D</span><span class="Comment">#3</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">Eb3</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
-<li><tt class="docutils literal"><span class="pre"><span class="Operator">---</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="Identifier">noteCut</span><span class="Punctuation">)</span></span></tt></li>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;...&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteNone</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;E-3&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">5</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;D#3&quot;</span></span></tt> or <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;Eb3&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">)</span></span></tt></li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;---&quot;</span></span></tt> represents <tt class="docutils literal"><span class="pre"><span class="Identifier">noteColumn</span><span class="Punctuation">(</span><span class="Identifier">noteCut</span><span class="Punctuation">)</span></span></tt></li>
 </ul>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/text.nim#L21" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -296,7 +296,7 @@
   <dd>
     
     <p>Fixed string type that contains the textual version of a <tt class="docutils literal"><span class="pre"><span class="Identifier">TrackRow</span></span></tt>. This string will always contain 18 characters.</p>
-<p>The format of this string is <tt class="docutils literal"><span class="pre"><span class="Identifier">NNN</span> <span class="Identifier">II</span> <span class="Identifier">EEE</span> <span class="Identifier">EEE</span> <span class="Identifier">EEE</span></span></tt> where</p>
+<p>The format of this string is <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;NNN II EEE EEE EEE&quot;</span></span></tt> where</p>
 <ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">NNN</span></span></tt> is a <a class="reference internal nimdoc" title="type NoteString" href="#NoteString">NoteString</a> of the row's note field</li>
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">II</span></span></tt> is an <a class="reference internal nimdoc" title="type InstrumentString" href="#InstrumentString">InstrumentString</a> of the row's instrument field</li>
 <li><tt class="docutils literal"><span class="pre"><span class="Identifier">EEE</span></span></tt> is an <a class="reference internal nimdoc" title="type EffectString" href="#EffectString">EffectString</a> for each effect in the row's effects array.</li>
@@ -315,8 +315,8 @@
     <p>Fixed string type that contains the textual version of a <tt class="docutils literal"><span class="pre"><span class="Identifier">WaveData</span></span></tt>. This string will always contain 32 characters.</p>
 <p>The format of this string is 32 hexadecimal literals, where each literal is a single sample of the wave data.</p>
 <p>Examples:</p>
-<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="DecNumber">00000000000000000000000000000000</span></span></tt> is an empty waveform</li>
-<li><tt class="docutils literal"><span class="pre"><span class="DecNumber">0123456789</span><span class="Identifier">ABCDEFFEDCBA9876543210</span></span></tt> is a triangular waveform</li>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;00000000000000000000000000000000&quot;</span></span></tt> is an empty waveform</li>
+<li><tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;0123456789ABCDEFFEDCBA9876543210&quot;</span></span></tt> is a triangular waveform</li>
 </ul>
 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/text.nim#L93" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
@@ -551,7 +551,7 @@
   <dt><pre><span class="Keyword">func</span> <a href="#parseEffectCmd%2Cchar"><span class="Identifier">parseEffectCmd</span></a><span class="Other">(</span><span class="Identifier">ch</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">)</span><span class="Other">:</span> <a href="data.html#EffectCmd"><span class="Identifier">EffectCmd</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Converts a character to the <tt class="docutils literal"><span class="pre"><span class="Identifier">EffectType</span></span></tt> it represents. For any unrecognized character, <tt class="docutils literal"><span class="pre"><span class="Identifier">etNoEffect</span></span></tt> is returned. 
+    Converts a character to the <tt class="docutils literal"><span class="pre"><span class="Identifier">EffectType</span></span></tt> it represents. For any unrecognized character, <tt class="docutils literal"><span class="pre"><span class="Identifier">ecNoEffect</span></span></tt> is returned. 
     <a href="https://github.com/stoneface86/libtrackerboy/tree/develop/libtrackerboy/text.nim#L360" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
 <a href="https://github.com/stoneface86/libtrackerboy/edit/develop/libtrackerboy/text.nim#L360" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
@@ -794,7 +794,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-23 05:23:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-25 05:17:45 UTC</small>
       </div>
     </div>
   </div>

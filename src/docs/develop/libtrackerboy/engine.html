@@ -184,7 +184,7 @@
 <p>There are two parts to this module: the engine itself and interfacing with an ApuIo.</p>
 
 <h2><a class="toc-backref" id="engine" href="#engine">Engine</a></h2><p>This module provides an <a class="reference internal nimdoc" title="object Engine" href="#Engine">Engine object</a> type that handles the performance of a <a class="reference external" href="./data.html#Song">data: Song</a> (and sound effects, in the future).</p>
-<p>To create an engine, initialize one with <a class="reference internal nimdoc" title="proc initEngine(): Engine" href="#initEngine">initEngine</a>. Then give it a song to play via the <a class="reference internal nimdoc" title="proc play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))" href="#play,Engine,sinkiref[Song]">play</a> proc. Reference semantics are used so you will need a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span> <span class="Identifier">Song</span></span></tt> when playing it. Afterwards, you can call <a class="reference internal" href="#step">step</a> to perform a single tick of the engine.</p>
+<p>To create an engine, initialize one with <a class="reference internal nimdoc" title="proc initEngine(): Engine" href="#initEngine">initEngine</a>. Then give it a song to play via the <a class="reference internal nimdoc" title="proc play(e: var Engine; song: sink iref[Song]; startAt = default(SongPos))" href="#play,Engine,sinkiref[Song]">play</a> proc. Reference semantics are used so you will need a <tt class="docutils literal"><span class="pre"><span class="Keyword">ref</span> <span class="Identifier">Song</span></span></tt> when playing it. Afterwards, you can call <a class="reference internal nimdoc" title="proc tick(e: var Engine; itable: InstrumentTable)" href="#tick,Engine,InstrumentTable">tick</a> to perform a single tick of the engine.</p>
 <p>There are also other procs for controlling playback, as well as informational ones for diagnostics.</p>
 
 <h2><a class="toc-backref" id="apuio-interface" href="#apuio-interface">ApuIo interface</a></h2><p>The engine creates an <a class="reference external" href="engine/enginestate.html#ApuOperation">enginestate: ApuOperation</a> every tick. This object can be converted into register writes and then sent to an <a class="reference external" href="./apuio.html#ApuIo">apuio: ApuIo</a>.</p>
@@ -555,7 +555,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-23 05:23:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-05-25 05:17:45 UTC</small>
       </div>
     </div>
   </div>
