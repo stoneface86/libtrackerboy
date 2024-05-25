@@ -5,6 +5,9 @@ Frequency effects and control.
 This module handles all frequency effects and related procedures regarding
 channel frequency.
 
+This module is part of the inner workings of the engine module, and has an
+**unstable API**.
+
 ]##
 
 import
@@ -34,9 +37,9 @@ type
     ## to give it a vibrato effect. This effect oscillates periodically between
     ## a negative `extent` and a positive `extent` every `period` frames.
     ## 
-    ## To use set the period and extent via [setParam(var Vibrato,uint8)], and
-    ## optionally set the `delay`. Then to start generation, call [trigger(var Vibrato)]
-    ## and then call [tick(var Vibrato)] to get the current offset.
+    ## To use set the period and extent via [setParam], and
+    ## optionally set the `delay`. Then to start generation, call [trigger]
+    ## and then call [tick] to get the current offset.
     ##
     delay*: uint8    # 0-255, number of frames before vibrato starts
     period: uint8   # 0-15, number of frames until value flips
@@ -50,9 +53,9 @@ type
     ## Arpeggio modulator.
     ## 
     ## Similates a chord by alternating between three notes each tick. Enable
-    ## by calling [setParam(var Arpeggio,uint8)] with a nonzero parameter, then
+    ## by calling [setParam] with a nonzero parameter, then
     ## set the chord buffer via [setChord]. The modulator can be stepped by
-    ## calling [tick(var Arpeggio)], which returns the frequency for that tick.
+    ## calling [tick], which returns the frequency for that tick.
     ##
     note1: uint8 # 0-F, offset from base note for the 2nd note in the chord
     note2: uint8 # 0-F, offset from base note for the 3rd note in the chord
@@ -64,7 +67,7 @@ type
     ##
     ## Modulates a frequency by sliding `amount` units towards the `target`
     ## frequency. To use set the desired amount and target, then call
-    ## [tick(Slide,var uint16)] which will modify the given frequency.
+    ## [tick] which will modify the given frequency.
     ##
     amount: uint8
     target: uint16
@@ -86,7 +89,7 @@ type
       slide: Slide
 
   FrequencyControl* = object
-    ## Handles frequency calculation for a channel. For each tick, call `tick`
+    ## Handles frequency calculation for a channel. For each tick, call [tick]
     ## on this control to get the frequency. If the channel has an operation,
     ## set it first via [setOperation].
     ##

@@ -18,7 +18,7 @@ This module provides an [Engine object] type that handles the performance of a
 
 To create an engine, initialize one with [initEngine]. Then give
 it a song to play via the [play] proc. Reference semantics are used so you
-will need a `ref Song` when playing it. Afterwards, you can call [step] to
+will need a `ref Song` when playing it. Afterwards, you can call [tick] to
 perform a single tick of the engine.
 
 There are also other procs for controlling playback, as well as informational

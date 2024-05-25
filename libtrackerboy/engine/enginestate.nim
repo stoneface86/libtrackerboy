@@ -24,16 +24,14 @@ export
 type
   EngineFrame* = object
     ## Informational data about the current engine frame being stepped.
+    ## - `status` - current status of the music tracker.
+    ## - `speed` - current playback speed of the song.
+    ## - `time` - time index of the frame, first frame is `0`.
+    ## - `pos` - current position in the song.
     ## 
     status*: TrackerStatus
-      ## Current status of the music tracker.
-      ##
     speed*: Speed
-      ## Current playback speed, in Q4.4 format.
-      ##
     time*: int
-      ## time index of the frame
-      ##
     pos*: SongPos
 
   UpdateFlag* = enum
@@ -51,21 +49,20 @@ type
     ##
 
   ChannelState* = object
-    ## State of a channel
+    ## State of a channel.
+    ## - `envelope` - The envelope setting, `0..255`. Use `0xFFFF` to specify
+    ##                initial state.
+    ## - `timbre` - The timbre setting, `0..3`. Use `0xFF` to specify initial
+    ##              state.
+    ## - `panning` - The panning setting, `0..3`. Use `0xFF` to specify
+    ##               initial state.
+    ## - `frequency` - The frequency setting, `0..2047`. Use `0xFFFF` to
+    ##                 specify initial state.
     ##
     envelope*: uint16
-      ## The envelope setting, `0..255`. Use `0xFFFF` to specify initial state.
-      ##
     timbre*: uint8
-      ## The timbre setting, `0..3`. Use `0xFF` to specify initial state.
-      ##
     panning*: uint8
-      ## The panning setting, `0..3`. Use `0xFF` to specify initial state.
-      ##
     frequency*: uint16
-      ## The frequency setting, `0..2047`. Use `0xFFFF` to specify initial
-      ## state.
-      ##
 
   ChannelAction* = enum
     ## Specifies which action the channel should do when updating for a single
@@ -103,16 +100,14 @@ type
   ApuOperation* = object
     ## An operation or modification to be made to an `ApuIo` object.
     ## Stepping the `Engine` results in an `ApuOperation`
+    ## - `updates` - A [ChannelUpdate] for each channel.
+    ## - `sweep` - Write to the sweep register with this value when set.
+    ## - `volume` - Write to the global volume register with this value when
+    ##              set.
     ##
     updates*: array[ChannelId, ChannelUpdate]
-      ## A `ChannelUpdate` for each channel.
-      ##
     sweep*: Option[uint8]
-      ## Write to the sweep register with this value when set.
-      ##
     volume*: Option[uint8]
-      ## Write to the global volume register with this value when set.
-      ##
     #lengthTable: array[ChannelId, Option[uint8]]
 
 const
@@ -121,7 +116,7 @@ const
     ##
 
 func initChannelState*(): ChannelState =
-  ## Initialize a `ChannelState` with initial settings. Using this state as an
+  ## Initialize a [ChannelState] with initial settings. Using this state as an
   ## initial value will guarentee that all settings will be updated on the
   ## first tick.
   ##

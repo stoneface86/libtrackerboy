@@ -58,10 +58,7 @@ The API in the data module has been completely overhauled:
   - added proc `data` for accessing the track's data seq
   - removed procs `setNote`, `setInstrument`, `setEffect`, `setEffectType`,
     `setEffectParam`
-- TrackView
-  - `TrackView` is no longer a `distinct Track`, but a proxy object containing
-     a `Track`. (There were some Nim internal errors using the borrow pragma).
-  - add converter `toView`
+  - add converter to a TrackView, `toView`
 - added types `Pattern`, `PatternView`, `SomePattern`, `SomeTrack`
 - Song
   - add procs `$`, `isValid`, `removeUnusedTracks`, `allocateTracks`, `getRow`,
@@ -77,6 +74,32 @@ The API in the data module has been completely overhauled:
   - removed procs `add`, `duplicate`, `remove`, `moveUp`, `moveDown`
 - Module
   - add proc `isValid`
+
+Changes to the API in `engine`:
+- engine internals now utilize the new `tracking` module
+- modules `apucontrol`, `enginecontrol` and `frequency` have an unstable API,
+  so any changes made to them will not be documented.
+- added proc `isPlaying`
+- `getLocked` renamed to `locked`
+- added proc `unlocked`
+- invalid starting position given to `play` no longer results in an
+  `IndexDefect` being raised, instead the engine is halted.
+- `step` renamed to `tick`
+- `currentFrame` renamed to `frame`
+- `currentSong` renamed to `song`
+- `currentNote` renamed to `note`
+- `currentState` renamed to `trackState`
+- `getTrackTimbre` renamed to `trackTimbre`
+- `getTrackEnvelope` renamed to `trackEnvelope`
+- `getTrackPanning` renamed to `trackPanning`
+- `stepAndApply` renamed to `tickAndApply`
+- `EngineFrame` object changed
+  - `halted`, `startedNewRow`, `startedNewPattern` fields replaced by
+    `status: TrackerStatus`
+  - `speed` is now of type `Speed`
+  - `order` and `row` fields are replaced by `pos: SongPos`
+- `GlobalState` object removed, as the engine internals no longer requires it
+- `ufAll` renamed to `updateAll`
 
 ### Added
  - (common) `iref[T]` and `iptr[T]` (these replace `Immutable[T]`)
@@ -98,11 +121,8 @@ The API in the data module has been completely overhauled:
  - (ir) renamed proc `toEffectType` -> `toEffectCmd`
  - modules `apucontrol`, `enginecontrol` and `enginestate` are no longer
    private and are now located in `libtrackerboy/engine`
- - (engine) `play` proc signature takes a `SongPos` instead of two ints
+ - (engine) see above for detailed changes.
  - (editing) completely rewritten, safer and easier to use.
-
-### Deprecated
- - (note) `note`
 
 ### Removed
  - (common) `MixMode` type and related procs.
@@ -112,6 +132,7 @@ The API in the data module has been completely overhauled:
  - (data) `parseWave` proc, use text module instead.
  - (ir) `SongPath` and `PatternVisit` types.
  - (editing) `PatternIter`, `ColumnIter` types
+ - (notes) `note` compile-time proc
 
 ## [0.8.3] - 2023-11-08
 

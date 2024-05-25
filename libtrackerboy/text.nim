@@ -26,15 +26,15 @@ type
     ## * `...` : an unset column or no note.
     ## * `NSO` : a set note where `N` is the note letter from A to G. `S` is
     ##           a separator that indicates if the note is a natural, sharp or
-    ##           a flat. `-` is used for naturals, `#` is used for sharps and
-    ##           `b` is used for flats. `O` is the octave from 2 to 8.
+    ##           a flat. `'-'` is used for naturals, `'#'` is used for sharps
+    ##           and `'b'` is used for flats. `O` is the octave from 2 to 8.
     ## * `---` : a set note containing a note cut.
     ## 
     ## Examples:
-    ## * `...` represents `noteNone`
-    ## * `E-3` represents `noteColumn(5, 3)`
-    ## * `D#3`, `Eb3` represents `noteColumn(4, 3)`
-    ## * `---` represents `noteColumn(noteCut)`
+    ## * `"..."` represents `noteNone`
+    ## * `"E-3"` represents `noteColumn(5, 3)`
+    ## * `"D#3"` or `"Eb3"` represents `noteColumn(4, 3)`
+    ## * `"---"` represents `noteColumn(noteCut)`
     ##
   
   InstrumentString* = FixedString[2]
@@ -46,9 +46,9 @@ type
     ## * `XX`: a set instrument where `XX` is the instrument id in hexadecimal.
     ## 
     ## Examples:
-    ## * `..` represents `instrumentNone`
-    ## * `00` represents `instrumentColumn(0)`
-    ## * `12` represents `instrumentColumn(18)`
+    ## * `".."` represents `instrumentNone`
+    ## * `"00"` represents `instrumentColumn(0)`
+    ## * `"12"` represents `instrumentColumn(18)`
     ##
   
   EffectString* = FixedString[3]
@@ -61,16 +61,16 @@ type
     ##          type, and PP is the effect's parameter in hexadecimal.
     ## 
     ## Examples:
-    ## * `...` represents `effectNone`
-    ## * `V03` represents `initEffect(etSetTimbre, 3)`
-    ## * `C00` represents `initEffect(etPatternHalt, 0)`
+    ## * `"..."` represents `effectNone`
+    ## * `"V03"` represents `initEffect(etSetTimbre, 3)`
+    ## * `"C00"` represents `initEffect(etPatternHalt, 0)`
     ##
   
   TrackRowString* = FixedString[18]
     ## Fixed string type that contains the textual version of a `TrackRow`.
     ## This string will always contain 18 characters.
     ## 
-    ## The format of this string is `NNN II EEE EEE EEE` where
+    ## The format of this string is `"NNN II EEE EEE EEE"` where
     ## * `NNN` is a [NoteString] of the row's note field
     ## * `II` is an [InstrumentString] of the row's instrument field
     ## * `EEE` is an [EffectString] for each effect in the row's effects array.
@@ -98,8 +98,8 @@ type
     ## is a single sample of the wave data.
     ## 
     ## Examples:
-    ## * `00000000000000000000000000000000` is an empty waveform
-    ## * `0123456789ABCDEFFEDCBA9876543210` is a triangular waveform
+    ## * `"00000000000000000000000000000000"` is an empty waveform
+    ## * `"0123456789ABCDEFFEDCBA9876543210"` is a triangular waveform
     ##
 
 const
@@ -359,7 +359,7 @@ func parseInstrument*(str: string): Option[InstrumentColumn] {.inline.} =
 
 func parseEffectCmd*(ch: char): EffectCmd =
   ## Converts a character to the `EffectType` it represents. For any
-  ## unrecognized character, `etNoEffect` is returned.
+  ## unrecognized character, `ecNoEffect` is returned.
   ## 
   for ec in (ecNoEffect.succ)..(EffectCmd.high):
     if ch == effectCharMap[ec]:

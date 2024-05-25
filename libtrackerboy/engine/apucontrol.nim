@@ -5,7 +5,8 @@ APU Control
 A module used by the engine module for determining the register writes needed
 by an `ApuOperation` object.
 
-This module is part of the inner workings of the engine module.
+This module is part of the inner workings of the engine module, and has an
+**unstable API**.
 
 ]##
 

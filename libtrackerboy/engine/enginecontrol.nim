@@ -1,3 +1,27 @@
+##[
+
+Engine control.
+
+This module contains the core components of `Engine`, and is responsible
+for music and sound effect playback of TrackerBoy modules.
+
+A brief overview of these components:
+* fc, `FrequencyControl` - handles frequency calculation and effects. Each
+  track has its own fc.
+* ir, `InstrumentRuntime` - for performing an instrument by stepping through
+  its sequences. Each track has its own ir, as one instrument is played per
+  track.
+* tc, `TrackControl` - handles the state of a channel for a track. It serves as
+  a container for an fc and ir, and ticks them when it is ticked. A tc also
+  handles note triggers and cuts.
+* mr, `MusicRuntime` - handles the performance of a `Song`. It is a container
+  for a tracker and each channel's tc. It also manages the state of each
+  channel.
+
+This module is part of the inner workings of the engine module, and has an
+**unstable API**.
+
+]##
 
 import
   ./enginestate,
