@@ -57,6 +57,7 @@ if low-level details of the engine are needed.
 | [apucontrol](libtrackerboy/engine/apucontrol.html)       | APU Register writes           |
 | [enginecontrol](libtrackerboy/engine/enginecontrol.html) | Core components of the Engine |
 | [enginestate](libtrackerboy/engine/enginestate.html)     | Current state of the Engine   |
+| [frequency](libtrackerboy/engine/frequency.html)         | Frequency effects             |
 
 .. note:: Modules in the private folder (libtrackerboy/private) are private to
           the library and should not be imported by users of the library. 

@@ -52,19 +52,7 @@ include::include/error-codes-1.adoc[]
 
 <<<
 
-== Structure
-
-A TrackerBoy module consists of a Header and a Payload.
-
-```
-   +----------------+-----------------------------------------+------------+
-   |                |                                         |            |
-   | Header         | Payload                                 | Terminator |
-   | 160 bytes      | size varies                             | 12 bytes   |
-   |                |                                         |            |
-   +----------------+-----------------------------------------+------------+
-  +0              +160                                                      EOF
-```
+include::include/structure-1.adoc[]
 
 <<<
 

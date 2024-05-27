@@ -73,8 +73,6 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
     steps:
       - uses: actions/checkout@v3
 
@@ -86,10 +84,8 @@ jobs:
         with:
           python-version: '3.10' 
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-          bundler-cache: true
+      - name: Install asciidoctor
+        run: sudo apt install -y asciidoctor ruby-asciidoctor-pdf
 
       - name: Generate documentation
         run: |

@@ -11,7 +11,7 @@ single INST, SONG or WAVE block. A terminator is not used since there is only
 one block present in the payload.
 
 .Structure of a module piece file
-image::res/fig-piece-structure-1.svg[]
+image::res/fig-piece-structure-1.svg["Module piece file structure",opts=inline]
 
 === Header
 
