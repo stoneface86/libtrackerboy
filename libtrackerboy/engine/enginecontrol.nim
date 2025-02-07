@@ -261,6 +261,7 @@ proc tick*(r: var MusicRuntime; song: Song; itable: InstrumentTable;
             ChannelUpdate(action: caCut)
     # sweep requires a retrigger
     if apuOp.sweep.isSome() and apuOp.updates[ch1].action == caUpdate:
+      apuOp.updates[ch1].flags.incl(ufFrequency)
       apuOp.updates[ch1].trigger = true
 
 # diagnostics

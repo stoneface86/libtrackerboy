@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+ - Incorrect frequency playing with repeated Hxx commands, see
+   [trackerboy#23](https://github.com/stoneface86/trackerboy/issues/23)
+
 ## [0.9.0] - 2024-05-27
 
 ### Important
