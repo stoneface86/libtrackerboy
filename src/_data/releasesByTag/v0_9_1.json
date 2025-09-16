@@ -1,0 +1,5 @@
+{
+  "version": "v0.9.1",
+  "date": "2025-02-07",
+  "changes": "### Fixed\n - Incorrect frequency playing with repeated Hxx commands, see\n   [trackerboy#23](https://github.com/stoneface86/trackerboy/issues/23)"
+}
