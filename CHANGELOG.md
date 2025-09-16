@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.9.1] - 2025-02-07
 
 ### Fixed
  - Incorrect frequency playing with repeated Hxx commands, see
